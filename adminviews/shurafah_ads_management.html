@@ -1,0 +1,1791 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shurafah Admin — Ads Management</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#05070F;--surface:#0A0E1A;--surface2:#111828;--surface3:#182035;--surface4:#1E2840;
+  --accent:#FF6B35;--accent2:#FFB347;--blue:#4D9FFF;--green:#2ECC8F;--purple:#9B6BFF;
+  --pink:#FF4D8F;--yellow:#FFD166;--teal:#00C9B8;--red:#FF4444;--gold:#F4A900;
+  --text:#F0F4FF;--text2:#8A94B0;--text3:#4A5270;
+  --border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.11);
+  --sw:240px;--scw:62px;--hh:62px;--tr:0.28s cubic-bezier(.4,0,.2,1);--r:14px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--text);min-height:100vh;display:flex;}
+::-webkit-scrollbar{width:4px;height:4px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--surface4);border-radius:2px;}
+
+/* ══ SIDEBAR ══ */
+.sidebar{width:var(--sw);min-height:100vh;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;left:0;top:0;bottom:0;z-index:200;overflow:hidden;transition:width var(--tr);}
+.sidebar.collapsed{width:var(--scw);}
+.sb-scroll{flex:1;overflow-y:auto;overflow-x:hidden;scrollbar-width:none;display:flex;flex-direction:column;}
+.sb-scroll::-webkit-scrollbar{display:none;}
+.sb-brand{padding:16px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;min-height:var(--hh);}
+.brand-logo{width:34px;height:34px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:15px;box-shadow:0 4px 14px rgba(255,107,53,.4);flex-shrink:0;}
+.brand-txt{overflow:hidden;white-space:nowrap;display:flex;align-items:center;gap:8px;opacity:1;transition:opacity var(--tr);}
+.sidebar.collapsed .brand-txt{opacity:0;pointer-events:none;}
+.b-name{font-family:sans-serif;font-size:16px;font-weight:800;}
+.b-name span{color:var(--accent);}
+.b-badge{font-size:8px;background:rgba(255,107,53,.15);border:1px solid rgba(255,107,53,.3);border-radius:4px;padding:1px 5px;color:var(--accent);font-family:sans-serif;font-weight:700;text-transform:uppercase;}
+.sb-sec{padding:14px 8px 4px;}
+.sb-sec-lbl{font-size:9px;font-family:sans-serif;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;padding:0 8px;margin-bottom:6px;white-space:nowrap;opacity:1;transition:opacity var(--tr);}
+.sidebar.collapsed .sb-sec-lbl{opacity:0;}
+.nav-item{display:flex;align-items:center;gap:9px;padding:9px 10px;border-radius:10px;cursor:pointer;font-size:12px;font-weight:500;color:var(--text2);transition:all .15s;margin-bottom:1px;position:relative;white-space:nowrap;overflow:hidden;}
+.nav-item:hover{background:var(--surface2);color:var(--text);}
+.nav-item.active{background:rgba(244,169,0,.1);color:var(--gold);font-weight:600;}
+.nav-item.active::before{content:'';position:absolute;left:0;top:20%;bottom:20%;width:3px;background:var(--gold);border-radius:0 3px 3px 0;}
+.nav-item svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:2;flex-shrink:0;}
+.nav-lbl{overflow:hidden;white-space:nowrap;opacity:1;transition:opacity var(--tr);flex:1;}
+.sidebar.collapsed .nav-lbl{opacity:0;}
+.n-badge{margin-left:auto;font-size:8px;font-family:sans-serif;font-weight:800;border-radius:50px;padding:1px 6px;min-width:18px;text-align:center;flex-shrink:0;opacity:1;transition:opacity var(--tr);}
+.sidebar.collapsed .n-badge{opacity:0;}
+.nb-o{background:var(--accent);color:white;}.nb-g{background:var(--green);color:white;}.nb-pk{background:var(--pink);color:white;}.nb-gd{background:var(--gold);color:#000;}
+.sidebar.collapsed .nav-item{justify-content:center;padding:9px;}
+.sidebar.collapsed .nav-item:hover::after{content:attr(data-tip);position:absolute;left:calc(var(--scw)+8px);top:50%;transform:translateY(-50%);background:var(--surface3);border:1px solid var(--border2);border-radius:8px;padding:5px 10px;font-size:11px;color:var(--text);white-space:nowrap;pointer-events:none;z-index:999;box-shadow:0 4px 16px rgba(0,0,0,.5);}
+.sb-footer{padding:12px 8px;border-top:1px solid var(--border);}
+.admin-row{display:flex;align-items:center;gap:10px;padding:8px;border-radius:10px;cursor:pointer;overflow:hidden;}
+.admin-av{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--purple),var(--blue));display:flex;align-items:center;justify-content:center;font-family:sans-serif;font-size:11px;font-weight:700;flex-shrink:0;}
+.admin-info{overflow:hidden;white-space:nowrap;flex:1;opacity:1;transition:opacity var(--tr);}
+.sidebar.collapsed .admin-info{opacity:0;width:0;}
+.admin-name-t{font-size:11px;font-weight:600;}
+.admin-role-t{font-size:9px;color:var(--text3);}
+
+/* ══ MAIN ══ */
+.main{margin-left:var(--sw);flex:1;display:flex;flex-direction:column;min-height:100vh;transition:margin-left var(--tr);}
+.main.expanded{margin-left:var(--scw);}
+
+/* ══ TOPBAR ══ */
+.topbar{height:var(--hh);background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 24px;gap:12px;position:sticky;top:0;z-index:100;}
+.toggle-btn{width:36px;height:36px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:border-color .15s;}
+.toggle-btn:hover{border-color:var(--gold);}
+.toggle-btn svg{width:16px;height:16px;fill:none;stroke:var(--text2);stroke-width:2;stroke-linecap:round;}
+.tb-left{flex:1;}
+.tb-title{font-family:sans-serif;font-size:16px;font-weight:800;letter-spacing:-.3px;}
+.tb-crumb{font-size:10px;color:var(--text3);margin-top:1px;display:flex;align-items:center;gap:4px;}
+.tb-crumb svg{width:10px;height:10px;fill:none;stroke:var(--text3);stroke-width:2;}
+.tb-crumb span{color:var(--gold);}
+.tb-right{display:flex;align-items:center;gap:8px;}
+.save-btn{display:flex;align-items:center;gap:6px;padding:8px 18px;background:var(--gold);border-radius:10px;font-family:sans-serif;font-size:12px;font-weight:700;color:#000;cursor:pointer;box-shadow:0 3px 14px rgba(244,169,0,.3);transition:transform .15s,box-shadow .15s;}
+.save-btn:hover{transform:translateY(-1px);box-shadow:0 5px 20px rgba(244,169,0,.45);}
+.save-btn svg{width:13px;height:13px;fill:none;stroke:#000;stroke-width:2.5;}
+.tb-ico{width:36px;height:36px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;}
+.tb-ico svg{width:15px;height:15px;fill:none;stroke:var(--text2);stroke-width:2;}
+.tb-dot{width:7px;height:7px;background:var(--accent);border-radius:50%;position:absolute;top:6px;right:6px;border:2px solid var(--surface);}
+.tb-av{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--purple),var(--blue));display:flex;align-items:center;justify-content:center;font-family:sans-serif;font-size:10px;font-weight:700;}
+
+/* ══ CONTENT + LEFT NAV ══ */
+.ads-layout{display:flex;flex:1;overflow:hidden;}
+.ads-nav{width:210px;flex-shrink:0;background:var(--surface);border-right:1px solid var(--border);overflow-y:auto;padding:16px 10px;scrollbar-width:none;}
+.ads-nav::-webkit-scrollbar{display:none;}
+.an-sec{margin-bottom:20px;}
+.an-lbl{font-size:9px;font-family:sans-serif;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.7px;padding:0 8px;margin-bottom:6px;}
+.an-item{display:flex;align-items:center;gap:8px;padding:9px 10px;border-radius:10px;cursor:pointer;font-size:12px;font-weight:500;color:var(--text2);transition:all .15s;margin-bottom:1px;position:relative;}
+.an-item:hover{background:var(--surface2);color:var(--text);}
+.an-item.on{background:rgba(244,169,0,.1);color:var(--gold);font-weight:600;}
+.an-item.on::before{content:'';position:absolute;left:0;top:20%;bottom:20%;width:3px;background:var(--gold);border-radius:0 3px 3px 0;}
+.an-item svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;flex-shrink:0;}
+.an-badge{margin-left:auto;font-size:8px;font-family:sans-serif;font-weight:800;border-radius:50px;padding:1px 6px;}
+.anb-g{background:rgba(46,204,143,.15);color:var(--green);}
+.anb-o{background:rgba(255,107,53,.15);color:var(--accent);}
+.anb-r{background:rgba(255,68,68,.15);color:var(--red);}
+
+.ads-content{flex:1;overflow-y:auto;padding:24px 28px 40px;}
+
+/* ══ SECTIONS ══ */
+.ads-sec{display:none;animation:fadeUp .25s ease;}
+.ads-sec.on{display:block;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.sec-hdr{margin-bottom:22px;}
+.sec-title{font-family:sans-serif;font-size:20px;font-weight:800;letter-spacing:-.4px;margin-bottom:4px;}
+.sec-desc{font-size:12px;color:var(--text2);line-height:1.6;}
+
+/* ══ CARD ══ */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:20px;}
+.card-hdr{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--border);}
+.card-title{font-family:sans-serif;font-size:13px;font-weight:700;display:flex;align-items:center;gap:7px;}
+.card-title svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;}
+.card-sub{font-size:10px;color:var(--text3);margin-top:2px;}
+.card-action{font-size:10px;color:var(--gold);font-weight:600;cursor:pointer;font-family:sans-serif;display:flex;align-items:center;gap:4px;}
+.card-action svg{width:11px;height:11px;fill:none;stroke:currentColor;stroke-width:2;}
+.card-body{padding:20px;}
+.card-body-sm{padding:14px 18px;}
+
+/* ══ SETTINGS ROWS ══ */
+.sr{display:flex;align-items:center;gap:14px;padding:14px 18px;border-bottom:1px solid var(--border);transition:background .12s;}
+.sr:last-child{border-bottom:none;}
+.sr:hover{background:rgba(255,255,255,.015);}
+.sr-ico{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.sr-ico svg{width:16px;height:16px;fill:none;stroke:white;stroke-width:2;}
+.sr-body{flex:1;}
+.sr-title{font-family:sans-serif;font-size:12px;font-weight:700;margin-bottom:3px;}
+.sr-desc{font-size:10px;color:var(--text3);line-height:1.5;}
+.sr-right{flex-shrink:0;display:flex;align-items:center;gap:10px;}
+.sr-val{font-size:11px;color:var(--text2);font-family:sans-serif;font-weight:600;}
+.sr-badge{font-size:8px;font-family:sans-serif;font-weight:700;padding:2px 8px;border-radius:50px;}
+.badge-live{background:rgba(46,204,143,.12);color:var(--green);}
+.badge-off{background:var(--surface2);color:var(--text3);}
+.badge-warn{background:rgba(255,209,102,.1);color:var(--yellow);}
+.badge-hot{background:rgba(244,169,0,.15);color:var(--gold);}
+
+/* ══ TOGGLE ══ */
+.toggler{width:40px;height:22px;border-radius:11px;position:relative;cursor:pointer;flex-shrink:0;transition:background .2s;}
+.toggler.on{background:var(--gold);}
+.toggler.off{background:var(--surface3);}
+.tog-thumb{position:absolute;top:3px;width:16px;height:16px;background:white;border-radius:50%;transition:left .2s;box-shadow:0 1px 4px rgba(0,0,0,.3);}
+.toggler.on .tog-thumb{left:21px;}
+.toggler.off .tog-thumb{left:3px;}
+
+/* inputs */
+.sr-input{background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:7px 12px;font-size:12px;color:var(--text);font-family:'DM Sans',sans-serif;outline:none;min-width:130px;transition:border-color .2s;}
+.sr-input:focus{border-color:rgba(244,169,0,.5);}
+.sr-input::placeholder{color:var(--text3);}
+.sr-select{background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:7px 12px;font-size:12px;color:var(--text);font-family:'DM Sans',sans-serif;outline:none;cursor:pointer;min-width:140px;}
+.sr-select:focus{border-color:rgba(244,169,0,.5);}
+.sr-number{background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:7px 12px;font-size:12px;color:var(--text);font-family:sans-serif;font-weight:700;outline:none;width:80px;text-align:center;}
+.sr-number:focus{border-color:rgba(244,169,0,.5);}
+
+/* ══ KPI STRIP ══ */
+.kpi-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:22px;}
+.kpi-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:16px;position:relative;overflow:hidden;animation:fadeUp .4s ease forwards;opacity:0;}
+.kpi-card:nth-child(1){animation-delay:.04s}.kpi-card:nth-child(2){animation-delay:.08s}
+.kpi-card:nth-child(3){animation-delay:.12s}.kpi-card:nth-child(4){animation-delay:.16s}
+.kpi-ico{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:10px;}
+.kpi-ico svg{width:16px;height:16px;fill:none;stroke:white;stroke-width:2;}
+.kpi-v{font-family:sans-serif;font-size:22px;font-weight:800;margin-bottom:3px;}
+.kpi-l{font-size:10px;color:var(--text3);}
+.kpi-t{font-size:9px;font-family:sans-serif;font-weight:700;margin-top:4px;}
+
+/* ══ PLACEMENT CARDS ══ */
+.placement-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.placement-card{background:var(--surface2);border:1.5px solid var(--border);border-radius:14px;padding:16px;cursor:pointer;transition:all .18s;position:relative;overflow:hidden;}
+.placement-card:hover{border-color:rgba(244,169,0,.35);background:rgba(244,169,0,.03);}
+.placement-card.active-pl{border-color:var(--gold);background:rgba(244,169,0,.05);}
+.placement-card::after{content:'';position:absolute;top:-20px;right:-20px;width:70px;height:70px;border-radius:50%;opacity:.06;}
+.pl-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.pl-icon{font-size:22px;}
+.pl-status{font-size:8px;font-family:sans-serif;font-weight:700;padding:3px 9px;border-radius:50px;}
+.pl-name{font-family:sans-serif;font-size:13px;font-weight:800;margin-bottom:4px;}
+.pl-desc{font-size:10px;color:var(--text3);margin-bottom:10px;line-height:1.5;}
+.pl-stats{display:flex;gap:12px;margin-bottom:10px;}
+.pl-stat{font-size:9px;color:var(--text3);}
+.pl-stat strong{color:var(--text);font-family:sans-serif;}
+.pl-footer{display:flex;align-items:center;justify-content:space-between;}
+.pl-assigned{font-size:9px;color:var(--text3);}
+.pl-assigned span{color:var(--gold);font-weight:600;}
+.pl-drag{font-size:14px;cursor:grab;opacity:.4;}
+
+/* ══ AD UNIT CARDS ══ */
+.unit-list{display:flex;flex-direction:column;gap:10px;}
+.unit-card{background:var(--surface2);border:1px solid var(--border);border-radius:14px;overflow:hidden;transition:border-color .15s;}
+.unit-card:hover{border-color:var(--border2);}
+.unit-card.active-unit{border-color:rgba(244,169,0,.4);}
+.uc-header{display:flex;align-items:center;gap:12px;padding:14px 16px;cursor:pointer;}
+.uc-color{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
+.uc-info{flex:1;}
+.uc-name{font-family:sans-serif;font-size:12px;font-weight:700;margin-bottom:2px;}
+.uc-meta{font-size:10px;color:var(--text3);display:flex;gap:10px;}
+.uc-right{display:flex;align-items:center;gap:10px;flex-shrink:0;}
+.uc-badge{font-size:8px;font-family:sans-serif;font-weight:700;padding:2px 8px;border-radius:50px;}
+.uc-expand{font-size:12px;color:var(--text3);cursor:pointer;transition:transform .2s;}
+.uc-expand.open{transform:rotate(180deg);}
+.uc-body{padding:14px 16px;border-top:1px solid var(--border);display:none;background:var(--surface3);}
+.uc-body.open{display:block;}
+.code-area{background:var(--bg);border:1px solid var(--border);border-radius:9px;padding:12px;font-size:10px;font-family:'DM Sans',monospace;color:var(--teal);line-height:1.7;white-space:pre-wrap;word-break:break-all;max-height:110px;overflow-y:auto;margin-bottom:10px;}
+.code-actions{display:flex;gap:7px;}
+.code-btn{padding:6px 12px;font-size:10px;font-family:sans-serif;font-weight:700;border-radius:8px;cursor:pointer;border:1px solid var(--border);color:var(--text2);transition:all .15s;}
+.code-btn:hover{border-color:var(--gold);color:var(--gold);}
+.code-btn.primary{background:var(--gold);color:#000;border-color:var(--gold);}
+.code-btn.danger{color:var(--red);border-color:rgba(255,68,68,.25);}
+
+/* ══ INTERSTITIAL FLOW ══ */
+.flow-diagram{display:flex;align-items:center;gap:0;margin:16px 0;overflow-x:auto;padding:4px 0;}
+.flow-step{display:flex;flex-direction:column;align-items:center;flex-shrink:0;}
+.flow-box{background:var(--surface2);border:1.5px solid var(--border);border-radius:12px;padding:12px 14px;text-align:center;min-width:110px;}
+.flow-box.active-flow{border-color:var(--gold);background:rgba(244,169,0,.06);}
+.flow-box.ad-box{border-color:var(--green);background:rgba(46,204,143,.06);}
+.fb-ico{font-size:20px;margin-bottom:6px;}
+.fb-title{font-family:sans-serif;font-size:10px;font-weight:700;margin-bottom:2px;}
+.fb-sub{font-size:9px;color:var(--text3);}
+.flow-arrow{font-size:18px;color:var(--gold);padding:0 8px;align-self:center;flex-shrink:0;}
+.flow-label{font-size:8px;color:var(--text3);margin-top:4px;font-family:sans-serif;font-weight:600;}
+
+/* ══ AD PREVIEW MOCKUP ══ */
+.ad-preview{border:1px solid var(--border);border-radius:12px;overflow:hidden;background:var(--surface3);}
+.adp-header{background:var(--surface2);padding:8px 12px;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--border);}
+.adp-title{font-family:sans-serif;font-size:10px;font-weight:700;flex:1;}
+.adp-timer{background:rgba(244,169,0,.15);color:var(--gold);font-family:sans-serif;font-size:10px;font-weight:800;padding:3px 9px;border-radius:6px;}
+.adp-skip{font-size:9px;color:var(--text3);cursor:pointer;}
+.adp-body{padding:20px;text-align:center;}
+.adp-ad-zone{background:var(--surface2);border:2px dashed rgba(244,169,0,.25);border-radius:10px;padding:28px;margin-bottom:14px;}
+.adp-ad-label{font-size:9px;color:var(--text3);font-family:sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:.5px;}
+.adp-ad-size{font-family:sans-serif;font-size:13px;font-weight:800;color:var(--text2);margin-top:4px;}
+.adp-song{display:flex;align-items:center;gap:10px;background:var(--surface);border-radius:10px;padding:10px 12px;}
+.adp-song-art{width:36px;height:36px;border-radius:8px;background:linear-gradient(135deg,var(--purple),var(--blue));display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
+.adp-song-info{flex:1;text-align:left;}
+.adp-dl-btn{background:var(--green);color:white;font-family:sans-serif;font-size:11px;font-weight:700;border-radius:9px;padding:7px 14px;opacity:.4;pointer-events:none;}
+
+/* ══ TARGETING MATRIX ══ */
+.target-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.target-card{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:16px;}
+.tc-title{font-family:sans-serif;font-size:11px;font-weight:700;color:var(--text2);margin-bottom:12px;display:flex;align-items:center;gap:6px;}
+.tc-title svg{width:12px;height:12px;fill:none;stroke:var(--gold);stroke-width:2;}
+.tc-list{display:flex;flex-direction:column;gap:6px;}
+.tc-item{display:flex;align-items:center;justify-content:space-between;padding:7px 10px;background:var(--surface);border-radius:9px;border:1px solid var(--border);}
+.tc-label{font-size:11px;font-weight:600;}
+.tc-pct{font-family:sans-serif;font-size:11px;font-weight:800;color:var(--gold);}
+
+/* ══ A/B TEST CARDS ══ */
+.ab-card{background:var(--surface2);border:1px solid var(--border);border-radius:14px;padding:16px;margin-bottom:12px;}
+.ab-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.ab-name{font-family:sans-serif;font-size:13px;font-weight:800;}
+.ab-status{font-size:8px;font-family:sans-serif;font-weight:700;padding:3px 9px;border-radius:50px;}
+.ab-variants{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;}
+.ab-variant{background:var(--surface);border:1.5px solid var(--border);border-radius:11px;padding:12px;}
+.ab-variant.winner{border-color:var(--green);}
+.abv-label{font-size:9px;font-family:sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:.4px;margin-bottom:4px;}
+.abv-name{font-size:11px;font-weight:600;margin-bottom:8px;}
+.abv-stats{display:flex;gap:10px;}
+.abv-stat{font-size:9px;color:var(--text3);}
+.abv-stat strong{font-family:sans-serif;font-weight:800;}
+.ab-bar-wrap{height:6px;background:var(--surface3);border-radius:3px;overflow:hidden;margin-bottom:8px;}
+.ab-bar-a{height:100%;background:linear-gradient(90deg,var(--blue),var(--purple));border-radius:3px;}
+.ab-bar-b{height:100%;background:linear-gradient(90deg,var(--gold),var(--accent));border-radius:3px;}
+.ab-footer{display:flex;justify-content:space-between;align-items:center;}
+.ab-traffic{font-size:9px;color:var(--text3);}
+.ab-actions{display:flex;gap:6px;}
+.ab-act-btn{padding:5px 11px;font-size:9px;font-family:sans-serif;font-weight:700;border-radius:7px;border:1px solid var(--border);color:var(--text2);cursor:pointer;transition:all .15s;}
+.ab-act-btn:hover{border-color:var(--gold);color:var(--gold);}
+.ab-act-btn.primary{background:var(--gold);color:#000;border-color:var(--gold);}
+
+/* ══ AD BLOCKER SETTINGS ══ */
+.adb-preview{background:var(--surface3);border:1px solid rgba(255,68,68,.2);border-radius:12px;padding:18px;text-align:center;margin:14px 0;}
+.adb-ico{font-size:32px;margin-bottom:8px;}
+.adb-title{font-family:sans-serif;font-size:14px;font-weight:800;color:var(--red);margin-bottom:4px;}
+.adb-msg{font-size:11px;color:var(--text2);line-height:1.6;margin-bottom:12px;}
+.adb-btn-row{display:flex;gap:8px;justify-content:center;}
+.adb-btn{padding:8px 16px;border-radius:9px;font-family:sans-serif;font-size:11px;font-weight:700;cursor:pointer;}
+.adb-primary{background:var(--accent);color:white;}
+.adb-secondary{background:var(--surface2);border:1px solid var(--border);color:var(--text2);}
+
+/* ══ RULES ENGINE ══ */
+.rule-card{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:10px;display:flex;align-items:flex-start;gap:12px;}
+.rule-card:last-child{margin-bottom:0;}
+.rule-ico{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
+.rule-info{flex:1;}
+.rule-title{font-family:sans-serif;font-size:12px;font-weight:700;margin-bottom:4px;}
+.rule-logic{font-size:10px;color:var(--text3);line-height:1.6;}
+.rule-logic .cond{color:var(--blue);font-weight:600;}
+.rule-logic .action{color:var(--gold);font-weight:600;}
+.rule-logic .value{color:var(--green);font-weight:600;}
+.rule-right{flex-shrink:0;}
+
+/* ══ PERF CHART ══ */
+.perf-chart-wrap{height:160px;position:relative;margin-top:8px;}
+
+/* ══ POLICY ITEMS ══ */
+.policy-item{display:flex;gap:12px;padding:14px;background:var(--surface2);border:1px solid var(--border);border-radius:12px;margin-bottom:10px;}
+.policy-item:last-child{margin-bottom:0;}
+.pi-ico{width:34px;height:34px;border-radius:9px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:14px;}
+.pi-body{flex:1;}
+.pi-title{font-family:sans-serif;font-size:12px;font-weight:700;margin-bottom:3px;}
+.pi-desc{font-size:10px;color:var(--text3);line-height:1.6;}
+.pi-status{font-size:9px;font-family:sans-serif;font-weight:700;padding:2px 8px;border-radius:50px;align-self:flex-start;flex-shrink:0;margin-top:2px;}
+.pis-ok{background:rgba(46,204,143,.12);color:var(--green);}
+.pis-warn{background:rgba(255,209,102,.1);color:var(--yellow);}
+.pis-err{background:rgba(255,68,68,.12);color:var(--red);}
+
+/* ══ TOAST ══ */
+.toast{position:fixed;bottom:24px;right:24px;padding:12px 18px;border-radius:12px;font-family:sans-serif;font-size:12px;font-weight:700;display:flex;align-items:center;gap:8px;z-index:9999;box-shadow:0 6px 24px rgba(0,0,0,.5);opacity:0;transform:translateY(8px);transition:all .3s;pointer-events:none;}
+.toast.show{opacity:1;transform:translateY(0);}
+.toast.success{background:var(--green);color:white;}
+.toast.info{background:var(--gold);color:#000;}
+.toast.warn{background:var(--yellow);color:#000;}
+.toast svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2.5;}
+</style>
+</head>
+<body>
+<div id="shurafah-scope-banner" style="position:fixed;top:8px;left:50%;transform:translateX(-50%);z-index:9999;background:rgba(15,20,32,.92);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.08);border-radius:50px;padding:5px 10px 5px 12px;font-family:sans-serif;font-size:11px;font-weight:700;color:#F0F4FF;box-shadow:0 8px 24px rgba(0,0,0,.45);display:flex;align-items:center;gap:8px;pointer-events:auto;"><span style="display:flex;align-items:center;gap:5px;color:#FFB347;"><span style="font-size:13px;">🎵</span>Songs Admin</span><span style="background:rgba(200,134,10,.15);color:#E8A020;border:1px solid rgba(200,134,10,.3);padding:3px 9px;border-radius:50px;font-weight:700;font-size:10px;">🎙️ Includes Wa'azi data</span><span onclick="document.getElementById('shurafah-scope-banner').remove()" style="cursor:pointer;padding:0 4px;opacity:.55;font-size:13px;">✕</span></div>
+
+<div class="toast" id="toast"></div>
+
+<script src="admin-sidebar.js"></script>
+<script src="theme-manager.js"></script>
+
+<!-- MAIN -->
+<div class="main" id="main">
+  <div class="topbar">
+    <div class="toggle-btn" id="sidebarToggle"><svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></div>
+    <div class="tb-left">
+      <div class="tb-title">Ads Management</div>
+      <div class="tb-crumb">Admin <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg> <span>Google Ads / AdSense</span></div>
+    </div>
+    <div class="tb-right">
+      <div class="tb-ico"><svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><div class="tb-dot"></div></div>
+      <div class="tb-av">SA</div>
+      <div class="save-btn" onclick="showToast('All ad settings saved!','success')"><svg viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>Save All Changes</div>
+    </div>
+  </div>
+
+  <div class="ads-layout">
+    <!-- LEFT NAV -->
+    <div class="ads-nav">
+      <div class="an-sec">
+        <div class="an-lbl">Overview</div>
+        <div class="an-item on" data-sec="overview"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>Dashboard</div>
+        <div class="an-item" data-sec="global"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>Global Control<div class="an-badge anb-g">ON</div></div>
+      </div>
+      <div class="an-sec">
+        <div class="an-lbl">Ad Setup</div>
+        <div class="an-item" data-sec="placements"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>Placement Manager<div class="an-badge anb-o">8</div></div>
+        <div class="an-item" data-sec="adunits"><svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/></svg>Ad Units / Code<div class="an-badge anb-o">11</div></div>
+        <div class="an-item" data-sec="adsense"><svg viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>AdSense API Config</div>
+      </div>
+      <div class="an-sec">
+        <div class="an-lbl">Monetization</div>
+        <div class="an-item" data-sec="interstitial"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Download / Interstitial Ads💰</div>
+        <div class="an-item" data-sec="targeting"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>Ad Targeting</div>
+        <div class="an-item" data-sec="frequency"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Frequency Control</div>
+      </div>
+      <div class="an-sec">
+        <div class="an-lbl">Optimization</div>
+        <div class="an-item" data-sec="abtest"><svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>A/B Testing</div>
+        <div class="an-item" data-sec="performance"><svg viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>Performance Stats</div>
+        <div class="an-item" data-sec="rules"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Smart Rules Engine</div>
+      </div>
+      <div class="an-sec">
+        <div class="an-lbl">Protection</div>
+        <div class="an-item" data-sec="adblocker"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>Ad Blocker Detection<div class="an-badge anb-r">ON</div></div>
+        <div class="an-item" data-sec="policy"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Policy Compliance</div>
+      </div>
+    </div>
+
+    <!-- CONTENT -->
+    <div class="ads-content">
+
+<!-- ═══ SECTION: OVERVIEW ═══ -->
+<div class="ads-sec on" id="sec-overview">
+  <div class="sec-hdr"><div class="sec-title">💰 Ads Dashboard</div><div class="sec-desc">Google AdSense integration overview — revenue, performance and platform ad status.</div></div>
+
+  <div class="kpi-strip">
+    <div class="kpi-card"><div class="kpi-ico" style="background:rgba(244,169,0,.15)"><svg viewBox="0 0 24 24" style="stroke:var(--gold)"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div><div class="kpi-v" style="color:var(--gold)">₦84,200</div><div class="kpi-l">Est. Revenue This Month</div><div class="kpi-t" style="color:var(--green)">↑ +18.4% vs last month</div></div>
+    <div class="kpi-card"><div class="kpi-ico" style="background:rgba(77,159,255,.15)"><svg viewBox="0 0 24 24" style="stroke:var(--blue)"><rect x="2" y="3" width="20" height="14" rx="2"/></svg></div><div class="kpi-v" style="color:var(--blue)">4.82M</div><div class="kpi-l">Total Ad Impressions</div><div class="kpi-t" style="color:var(--green)">↑ +9.1% this month</div></div>
+    <div class="kpi-card"><div class="kpi-ico" style="background:rgba(46,204,143,.15)"><svg viewBox="0 0 24 24" style="stroke:var(--green)"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div><div class="kpi-v" style="color:var(--green)">3.24%</div><div class="kpi-l">Click-Through Rate (CTR)</div><div class="kpi-t" style="color:var(--green)">↑ Industry avg: 1.9%</div></div>
+    <div class="kpi-card"><div class="kpi-ico" style="background:rgba(255,77,143,.15)"><svg viewBox="0 0 24 24" style="stroke:var(--pink)"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg></div><div class="kpi-v" style="color:var(--red)">12.4%</div><div class="kpi-l">Ad Block Rate</div><div class="kpi-t" style="color:var(--yellow)">⚠ 5,980 blocked sessions</div></div>
+  </div>
+
+  <!-- Revenue chart -->
+  <div class="card">
+    <div class="card-hdr"><div><div class="card-title" style="color:var(--gold)"><svg viewBox="0 0 24 24" style="stroke:var(--gold)"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/></svg>Monthly Revenue & Impressions</div><div class="card-sub">Last 30 days — all ad placements combined</div></div><div class="card-action" onclick="showToast('Opening AdSense dashboard…','info')">Open AdSense →</div></div>
+    <div class="card-body"><svg id="revenueChart" width="100%" height="160" viewBox="0 0 700 160" preserveAspectRatio="none"></svg>
+    <div style="display:flex;gap:16px;margin-top:10px;">
+      <div style="display:flex;align-items:center;gap:5px;font-size:10px;color:var(--text2)"><div style="width:10px;height:10px;border-radius:3px;background:var(--gold)"></div>Revenue (₦)</div>
+      <div style="display:flex;align-items:center;gap:5px;font-size:10px;color:var(--text2)"><div style="width:10px;height:10px;border-radius:3px;background:var(--blue)"></div>Impressions</div>
+    </div></div>
+  </div>
+
+  <!-- Top placements table -->
+  <div class="card">
+    <div class="card-hdr"><div class="card-title">🏆 Top Performing Placements</div><div class="card-action" onclick="switchSec('performance')">Full stats →</div></div>
+    <div class="card-body-sm" id="topPlacements"></div>
+  </div>
+</div>
+
+<!-- ═══ SECTION: GLOBAL CONTROL ═══ -->
+<div class="ads-sec" id="sec-global">
+  <div class="sec-hdr"><div class="sec-title">🌐 Global Ads Control</div><div class="sec-desc">Master switches for the entire ads system. Changes here override all placement-level settings.</div></div>
+  <div class="card">
+    <div class="card-hdr"><div class="card-title" style="color:var(--gold)"><svg viewBox="0 0 24 24" style="stroke:var(--gold)"><circle cx="12" cy="12" r="10"/></svg>Master Ads Switch</div></div>
+    <div class="sr"><div class="sr-ico" style="background:rgba(244,169,0,.15)"><svg viewBox="0 0 24 24" style="stroke:var(--gold)"><rect x="2" y="3" width="20" height="14" rx="2"/></svg></div><div class="sr-body"><div class="sr-title">Enable Ads Platform-Wide</div><div class="sr-desc">Master toggle — turning this OFF disables all ads instantly on every page</div></div><div class="sr-right"><div class="sr-badge badge-live">LIVE</div><div class="toggler on" onclick="toggleSw(this)"><div class="tog-thumb"></div></div></div></div>
+    <div class="sr"><div class="sr-ico" style="background:rgba(255,107,53,.15)"><svg viewBox="0 0 24 24" style="stroke:var(--accent)"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></div><div class="sr-body"><div class="sr-title">Maintenance Mode → Disable Ads Automatically</div><div class="sr-desc">When platform enters maintenance mode, ads are suppressed automatically</div></div><div class="sr-right"><div class="toggler on" onclick="toggleSw(this)"><div class="tog-thumb"></div></div></div></div>
+  </div>
+
+  <div class="card">
+    <div class="card-hdr"><div class="card-title"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Show Ads To</div><div class="card-sub">Control which user types see advertisements</div></div>
+    <div class="sr"><div class="sr-ico" style="background:rgba(77,159,255,.15)"><svg viewBox="0 0 24 24" style="stroke:var(--blue)"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div><div class="sr-body"><div class="sr-title">Guest / Unauthenticated Visitors</div><div class="sr-desc">Show ads to users who are not logged in</div></div><div class="sr-right"><div class="sr-badge badge-live">Enabled</div><div class="toggler on" onclick="toggleSw(this)"><div class="tog-thumb"></div></div></div></div>
+    <div class="sr"><div class="sr-ico" style="background:rgba(46,204,143,.15)"><svg viewBox="0 0 24 24" style="stroke:var(--green)"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22,4 12,14.01 9,11.01"/></svg></div><div class="sr-body"><div class="sr-title">Logged-In (Free) Users</div><div class="sr-desc">Show ads to registered free-tier users</div></div><div class="sr-right"><div class="sr-badge badge-live">Enabled</div><div class="toggler on" onclick="toggleSw(this)"><div class="tog-thumb"></div></div></div></div>
+    <div class="sr"><div class="sr-ico" style="background:rgba(255,209,102,.1)"><svg viewBox="0 0 24 24" style="stroke:var(--yellow)"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div><div class="sr-body"><div class="sr-title">Premium Subscribers</div><div class="sr-desc">Premium users are <strong>ad-free</strong> by default — enable to show them ads too</div></div><div class="sr-right"><div class="sr-badge badge-off">Disabled</div><div class="toggler off" onclick="toggleSw(this)"><div class="tog-thumb"></div></div></div></div>
+  </div>
+
+  <div class="card">
+    <div class="card-hdr"><div class="card-title"><svg viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2"/></svg>Platform & Context Rules</div></div>
+    <div class="sr"><div class="sr-ico" style="background:rgba(155,107,255,.15)"><svg viewBox="0 0 24 24" style="stroke:var(--purple)"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg></div><div class="sr-body"><div class="sr-title">Show Ads on Mobile App</div><div class="sr-desc">Enable ads in the native mobile experience</div></div><div class="sr-right"><div class="toggler on" onclick="toggleSw(this)"><div class="tog-thumb"></div></div></div></div>
+    <div class="sr"><div class="sr-ico" style="background:rgba(77,159,255,.15)"><svg viewBox="0 0 24 24" style="stroke:var(--blue)"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/></svg></div><div class="sr-body"><div class="sr-title">Show Ads on Web (Desktop)</div><div class="sr-desc">Enable ads on the web portal version</div></div><div class="sr-right"><div class="toggler on" onclick="toggleSw(this)"><div class="tog-thumb"></div></div></div></div>
+    <div class="sr"><div class="sr-ico" style="background:rgba(255,77,143,.15)"><svg viewBox="0 0 24 24" style="stroke:var(--pink)"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/></svg></div><div class="sr-body"><div class="sr-title">Safe Mode (Strict Ad Filter)</div><div class="sr-desc">Only serve family-safe / Islamic-appropriate ads via category exclusions</div></div><div class="sr-right"><div class="sr-badge badge-hot">Recommended</div><div class="toggler on" onclick="toggleSw(this)"><div class="tog-thumb"></div></div></div></div>
+  </div>
+</div>
+
+<!-- ═══ SECTION: PLACEMENT MANAGER ═══ -->
+<div class="ads-sec" id="sec-placements">
+  <div class="sec-hdr"><div class="sec-title">📍 Ad Placement Manager</div><div class="sec-desc">Define where ads appear across the platform. Drag to reorder, toggle per slot, assign ad units.</div></div>
+  <div style="display:flex;justify-content:flex-end;margin-bottom:14px;"><div onclick="showToast('Add placement dialog — configure name, type and position','info')" style="display:flex;align-items:center;gap:6px;padding:9px 16px;background:var(--gold);border-radius:10px;font-family:sans-serif;font-size:12px;font-weight:700;color:#000;cursor:pointer;box-shadow:0 3px 12px rgba(244,169,0,.3)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add New Placement</div></div>
+  <div class="placement-grid" id="placementGrid"></div>
+</div>
+
+<!-- ═══ SECTION: AD UNITS ═══ -->
+<div class="ads-sec" id="sec-adunits">
+  <div class="sec-hdr"><div class="sec-title">🧾 Ad Units & Code Manager</div><div class="sec-desc">Store, label and manage all your Google AdSense ad unit code snippets. Activate or deactivate per unit.</div></div>
+  <div style="display:flex;justify-content:flex-end;margin-bottom:14px;"><div onclick="showToast('New ad unit editor opened','info')" style="display:flex;align-items:center;gap:6px;padding:9px 16px;background:var(--gold);border-radius:10px;font-family:sans-serif;font-size:12px;font-weight:700;color:#000;cursor:pointer;box-shadow:0 3px 12px rgba(244,169,0,.3)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add New Ad Unit</div></div>
+  <div class="unit-list" id="adUnitList"></div>
+</div>
+
+<!-- ═══ SECTION: ADSENSE API ═══ -->
+<div class="ads-sec" id="sec-adsense">
+  <div class="sec-hdr"><div class="sec-title">⚙️ Google AdSense API Configuration</div><div class="sec-desc">Connect your Google AdSense account and configure Auto Ads vs Manual ad placement mode.</div></div>
+  <div class="card">
+    <div class="card-hdr"><div class="card-title" style="color:var(--gold)"><svg viewBox="0 0 24 24" style="stroke:var(--gold)"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>Publisher Settings</div></div>
+    <div class="sr"><div class="sr-ico" style="background:rgba(244,169,0,.15)"><svg viewBox="0 0 24 24" style="stroke:var(--gold)"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div><div class="sr-body"><div class="sr-title">AdSense Publisher ID (pub-XXXXXXXX)</div><div class="sr-desc">Your Google AdSense account identifier</div></div><div class="sr-right"><input class="sr-input" type="text" value="ca-pub-6173829384710284" placeholder="ca-pub-xxxxxxxxxxxxxxxx" style="min-width:230px;font-family:monospace;font-size:11px;"></div></div>
+    <div class="sr"><div class="sr-ico" style="background:rgba(77,159,255,.15)"><svg viewBox="0 0 24 24" style="stroke:var(--blue)"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22,4 12,14.01 9,11.01"/></svg></div><div class="sr-body"><div class="sr-title">Account Verification Status</div><div class="sr-desc">Whether this publisher ID is verified with Google</div></div><div class="sr-right"><div class="sr-badge badge-live">✓ Verified</div></div></div>
+    <div class="sr"><div class="sr-ico" style="background:rgba(46,204,143,.15)"><svg viewBox="0 0 24 24" style="stroke:var(--green)"><rect x="2" y="3" width="20" height="14" rx="2"/></svg></div><div class="sr-body"><div class="sr-title">Auto Ads (Google-Controlled Placement)</div><div class="sr-desc">Let Google automatically find best positions to place ads. Faster setup but less control.</div></div><div class="sr-right"><div class="sr-badge badge-off">Manual Mode</div><div class="toggler off" onclick="toggleSw(this)"><div class="tog-thumb"></div></div></div></div>
+    <div class="sr"><div class="sr-ico" style="background:rgba(155,107,255,.15)"><svg viewBox="0 0 24 24" style="stroke:var(--purple)"><path d="M21 2H3v16h5v4l4-4h5l4-4V2z"/></svg></div><div class="sr-body"><div class="sr-title">Manual Placement Mode</div><div class="sr-desc">You control every ad slot via the Placement Manager (recommended for music sites)</div></div><div class="sr-right"><div class="sr-badge badge-live">Active</div><div class="toggler on" onclick="toggleSw(this)"><div class="tog-thumb"></div></div></div></div>
+  </div>
+  <div class="card">
+    <div class="card-hdr"><div class="card-title"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Global AdSense Script</div><div class="card-sub">Auto-injected in &lt;head&gt; on every page</div></div>
+    <div class="card-body">
+      <div class="code-area">&lt;script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6173829384710284" crossorigin="anonymous"&gt;&lt;/script&gt;</div>
+      <div style="display:flex;gap:8px;">
+        <div class="code-btn primary" onclick="showToast('Script copied to clipboard!','success')">📋 Copy Script</div>
+        <div class="code-btn" onclick="showToast('Script injected and verified','success')">✓ Verify Injection</div>
+        <div style="margin-left:auto;display:flex;align-items:center;gap:8px;font-size:11px;color:var(--text3);">Inject mode: <select class="sr-select" style="min-width:100px;padding:5px 8px;font-size:10px;"><option>Auto &lt;head&gt;</option><option>Manual</option><option>Via Tag Manager</option></select></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ SECTION: INTERSTITIAL ═══ -->
+<div class="ads-sec" id="sec-interstitial">
+  <div class="sec-hdr"><div class="sec-title">💰 Download / Interstitial Ads</div><div class="sec-desc">The most profitable ad placement — shown to users before their download begins. Full control over the flow.</div></div>
+
+  <!-- Flow diagram -->
+  <div class="card">
+    <div class="card-hdr"><div class="card-title" style="color:var(--gold)">Download Ad Flow</div><div class="card-sub">How the ad appears in the user download journey</div></div>
+    <div class="card-body">
+      <div class="flow-diagram">
+        <div class="flow-step"><div class="flow-box active-flow"><div class="fb-ico">🎵</div><div class="fb-title">Song Page</div><div class="fb-sub">User clicks "Download"</div></div><div class="flow-label">Start</div></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step"><div class="flow-box ad-box"><div class="fb-ico">📢</div><div class="fb-title">Ad Page Shown</div><div class="fb-sub">Timer counts down</div></div><div class="flow-label" style="color:var(--green)">Ad Display</div></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step"><div class="flow-box"><div class="fb-ico">⏱️</div><div class="fb-title">Wait Timer</div><div class="fb-sub" id="timerFlowSub">5 seconds</div></div><div class="flow-label">Countdown</div></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step"><div class="flow-box"><div class="fb-ico">⏭️</div><div class="fb-title">Skip Button</div><div class="fb-sub">Appears after timer</div></div><div class="flow-label">Optional</div></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step"><div class="flow-box active-flow"><div class="fb-ico">⬇️</div><div class="fb-title">Download Starts</div><div class="fb-sub">File served to user</div></div><div class="flow-label">Revenue ✓</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+    <!-- Controls -->
+    <div class="card">
+      <div class="card-hdr"><div class="card-title"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Ad Controls</div></div>
+      <div class="sr"><div class="sr-ico" style="background:rgba(244,169,0,.15)"><svg viewBox="0 0 24 24" style="stroke:var(--gold)"><rect x="2" y="3" width="20" height="14" rx="2"/></svg></div><div class="sr-body"><div class="sr-title">Enable Download Ads</div><div class="sr-desc">Show ad page before every download</div></div><div class="sr-right"><div class="sr-badge badge-live">LIVE</div><div class="toggler on" onclick="toggleSw(this)"><div class="tog-thumb"></div></div></div></div>
+      <div class="sr"><div class="sr-ico" style="background:rgba(77,159,255,.15)"><svg viewBox="0 0 24 24" style="stroke:var(--blue)"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><div class="sr-body"><div class="sr-title">Ad Timer Duration</div><div class="sr-desc">How long user must wait before download button activates</div></div><div class="sr-right"><input class="sr-number" type="number" id="adTimer" value="5" min="3" max="30" oninput="document.getElementById('timerFlowSub').textContent=this.value+' seconds'"><span style="font-size:11px;color:var(--text3);margin-left:4px">sec</span></div></div>
+      <div class="sr"><div class="sr-ico" style="background:rgba(46,204,143,.15)"><svg viewBox="0 0 24 24" style="stroke:var(--green)"><polygon points="5 3 19 12 5 21 5 3"/></svg></div><div class="sr-body"><div class="sr-title">Show Skip Button</div><div class="sr-desc">Allow user to skip ad after timer expires</div></div><div class="sr-right"><div class="toggler on" onclick="toggleSw(this)"><div class="tog-thumb"></div></div></div></div>
+      <div class="sr"><div class="sr-ico" style="background:rgba(255,77,143,.15)"><svg viewBox="0 0 24 24" style="stroke:var(--pink)"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg></div><div class="sr-body"><div class="sr-title">Block Download if Ad Blocked</div><div class="sr-desc">Require user to disable ad blocker to download</div></div><div class="sr-right"><div class="toggler off" onclick="toggleSw(this)"><div class="tog-thumb"></div></div></div></div>
+      <div class="sr"><div class="sr-ico" style="background:rgba(155,107,255,.15)"><svg viewBox="0 0 24 24" style="stroke:var(--purple)"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/></svg></div><div class="sr-body"><div class="sr-title">Redirect URL After Ad</div><div class="sr-desc">Where to go after ad timer — usually the download start URL</div></div><div class="sr-right"><input class="sr-input" type="text" value="/download/start/{id}" style="min-width:180px;font-size:10px;font-family:monospace;"></div></div>
+      <div class="sr"><div class="sr-ico" style="background:rgba(255,209,102,.1)"><svg viewBox="0 0 24 24" style="stroke:var(--yellow)"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div><div class="sr-body"><div class="sr-title">Premium Users — Skip Download Ad</div><div class="sr-desc">Premium subscribers bypass the interstitial ad entirely</div></div><div class="sr-right"><div class="sr-badge badge-hot">Perk</div><div class="toggler on" onclick="toggleSw(this)"><div class="tog-thumb"></div></div></div></div>
+    </div>
+
+    <!-- Ad Preview Mockup -->
+    <div class="card">
+      <div class="card-hdr"><div class="card-title"><svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>Live Preview</div><div class="card-sub">How the interstitial looks to users</div></div>
+      <div class="card-body">
+        <div class="ad-preview">
+          <div class="adp-header">
+            <div class="adp-title">🎵 Your download is almost ready…</div>
+            <div class="adp-timer" id="previewTimer">⏱ 5s</div>
+            <div class="adp-skip" style="opacity:.35;">Skip →</div>
+          </div>
+          <div class="adp-body">
+            <div class="adp-ad-zone">
+              <div class="adp-ad-label">Advertisement</div>
+              <div class="adp-ad-size">728 × 90 — Leaderboard</div>
+              <div style="font-size:9px;color:var(--text3);margin-top:6px;">Google AdSense Unit: "Download Page Banner"</div>
+            </div>
+            <div class="adp-song">
+              <div class="adp-song-art">🎵</div>
+              <div class="adp-song-info"><div style="font-family:sans-serif;font-size:11px;font-weight:700;">Kurmus</div><div style="font-size:9px;color:var(--text3);">Uzairu Badamasi · 8.4 MB · 320kbps</div></div>
+              <div class="adp-dl-btn" id="adDlBtn">⬇ Download</div>
+            </div>
+          </div>
+        </div>
+        <div style="text-align:center;margin-top:10px;"><div onclick="runAdPreview()" style="display:inline-flex;align-items:center;gap:6px;padding:8px 18px;background:var(--gold);border-radius:9px;font-family:sans-serif;font-size:11px;font-weight:700;color:#000;cursor:pointer;">▶ Run Preview</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ SECTION: TARGETING ═══ -->
+<div class="ads-sec" id="sec-targeting">
+  <div class="sec-hdr"><div class="sec-title">🎯 Ad Targeting Control</div><div class="sec-desc">Control who sees which ads — by country, device type, user role and more.</div></div>
+  <div class="card" style="margin-bottom:16px;">
+    <div class="card-hdr"><div class="card-title"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>Country Targeting</div><div class="card-sub">Limit ad delivery to specific countries or set different ad units per region</div></div>
+    <div class="card-body">
+      <div class="target-grid" id="targetCountries"></div>
+      <div style="margin-top:12px;display:flex;gap:8px;align-items:center;">
+        <div style="font-size:11px;color:var(--text3);">Countries not listed:</div>
+        <select class="sr-select" style="min-width:160px;"><option>Show default ads</option><option>Show no ads</option><option>Show fallback banner</option></select>
+      </div>
+    </div>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+    <div class="card">
+      <div class="card-hdr"><div class="card-title"><svg viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2"/></svg>Device Targeting</div></div>
+      <div class="sr" style="padding:12px 18px;"><div class="sr-body"><div class="sr-title">📱 Mobile</div></div><div class="sr-right"><select class="sr-select" style="min-width:130px;"><option>Banner 320×50</option><option>Interstitial</option><option>In-Feed</option></select></div></div>
+      <div class="sr" style="padding:12px 18px;"><div class="sr-body"><div class="sr-title">💻 Desktop</div></div><div class="sr-right"><select class="sr-select" style="min-width:130px;"><option>Leaderboard 728×90</option><option>Rectangle 300×250</option></select></div></div>
+      <div class="sr" style="padding:12px 18px;"><div class="sr-body"><div class="sr-title">📟 Tablet</div></div><div class="sr-right"><select class="sr-select" style="min-width:130px;"><option>Rectangle 300×250</option><option>Banner 320×50</option></select></div></div>
+    </div>
+    <div class="card">
+      <div class="card-hdr"><div class="card-title"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>User Role Targeting</div></div>
+      <div class="sr" style="padding:12px 18px;"><div class="sr-body"><div class="sr-title">👤 Guest</div></div><div class="sr-right"><select class="sr-select" style="min-width:130px;"><option>Max Ads (All slots)</option><option>Moderate</option></select></div></div>
+      <div class="sr" style="padding:12px 18px;"><div class="sr-body"><div class="sr-title">✅ Free User</div></div><div class="sr-right"><select class="sr-select" style="min-width:130px;"><option>Standard Ads</option><option>Reduced</option></select></div></div>
+      <div class="sr" style="padding:12px 18px;"><div class="sr-body"><div class="sr-title">⭐ Premium</div></div><div class="sr-right"><select class="sr-select" style="min-width:130px;"><option>No Ads</option><option>House Ads Only</option></select></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ SECTION: FREQUENCY ═══ -->
+<div class="ads-sec" id="sec-frequency">
+  <div class="sec-hdr"><div class="sec-title">⏱️ Frequency Control</div><div class="sec-desc">Prevent ad fatigue by limiting how often the same user sees ads.</div></div>
+  <div class="card">
+    <div class="card-hdr"><div class="card-title"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Session & Time Limits</div></div>
+    <div class="sr"><div class="sr-ico" style="background:rgba(244,169,0,.15)"><svg viewBox="0 0 24 24" style="stroke:var(--gold)"><rect x="2" y="3" width="20" height="14" rx="2"/></svg></div><div class="sr-body"><div class="sr-title">Max Ads Per Session</div><div class="sr-desc">Maximum total ad impressions per user session</div></div><div class="sr-right"><input class="sr-number" type="number" value="8" min="1" max="50"><span style="font-size:11px;color:var(--text3);margin-left:4px;">per session</span></div></div>
+    <div class="sr"><div class="sr-ico" style="background:rgba(77,159,255,.15)"><svg viewBox="0 0 24 24" style="stroke:var(--blue)"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><div class="sr-body"><div class="sr-title">Interval Between Banner Ads</div><div class="sr-desc">Minimum minutes between showing banner ad slots to same user</div></div><div class="sr-right"><input class="sr-number" type="number" value="3" min="0"><span style="font-size:11px;color:var(--text3);margin-left:4px;">minutes</span></div></div>
+    <div class="sr"><div class="sr-ico" style="background:rgba(255,107,53,.15)"><svg viewBox="0 0 24 24" style="stroke:var(--accent)"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/></svg></div><div class="sr-body"><div class="sr-title">Max Download Ads Per Day (Per User)</div><div class="sr-desc">Limit how many download-gate ads a single user encounters daily</div></div><div class="sr-right"><input class="sr-number" type="number" value="5" min="1" max="20"><span style="font-size:11px;color:var(--text3);margin-left:4px;">per day</span></div></div>
+    <div class="sr"><div class="sr-ico" style="background:rgba(155,107,255,.15)"><svg viewBox="0 0 24 24" style="stroke:var(--purple)"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div><div class="sr-body"><div class="sr-title">Pop-up / Interstitial Frequency</div><div class="sr-desc">Only show full-screen ads after every N song interactions</div></div><div class="sr-right"><select class="sr-select"><option>Every 3 songs</option><option>Every 5 songs</option><option>Every 10 songs</option><option>Once per session</option></select></div></div>
+    <div class="sr"><div class="sr-ico" style="background:rgba(46,204,143,.15)"><svg viewBox="0 0 24 24" style="stroke:var(--green)"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div><div class="sr-body"><div class="sr-title">Cooldown After Ad Block Detected</div><div class="sr-desc">Wait before showing another ad to a user who recently had an ad blocked</div></div><div class="sr-right"><input class="sr-number" type="number" value="30" min="0"><span style="font-size:11px;color:var(--text3);margin-left:4px;">minutes</span></div></div>
+  </div>
+</div>
+
+<!-- ═══ SECTION: A/B TESTING ═══ -->
+<div class="ads-sec" id="sec-abtest">
+  <div class="sec-hdr"><div class="sec-title">🔄 A/B Testing</div><div class="sec-desc">Test two ad units in the same placement and let performance data decide the winner.</div></div>
+  <div style="display:flex;justify-content:flex-end;margin-bottom:14px;"><div onclick="showToast('New A/B test wizard opened','info')" style="display:flex;align-items:center;gap:6px;padding:9px 16px;background:var(--gold);border-radius:10px;font-family:sans-serif;font-size:12px;font-weight:700;color:#000;cursor:pointer;">+ New A/B Test</div></div>
+  <div id="abTestList"></div>
+</div>
+
+<!-- ═══ SECTION: PERFORMANCE ═══ -->
+<div class="ads-sec" id="sec-performance">
+  <div class="sec-hdr"><div class="sec-title">📊 Ads Performance Stats</div><div class="sec-desc">Internal tracking of impressions, clicks and revenue by placement — refreshed every hour.</div></div>
+  <div class="card">
+    <div class="card-hdr"><div class="card-title" style="color:var(--gold)"><svg viewBox="0 0 24 24" style="stroke:var(--gold)"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/></svg>30-Day Performance Chart</div></div>
+    <div class="card-body"><svg id="perfChart" width="100%" height="160" viewBox="0 0 700 160" preserveAspectRatio="none"></svg>
+    <div style="display:flex;gap:16px;margin-top:10px;">
+      <div style="display:flex;align-items:center;gap:5px;font-size:10px;color:var(--text2)"><div style="width:10px;height:10px;border-radius:3px;background:var(--gold)"></div>Revenue ₦</div>
+      <div style="display:flex;align-items:center;gap:5px;font-size:10px;color:var(--text2)"><div style="width:10px;height:10px;border-radius:3px;background:var(--blue)"></div>Impressions</div>
+      <div style="display:flex;align-items:center;gap:5px;font-size:10px;color:var(--text2)"><div style="width:10px;height:10px;border-radius:3px;background:var(--green)"></div>Clicks</div>
+    </div></div>
+  </div>
+  <div class="card">
+    <div class="card-hdr"><div class="card-title">Placement Performance Table</div></div>
+    <div class="card-body-sm" id="perfTable"></div>
+  </div>
+</div>
+
+<!-- ═══ SECTION: RULES ENGINE ═══ -->
+<div class="ads-sec" id="sec-rules">
+  <div class="sec-hdr"><div class="sec-title">🧠 Smart Rules Engine</div><div class="sec-desc">Automate ad behavior with trigger-based logic rules. Active rules run in real-time for every user session.</div></div>
+  <div style="display:flex;justify-content:flex-end;margin-bottom:14px;"><div onclick="showToast('Rule builder opened','info')" style="display:flex;align-items:center;gap:6px;padding:9px 16px;background:var(--gold);border-radius:10px;font-family:sans-serif;font-size:12px;font-weight:700;color:#000;cursor:pointer;">+ Add New Rule</div></div>
+  <div id="rulesList"></div>
+</div>
+
+<!-- ═══ SECTION: AD BLOCKER ═══ -->
+<div class="ads-sec" id="sec-adblocker">
+  <div class="sec-hdr"><div class="sec-title">🚫 Ad Blocker Detection</div><div class="sec-desc">Protect revenue by detecting and responding to ad blockers. Customize the message and fallback behavior.</div></div>
+  <div class="card">
+    <div class="card-hdr"><div class="card-title" style="color:var(--red)"><svg viewBox="0 0 24 24" style="stroke:var(--red)"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>Detection Settings</div></div>
+    <div class="sr"><div class="sr-ico" style="background:rgba(255,68,68,.12)"><svg viewBox="0 0 24 24" style="stroke:var(--red)"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg></div><div class="sr-body"><div class="sr-title">Enable Ad Blocker Detection</div><div class="sr-desc">Run JavaScript detection script on every page load</div></div><div class="sr-right"><div class="sr-badge badge-live">Active</div><div class="toggler on" onclick="toggleSw(this)"><div class="tog-thumb"></div></div></div></div>
+    <div class="sr"><div class="sr-ico" style="background:rgba(255,209,102,.1)"><svg viewBox="0 0 24 24" style="stroke:var(--yellow)"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg></div><div class="sr-body"><div class="sr-title">Show Warning Banner</div><div class="sr-desc">Display polite message asking user to disable ad blocker</div></div><div class="sr-right"><div class="toggler on" onclick="toggleSw(this)"><div class="tog-thumb"></div></div></div></div>
+    <div class="sr"><div class="sr-ico" style="background:rgba(255,68,68,.12)"><svg viewBox="0 0 24 24" style="stroke:var(--red)"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/></svg></div><div class="sr-body"><div class="sr-title">Block Downloads if Ad Blocker Active</div><div class="sr-desc">Require users to disable ad blocker to access downloads</div></div><div class="sr-right"><div class="toggler off" onclick="toggleSw(this)"><div class="tog-thumb"></div></div></div></div>
+    <div class="sr"><div class="sr-ico" style="background:rgba(77,159,255,.15)"><svg viewBox="0 0 24 24" style="stroke:var(--blue)"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/></svg></div><div class="sr-body"><div class="sr-title">Block Detection Method</div><div class="sr-desc">How to identify ad blockers</div></div><div class="sr-right"><select class="sr-select"><option>Bait element (recommended)</option><option>Script injection check</option><option>Both methods</option></select></div></div>
+  </div>
+  <div class="card">
+    <div class="card-hdr"><div class="card-title">Warning Message Preview</div><div class="card-action" onclick="showToast('Message editor opened','info')">Edit Message →</div></div>
+    <div class="card-body">
+      <div class="adb-preview">
+        <div class="adb-ico">🛡️</div>
+        <div class="adb-title">Ad Blocker Detected</div>
+        <div class="adb-msg">We detected that you're using an ad blocker. Shurafah is free because of our ads. Please disable your ad blocker to support us and continue enjoying free music downloads.</div>
+        <div class="adb-btn-row">
+          <div class="adb-btn adb-primary">✓ I've Disabled It</div>
+          <div class="adb-btn adb-secondary">Get Premium (Ad-Free)</div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px;">
+        <div class="sr" style="padding:10px 14px;background:var(--surface2);border-radius:10px;"><div class="sr-body"><div class="sr-title" style="font-size:11px;">Warning Style</div></div><div class="sr-right"><select class="sr-select" style="min-width:110px;"><option>Banner (top)</option><option>Modal overlay</option><option>Inline</option></select></div></div>
+        <div class="sr" style="padding:10px 14px;background:var(--surface2);border-radius:10px;"><div class="sr-body"><div class="sr-title" style="font-size:11px;">Show After</div></div><div class="sr-right"><select class="sr-select" style="min-width:110px;"><option>Immediately</option><option>After 3 seconds</option><option>After 10 seconds</option></select></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ SECTION: POLICY ═══ -->
+<div class="ads-sec" id="sec-policy">
+  <div class="sec-hdr"><div class="sec-title">🔐 Policy Compliance Controls</div><div class="sec-desc">Ensure your ad setup complies with Google AdSense policies and Islamic content guidelines.</div></div>
+  <div class="card">
+    <div class="card-hdr"><div class="card-title" style="color:var(--gold)">Google AdSense Policy Status</div><div class="card-action" onclick="showToast('Running full compliance check…','info')">Run Check →</div></div>
+    <div class="card-body-sm" id="policyList"></div>
+  </div>
+  <div class="card">
+    <div class="card-hdr"><div class="card-title"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Content & Category Exclusions</div></div>
+    <div class="sr"><div class="sr-ico" style="background:rgba(255,68,68,.12)"><svg viewBox="0 0 24 24" style="stroke:var(--red)"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg></div><div class="sr-body"><div class="sr-title">Block Adult / Explicit Content Ads</div><div class="sr-desc">Never show 18+ or sexually explicit ad categories</div></div><div class="sr-right"><div class="sr-badge badge-live">Blocked</div><div class="toggler on" onclick="toggleSw(this)"><div class="tog-thumb"></div></div></div></div>
+    <div class="sr"><div class="sr-ico" style="background:rgba(255,68,68,.12)"><svg viewBox="0 0 24 24" style="stroke:var(--red)"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg></div><div class="sr-body"><div class="sr-title">Block Gambling & Betting Ads</div><div class="sr-desc">Exclude all gambling, sports betting and casino ad categories</div></div><div class="sr-right"><div class="sr-badge badge-live">Blocked</div><div class="toggler on" onclick="toggleSw(this)"><div class="tog-thumb"></div></div></div></div>
+    <div class="sr"><div class="sr-ico" style="background:rgba(255,68,68,.12)"><svg viewBox="0 0 24 24" style="stroke:var(--red)"><path d="M18 6L6 18M6 6l12 12"/></svg></div><div class="sr-body"><div class="sr-title">Block Alcohol & Tobacco Ads</div><div class="sr-desc">Exclude ads promoting alcohol, cigarettes or harmful substances</div></div><div class="sr-right"><div class="sr-badge badge-live">Blocked</div><div class="toggler on" onclick="toggleSw(this)"><div class="tog-thumb"></div></div></div></div>
+    <div class="sr"><div class="sr-ico" style="background:rgba(255,209,102,.1)"><svg viewBox="0 0 24 24" style="stroke:var(--yellow)"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div><div class="sr-body"><div class="sr-title">Islamic-Safe Mode</div><div class="sr-desc">Apply additional Halal filters — block music festivals, dating apps, financial interest ads</div></div><div class="sr-right"><div class="sr-badge badge-hot">Recommended</div><div class="toggler on" onclick="toggleSw(this)"><div class="tog-thumb"></div></div></div></div>
+    <div class="sr"><div class="sr-ico" style="background:rgba(77,159,255,.15)"><svg viewBox="0 0 24 24" style="stroke:var(--blue)"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg></div><div class="sr-body"><div class="sr-title">GDPR & Privacy Consent Mode</div><div class="sr-desc">Enable Google Consent Mode v2 for EU users — required for AdSense compliance</div></div><div class="sr-right"><div class="sr-badge badge-warn">Configure</div><div class="toggler off" onclick="toggleSw(this)"><div class="tog-thumb"></div></div></div></div>
+    <div class="sr"><div class="sr-ico" style="background:rgba(46,204,143,.15)"><svg viewBox="0 0 24 24" style="stroke:var(--green)"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22,4 12,14.01 9,11.01"/></svg></div><div class="sr-body"><div class="sr-title">Invalid Click Protection</div><div class="sr-desc">Prevent click fraud — auto-detect and throttle suspicious click patterns</div></div><div class="sr-right"><div class="toggler on" onclick="toggleSw(this)"><div class="tog-thumb"></div></div></div></div>
+  </div>
+</div>
+
+    </div><!-- /ads-content -->
+  </div><!-- /ads-layout -->
+</div><!-- /main -->
+<script>
+/* ═══ UTILITIES ═══ */
+let toastT=null;
+function showToast(msg,type='info'){
+  const t=document.getElementById('toast');
+  const icons={success:'✓',info:'💡',warn:'⚠'};
+  t.innerHTML=`<svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22,4 12,14.01 9,11.01"/></svg>${msg}`;
+  t.className=`toast show ${type}`;
+  clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('show'),2800);
+}
+function toggleSw(el){el.classList.toggle('on');el.classList.toggle('off');}
+const fmt=n=>n>=1e6?(n/1e6).toFixed(1)+'M':n>=1e3?(n/1e3).toFixed(0)+'K':n;
+
+/* ═══ SIDEBAR ═══ */
+const sidebar=document.getElementById('sidebar'),mainEl=document.getElementById('main');
+let collapsed=false;
+document.getElementById('sidebarToggle').addEventListener('click',()=>{
+  collapsed=!collapsed;sidebar.classList.toggle('collapsed',collapsed);mainEl.classList.toggle('expanded',collapsed);
+});
+
+/* ═══ SECTION NAV ═══ */
+document.querySelectorAll('.an-item[data-sec]').forEach(item=>{
+  item.addEventListener('click',()=>switchSec(item.dataset.sec));
+});
+function switchSec(id){
+  document.querySelectorAll('.an-item').forEach(i=>i.classList.remove('on'));
+  document.querySelectorAll('.ads-sec').forEach(s=>s.classList.remove('on'));
+  document.querySelector(`.an-item[data-sec="${id}"]`)?.classList.add('on');
+  document.getElementById('sec-'+id)?.classList.add('on');
+  document.querySelector('.ads-content').scrollTop=0;
+}
+
+/* ═══ REVENUE CHART ═══ */
+function buildRevenueChart(){
+  const svg=document.getElementById('revenueChart');
+  if(!svg)return;
+  const W=700,H=160,P=30;
+  const days=30;
+  const rev=[],imp=[];
+  for(let i=0;i<days;i++){
+    const wknd=(i%7===5||i%7===6)?1.5:1;
+    rev.push(Math.round((1800+Math.random()*1400)*wknd*(1+i*0.01)));
+    imp.push(Math.round((120000+Math.random()*80000)*wknd));
+  }
+  const maxR=Math.max(...rev),maxI=Math.max(...imp);
+  const sx=i=>(i/(days-1))*(W-P*2)+P;
+  const sy=(v,m)=>H-P-(v/m)*(H-P*2);
+  const pathR=rev.map((v,i)=>`${i===0?'M':'L'}${sx(i).toFixed(1)},${sy(v,maxR).toFixed(1)}`).join(' ');
+  const pathI=imp.map((v,i)=>`${i===0?'M':'L'}${sx(i).toFixed(1)},${sy(v,maxI).toFixed(1)}`).join(' ');
+  svg.innerHTML=`
+    <defs>
+      <linearGradient id="grev" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stop-color="#F4A900" stop-opacity=".35"/><stop offset="100%" stop-color="#F4A900" stop-opacity="0"/></linearGradient>
+      <linearGradient id="gimp" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stop-color="#4D9FFF" stop-opacity=".2"/><stop offset="100%" stop-color="#4D9FFF" stop-opacity="0"/></linearGradient>
+    </defs>
+    <path d="${pathI} L${sx(days-1)},${H-P} L${sx(0)},${H-P} Z" fill="url(#gimp)"/>
+    <path d="${pathR} L${sx(days-1)},${H-P} L${sx(0)},${H-P} Z" fill="url(#grev)"/>
+    <path d="${pathI}" fill="none" stroke="var(--blue)" stroke-width="1.5" stroke-linejoin="round"/>
+    <path d="${pathR}" fill="none" stroke="var(--gold)" stroke-width="2" stroke-linejoin="round"/>
+    ${rev.map((v,i)=>i%5===0?`<circle cx="${sx(i)}" cy="${sy(v,maxR)}" r="3" fill="var(--gold)" stroke="var(--surface)" stroke-width="1.5"/>`:'').join('')}
+  `;
+  /* same for perf chart */
+  const pc=document.getElementById('perfChart');
+  if(pc){
+    const clicks=rev.map(r=>Math.round(r/55));
+    const maxC=Math.max(...clicks);
+    const pathC=clicks.map((v,i)=>`${i===0?'M':'L'}${sx(i).toFixed(1)},${sy(v,maxC).toFixed(1)}`).join(' ');
+    pc.innerHTML=`<defs><linearGradient id="gcl" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stop-color="#2ECC8F" stop-opacity=".25"/><stop offset="100%" stop-color="#2ECC8F" stop-opacity="0"/></linearGradient></defs>
+    <path d="${pathI} L${sx(days-1)},${H-P} L${sx(0)},${H-P} Z" fill="url(#gimp)"/>
+    <path d="${pathR} L${sx(days-1)},${H-P} L${sx(0)},${H-P} Z" fill="url(#grev)"/>
+    <path d="${pathC} L${sx(days-1)},${H-P} L${sx(0)},${H-P} Z" fill="url(#gcl)"/>
+    <path d="${pathI}" fill="none" stroke="var(--blue)" stroke-width="1.5" stroke-linejoin="round"/>
+    <path d="${pathR}" fill="none" stroke="var(--gold)" stroke-width="2" stroke-linejoin="round"/>
+    <path d="${pathC}" fill="none" stroke="var(--green)" stroke-width="1.5" stroke-linejoin="round"/>`;
+  }
+}
+
+/* ═══ TOP PLACEMENTS ═══ */
+function buildTopPlacements(){
+  const placements=[
+    {name:'Before Download Button',impressions:1820000,clicks:68200,ctr:'3.75%',rev:'₦34,100',trend:'+22%',color:'var(--gold)'},
+    {name:'Song Detail — Player Area',impressions:980000,clicks:31400,ctr:'3.20%',rev:'₦18,600',trend:'+11%',color:'var(--blue)'},
+    {name:'In-Feed (Song List)',impressions:740000,clicks:18500,ctr:'2.50%',rev:'₦13,200',trend:'+8%',color:'var(--green)'},
+    {name:'Header Banner',impressions:620000,clicks:11100,ctr:'1.79%',rev:'₦9,800',trend:'-2%',color:'var(--accent)'},
+    {name:'After Download Page',impressions:480000,clicks:9100,ctr:'1.90%',rev:'₦8,500',trend:'+5%',color:'var(--purple)'},
+  ];
+  const el=document.getElementById('topPlacements');
+  if(!el)return;
+  el.innerHTML=`<div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1fr 1fr;gap:0;font-size:9px;font-family:sans-serif;font-weight:700;color:var(--text3);text-transform:uppercase;padding:0 0 8px 0;border-bottom:1px solid var(--border);margin-bottom:4px;">
+    <div>Placement</div><div style="text-align:right">Impressions</div><div style="text-align:right">Clicks</div><div style="text-align:right">CTR</div><div style="text-align:right">Est. Revenue</div><div style="text-align:right">Trend</div>
+  </div>`+placements.map(p=>`<div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1fr 1fr;gap:0;align-items:center;padding:9px 0;border-bottom:1px solid var(--border);">
+    <div style="display:flex;align-items:center;gap:6px;"><div style="width:8px;height:8px;border-radius:2px;background:${p.color};flex-shrink:0;"></div><div style="font-family:sans-serif;font-size:11px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${p.name}</div></div>
+    <div style="text-align:right;font-family:sans-serif;font-size:11px;font-weight:700;">${fmt(p.impressions)}</div>
+    <div style="text-align:right;font-size:11px;color:var(--text2);">${fmt(p.clicks)}</div>
+    <div style="text-align:right;font-family:sans-serif;font-size:12px;font-weight:800;color:${p.color};">${p.ctr}</div>
+    <div style="text-align:right;font-family:sans-serif;font-size:12px;font-weight:800;color:var(--gold);">${p.rev}</div>
+    <div style="text-align:right;font-family:sans-serif;font-size:10px;font-weight:700;color:${p.trend.startsWith('-')?'var(--red)':'var(--green)'};">${p.trend}</div>
+  </div>`).join('');
+  /* also for perf table */
+  const pt=document.getElementById('perfTable');
+  if(pt)pt.innerHTML=el.innerHTML;
+}
+
+/* ═══ PLACEMENTS ═══ */
+const PLACEMENTS=[
+  {ico:'📢',name:'Before Download Button',desc:'Shown immediately when user clicks download — highest revenue placement',status:'Live',assigned:'Download Page Banner',impr:1820000,ctr:'3.75%',color:'var(--gold)',active:true},
+  {ico:'🎵',name:'Song Detail — Player Area',desc:'Below the audio player on song detail pages',status:'Live',assigned:'Rectangle 300×250',impr:980000,ctr:'3.20%',color:'var(--blue)',active:true},
+  {ico:'📋',name:'In-Feed (Between Songs)',desc:'Appears every 5 songs in any song list view',status:'Live',assigned:'In-Feed Native',impr:740000,ctr:'2.50%',color:'var(--green)',active:true},
+  {ico:'🔝',name:'Header Banner',desc:'Sticky top-of-page leaderboard (728×90 desktop / 320×50 mobile)',status:'Live',assigned:'Header Leaderboard',impr:620000,ctr:'1.79%',color:'var(--accent)',active:true},
+  {ico:'🦶',name:'Footer Banner',desc:'Bottom of page — visible after user scrolls down',status:'Live',assigned:'Footer 728×90',impr:320000,ctr:'1.42%',color:'var(--purple)',active:true},
+  {ico:'⬇️',name:'After Download Page',desc:'Full ad page shown to user after download begins',status:'Live',assigned:'Post-Download Full',impr:480000,ctr:'1.90%',color:'var(--teal)',active:true},
+  {ico:'📱',name:'Sidebar (Desktop Only)',desc:'300×600 half-page or 160×600 wide skyscraper',status:'Paused',assigned:'Sidebar 300×600',impr:210000,ctr:'0.98%',color:'var(--text3)',active:false},
+  {ico:'🔲',name:'Pop-up / Interstitial',desc:'Full-screen overlay on specific user actions (limited to 1× per session)',status:'Paused',assigned:'Interstitial Fullscreen',impr:140000,ctr:'4.10%',color:'var(--yellow)',active:false},
+];
+function buildPlacements(){
+  const el=document.getElementById('placementGrid');
+  if(!el)return;
+  el.innerHTML=PLACEMENTS.map((p,i)=>`
+    <div class="placement-card ${p.active?'active-pl':''}">
+      <div class="pl-header">
+        <div class="pl-icon">${p.ico}</div>
+        <div class="pl-status" style="background:${p.active?'rgba(46,204,143,.12)':'rgba(255,255,255,.04)'};color:${p.active?'var(--green)':'var(--text3)'};">${p.status}</div>
+      </div>
+      <div class="pl-name">${p.name}</div>
+      <div class="pl-desc">${p.desc}</div>
+      <div class="pl-stats">
+        <div class="pl-stat"><strong>${fmt(p.impr)}</strong> impr.</div>
+        <div class="pl-stat"><strong>${p.ctr}</strong> CTR</div>
+      </div>
+      <div class="pl-footer">
+        <div class="pl-assigned">Unit: <span>${p.assigned}</span></div>
+        <div class="toggler ${p.active?'on':'off'}" onclick="toggleSw(this);this.closest('.placement-card').classList.toggle('active-pl')"><div class="tog-thumb"></div></div>
+      </div>
+    </div>
+  `).join('');
+}
+
+/* ═══ AD UNITS ═══ */
+const AD_UNITS=[
+  {name:'Download Page Banner',type:'Leaderboard 728×90',active:true,placements:'Before Download',impressions:1820000,color:'rgba(244,169,0,.15)',code:`<ins class="adsbygoogle"\n  style="display:block"\n  data-ad-client="ca-pub-6173829384710284"\n  data-ad-slot="1234567890"\n  data-ad-format="auto"\n  data-full-width-responsive="true">\n</ins>\n<script>(adsbygoogle=window.adsbygoogle||[]).push({});<\/script>`},
+  {name:'Rectangle 300×250',type:'Medium Rectangle',active:true,placements:'Song Detail, Sidebar',impressions:980000,color:'rgba(77,159,255,.12)',code:`<ins class="adsbygoogle"\n  style="display:inline-block;width:300px;height:250px"\n  data-ad-client="ca-pub-6173829384710284"\n  data-ad-slot="9876543210">\n</ins>\n<script>(adsbygoogle=window.adsbygoogle||[]).push({});<\/script>`},
+  {name:'In-Feed Native Ad',type:'In-Feed / In-Article',active:true,placements:'Song List In-Feed',impressions:740000,color:'rgba(46,204,143,.1)',code:`<ins class="adsbygoogle"\n  style="display:block"\n  data-ad-format="fluid"\n  data-ad-layout-key="-6t+ed+2i-1n-4w"\n  data-ad-client="ca-pub-6173829384710284"\n  data-ad-slot="1122334455">\n</ins>`},
+  {name:'Header Leaderboard',type:'Leaderboard 728×90',active:true,placements:'Header',impressions:620000,color:'rgba(255,107,53,.1)',code:`<ins class="adsbygoogle"\n  style="display:block"\n  data-ad-client="ca-pub-6173829384710284"\n  data-ad-slot="5544332211"\n  data-ad-format="auto">\n</ins>`},
+  {name:'Post-Download Full',type:'Responsive Banner',active:true,placements:'After Download',impressions:480000,color:'rgba(0,201,184,.1)',code:`<ins class="adsbygoogle"\n  style="display:block"\n  data-ad-client="ca-pub-6173829384710284"\n  data-ad-slot="6677889900"\n  data-ad-format="auto"\n  data-full-width-responsive="true">\n</ins>`},
+  {name:'Sidebar 300×600',type:'Half Page',active:false,placements:'Desktop Sidebar',impressions:210000,color:'rgba(155,107,255,.1)',code:`<ins class="adsbygoogle"\n  style="display:inline-block;width:300px;height:600px"\n  data-ad-client="ca-pub-6173829384710284"\n  data-ad-slot="1029384756">\n</ins>`},
+  {name:'Mobile Banner 320×50',type:'Mobile Banner',active:true,placements:'Mobile Header',impressions:390000,color:'rgba(255,77,143,.1)',code:`<ins class="adsbygoogle"\n  style="display:inline-block;width:320px;height:50px"\n  data-ad-client="ca-pub-6173829384710284"\n  data-ad-slot="5647382910">\n</ins>`},
+];
+function buildAdUnits(){
+  const el=document.getElementById('adUnitList');
+  if(!el)return;
+  el.innerHTML=AD_UNITS.map((u,i)=>`
+    <div class="unit-card ${u.active?'active-unit':''}">
+      <div class="uc-header" onclick="toggleUnitBody(${i})">
+        <div class="uc-color" style="background:${u.color};font-size:16px;">${u.active?'📢':'⏸️'}</div>
+        <div class="uc-info">
+          <div class="uc-name">${u.name}</div>
+          <div class="uc-meta"><span>${u.type}</span><span>·</span><span>${fmt(u.impressions)} impressions</span><span>·</span><span style="color:var(--text2);">${u.placements}</span></div>
+        </div>
+        <div class="uc-right">
+          <div class="uc-badge" style="background:${u.active?'rgba(46,204,143,.12)':'rgba(255,255,255,.05)'};color:${u.active?'var(--green)':'var(--text3)'};">${u.active?'Active':'Paused'}</div>
+          <div class="toggler ${u.active?'on':'off'}" onclick="event.stopPropagation();toggleSw(this)"><div class="tog-thumb"></div></div>
+          <div class="uc-expand" id="exp-${i}">▼</div>
+        </div>
+      </div>
+      <div class="uc-body" id="ucb-${i}">
+        <div style="font-size:10px;color:var(--text3);margin-bottom:6px;font-family:sans-serif;font-weight:700;">AD CODE SNIPPET</div>
+        <div class="code-area">${u.code.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>
+        <div class="code-actions">
+          <div class="code-btn primary" onclick="showToast('Code copied!','success')">📋 Copy Code</div>
+          <div class="code-btn" onclick="showToast('Opening editor…','info')">✏️ Edit</div>
+          <div class="code-btn" onclick="showToast('Ad unit tested — OK','success')">🧪 Test</div>
+          <div class="code-btn danger" onclick="showToast('Ad unit deleted','warn')">🗑️ Delete</div>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+function toggleUnitBody(i){
+  const body=document.getElementById('ucb-'+i);
+  const exp=document.getElementById('exp-'+i);
+  const open=body.classList.toggle('open');
+  exp.classList.toggle('open',open);
+}
+
+/* ═══ A/B TESTS ═══ */
+const AB_TESTS=[
+  {name:'Download Page Banner — Size Test',status:'Running',statusColor:'var(--green)',placement:'Before Download Button',varA:{name:'Leaderboard 728×90',impr:91400,ctr:'3.75%',rev:'₦17,100',traffic:50},varB:{name:'Rectangle 300×250',impr:90800,ctr:'3.10%',rev:'₦14,200',traffic:50},winner:null},
+  {name:'In-Feed Ad Format Test',status:'Completed',statusColor:'var(--blue)',placement:'Song List In-Feed',varA:{name:'Native In-Feed',impr:124000,ctr:'2.50%',rev:'₦6,800',traffic:50},varB:{name:'Display Banner',impr:122500,ctr:'1.80%',rev:'₦4,900',traffic:50},winner:'A'},
+  {name:'Interstitial Timer — 5s vs 8s',status:'Paused',statusColor:'var(--yellow)',placement:'Download Interstitial',varA:{name:'5 Second Timer',impr:44000,ctr:'4.10%',rev:'₦5,200',traffic:60},varB:{name:'8 Second Timer',impr:29000,ctr:'4.80%',rev:'₦3,900',traffic:40},winner:null},
+];
+function buildABTests(){
+  const el=document.getElementById('abTestList');
+  if(!el)return;
+  el.innerHTML=AB_TESTS.map(t=>`
+    <div class="ab-card">
+      <div class="ab-header">
+        <div><div class="ab-name">${t.name}</div><div style="font-size:10px;color:var(--text3);margin-top:2px;">Placement: ${t.placement}</div></div>
+        <div class="ab-status" style="background:${t.status==='Running'?'rgba(46,204,143,.12)':t.status==='Completed'?'rgba(77,159,255,.12)':'rgba(255,209,102,.1)'};color:${t.statusColor};">${t.status}</div>
+      </div>
+      <div class="ab-variants">
+        <div class="ab-variant ${t.winner==='A'?'winner':''}">
+          <div class="abv-label" style="color:var(--blue);">Variant A ${t.winner==='A'?'🏆 Winner':''}</div>
+          <div class="abv-name">${t.varA.name}</div>
+          <div style="margin-bottom:6px;"><div class="ab-bar-wrap"><div class="ab-bar-a" style="width:${t.varA.traffic}%"></div></div></div>
+          <div class="abv-stats"><div class="abv-stat"><strong style="color:var(--blue)">${t.varA.ctr}</strong> CTR</div><div class="abv-stat"><strong style="color:var(--gold)">${t.varA.rev}</strong> Rev</div><div class="abv-stat">${fmt(t.varA.impr)} impr.</div></div>
+        </div>
+        <div class="ab-variant ${t.winner==='B'?'winner':''}">
+          <div class="abv-label" style="color:var(--gold);">Variant B ${t.winner==='B'?'🏆 Winner':''}</div>
+          <div class="abv-name">${t.varB.name}</div>
+          <div style="margin-bottom:6px;"><div class="ab-bar-wrap"><div class="ab-bar-b" style="width:${t.varB.traffic}%"></div></div></div>
+          <div class="abv-stats"><div class="abv-stat"><strong style="color:var(--gold)">${t.varB.ctr}</strong> CTR</div><div class="abv-stat"><strong style="color:var(--gold)">${t.varB.rev}</strong> Rev</div><div class="abv-stat">${fmt(t.varB.impr)} impr.</div></div>
+        </div>
+      </div>
+      <div class="ab-footer">
+        <div class="ab-traffic">Traffic split: ${t.varA.traffic}% A / ${t.varB.traffic}% B</div>
+        <div class="ab-actions">
+          ${t.status==='Running'?`<div class="ab-act-btn" onclick="showToast('Test paused','warn')">⏸ Pause</div><div class="ab-act-btn primary" onclick="showToast('Winner declared! Deploying variant A…','success')">🏆 Declare Winner</div>`:''}
+          ${t.status==='Completed'?`<div class="ab-act-btn primary" onclick="showToast('Deploying winning variant…','success')">Deploy Winner</div>`:''}
+          ${t.status==='Paused'?`<div class="ab-act-btn" onclick="showToast('Test resumed','success')">▶ Resume</div>`:''}
+          <div class="ab-act-btn danger" onclick="showToast('Test deleted','warn')">Delete</div>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+/* ═══ RULES ENGINE ═══ */
+function buildRules(){
+  const rules=[
+    {ico:'🎵',title:'Heavy Downloader Rule',logic:'IF user downloads <span class="cond">&gt; 3 songs</span> in a session → <span class="action">increase ad frequency</span> to <span class="value">every 2 songs</span>',color:'rgba(255,107,53,.12)',active:true},
+    {ico:'⭐',title:'Premium User Rule',logic:'IF user role = <span class="cond">premium</span> → <span class="action">hide all ads</span> (override all placements)',color:'rgba(255,209,102,.1)',active:true},
+    {ico:'👶',title:'New User Intro Rule',logic:'IF user registered <span class="cond">&lt; 7 days ago</span> → <span class="action">show welcome ad</span> on first visit (<span class="value">house ad unit</span>)',color:'rgba(77,159,255,.12)',active:true},
+    {ico:'🌙',title:'Peak Hours Rule',logic:'IF time is <span class="cond">8PM–11PM WAT</span> → <span class="action">enable all premium slots</span> including <span class="value">pop-up interstitial</span>',color:'rgba(155,107,255,.12)',active:false},
+    {ico:'🌍',title:'Nigeria Priority Rule',logic:'IF user country = <span class="cond">Nigeria</span> → <span class="action">serve local Naira-targeted ads</span> (higher eCPM)',color:'rgba(46,204,143,.1)',active:true},
+    {ico:'🛑',title:'Ad Blocker Detected Rule',logic:'IF <span class="cond">ad blocker detected</span> → <span class="action">show house banner</span> + <span class="action">disable download button</span> until resolved',color:'rgba(255,68,68,.1)',active:false},
+  ];
+  const el=document.getElementById('rulesList');
+  if(!el)return;
+  el.innerHTML=rules.map(r=>`
+    <div class="rule-card">
+      <div class="rule-ico" style="background:${r.color}">${r.ico}</div>
+      <div class="rule-info">
+        <div class="rule-title">${r.title}</div>
+        <div class="rule-logic">${r.logic}</div>
+      </div>
+      <div class="rule-right" style="display:flex;align-items:center;gap:10px;flex-shrink:0;">
+        <div style="font-size:9px;color:var(--text3);cursor:pointer;" onclick="showToast('Opening rule editor…','info')">Edit</div>
+        <div class="toggler ${r.active?'on':'off'}" onclick="toggleSw(this)"><div class="tog-thumb"></div></div>
+      </div>
+    </div>
+  `).join('');
+}
+
+/* ═══ TARGETING COUNTRIES ═══ */
+function buildTargeting(){
+  const countries=[
+    {flag:'🇳🇬',name:'Nigeria',adUnit:'Download Page Banner',pct:55,enabled:true},
+    {flag:'🇬🇭',name:'Ghana',adUnit:'Standard Rectangle',pct:7.3,enabled:true},
+    {flag:'🇬🇧',name:'United Kingdom',adUnit:'Leaderboard',pct:3.7,enabled:true},
+    {flag:'🇺🇸',name:'United States',adUnit:'Leaderboard',pct:5.5,enabled:true},
+    {flag:'🇰🇪',name:'Kenya',adUnit:'In-Feed',pct:5.1,enabled:true},
+    {flag:'🇩🇪',name:'Germany',adUnit:'Default',pct:2.0,enabled:false},
+  ];
+  const el=document.getElementById('targetCountries');
+  if(!el)return;
+  el.innerHTML=countries.map(c=>`
+    <div class="tc-item" style="flex-direction:column;align-items:flex-start;padding:10px 12px;gap:6px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;width:100%">
+        <div style="display:flex;align-items:center;gap:7px;"><span style="font-size:16px;">${c.flag}</span><span class="tc-label">${c.name}</span><span style="font-size:9px;color:var(--text3);">${c.pct}% traffic</span></div>
+        <div class="toggler ${c.enabled?'on':'off'}" onclick="toggleSw(this)"><div class="tog-thumb"></div></div>
+      </div>
+      <select class="sr-select" style="width:100%;padding:5px 10px;font-size:10px;"><option>${c.adUnit}</option><option>Download Page Banner</option><option>Rectangle 300×250</option><option>In-Feed Native</option><option>No Ads</option></select>
+    </div>
+  `).join('');
+}
+
+/* ═══ POLICY LIST ═══ */
+function buildPolicyList(){
+  const items=[
+    {ico:'✅',title:'Publisher ID Verified',desc:'ca-pub-6173829384710284 is linked and active with Google AdSense',status:'pis-ok',statusTxt:'Compliant'},
+    {ico:'✅',title:'Ad Code Correctly Implemented',desc:'adsbygoogle.js script detected in page <head> on all pages',status:'pis-ok',statusTxt:'Compliant'},
+    {ico:'⚠️',title:'GDPR Consent Mode',desc:'Consent Mode v2 not yet configured — required for EU user targeting compliance',status:'pis-warn',statusTxt:'Action Needed'},
+    {ico:'✅',title:'Adult Content Exclusions',desc:'All adult, gambling and explicit ad categories are blocked in your AdSense settings',status:'pis-ok',statusTxt:'Compliant'},
+    {ico:'✅',title:'Click Fraud Protection',desc:'Invalid click detection is active and running for all placements',status:'pis-ok',statusTxt:'Compliant'},
+    {ico:'⚠️',title:'Page Speed Impact',desc:'Ad scripts may be slowing page load — consider lazy loading ad units',status:'pis-warn',statusTxt:'Optimize'},
+    {ico:'✅',title:'Ad Placement Policy',desc:'No ads placed inside articles violating content guidelines — layout compliant',status:'pis-ok',statusTxt:'Compliant'},
+    {ico:'❌',title:'3 Ads-Per-Page Limit',desc:'Song list page currently loads 4 ad units — Google policy recommends maximum 3 per page',status:'pis-err',statusTxt:'Fix Required'},
+  ];
+  const el=document.getElementById('policyList');
+  if(!el)return;
+  el.innerHTML=items.map(i=>`
+    <div class="policy-item">
+      <div class="pi-ico" style="background:${i.status==='pis-ok'?'rgba(46,204,143,.1)':i.status==='pis-warn'?'rgba(255,209,102,.1)':'rgba(255,68,68,.1)'};">${i.ico}</div>
+      <div class="pi-body"><div class="pi-title">${i.title}</div><div class="pi-desc">${i.desc}</div></div>
+      <div class="pi-status ${i.status}">${i.statusTxt}</div>
+    </div>
+  `).join('');
+}
+
+/* ═══ AD PREVIEW TIMER ═══ */
+let previewRunning=false;
+function runAdPreview(){
+  if(previewRunning)return;
+  previewRunning=true;
+  const timer=document.getElementById('adTimer');
+  const secs=parseInt(timer?.value||5);
+  const previewT=document.getElementById('previewTimer');
+  const dlBtn=document.getElementById('adDlBtn');
+  const skipBtn=document.querySelector('.adp-skip');
+  dlBtn.style.opacity='.4';dlBtn.style.pointerEvents='none';
+  if(skipBtn)skipBtn.style.opacity='.35';
+  let remaining=secs;
+  const tick=setInterval(()=>{
+    remaining--;
+    if(previewT)previewT.textContent=`⏱ ${remaining}s`;
+    if(remaining<=0){
+      clearInterval(tick);
+      dlBtn.style.opacity='1';dlBtn.style.pointerEvents='auto';
+      dlBtn.style.background='var(--green)';
+      if(previewT)previewT.textContent='✓ Done!';
+      if(skipBtn)skipBtn.style.opacity='1';
+      previewRunning=false;
+      showToast('Ad timer complete — download enabled!','success');
+    }
+  },1000);
+}
+
+/* ═══ DATA STORAGE ═══ */
+const storage={
+  placements:()=>JSON.parse(localStorage.getItem('adsPlacements')||JSON.stringify(PLACEMENTS)),
+  savePlacements:(data)=>localStorage.setItem('adsPlacements',JSON.stringify(data)),
+  units:()=>JSON.parse(localStorage.getItem('adsUnits')||JSON.stringify(AD_UNITS)),
+  saveUnits:(data)=>localStorage.setItem('adsUnits',JSON.stringify(data)),
+  config:()=>JSON.parse(localStorage.getItem('adsConfig')||JSON.stringify({publisherId:'ca-pub-6173829384710284',autoAds:false,manualMode:true})),
+  saveConfig:(data)=>localStorage.setItem('adsConfig',JSON.stringify(data))
+};
+
+/* ═══ PLACEMENT MANAGER INTERACTIONS ═══ */
+document.addEventListener('click',e=>{
+  if(e.target.closest('.placement-card')){
+    const card=e.target.closest('.placement-card');
+    const name=card.querySelector('.pl-name').textContent;
+    if(!e.target.closest('.toggler')){
+      openPlacementEditor(name);
+    }
+  }
+});
+
+function openPlacementEditor(name){
+  const placements=storage.placements();
+  const placement=placements.find(p=>p.name===name);
+  if(!placement)return;
+  
+  const modal=document.createElement('div');
+  modal.style.cssText=`position:fixed;inset:0;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;z-index:9999;`;
+  modal.innerHTML=`
+    <div style="background:var(--surface);border-radius:16px;padding:24px;max-width:550px;width:90%;max-height:80vh;overflow-y:auto;border:1px solid var(--border);">
+      <div style="font-family:sans-serif;font-size:16px;font-weight:800;margin-bottom:16px;">Edit Placement: ${name}</div>
+      <div style="margin-bottom:12px;">
+        <label style="display:block;font-size:11px;color:var(--text3);margin-bottom:4px;font-weight:700;">Placement Name</label>
+        <input type="text" id="placeName" value="${placement.name}" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--surface2);color:var(--text);font-size:12px;">
+      </div>
+      <div style="margin-bottom:12px;">
+        <label style="display:block;font-size:11px;color:var(--text3);margin-bottom:4px;font-weight:700;">Description</label>
+        <textarea id="placeDesc" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--surface2);color:var(--text);font-size:12px;min-height:60px;resize:vertical;">${placement.desc}</textarea>
+      </div>
+      <div style="margin-bottom:12px;">
+        <label style="display:block;font-size:11px;color:var(--text3);margin-bottom:4px;font-weight:700;">Assigned Ad Unit</label>
+        <select id="placeUnit" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--surface2);color:var(--text);font-size:12px;">
+          <option>${placement.assigned}</option>
+          <option>Download Page Banner</option>
+          <option>Rectangle 300×250</option>
+          <option>In-Feed Native</option>
+          <option>Header Leaderboard</option>
+        </select>
+      </div>
+      <div style="margin-bottom:12px;">
+        <label style="display:block;font-size:11px;color:var(--text3);margin-bottom:4px;font-weight:700;">Status</label>
+        <select id="placeStatus" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--surface2);color:var(--text);font-size:12px;">
+          <option>${placement.status}</option>
+          <option>Live</option>
+          <option>Paused</option>
+          <option>Testing</option>
+        </select>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:20px;">
+        <button onclick="savePlacementChanges('${name}');this.closest('div').parentElement.parentElement.remove();showToast('Placement updated!','success')" style="flex:1;padding:10px;background:var(--gold);color:#000;border:none;border-radius:8px;font-weight:700;cursor:pointer;font-family:sans-serif;">Save Changes</button>
+        <button onclick="this.closest('div').parentElement.parentElement.remove()" style="flex:1;padding:10px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:8px;font-weight:700;cursor:pointer;font-family:sans-serif;">Cancel</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(modal);
+  modal.addEventListener('click',e=>{if(e.target===modal)modal.remove();});
+}
+
+function savePlacementChanges(oldName){
+  const placements=storage.placements();
+  const idx=placements.findIndex(p=>p.name===oldName);
+  if(idx>=0){
+    placements[idx].name=document.getElementById('placeName').value;
+    placements[idx].desc=document.getElementById('placeDesc').value;
+    placements[idx].assigned=document.getElementById('placeUnit').value;
+    placements[idx].status=document.getElementById('placeStatus').value;
+    storage.savePlacements(placements);
+    buildPlacements();
+  }
+}
+
+/* ═══ AD UNITS INTERACTIONS ═══ */
+document.addEventListener('click',e=>{
+  const copyBtn=e.target.closest('.code-btn.primary');
+  if(copyBtn&&copyBtn.textContent.includes('Copy')){
+    const codeArea=copyBtn.closest('.uc-body').querySelector('.code-area');
+    const code=codeArea.textContent;
+    navigator.clipboard.writeText(code).then(()=>{
+      showToast('Ad code copied to clipboard!','success');
+    });
+  }
+  const editBtn=e.target.closest('.code-btn:not(.primary):not(.danger)');
+  if(editBtn&&editBtn.textContent.includes('Edit')){
+    const unitName=editBtn.closest('.unit-card').querySelector('.uc-name').textContent;
+    openAdUnitEditor(unitName);
+  }
+  const testBtn=e.target.closest('.code-btn:not(.primary):not(.danger)');
+  if(testBtn&&testBtn.textContent.includes('Test')){
+    const unitName=testBtn.closest('.unit-card').querySelector('.uc-name').textContent;
+    showToast(`Testing ad unit: ${unitName}…`,'info');
+    setTimeout(()=>showToast(`✓ Ad unit "${unitName}" tested successfully!`,'success'),1500);
+  }
+  const delBtn=e.target.closest('.code-btn.danger');
+  if(delBtn){
+    const unitName=delBtn.closest('.unit-card').querySelector('.uc-name').textContent;
+    if(confirm(`Delete ad unit "${unitName}"?`)){
+      const units=storage.units();
+      const idx=units.findIndex(u=>u.name===unitName);
+      if(idx>=0){
+        units.splice(idx,1);
+        storage.saveUnits(units);
+        delBtn.closest('.unit-card').style.animation='slideOut 0.3s ease forwards';
+        setTimeout(()=>{
+          buildAdUnits();
+          showToast(`Ad unit "${unitName}" deleted`,'warn');
+        },300);
+      }
+    }
+  }
+});
+
+function openAdUnitEditor(name){
+  const units=storage.units();
+  const unit=units.find(u=>u.name===name);
+  if(!unit)return;
+  
+  const modal=document.createElement('div');
+  modal.style.cssText=`position:fixed;inset:0;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;z-index:9999;`;
+  modal.innerHTML=`
+    <div style="background:var(--surface);border-radius:16px;padding:24px;max-width:550px;width:90%;max-height:85vh;overflow-y:auto;border:1px solid var(--border);">
+      <div style="font-family:sans-serif;font-size:16px;font-weight:800;margin-bottom:16px;">Edit Ad Unit: ${name}</div>
+      <div style="margin-bottom:12px;">
+        <label style="display:block;font-size:11px;color:var(--text3);margin-bottom:4px;font-weight:700;">Ad Unit Name</label>
+        <input type="text" id="unitName" value="${unit.name}" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--surface2);color:var(--text);font-size:12px;">
+      </div>
+      <div style="margin-bottom:12px;">
+        <label style="display:block;font-size:11px;color:var(--text3);margin-bottom:4px;font-weight:700;">Ad Type</label>
+        <input type="text" id="unitType" value="${unit.type}" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--surface2);color:var(--text);font-size:12px;">
+      </div>
+      <div style="margin-bottom:12px;">
+        <label style="display:block;font-size:11px;color:var(--text3);margin-bottom:4px;font-weight:700;">Ad Code Snippet</label>
+        <textarea id="unitCode" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--surface2);color:var(--text);font-size:10px;font-family:monospace;min-height:100px;resize:vertical;">${unit.code}</textarea>
+      </div>
+      <div style="margin-bottom:12px;">
+        <label style="display:block;font-size:11px;color:var(--text3);margin-bottom:4px;font-weight:700;">Placements Using This Unit</label>
+        <input type="text" id="unitPlacements" value="${unit.placements}" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--surface2);color:var(--text);font-size:12px;">
+      </div>
+      <div style="display:flex;gap:8px;margin-top:20px;">
+        <button onclick="saveAdUnitChanges('${name}');this.closest('div').parentElement.parentElement.remove();showToast('Ad unit updated!','success')" style="flex:1;padding:10px;background:var(--gold);color:#000;border:none;border-radius:8px;font-weight:700;cursor:pointer;font-family:sans-serif;">Save Changes</button>
+        <button onclick="this.closest('div').parentElement.parentElement.remove()" style="flex:1;padding:10px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:8px;font-weight:700;cursor:pointer;font-family:sans-serif;">Cancel</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(modal);
+  modal.addEventListener('click',e=>{if(e.target===modal)modal.remove();});
+}
+
+function saveAdUnitChanges(oldName){
+  const units=storage.units();
+  const idx=units.findIndex(u=>u.name===oldName);
+  if(idx>=0){
+    units[idx].name=document.getElementById('unitName').value;
+    units[idx].type=document.getElementById('unitType').value;
+    units[idx].code=document.getElementById('unitCode').value;
+    units[idx].placements=document.getElementById('unitPlacements').value;
+    storage.saveUnits(units);
+    buildAdUnits();
+  }
+}
+
+/* ═══ ADSENSE API INTERACTIONS ═══ */
+document.addEventListener('change',e=>{
+  if(e.target.classList.contains('sr-input')){
+    const config=storage.config();
+    if(e.target.value.startsWith('ca-pub-')){
+      config.publisherId=e.target.value;
+      storage.saveConfig(config);
+      showToast('Publisher ID updated and saved!','success');
+    }
+  }
+  if(e.target.classList.contains('sr-select')){
+    const label=e.target.closest('.sr')?.querySelector('.sr-title')?.textContent||'Setting';
+    showToast(`${label} changed to: ${e.target.value}`,'info');
+  }
+});
+
+document.addEventListener('click',e=>{
+  const copyScriptBtn=e.target.closest('.code-btn.primary');
+  if(copyScriptBtn&&copyScriptBtn.textContent.includes('Copy Script')){
+    const config=storage.config();
+    const scriptCode=`<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${config.publisherId}" crossorigin="anonymous"><\/script>`;
+    navigator.clipboard.writeText(scriptCode).then(()=>{
+      showToast('AdSense script copied to clipboard!','success');
+    });
+  }
+  const verifyBtn=e.target.closest('.code-btn:not(.primary)');
+  if(verifyBtn&&verifyBtn.textContent.includes('Verify')){
+    showToast('Verifying script injection…','info');
+    setTimeout(()=>{
+      showToast('✓ AdSense script verified and active on all pages!','success');
+    },1500);
+  }
+});
+
+/* Handle Auto Ads toggle */
+document.addEventListener('click',e=>{
+  const toggler=e.target.closest('.toggler');
+  if(toggler&&toggler.closest('.sr')?.querySelector('.sr-title')?.textContent.includes('Auto Ads')){
+    const config=storage.config();
+    config.autoAds=toggler.classList.contains('on');
+    storage.saveConfig(config);
+    showToast(`Auto Ads ${config.autoAds?'enabled':'disabled'}`,'info');
+  }
+  if(toggler&&toggler.closest('.sr')?.querySelector('.sr-title')?.textContent.includes('Manual Placement')){
+    const config=storage.config();
+    config.manualMode=toggler.classList.contains('on');
+    storage.saveConfig(config);
+    showToast(`Manual Mode ${config.manualMode?'enabled':'disabled'}`,'info');
+  }
+});
+
+/* ═══ PLACEMENT CARD DRAG & DROP ═══ */
+let draggedCard=null;
+document.addEventListener('dragstart',e=>{
+  if(e.target.closest('.placement-card')){
+    draggedCard=e.target.closest('.placement-card');
+    draggedCard.style.opacity='0.5';
+    e.dataTransfer.effectAllowed='move';
+  }
+});
+document.addEventListener('dragend',e=>{
+  if(draggedCard){
+    draggedCard.style.opacity='1';
+    draggedCard=null;
+  }
+});
+document.addEventListener('dragover',e=>{
+  e.preventDefault();
+  e.dataTransfer.dropEffect='move';
+});
+document.addEventListener('drop',e=>{
+  e.preventDefault();
+  if(draggedCard&&e.target.closest('.placement-card')){
+    const target=e.target.closest('.placement-card');
+    const parent=target.parentElement;
+    const allCards=Array.from(parent.querySelectorAll('.placement-card'));
+    const dragIdx=allCards.indexOf(draggedCard);
+    const targetIdx=allCards.indexOf(target);
+    if(dragIdx<targetIdx){
+      target.parentElement.insertBefore(draggedCard,target.nextSibling);
+    }else{
+      target.parentElement.insertBefore(draggedCard,target);
+    }
+    showToast('Placement order updated','success');
+  }
+});
+
+/* ═══ ADD NEW PLACEMENT ═══ */
+document.addEventListener('click',e=>{
+  if(e.target.textContent.includes('Add New Placement')){
+    const modal=document.createElement('div');
+    modal.style.cssText=`position:fixed;inset:0;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;z-index:9999;`;
+    modal.innerHTML=`
+      <div style="background:var(--surface);border-radius:16px;padding:24px;max-width:500px;width:90%;border:1px solid var(--border);">
+        <div style="font-family:sans-serif;font-size:16px;font-weight:800;margin-bottom:16px;">Add New Ad Placement</div>
+        <div style="margin-bottom:12px;">
+          <label style="display:block;font-size:11px;color:var(--text3);margin-bottom:4px;font-weight:700;">Placement Name</label>
+          <input type="text" id="newPlaceName" placeholder="e.g., Sidebar Right" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--surface2);color:var(--text);font-size:12px;">
+        </div>
+        <div style="margin-bottom:12px;">
+          <label style="display:block;font-size:11px;color:var(--text3);margin-bottom:4px;font-weight:700;">Description</label>
+          <textarea id="newPlaceDesc" placeholder="Describe where this placement appears" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--surface2);color:var(--text);font-size:12px;min-height:60px;resize:vertical;"></textarea>
+        </div>
+        <div style="margin-bottom:12px;">
+          <label style="display:block;font-size:11px;color:var(--text3);margin-bottom:4px;font-weight:700;">Assign Ad Unit</label>
+          <select id="newPlaceUnit" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--surface2);color:var(--text);font-size:12px;">
+            <option>Download Page Banner</option>
+            <option>Rectangle 300×250</option>
+            <option>In-Feed Native Ad</option>
+            <option>Header Leaderboard</option>
+          </select>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:20px;">
+          <button onclick="createNewPlacement();this.closest('div').parentElement.parentElement.remove()" style="flex:1;padding:10px;background:var(--gold);color:#000;border:none;border-radius:8px;font-weight:700;cursor:pointer;font-family:sans-serif;">Create Placement</button>
+          <button onclick="this.closest('div').parentElement.parentElement.remove()" style="flex:1;padding:10px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:8px;font-weight:700;cursor:pointer;font-family:sans-serif;">Cancel</button>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(modal);
+    modal.addEventListener('click',e=>{if(e.target===modal)modal.remove();});
+  }
+});
+
+function createNewPlacement(){
+  const name=document.getElementById('newPlaceName').value.trim();
+  const desc=document.getElementById('newPlaceDesc').value.trim();
+  const unit=document.getElementById('newPlaceUnit').value;
+  
+  if(!name){
+    showToast('Please enter a placement name','warn');
+    return;
+  }
+  
+  const placements=storage.placements();
+  const newPlacement={
+    ico:'📍',
+    name:name,
+    desc:desc||'New ad placement',
+    status:'Live',
+    assigned:unit,
+    impr:0,
+    ctr:'0%',
+    color:'var(--gold)',
+    active:true
+  };
+  
+  placements.push(newPlacement);
+  storage.savePlacements(placements);
+  buildPlacements();
+  showToast(`New placement "${name}" created!`,'success');
+}
+
+/* ═══ ADD NEW AD UNIT ═══ */
+document.addEventListener('click',e=>{
+  if(e.target.textContent.includes('Add New Ad Unit')){
+    const modal=document.createElement('div');
+    modal.style.cssText=`position:fixed;inset:0;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;z-index:9999;`;
+    modal.innerHTML=`
+      <div style="background:var(--surface);border-radius:16px;padding:24px;max-width:550px;width:90%;max-height:85vh;overflow-y:auto;border:1px solid var(--border);">
+        <div style="font-family:sans-serif;font-size:16px;font-weight:800;margin-bottom:16px;">Add New Ad Unit</div>
+        <div style="margin-bottom:12px;">
+          <label style="display:block;font-size:11px;color:var(--text3);margin-bottom:4px;font-weight:700;">Ad Unit Name</label>
+          <input type="text" id="newUnitName" placeholder="e.g., Sidebar Rectangle" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--surface2);color:var(--text);font-size:12px;">
+        </div>
+        <div style="margin-bottom:12px;">
+          <label style="display:block;font-size:11px;color:var(--text3);margin-bottom:4px;font-weight:700;">Ad Type</label>
+          <select id="newUnitType" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--surface2);color:var(--text);font-size:12px;">
+            <option>Display Banner</option>
+            <option>Medium Rectangle</option>
+            <option>In-Feed / In-Article</option>
+            <option>Responsive</option>
+            <option>Matched Content</option>
+          </select>
+        </div>
+        <div style="margin-bottom:12px;">
+          <label style="display:block;font-size:11px;color:var(--text3);margin-bottom:4px;font-weight:700;">Ad Slot ID</label>
+          <input type="text" id="newUnitSlot" placeholder="e.g., 1234567890" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--surface2);color:var(--text);font-size:12px;font-family:monospace;">
+        </div>
+        <div style="margin-bottom:12px;">
+          <label style="display:block;font-size:11px;color:var(--text3);margin-bottom:4px;font-weight:700;">Ad Code Snippet</label>
+          <textarea id="newUnitCode" placeholder="Paste full ad code snippet here" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--surface2);color:var(--text);font-size:10px;font-family:monospace;min-height:80px;resize:vertical;"></textarea>
+        </div>
+        <div style="margin-bottom:12px;">
+          <label style="display:block;font-size:11px;color:var(--text3);margin-bottom:4px;font-weight:700;">Placements (comma-separated)</label>
+          <input type="text" id="newUnitPlace" placeholder="e.g., Sidebar, Header" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--surface2);color:var(--text);font-size:12px;">
+        </div>
+        <div style="display:flex;gap:8px;margin-top:20px;">
+          <button onclick="createNewAdUnit();this.closest('div').parentElement.parentElement.remove()" style="flex:1;padding:10px;background:var(--gold);color:#000;border:none;border-radius:8px;font-weight:700;cursor:pointer;font-family:sans-serif;">Create Ad Unit</button>
+          <button onclick="this.closest('div').parentElement.parentElement.remove()" style="flex:1;padding:10px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:8px;font-weight:700;cursor:pointer;font-family:sans-serif;">Cancel</button>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(modal);
+    modal.addEventListener('click',e=>{if(e.target===modal)modal.remove();});
+  }
+});
+
+function createNewAdUnit(){
+  const name=document.getElementById('newUnitName').value.trim();
+  const type=document.getElementById('newUnitType').value;
+  const slot=document.getElementById('newUnitSlot').value.trim();
+  const code=document.getElementById('newUnitCode').value.trim();
+  const placements=document.getElementById('newUnitPlace').value.trim();
+  
+  if(!name){
+    showToast('Please enter an ad unit name','warn');
+    return;
+  }
+  
+  const units=storage.units();
+  const newUnit={
+    name:name,
+    type:type,
+    active:true,
+    placements:placements||'Unassigned',
+    impressions:0,
+    color:'rgba(244,169,0,.15)',
+    code:code||`<ins class="adsbygoogle"\n  style="display:block"\n  data-ad-client="ca-pub-6173829384710284"\n  data-ad-slot="${slot}"\n  data-ad-format="auto">\n</ins>`
+  };
+  
+  units.push(newUnit);
+  storage.saveUnits(units);
+  buildAdUnits();
+  showToast(`New ad unit "${name}" created!`,'success');
+}
+
+/* ═══ INIT ═══ */
+buildRevenueChart();
+buildTopPlacements();
+buildPlacements();
+buildAdUnits();
+buildABTests();
+buildRules();
+buildTargeting();
+buildPolicyList();
+
+/* Make placement cards draggable */
+document.querySelectorAll('.placement-card').forEach(card=>{
+  card.draggable=true;
+});
+
+/* ═══ INTERSTITIAL ADS INTERACTIONS ═══ */
+document.addEventListener('change',e=>{
+  const sr=e.target.closest('.sr');
+  if(!sr)return;
+  const title=sr.querySelector('.sr-title')?.textContent||'';
+  
+  if(title.includes('Ad Timer Duration')){
+    const val=e.target.value;
+    document.getElementById('timerFlowSub').textContent=val+' seconds';
+    document.getElementById('previewTimer').textContent='⏱ '+val+'s';
+    showToast(`Timer set to ${val} seconds`,'info');
+    try{
+      const k='adsInterstitialConfig';
+      const cur=JSON.parse(localStorage.getItem(k)||'{}');
+      cur.timer=parseInt(val)||5;
+      localStorage.setItem(k,JSON.stringify(cur));
+    }catch(err){}
+  }
+  if(title.includes('Redirect URL')){
+    showToast('Redirect URL updated','info');
+  }
+});
+
+document.addEventListener('click',e=>{
+  const toggler=e.target.closest('.toggler');
+  if(!toggler)return;
+  const sr=toggler.closest('.sr');
+  if(!sr)return;
+  const title=sr.querySelector('.sr-title')?.textContent||'';
+  
+  if(title.includes('Enable Download Ads')){
+    const state=toggler.classList.contains('on');
+    showToast(`Download ads ${state?'enabled':'disabled'}`,'info');
+    try{
+      const k='adsInterstitialConfig';
+      const cur=JSON.parse(localStorage.getItem(k)||'{}');
+      cur.enabled=!!state;
+      localStorage.setItem(k,JSON.stringify(cur));
+    }catch(err){}
+  }
+  if(title.includes('Show Skip Button')){
+    const state=toggler.classList.contains('on');
+    showToast(`Skip button ${state?'enabled':'disabled'}`,'info');
+    try{
+      const k='adsInterstitialConfig';
+      const cur=JSON.parse(localStorage.getItem(k)||'{}');
+      cur.showSkip=!!state;
+      localStorage.setItem(k,JSON.stringify(cur));
+    }catch(err){}
+  }
+  if(title.includes('Block Download if Ad Blocked')){
+    const state=toggler.classList.contains('on');
+    showToast(`Ad blocker block ${state?'enabled':'disabled'}`,'info');
+    try{
+      const k='adsInterstitialConfig';
+      const cur=JSON.parse(localStorage.getItem(k)||'{}');
+      cur.blockIfAdBlocked=!!state;
+      localStorage.setItem(k,JSON.stringify(cur));
+    }catch(err){}
+  }
+  if(title.includes('Premium Users')){
+    const state=toggler.classList.contains('on');
+    showToast(`Premium skip ${state?'enabled':'disabled'}`,'info');
+    try{
+      const k='adsInterstitialConfig';
+      const cur=JSON.parse(localStorage.getItem(k)||'{}');
+      cur.skipForPremium=!!state;
+      localStorage.setItem(k,JSON.stringify(cur));
+    }catch(err){}
+  }
+});
+
+/* ═══ TARGETING INTERACTIONS ═══ */
+document.addEventListener('click',e=>{
+  const countryToggler=e.target.closest('.toggler');
+  if(countryToggler&&countryToggler.closest('.tc-item')){
+    const country=countryToggler.closest('.tc-item').querySelector('.tc-label')?.textContent||'Country';
+    const state=countryToggler.classList.contains('on');
+    showToast(`${country} targeting ${state?'enabled':'disabled'}`,'info');
+  }
+});
+
+document.addEventListener('change',e=>{
+  const select=e.target.closest('.sr-select');
+  if(!select)return;
+  const sr=select.closest('.sr');
+  if(!sr)return;
+  const title=sr.querySelector('.sr-title')?.textContent||'';
+  
+  if(title.includes('Device')||title.includes('Role')||title.includes('Countries')){
+    showToast(`${title} updated to: ${select.value}`,'info');
+  }
+});
+
+/* ═══ FREQUENCY CONTROL INTERACTIONS ═══ */
+document.addEventListener('change',e=>{
+  const input=e.target.closest('.sr-number');
+  if(input){
+    const sr=input.closest('.sr');
+    const title=sr?.querySelector('.sr-title')?.textContent||'Setting';
+    const val=input.value;
+    showToast(`${title} set to ${val}`,'info');
+  }
+  const select=e.target.closest('.sr-select');
+  if(select){
+    const sr=select.closest('.sr');
+    const title=sr?.querySelector('.sr-title')?.textContent||'Setting';
+    showToast(`${title} set to: ${select.value}`,'info');
+  }
+});
+
+/* ═══ A/B TESTING INTERACTIONS ═══ */
+document.addEventListener('click',e=>{
+  const btn=e.target.closest('.ab-act-btn');
+  if(!btn)return;
+  
+  const text=btn.textContent.trim();
+  const test=btn.closest('.ab-card');
+  const name=test?.querySelector('.ab-name')?.textContent||'Test';
+  
+  if(text.includes('Pause')){
+    showToast('A/B test paused','warn');
+  }
+  else if(text.includes('Declare')){
+    showToast('Winner declared! Deploying variant A…','success');
+  }
+  else if(text.includes('Deploy')){
+    showToast('Deploying winning variant…','success');
+  }
+  else if(text.includes('Resume')){
+    showToast('A/B test resumed','success');
+  }
+  else if(text.includes('Delete')){
+    if(confirm(`Delete A/B test "${name}"?`)){
+      test.style.animation='slideOut 0.3s ease forwards';
+      setTimeout(()=>{
+        test.remove();
+        showToast(`A/B test deleted`,'warn');
+      },300);
+    }
+  }
+});
+
+/* New A/B Test button */
+document.addEventListener('click',e=>{
+  if(e.target.textContent.includes('New A/B Test')){
+    const modal=document.createElement('div');
+    modal.style.cssText=`position:fixed;inset:0;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;z-index:9999;`;
+    modal.innerHTML=`
+      <div style="background:var(--surface);border-radius:16px;padding:24px;max-width:550px;width:90%;max-height:85vh;overflow-y:auto;border:1px solid var(--border);">
+        <div style="font-family:sans-serif;font-size:16px;font-weight:800;margin-bottom:16px;">Create New A/B Test</div>
+        <div style="margin-bottom:12px;">
+          <label style="display:block;font-size:11px;color:var(--text3);margin-bottom:4px;font-weight:700;">Test Name</label>
+          <input type="text" id="abTestName" placeholder="e.g., Banner Size Test" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--surface2);color:var(--text);font-size:12px;">
+        </div>
+        <div style="margin-bottom:12px;">
+          <label style="display:block;font-size:11px;color:var(--text3);margin-bottom:4px;font-weight:700;">Placement</label>
+          <select id="abTestPlace" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--surface2);color:var(--text);font-size:12px;">
+            <option>Before Download Button</option>
+            <option>Song Detail — Player Area</option>
+            <option>In-Feed (Song List)</option>
+            <option>Header Banner</option>
+          </select>
+        </div>
+        <div style="margin-bottom:12px;">
+          <label style="display:block;font-size:11px;color:var(--text3);margin-bottom:4px;font-weight:700;">Variant A</label>
+          <input type="text" id="abTestVarA" placeholder="e.g., Leaderboard 728×90" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--surface2);color:var(--text);font-size:12px;">
+        </div>
+        <div style="margin-bottom:12px;">
+          <label style="display:block;font-size:11px;color:var(--text3);margin-bottom:4px;font-weight:700;">Variant B</label>
+          <input type="text" id="abTestVarB" placeholder="e.g., Rectangle 300×250" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--surface2);color:var(--text);font-size:12px;">
+        </div>
+        <div style="margin-bottom:12px;">
+          <label style="display:block;font-size:11px;color:var(--text3);margin-bottom:4px;font-weight:700;">Traffic Split</label>
+          <div style="display:flex;gap:8px;">
+            <input type="number" id="abTestTraffic" value="50" min="10" max="90" style="flex:1;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--surface2);color:var(--text);font-size:12px;">
+            <span style="display:flex;align-items:center;color:var(--text3);font-size:11px;">% A / remaining % B</span>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:20px;">
+          <button onclick="createABTest();this.closest('div').parentElement.parentElement.remove()" style="flex:1;padding:10px;background:var(--gold);color:#000;border:none;border-radius:8px;font-weight:700;cursor:pointer;font-family:sans-serif;">Create Test</button>
+          <button onclick="this.closest('div').parentElement.parentElement.remove()" style="flex:1;padding:10px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:8px;font-weight:700;cursor:pointer;font-family:sans-serif;">Cancel</button>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(modal);
+    modal.addEventListener('click',e=>{if(e.target===modal)modal.remove();});
+  }
+});
+
+function createABTest(){
+  const name=document.getElementById('abTestName').value.trim();
+  const place=document.getElementById('abTestPlace').value;
+  const varA=document.getElementById('abTestVarA').value.trim();
+  const varB=document.getElementById('abTestVarB').value.trim();
+  const traffic=document.getElementById('abTestTraffic').value;
+  
+  if(!name||!varA||!varB){
+    showToast('Please fill all required fields','warn');
+    return;
+  }
+  
+  showToast(`A/B test "${name}" created and started!`,'success');
+}
+
+/* ═══ RULES ENGINE INTERACTIONS ═══ */
+document.addEventListener('click',e=>{
+  if(e.target.textContent.trim()==='Edit'&&e.target.closest('.rule-card')){
+    const rule=e.target.closest('.rule-card');
+    const title=rule?.querySelector('.rule-title')?.textContent||'Rule';
+    openRuleEditor(title);
+  }
+  const toggler=e.target.closest('.toggler');
+  if(toggler&&toggler.closest('.rule-card')){
+    const rule=toggler.closest('.rule-card');
+    const title=rule?.querySelector('.rule-title')?.textContent||'Rule';
+    const state=toggler.classList.contains('on');
+    showToast(`${title} ${state?'enabled':'disabled'}`,'info');
+  }
+});
+
+function openRuleEditor(name){
+  const modal=document.createElement('div');
+  modal.style.cssText=`position:fixed;inset:0;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;z-index:9999;`;
+  modal.innerHTML=`
+    <div style="background:var(--surface);border-radius:16px;padding:24px;max-width:550px;width:90%;max-height:85vh;overflow-y:auto;border:1px solid var(--border);">
+      <div style="font-family:sans-serif;font-size:16px;font-weight:800;margin-bottom:16px;">Edit Rule: ${name}</div>
+      <div style="margin-bottom:12px;">
+        <label style="display:block;font-size:11px;color:var(--text3);margin-bottom:4px;font-weight:700;">Rule Name</label>
+        <input type="text" id="ruleName" value="${name}" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--surface2);color:var(--text);font-size:12px;">
+      </div>
+      <div style="margin-bottom:12px;">
+        <label style="display:block;font-size:11px;color:var(--text3);margin-bottom:4px;font-weight:700;">Condition</label>
+        <select id="ruleCondition" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--surface2);color:var(--text);font-size:12px;">
+          <option>User Type = Guest</option>
+          <option>User Type = Free</option>
+          <option>User Type = Premium</option>
+          <option>Time of Day = Peak Hours</option>
+          <option>Device Type = Mobile</option>
+          <option>Device Type = Desktop</option>
+          <option>Country = High Value</option>
+        </select>
+      </div>
+      <div style="margin-bottom:12px;">
+        <label style="display:block;font-size:11px;color:var(--text3);margin-bottom:4px;font-weight:700;">Action</label>
+        <select id="ruleAction" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--surface2);color:var(--text);font-size:12px;">
+          <option>Show Ad</option>
+          <option>Hide Ad</option>
+          <option>Increase Frequency</option>
+          <option>Decrease Frequency</option>
+          <option>Change Ad Type</option>
+          <option>Redirect to Premium</option>
+        </select>
+      </div>
+      <div style="margin-bottom:12px;">
+        <label style="display:block;font-size:11px;color:var(--text3);margin-bottom:4px;font-weight:700;">Priority</label>
+        <input type="number" id="rulePriority" value="1" min="1" max="10" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--surface2);color:var(--text);font-size:12px;">
+      </div>
+      <div style="display:flex;gap:8px;margin-top:20px;">
+        <button onclick="saveRuleChanges('${name}');this.closest('div').parentElement.parentElement.remove();showToast('Rule updated!','success')" style="flex:1;padding:10px;background:var(--gold);color:#000;border:none;border-radius:8px;font-weight:700;cursor:pointer;font-family:sans-serif;">Save Changes</button>
+        <button onclick="this.closest('div').parentElement.parentElement.remove()" style="flex:1;padding:10px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:8px;font-weight:700;cursor:pointer;font-family:sans-serif;">Cancel</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(modal);
+  modal.addEventListener('click',e=>{if(e.target===modal)modal.remove();});
+}
+
+function saveRuleChanges(oldName){
+  const newName=document.getElementById('ruleName').value.trim();
+  const condition=document.getElementById('ruleCondition').value;
+  const action=document.getElementById('ruleAction').value;
+  const priority=document.getElementById('rulePriority').value;
+  
+  if(!newName){
+    showToast('Rule name cannot be empty','warn');
+    return;
+  }
+  showToast(`Rule "${newName}" updated successfully`,'success');
+}
+
+/* Add New Rule button */
+document.addEventListener('click',e=>{
+  if(e.target.textContent.includes('Add New Rule')){
+    const modal=document.createElement('div');
+    modal.style.cssText=`position:fixed;inset:0;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;z-index:9999;`;
+    modal.innerHTML=`
+      <div style="background:var(--surface);border-radius:16px;padding:24px;max-width:550px;width:90%;max-height:85vh;overflow-y:auto;border:1px solid var(--border);">
+        <div style="font-family:sans-serif;font-size:16px;font-weight:800;margin-bottom:16px;">Create New Rule</div>
+        <div style="margin-bottom:12px;">
+          <label style="display:block;font-size:11px;color:var(--text3);margin-bottom:4px;font-weight:700;">Rule Name</label>
+          <input type="text" id="newRuleName" placeholder="e.g., Hide Ads for Premium" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--surface2);color:var(--text);font-size:12px;">
+        </div>
+        <div style="margin-bottom:12px;">
+          <label style="display:block;font-size:11px;color:var(--text3);margin-bottom:4px;font-weight:700;">Condition (If)</label>
+          <select id="newRuleCondition" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--surface2);color:var(--text);font-size:12px;">
+            <option>User Type = Guest</option>
+            <option>User Type = Free</option>
+            <option>User Type = Premium</option>
+            <option>Time of Day = Peak Hours</option>
+            <option>Device Type = Mobile</option>
+            <option>Device Type = Desktop</option>
+            <option>Country = High Value</option>
+            <option>Ad Impressions > X</option>
+            <option>Time Since Last Ad > X minutes</option>
+          </select>
+        </div>
+        <div style="margin-bottom:12px;">
+          <label style="display:block;font-size:11px;color:var(--text3);margin-bottom:4px;font-weight:700;">Action (Then)</label>
+          <select id="newRuleAction" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--surface2);color:var(--text);font-size:12px;">
+            <option>Show Ad</option>
+            <option>Hide Ad</option>
+            <option>Increase Frequency</option>
+            <option>Decrease Frequency</option>
+            <option>Change Ad Type</option>
+            <option>Redirect to Premium</option>
+            <option>Show Custom Message</option>
+          </select>
+        </div>
+        <div style="margin-bottom:12px;">
+          <label style="display:block;font-size:11px;color:var(--text3);margin-bottom:4px;font-weight:700;">Priority (1-10)</label>
+          <input type="number" id="newRulePriority" value="5" min="1" max="10" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--surface2);color:var(--text);font-size:12px;">
+        </div>
+        <div style="display:flex;gap:8px;margin-top:20px;">
+          <button onclick="createNewRule();this.closest('div').parentElement.parentElement.remove()" style="flex:1;padding:10px;background:var(--gold);color:#000;border:none;border-radius:8px;font-weight:700;cursor:pointer;font-family:sans-serif;">Create Rule</button>
+          <button onclick="this.closest('div').parentElement.parentElement.remove()" style="flex:1;padding:10px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:8px;font-weight:700;cursor:pointer;font-family:sans-serif;">Cancel</button>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(modal);
+    modal.addEventListener('click',e=>{if(e.target===modal)modal.remove();});
+  }
+});
+
+function createNewRule(){
+  const name=document.getElementById('newRuleName').value.trim();
+  const condition=document.getElementById('newRuleCondition').value;
+  const action=document.getElementById('newRuleAction').value;
+  const priority=document.getElementById('newRulePriority').value;
+  
+  if(!name){
+    showToast('Please enter a rule name','warn');
+    return;
+  }
+  
+  showToast(`Rule "${name}" created successfully!`,'success');
+}
+
+/* ═══ AD BLOCKER DETECTION INTERACTIONS ═══ */
+document.addEventListener('click',e=>{
+  const editMsg=e.target.closest('.card-action');
+  if(editMsg&&editMsg.textContent.includes('Edit')){
+    showToast('Opening message editor…','info');
+  }
+  const toggler=e.target.closest('.toggler');
+  if(toggler){
+    const sr=toggler.closest('.sr');
+    if(!sr)return;
+    const title=sr.querySelector('.sr-title')?.textContent||'';
+    if(title.includes('Detection')||title.includes('Warning')||title.includes('Block')){
+      const state=toggler.classList.contains('on');
+      showToast(`${title} ${state?'enabled':'disabled'}`,'info');
+    }
+  }
+});
+
+document.addEventListener('change',e=>{
+  const select=e.target.closest('.sr-select');
+  if(select&&select.closest('#sec-adblocker')){
+    showToast(`Setting updated to: ${select.value}`,'info');
+  }
+});
+
+/* ═══ POLICY COMPLIANCE INTERACTIONS ═══ */
+document.addEventListener('click',e=>{
+  const runCheck=e.target.closest('.card-action');
+  if(runCheck&&runCheck.textContent.includes('Run Check')){
+    showToast('Running compliance check…','info');
+    setTimeout(()=>{
+      showToast('✓ Compliance check complete!','success');
+    },2000);
+  }
+  const toggler=e.target.closest('.toggler');
+  if(toggler&&toggler.closest('#sec-policy')){
+    const sr=toggler.closest('.sr');
+    const title=sr?.querySelector('.sr-title')?.textContent||'Policy';
+    const state=toggler.classList.contains('on');
+    showToast(`${title} ${state?'enabled':'disabled'}`,'info');
+  }
+});
+
+/* ═══ INIT ═══ */
+buildRevenueChart();
+buildTopPlacements();
+buildPlacements();
+buildAdUnits();
+buildABTests();
+buildRules();
+buildTargeting();
+buildPolicyList();
+
+/* Make placement cards draggable */
+document.querySelectorAll('.placement-card').forEach(card=>{
+  card.draggable=true;
+});
+</script>
+</body>
+</html>
