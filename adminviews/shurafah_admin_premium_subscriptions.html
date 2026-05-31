@@ -1,0 +1,1308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shurafah Admin — Premium & Subscriptions</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#05070F;--surface:#0A0E1A;--surface2:#0F1525;--surface3:#141B2E;--surface4:#1A2238;
+  --accent:#FF6B35;--accent2:#FFB347;--blue:#4D9FFF;--green:#2ECC8F;
+  --purple:#9B6BFF;--pink:#FF4D8F;--yellow:#FFD166;--red:#FF4444;--teal:#00C9B8;
+  --text:#F0F4FF;--text2:#8A94B0;--text3:#4A5270;
+  --border:rgba(255,255,255,0.06);
+  --sidebar-w:240px;--sidebar-collapsed:62px;--topbar-h:60px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--text);min-height:100vh;display:flex;overflow-x:hidden;}
+
+/* ── SIDEBAR ── */
+.sidebar{width:var(--sidebar-w);min-height:100vh;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;top:0;left:0;z-index:100;transition:width .25s ease;overflow:hidden;}
+.sidebar.collapsed{width:var(--sidebar-collapsed);}
+.sb-logo{display:flex;align-items:center;gap:10px;padding:18px 16px 16px;border-bottom:1px solid var(--border);flex-shrink:0;min-height:var(--topbar-h);}
+.sb-logo-icon{width:32px;height:32px;border-radius:9px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.sb-logo-text{font-family:sans-serif;font-size:15px;font-weight:800;white-space:nowrap;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.sb-logo-sub{font-size:9px;color:var(--text3);white-space:nowrap;}
+.sb-nav{flex:1;overflow-y:auto;overflow-x:hidden;padding:10px 0;scrollbar-width:none;}
+.sb-nav::-webkit-scrollbar{display:none;}
+.sb-group-label{font-size:9px;font-family:sans-serif;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.6px;padding:10px 16px 5px;white-space:nowrap;transition:opacity .2s;}
+.sidebar.collapsed .sb-group-label{opacity:0;}
+.sb-item{display:flex;align-items:center;gap:10px;padding:9px 16px;cursor:pointer;transition:background .15s;position:relative;white-space:nowrap;text-decoration:none;color:var(--text2);}
+.sb-item:hover{background:var(--surface2);color:var(--text);}
+.sb-item.active{background:rgba(255,209,102,.08);color:var(--yellow);border-right:2px solid var(--yellow);}
+.sb-item.active .sb-icon svg{stroke:var(--yellow);}
+.sb-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.sb-item.active .sb-icon{background:rgba(255,209,102,.1);}
+.sb-icon svg{width:15px;height:15px;fill:none;stroke:var(--text3);stroke-width:2;transition:stroke .15s;}
+.sb-item:hover .sb-icon svg{stroke:var(--text);}
+.sb-label{font-size:12px;font-weight:500;white-space:nowrap;overflow:hidden;transition:opacity .2s;}
+.sidebar.collapsed .sb-label{opacity:0;pointer-events:none;}
+.sb-badge{margin-left:auto;background:var(--accent);border-radius:50px;padding:1px 7px;font-size:9px;font-weight:700;color:white;font-family:sans-serif;white-space:nowrap;flex-shrink:0;transition:opacity .2s;}
+.sidebar.collapsed .sb-badge{opacity:0;}
+.sb-item::after{content:attr(data-tip);position:absolute;left:calc(var(--sidebar-collapsed) + 8px);top:50%;transform:translateY(-50%);background:var(--surface3);border:1px solid var(--border);border-radius:8px;padding:5px 10px;font-size:11px;color:var(--text);white-space:nowrap;pointer-events:none;opacity:0;transition:opacity .15s;z-index:200;box-shadow:0 4px 16px rgba(0,0,0,.4);}
+.sidebar.collapsed .sb-item:hover::after{opacity:1;}
+.sb-footer{padding:12px 16px;border-top:1px solid var(--border);display:flex;align-items:center;gap:10px;flex-shrink:0;}
+.sb-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--purple),var(--blue));display:flex;align-items:center;justify-content:center;font-size:12px;font-family:sans-serif;font-weight:700;flex-shrink:0;}
+.sb-user-name{font-size:12px;font-weight:600;white-space:nowrap;transition:opacity .2s;}
+.sb-user-role{font-size:10px;color:var(--text3);white-space:nowrap;transition:opacity .2s;}
+.sidebar.collapsed .sb-user-name,.sidebar.collapsed .sb-user-role{opacity:0;}
+
+/* ── MAIN ── */
+.main{margin-left:var(--sidebar-w);flex:1;display:flex;flex-direction:column;min-height:100vh;transition:margin-left .25s ease;}
+.main.sidebar-collapsed{margin-left:var(--sidebar-collapsed);}
+
+/* ── TOPBAR ── */
+.topbar{height:var(--topbar-h);background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:14px;padding:0 24px;position:sticky;top:0;z-index:50;flex-shrink:0;}
+.topbar-toggle{width:32px;height:32px;border-radius:8px;background:var(--surface2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;}
+.topbar-toggle svg{width:14px;height:14px;fill:none;stroke:var(--text2);stroke-width:2;}
+.topbar-breadcrumb{font-size:12px;color:var(--text3);display:flex;align-items:center;gap:6px;}
+.topbar-right{display:flex;align-items:center;gap:10px;margin-left:auto;}
+.tb-icon-btn{width:34px;height:34px;border-radius:9px;background:var(--surface2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;transition:border-color .15s;}
+.tb-icon-btn:hover{border-color:rgba(255,107,53,.3);}
+.tb-icon-btn svg{width:15px;height:15px;fill:none;stroke:var(--text2);stroke-width:2;}
+.tb-notif-dot{position:absolute;top:6px;right:6px;width:6px;height:6px;background:var(--accent);border-radius:50%;border:1.5px solid var(--surface);}
+.tb-avatar{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-family:sans-serif;font-size:12px;font-weight:700;cursor:pointer;}
+
+/* ── CONTENT ── */
+.content{flex:1;padding:24px;overflow-y:auto;}
+.page-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:22px;flex-wrap:wrap;gap:12px;}
+.page-title{font-family:sans-serif;font-size:22px;font-weight:800;letter-spacing:-.4px;margin-bottom:3px;}
+.page-subtitle{font-size:12px;color:var(--text2);}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:9px;cursor:pointer;font-family:sans-serif;font-size:11px;font-weight:700;transition:all .15s;border:1px solid transparent;}
+.btn-primary{background:var(--accent);color:white;box-shadow:0 3px 12px rgba(255,107,53,.3);}
+.btn-primary:hover{box-shadow:0 5px 18px rgba(255,107,53,.45);}
+.btn-outline{background:transparent;border-color:var(--border);color:var(--text2);}
+.btn-outline:hover{border-color:rgba(255,107,53,.3);color:var(--text);}
+.btn-yellow{background:rgba(255,209,102,.12);border-color:rgba(255,209,102,.28);color:var(--yellow);}
+.btn-yellow:hover{background:rgba(255,209,102,.2);}
+.btn-green{background:rgba(46,204,143,.12);border-color:rgba(46,204,143,.28);color:var(--green);}
+.btn-teal{background:rgba(0,201,184,.12);border-color:rgba(0,201,184,.28);color:var(--teal);}
+.btn-danger{background:rgba(255,68,68,.12);border-color:rgba(255,68,68,.28);color:var(--red);}
+.btn-sm{padding:5px 12px;font-size:10px;}
+.btn svg{width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:2;}
+
+/* ── STAT STRIP ── */
+.stat-strip{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:22px;}
+.ss-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:10px;animation:fadeUp .4s ease both;}
+.ss-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.ss-icon svg{width:16px;height:16px;fill:none;stroke:white;stroke-width:2;}
+.ss-val{font-family:sans-serif;font-size:18px;font-weight:800;line-height:1;}
+.ss-label{font-size:10px;color:var(--text3);margin-top:2px;}
+.ss-delta{font-size:9px;margin-top:3px;font-family:sans-serif;font-weight:700;}
+.ss-delta.up{color:var(--green);}
+.ss-delta.down{color:var(--red);}
+
+/* ── REVENUE OVERVIEW ── */
+.revenue-row{display:grid;grid-template-columns:1.4fr 1fr;gap:20px;margin-bottom:22px;}
+.rev-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:20px;animation:fadeUp .4s ease both;}
+.rev-title{font-family:sans-serif;font-size:13px;font-weight:700;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;}
+.rev-title-icon{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;}
+.rev-title-icon svg{width:13px;height:13px;fill:none;stroke:white;stroke-width:2;}
+
+/* SVG bar chart */
+.bar-chart{display:flex;align-items:flex-end;gap:6px;height:80px;margin-bottom:8px;}
+.bc-bar-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;}
+.bc-bar{width:100%;border-radius:4px 4px 0 0;transition:height .3s;}
+.bc-label{font-size:8px;color:var(--text3);font-family:sans-serif;text-align:center;}
+.bc-val{font-size:8px;font-family:sans-serif;font-weight:700;text-align:center;}
+
+/* Plan breakdown */
+.plan-breakdown{display:flex;flex-direction:column;gap:10px;}
+.pb-row{display:flex;align-items:center;gap:10px;}
+.pb-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.pb-name{font-size:11px;flex:1;}
+.pb-bar-bg{flex:2;height:5px;background:var(--surface3);border-radius:3px;overflow:hidden;}
+.pb-fill{height:100%;border-radius:3px;}
+.pb-val{font-family:sans-serif;font-size:11px;font-weight:700;flex-shrink:0;min-width:48px;text-align:right;}
+.pb-count{font-size:10px;color:var(--text3);flex-shrink:0;min-width:48px;text-align:right;}
+
+/* ── TABS ── */
+.tab-bar{display:flex;gap:4px;background:var(--surface);border:1px solid var(--border);border-radius:11px;padding:4px;margin-bottom:18px;width:fit-content;flex-wrap:wrap;}
+.tab-btn{padding:7px 18px;border-radius:8px;font-family:sans-serif;font-size:11px;font-weight:700;cursor:pointer;color:var(--text3);transition:all .15s;white-space:nowrap;}
+.tab-btn.active{background:var(--yellow);color:#1A0A00;box-shadow:0 2px 8px rgba(255,209,102,.3);}
+
+/* ── WALLET / VIRTUAL ACCOUNT BANNER ── */
+.wallet-banner{background:linear-gradient(135deg,#0A1A0A,#061806,#001A14);border:1px solid rgba(0,201,184,.2);border-radius:16px;padding:20px 22px;margin-bottom:22px;display:flex;align-items:center;gap:20px;position:relative;overflow:hidden;animation:fadeUp .4s ease both;}
+.wallet-banner::before{content:'';position:absolute;top:-40px;right:-40px;width:200px;height:200px;background:radial-gradient(circle,rgba(0,201,184,.12) 0%,transparent 70%);}
+.wallet-banner::after{content:'';position:absolute;bottom:-30px;left:200px;width:140px;height:140px;background:radial-gradient(circle,rgba(46,204,143,.08) 0%,transparent 70%);}
+.wb-icon{font-size:36px;flex-shrink:0;}
+.wb-info{flex:1;}
+.wb-title{font-family:sans-serif;font-size:15px;font-weight:800;color:var(--teal);margin-bottom:3px;}
+.wb-sub{font-size:11px;color:var(--text2);line-height:1.6;margin-bottom:10px;}
+.wb-features{display:flex;gap:10px;flex-wrap:wrap;}
+.wb-feat{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--teal);font-family:sans-serif;font-weight:700;}
+.wb-feat svg{width:11px;height:11px;fill:none;stroke:var(--teal);stroke-width:2;}
+.wb-provider{flex-shrink:0;text-align:center;}
+.wb-provider-logo{background:rgba(255,255,255,.05);border:1px solid rgba(0,201,184,.2);border-radius:12px;padding:10px 16px;font-family:sans-serif;font-size:13px;font-weight:800;color:var(--teal);margin-bottom:4px;}
+.wb-provider-label{font-size:9px;color:var(--text3);}
+
+/* ── TOOLBAR ── */
+.toolbar{display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap;}
+.search-wrap{flex:1;min-width:200px;position:relative;}
+.search-input{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:9px 14px 9px 38px;font-size:12px;color:var(--text);font-family:'DM Sans',sans-serif;outline:none;transition:border-color .2s;}
+.search-input:focus{border-color:rgba(255,107,53,.35);}
+.search-input::placeholder{color:var(--text3);}
+.search-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);}
+.search-icon svg{width:14px;height:14px;fill:none;stroke:var(--text3);stroke-width:2;}
+.filter-select{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:9px 14px;font-size:11px;color:var(--text2);font-family:'DM Sans',sans-serif;outline:none;cursor:pointer;}
+.filter-select option{background:var(--surface2);}
+
+/* ── SUBSCRIBER TABLE ── */
+.table-wrap{background:var(--surface);border:1px solid var(--border);border-radius:16px;overflow:hidden;animation:fadeUp .4s ease both;}
+.table-header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--border);}
+.table-title{font-family:sans-serif;font-size:13px;font-weight:700;display:flex;align-items:center;gap:8px;}
+table{width:100%;border-collapse:collapse;}
+thead th{padding:10px 16px;text-align:left;font-size:10px;font-family:sans-serif;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.4px;border-bottom:1px solid var(--border);white-space:nowrap;}
+tbody tr{border-bottom:1px solid var(--border);transition:background .15s;cursor:pointer;}
+tbody tr:last-child{border-bottom:none;}
+tbody tr:hover{background:var(--surface2);}
+td{padding:11px 16px;font-size:12px;vertical-align:middle;}
+.td-user{display:flex;align-items:center;gap:10px;}
+.td-avatar{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-family:sans-serif;font-weight:700;flex-shrink:0;}
+.td-name{font-family:sans-serif;font-size:12px;font-weight:700;}
+.td-phone{font-size:10px;color:var(--text3);}
+
+/* Plan badges */
+.plan-badge{font-size:9px;font-family:sans-serif;font-weight:700;padding:3px 9px;border-radius:50px;white-space:nowrap;}
+.plan-monthly{background:rgba(77,159,255,.15);color:var(--blue);border:1px solid rgba(77,159,255,.3);}
+.plan-yearly{background:rgba(255,209,102,.12);color:var(--yellow);border:1px solid rgba(255,209,102,.28);}
+.plan-lifetime{background:rgba(155,107,255,.15);color:var(--purple);border:1px solid rgba(155,107,255,.3);}
+.plan-free{background:var(--surface3);color:var(--text3);border:1px solid var(--border);}
+
+/* Status badges */
+.status-badge{font-size:9px;font-family:sans-serif;font-weight:700;padding:3px 9px;border-radius:50px;}
+.status-active{background:rgba(46,204,143,.12);color:var(--green);border:1px solid rgba(46,204,143,.28);}
+.status-expired{background:rgba(255,68,68,.1);color:var(--red);border:1px solid rgba(255,68,68,.25);}
+.status-cancelled{background:rgba(255,107,53,.1);color:var(--accent);border:1px solid rgba(255,107,53,.25);}
+.status-trial{background:rgba(0,201,184,.1);color:var(--teal);border:1px solid rgba(0,201,184,.25);}
+
+/* Wallet cell */
+.wallet-cell{display:flex;flex-direction:column;gap:2px;}
+.wallet-acct{font-family:sans-serif;font-size:11px;font-weight:700;color:var(--teal);}
+.wallet-bank{font-size:9px;color:var(--text3);}
+.wallet-bal{font-family:sans-serif;font-size:11px;font-weight:800;color:var(--green);}
+
+/* Action cells */
+.td-actions{display:flex;gap:4px;}
+.td-btn{padding:4px 9px;border-radius:6px;font-size:9px;font-family:sans-serif;font-weight:700;cursor:pointer;border:1px solid var(--border);background:transparent;transition:all .15s;white-space:nowrap;}
+.td-btn:hover{background:var(--surface3);}
+.td-btn.extend{color:var(--green);border-color:rgba(46,204,143,.25);}
+.td-btn.extend:hover{background:rgba(46,204,143,.1);}
+.td-btn.cancel{color:var(--red);border-color:rgba(255,68,68,.25);}
+.td-btn.cancel:hover{background:rgba(255,68,68,.1);}
+.td-btn.wallet{color:var(--teal);border-color:rgba(0,201,184,.25);}
+.td-btn.wallet:hover{background:rgba(0,201,184,.1);}
+
+/* ── WALLET DETAIL PANEL (slide-in) ── */
+.side-panel{position:fixed;top:0;right:-440px;width:440px;height:100vh;background:var(--surface);border-left:1px solid var(--border);z-index:200;transition:right .3s ease;overflow-y:auto;display:flex;flex-direction:column;}
+.side-panel.open{right:0;}
+.sp-header{display:flex;align-items:center;justify-content:space-between;padding:20px 22px;border-bottom:1px solid var(--border);flex-shrink:0;position:sticky;top:0;background:var(--surface);z-index:1;}
+.sp-title{font-family:sans-serif;font-size:15px;font-weight:800;}
+.sp-close{width:32px;height:32px;border-radius:8px;background:var(--surface2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;}
+.sp-close svg{width:14px;height:14px;fill:none;stroke:var(--text2);stroke-width:2;}
+.sp-body{padding:22px;flex:1;}
+
+/* Virtual account card */
+.va-card{background:linear-gradient(135deg,#061810,#001A18);border:1px solid rgba(0,201,184,.25);border-radius:16px;padding:18px 20px;margin-bottom:18px;position:relative;overflow:hidden;}
+.va-card::before{content:'';position:absolute;top:-30px;right:-30px;width:120px;height:120px;background:radial-gradient(circle,rgba(0,201,184,.15) 0%,transparent 70%);}
+.va-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.va-bank{font-family:sans-serif;font-size:13px;font-weight:800;color:var(--teal);}
+.va-type{font-size:9px;font-family:sans-serif;font-weight:700;background:rgba(0,201,184,.12);border:1px solid rgba(0,201,184,.25);border-radius:50px;padding:2px 8px;color:var(--teal);}
+.va-acct-label{font-size:10px;color:var(--text3);margin-bottom:4px;}
+.va-acct-num{font-family:sans-serif;font-size:22px;font-weight:800;letter-spacing:2px;color:var(--text);margin-bottom:3px;}
+.va-acct-name{font-size:11px;color:var(--text2);margin-bottom:14px;}
+.va-balance-row{display:flex;align-items:center;justify-content:space-between;}
+.va-bal-label{font-size:10px;color:var(--text3);}
+.va-bal-amount{font-family:sans-serif;font-size:18px;font-weight:800;color:var(--green);}
+.va-copy-btn{display:flex;align-items:center;gap:4px;padding:5px 12px;border-radius:7px;background:rgba(0,201,184,.1);border:1px solid rgba(0,201,184,.25);color:var(--teal);font-size:9px;font-family:sans-serif;font-weight:700;cursor:pointer;}
+.va-copy-btn svg{width:10px;height:10px;fill:none;stroke:currentColor;stroke-width:2;}
+
+/* Wallet actions */
+.wallet-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:18px;}
+.wa-btn{padding:10px;border-radius:10px;text-align:center;cursor:pointer;border:1px solid var(--border);font-family:sans-serif;font-size:10px;font-weight:700;transition:all .15s;}
+.wa-btn:hover{background:var(--surface2);}
+.wa-btn-icon{font-size:18px;margin-bottom:4px;}
+
+/* Transaction list */
+.tx-list{display:flex;flex-direction:column;gap:6px;}
+.tx-row{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--surface2);border-radius:10px;border:1px solid var(--border);}
+.tx-icon{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.tx-icon svg{width:14px;height:14px;fill:none;stroke:white;stroke-width:2;}
+.tx-info{flex:1;min-width:0;}
+.tx-desc{font-family:sans-serif;font-size:11px;font-weight:700;margin-bottom:1px;}
+.tx-meta{font-size:9px;color:var(--text3);}
+.tx-amount{font-family:sans-serif;font-size:12px;font-weight:800;flex-shrink:0;}
+.tx-amount.credit{color:var(--green);}
+.tx-amount.debit{color:var(--red);}
+
+/* Subscription info */
+.sub-info-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:18px;}
+.sig-item{background:var(--surface2);border-radius:10px;padding:10px 12px;border:1px solid var(--border);}
+.sig-label{font-size:9px;color:var(--text3);font-family:sans-serif;text-transform:uppercase;letter-spacing:.3px;margin-bottom:3px;}
+.sig-value{font-family:sans-serif;font-size:12px;font-weight:700;}
+
+/* ── PLAN CARDS (pricing section) ── */
+.plans-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:22px;}
+.plan-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:20px;position:relative;overflow:hidden;animation:fadeUp .4s ease both;cursor:pointer;transition:border-color .15s,transform .15s;}
+.plan-card:hover{transform:translateY(-2px);}
+.plan-card.popular{border-color:rgba(255,209,102,.3);background:linear-gradient(135deg,rgba(255,209,102,.03),var(--surface));}
+.popular-badge{position:absolute;top:12px;right:12px;background:var(--yellow);color:#1A0A00;font-family:sans-serif;font-size:8px;font-weight:800;border-radius:50px;padding:2px 8px;text-transform:uppercase;}
+.plan-name{font-family:sans-serif;font-size:14px;font-weight:800;margin-bottom:4px;}
+.plan-price{font-family:sans-serif;font-size:24px;font-weight:800;margin-bottom:2px;}
+.plan-period{font-size:10px;color:var(--text3);margin-bottom:12px;}
+.plan-features{display:flex;flex-direction:column;gap:5px;margin-bottom:14px;}
+.pf-row{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text2);}
+.pf-row svg{width:11px;height:11px;fill:none;stroke:var(--green);stroke-width:2;flex-shrink:0;}
+.plan-subscribers{font-size:10px;color:var(--text3);padding-top:10px;border-top:1px solid var(--border);}
+.plan-subscribers strong{color:var(--text);font-weight:700;}
+.plan-edit-btn{margin-top:8px;width:100%;padding:7px;border-radius:8px;text-align:center;font-family:sans-serif;font-size:10px;font-weight:700;cursor:pointer;border:1px solid var(--border);color:var(--text2);transition:all .15s;}
+.plan-edit-btn:hover{border-color:rgba(255,107,53,.3);color:var(--accent);}
+
+/* ── PAGINATION ── */
+.pagination{display:flex;align-items:center;justify-content:space-between;margin-top:16px;flex-wrap:wrap;gap:10px;}
+.page-info{font-size:11px;color:var(--text3);}
+.page-btns{display:flex;gap:4px;}
+.page-btn{width:32px;height:32px;border-radius:8px;background:var(--surface);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;font-family:sans-serif;font-size:11px;font-weight:700;color:var(--text3);transition:all .15s;}
+.page-btn:hover{border-color:rgba(255,107,53,.3);color:var(--text);}
+.page-btn.active{background:var(--accent);border-color:var(--accent);color:white;}
+.page-btn svg{width:12px;height:12px;fill:none;stroke:currentColor;stroke-width:2;}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:24px;right:24px;background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:12px 18px;font-size:12px;font-family:sans-serif;font-weight:700;color:var(--text);box-shadow:0 8px 24px rgba(0,0,0,.5);z-index:300;opacity:0;transform:translateY(10px);transition:opacity .2s,transform .2s;pointer-events:none;max-width:320px;}
+.toast.show{opacity:1;transform:translateY(0);}
+.toast.success{border-color:rgba(46,204,143,.35);}
+.toast.danger{border-color:rgba(255,68,68,.35);}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.g1{background:linear-gradient(135deg,#9B6BFF,#4D9FFF);}
+.g2{background:linear-gradient(135deg,#FF6B35,#FFB347);}
+.g3{background:linear-gradient(135deg,#FF4D8F,#FF6B35);}
+.g4{background:linear-gradient(135deg,#2ECC8F,#4D9FFF);}
+.g5{background:linear-gradient(135deg,#FFB347,#FF4D8F);}
+.g6{background:linear-gradient(135deg,#4D9FFF,#9B6BFF);}
+.g7{background:linear-gradient(135deg,#FF6B35,#FF4D8F);}
+.g8{background:linear-gradient(135deg,#2ECC8F,#9B6BFF);}
+::-webkit-scrollbar{width:4px;height:4px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--surface4);border-radius:2px;}
+
+/* ════════════════════════════════
+   MOBILE RESPONSIVENESS
+════════════════════════════════ */
+@media (max-width:768px) {
+  .main{margin-left:var(--sidebar-collapsed);}
+  .topbar{padding:0 16px;gap:10px;}
+  .topbar-toggle{width:28px;height:28px;}
+  .topbar-toggle svg{width:14px;height:14px;}
+  .topbar-breadcrumb{font-size:10px;}
+  .topbar-right{gap:8px;}
+  .tb-icon-btn{width:28px;height:28px;}
+  .tb-icon-btn svg{width:12px;height:12px;}
+  .tb-avatar{width:28px;height:28px;font-size:10px;}
+  
+  .content{padding:14px;}
+  .page-header{margin-bottom:16px;gap:10px;}
+  .page-title{font-size:14px;}
+  .page-subtitle{font-size:10px;}
+  
+  .stat-strip{gap:8px;}
+  .ss-card{padding:12px;}
+  .ss-icon{width:32px;height:32px;}
+  .ss-icon svg{width:14px;height:14px;}
+  .ss-val{font-size:16px;}
+  .ss-label{font-size:9px;}
+  .ss-delta{font-size:8px;}
+  
+  .tab-bar{gap:4px;}
+  .tab-btn{padding:6px 12px;font-size:10px;}
+  
+  .toolbar{gap:8px;}
+  .search-wrap{flex:1;}
+  .search-input{padding:8px 12px;font-size:11px;}
+  .filter-select{padding:6px 10px;font-size:10px;}
+  
+  .table-wrap{overflow-x:auto;}
+  table{font-size:10px;}
+  thead th{padding:8px 10px;font-size:8px;}
+  tbody td{padding:8px 10px;}
+  .td-avatar{width:28px;height:28px;font-size:10px;}
+  .td-name{font-size:10px;}
+  .td-phone{font-size:8px;}
+  .plan-badge{font-size:8px;}
+  .status-badge{font-size:8px;}
+  .wallet-bal{font-size:10px;}
+  .td-btn{padding:3px 8px;font-size:8px;}
+  
+  .plans-grid{grid-template-columns:1fr;}
+  .plan-card{padding:14px;}
+  .plan-name{font-size:12px;}
+  .plan-price{font-size:18px;}
+  
+  .side-panel{width:360px;right:-360px;}
+  .sp-header{padding:14px 16px;}
+  .sp-title{font-size:13px;}
+  .sp-body{padding:14px;}
+  
+  .pagination{gap:8px;}
+  .page-info{font-size:10px;}
+  .page-btn{width:28px;height:28px;font-size:10px;}
+  
+  .toast{bottom:16px;right:16px;padding:10px 14px;font-size:11px;}
+}
+
+@media (max-width:480px) {
+  .main{margin-left:var(--sidebar-collapsed);}
+  .topbar{padding:0 12px;height:56px;}
+  .topbar-toggle{width:24px;height:24px;}
+  .topbar-toggle svg{width:12px;height:12px;}
+  .topbar-breadcrumb{font-size:9px;display:none;}
+  .topbar-right{gap:6px;}
+  .tb-icon-btn{width:24px;height:24px;}
+  .tb-icon-btn svg{width:11px;height:11px;}
+  .tb-avatar{width:24px;height:24px;font-size:9px;}
+  
+  .content{padding:10px;}
+  .page-header{margin-bottom:12px;gap:8px;flex-direction:column;}
+  .page-title{font-size:12px;}
+  .page-subtitle{font-size:9px;display:none;}
+  
+  .stat-strip{grid-template-columns:repeat(2,1fr);gap:6px;}
+  .ss-card{padding:10px;}
+  .ss-icon{width:28px;height:28px;}
+  .ss-icon svg{width:12px;height:12px;}
+  .ss-val{font-size:14px;}
+  .ss-label{font-size:8px;}
+  .ss-delta{font-size:7px;}
+  
+  .tab-bar{gap:3px;overflow-x:auto;}
+  .tab-btn{padding:5px 10px;font-size:9px;}
+  
+  .toolbar{gap:6px;flex-direction:column;}
+  .search-wrap{flex:1;}
+  .search-input{padding:7px 10px;font-size:10px;}
+  .filter-select{padding:5px 8px;font-size:9px;}
+  
+  .table-wrap{overflow-x:auto;}
+  table{font-size:9px;}
+  thead th{padding:6px 8px;font-size:7px;}
+  tbody td{padding:6px 8px;}
+  .td-avatar{width:24px;height:24px;font-size:9px;}
+  .td-name{font-size:9px;}
+  .td-phone{font-size:7px;}
+  .plan-badge{font-size:7px;}
+  .status-badge{font-size:7px;}
+  .wallet-bal{font-size:9px;}
+  .td-btn{padding:2px 6px;font-size:7px;}
+  
+  .plans-grid{grid-template-columns:1fr;}
+  .plan-card{padding:12px;}
+  .plan-name{font-size:11px;}
+  .plan-price{font-size:16px;}
+  
+  .side-panel{width:100%;right:-100%;}
+  .sp-header{padding:12px 14px;}
+  .sp-title{font-size:12px;}
+  .sp-body{padding:12px;}
+  
+  .pagination{gap:6px;flex-wrap:wrap;}
+  .page-info{font-size:9px;}
+  .page-btn{width:24px;height:24px;font-size:9px;}
+  
+  .toast{bottom:12px;right:12px;padding:8px 12px;font-size:10px;}
+}
+</style>
+</head>
+<body>
+
+<script src="admin-sidebar.js"></script>
+<script src="theme-manager.js"></script>
+
+<!-- ════ MAIN ════ -->
+<div class="main" id="mainArea">
+  <header class="topbar">
+    <div class="topbar-toggle" id="sidebarToggle">
+      <svg viewBox="0 0 24 24"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </div>
+    <div class="topbar-breadcrumb">
+      <span>Admin</span><span style="color:var(--text3);margin:0 6px;">/</span>
+      <span style="color:var(--yellow);">Premium &amp; Subscriptions</span>
+    </div>
+    <div class="topbar-right">
+      <div class="tb-icon-btn"><svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><div class="tb-notif-dot"></div></div>
+      <div class="tb-icon-btn"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></div>
+      <div class="tb-avatar">SA</div>
+    </div>
+  </header>
+
+  <main class="content">
+
+    <div class="page-header">
+      <div>
+        <div class="page-title">Premium &amp; Subscriptions</div>
+        <div class="page-subtitle">Manage plans, wallet top-ups, virtual accounts (Moniepoint / Wema Bank), and subscriber records</div>
+      </div>
+      <div style="display:flex;gap:8px;">
+        <div class="btn btn-teal" onclick="openVASettings()">
+          <svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+          VA Settings
+        </div>
+        <div class="btn btn-primary" onclick="grantPremiumModal()">
+          <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          Grant Premium
+        </div>
+      </div>
+    </div>
+
+    <!-- Stat strip -->
+    <div class="stat-strip">
+      <div class="ss-card" style="animation-delay:0s;">
+        <div class="ss-icon" style="background:rgba(255,209,102,.15);"><svg viewBox="0 0 24 24" style="stroke:var(--yellow);"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
+        <div><div class="ss-val" style="color:var(--yellow);">1,204</div><div class="ss-label">Active Subscribers</div><div class="ss-delta up">▲ +48 this week</div></div>
+      </div>
+      <div class="ss-card" style="animation-delay:.04s;">
+        <div class="ss-icon" style="background:rgba(46,204,143,.12);"><svg viewBox="0 0 24 24" style="stroke:var(--green);"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
+        <div><div class="ss-val" style="color:var(--green);">₦2.84M</div><div class="ss-label">Monthly Revenue</div><div class="ss-delta up">▲ +12.4%</div></div>
+      </div>
+      <div class="ss-card" style="animation-delay:.08s;">
+        <div class="ss-icon" style="background:rgba(0,201,184,.1);"><svg viewBox="0 0 24 24" style="stroke:var(--teal);"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg></div>
+        <div><div class="ss-val" style="color:var(--teal);">1,204</div><div class="ss-label">Virtual Accounts</div><div class="ss-delta up">▲ Active</div></div>
+      </div>
+      <div class="ss-card" style="animation-delay:.12s;">
+        <div class="ss-icon" style="background:rgba(255,107,53,.15);"><svg viewBox="0 0 24 24" style="stroke:var(--accent);"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/></svg></div>
+        <div><div class="ss-val" style="color:var(--accent);">89</div><div class="ss-label">Expiring This Week</div><div class="ss-delta down">⚠ Needs attention</div></div>
+      </div>
+      <div class="ss-card" style="animation-delay:.16s;">
+        <div class="ss-icon" style="background:rgba(255,68,68,.1);"><svg viewBox="0 0 24 24" style="stroke:var(--red);"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg></div>
+        <div><div class="ss-val" style="color:var(--red);">37</div><div class="ss-label">Cancelled This Month</div><div class="ss-delta down">▼ Churn rate: 3.1%</div></div>
+      </div>
+    </div>
+
+    <!-- Wallet system banner -->
+    <div class="wallet-banner">
+      <div class="wb-icon">🏦</div>
+      <div class="wb-info">
+        <div class="wb-title">Dedicated Virtual Account Wallet System</div>
+        <div class="wb-sub">Every registered user receives a unique virtual account number on registration. Users fund their wallet via bank transfer to this account. Premium subscriptions are auto-debited from the wallet balance. Powered by <strong style="color:var(--teal);">Moniepoint</strong> (primary) with <strong style="color:var(--teal);">Wema Bank ALAT</strong> as fallback.</div>
+        <div class="wb-features">
+          <div class="wb-feat"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Auto-generated on registration via API</div>
+          <div class="wb-feat"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Instant credit on NIBSS inflow</div>
+          <div class="wb-feat"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Auto-debit on subscription renewal</div>
+          <div class="wb-feat"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Low-balance renewal reminders via Termii SMS</div>
+          <div class="wb-feat"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Admin manual credit / refund controls</div>
+        </div>
+      </div>
+      <div class="wb-provider">
+        <div class="wb-provider-logo">Moniepoint</div>
+        <div class="wb-provider-label">Primary Provider</div>
+        <div style="margin-top:8px;">
+          <div class="wb-provider-logo" style="background:rgba(255,255,255,.03);color:var(--text3);border-color:rgba(255,255,255,.08);font-size:11px;">Wema ALAT</div>
+          <div class="wb-provider-label">Fallback Provider</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Plans overview -->
+    <div style="font-family:sans-serif;font-size:13px;font-weight:700;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;">
+      <span>Subscription Plans (Downloads per Month)</span>
+      <div class="btn btn-sm btn-outline" onclick="openPlanEditor()">
+        <svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        Edit Plans
+      </div>
+    </div>
+    <div class="plans-grid">
+      <div class="plan-card" style="animation-delay:.05s;">
+        <div class="plan-name">Basic</div>
+        <div class="plan-price" style="color:var(--blue);">₦500</div>
+        <div class="plan-period">per month</div>
+        <div class="plan-features">
+          <div class="pf-row"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>10 downloads/month</div>
+          <div class="pf-row"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>320 kbps quality</div>
+          <div class="pf-row"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Offline listening</div>
+          <div class="pf-row"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Ad-free</div>
+        </div>
+        <div class="plan-subscribers">Active subscribers: <strong id="basic-count">680</strong></div>
+        <div class="plan-edit-btn" onclick="editPlanModal('basic')">Edit Plan</div>
+      </div>
+      <div class="plan-card popular" style="animation-delay:.1s;">
+        <div class="popular-badge">⭐ Popular</div>
+        <div class="plan-name">Premium</div>
+        <div class="plan-price" style="color:var(--yellow);">₦2,000</div>
+        <div class="plan-period">per month</div>
+        <div class="plan-features">
+          <div class="pf-row"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>100 downloads/month</div>
+          <div class="pf-row"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>320 kbps quality</div>
+          <div class="pf-row"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Offline listening</div>
+          <div class="pf-row"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Priority support</div>
+        </div>
+        <div class="plan-subscribers">Active subscribers: <strong id="premium-count">484</strong></div>
+        <div class="plan-edit-btn" onclick="editPlanModal('premium')">Edit Plan</div>
+      </div>
+      <div class="plan-card" style="animation-delay:.15s;">
+        <div class="plan-name">Unlimited</div>
+        <div class="plan-price" style="color:var(--purple);">₦5,000</div>
+        <div class="plan-period">per month</div>
+        <div class="plan-features">
+          <div class="pf-row"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Unlimited downloads</div>
+          <div class="pf-row"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>320 kbps quality</div>
+          <div class="pf-row"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Offline listening</div>
+          <div class="pf-row"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>VIP support</div>
+        </div>
+        <div class="plan-subscribers">Active subscribers: <strong id="unlimited-count">40</strong></div>
+        <div class="plan-edit-btn" onclick="editPlanModal('unlimited')">Edit Plan</div>
+      </div>
+    </div>
+
+    <!-- Revenue + Plan breakdown -->
+    <div class="revenue-row">
+      <div class="rev-card" style="animation-delay:.1s;">
+        <div class="rev-title">
+          <span style="display:flex;align-items:center;gap:8px;">
+            <div class="rev-title-icon" style="background:rgba(46,204,143,.15);"><svg viewBox="0 0 24 24" style="stroke:var(--green);"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
+            Monthly Revenue (₦)
+          </span>
+          <span style="font-size:10px;color:var(--text3);font-weight:500;">Last 7 months</span>
+        </div>
+        <div class="bar-chart" id="revenueChart"></div>
+        <div style="font-size:10px;color:var(--text3);text-align:center;">Wallet top-up inflows · auto-debit renewals</div>
+      </div>
+      <div class="rev-card" style="animation-delay:.15s;">
+        <div class="rev-title">
+          <span style="display:flex;align-items:center;gap:8px;">
+            <div class="rev-title-icon" style="background:rgba(255,209,102,.12);"><svg viewBox="0 0 24 24" style="stroke:var(--yellow);"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
+            Plan Breakdown
+          </span>
+        </div>
+        <div class="plan-breakdown" id="planBreakdown"></div>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tab-bar" id="mainTabs">
+      <div class="tab-btn active" data-tab="subscribers">👥 Subscribers</div>
+      <div class="tab-btn" data-tab="wallets">💳 Wallets</div>
+      <div class="tab-btn" data-tab="transactions">📋 Transactions</div>
+      <div class="tab-btn" data-tab="expiring">⚠ Expiring</div>
+    </div>
+
+    <!-- Toolbar -->
+    <div class="toolbar">
+      <div class="search-wrap">
+        <div class="search-icon"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div>
+        <input class="search-input" id="searchInput" type="text" placeholder="Search by name, phone, or account number…">
+      </div>
+      <select class="filter-select" id="planFilter">
+        <option value="all">All Plans</option>
+        <option value="basic">Basic</option>
+        <option value="premium">Premium</option>
+        <option value="unlimited">Unlimited</option>
+        <option value="free">Free</option>
+      </select>
+      <select class="filter-select" id="statusFilter">
+        <option value="all">All Statuses</option>
+        <option value="active">Active</option>
+        <option value="expired">Expired</option>
+        <option value="cancelled">Cancelled</option>
+        <option value="trial">Trial</option>
+      </select>
+    </div>
+
+    <!-- Table -->
+    <div class="table-wrap">
+      <div class="table-header">
+        <div class="table-title">
+          <div style="width:28px;height:28px;border-radius:8px;background:rgba(255,209,102,.12);display:flex;align-items:center;justify-content:center;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--yellow)" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+          Subscriber Records
+          <span id="tableCount" style="font-size:10px;background:var(--surface3);border-radius:50px;padding:1px 8px;color:var(--text3);font-family:sans-serif;font-weight:700;"></span>
+        </div>
+        <div style="display:flex;gap:6px;">
+          <div class="btn btn-sm btn-outline" onclick="exportCSV()">
+            <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Export CSV
+          </div>
+        </div>
+      </div>
+      <div style="overflow-x:auto;">
+        <table>
+          <thead>
+            <tr>
+              <th>User</th>
+              <th>Plan</th>
+              <th>Status</th>
+              <th>Virtual Account</th>
+              <th>Wallet Balance</th>
+              <th>Renewal Date</th>
+              <th>Total Paid</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="subTableBody"></tbody>
+        </table>
+      </div>
+      <div style="padding:14px 20px;">
+        <div class="pagination">
+          <div class="page-info" id="pageInfo"></div>
+          <div class="page-btns" id="pageBtns"></div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- ════ WALLET SIDE PANEL ════ -->
+<div class="side-panel" id="sidePanel">
+  <div class="sp-header">
+    <div class="sp-title" id="spTitle">Wallet Details</div>
+    <div class="sp-close" onclick="closePanel()"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>
+  </div>
+  <div class="sp-body" id="spBody"></div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+/* ── Sidebar ── */
+var sidebar = document.getElementById('sidebar');
+var mainArea = document.getElementById('mainArea');
+var sidebarCollapsed = false;
+document.getElementById('sidebarToggle').addEventListener('click', function() {
+  sidebarCollapsed = !sidebarCollapsed;
+  sidebar.classList.toggle('collapsed', sidebarCollapsed);
+  mainArea.classList.toggle('sidebar-collapsed', sidebarCollapsed);
+});
+
+/* ── Toast ── */
+var toastEl = document.getElementById('toast');
+var toastTimer = null;
+function showToast(msg, type) {
+  toastEl.textContent = msg;
+  toastEl.className = 'toast show' + (type ? ' ' + type : '');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function(){ toastEl.classList.remove('show'); }, 2800);
+}
+
+/* ── Side panel ── */
+function openPanel(user) {
+  document.getElementById('spTitle').textContent = user.name + ' — Wallet';
+  document.getElementById('spBody').innerHTML = buildWalletPanel(user);
+  document.getElementById('sidePanel').classList.add('open');
+}
+function closePanel() {
+  document.getElementById('sidePanel').classList.remove('open');
+}
+
+/* ─────────────────────────────────────────
+   DATA
+   Laravel:
+     var SUBSCRIBERS = {!! json_encode($subscribers) !!};
+     var PLAN_STATS  = {!! json_encode($planStats) !!};
+
+   Virtual accounts are created via Moniepoint API on user registration:
+     POST /v1/virtual-accounts
+     { "accountName": user.name, "bvn": user.bvn, "reference": user.id }
+
+   Fallback to Wema Bank ALAT API if Moniepoint fails:
+     POST /api/v1/account/create
+     { "firstName": ..., "lastName": ..., "phone": ... }
+───────────────────────────────────────── */
+var SUBSCRIBERS = [
+  { id:1,  name:'Ahmad Musa Kano',     phone:'0812 345 6789', avatar:'AM', grad:'g1', plan:'premium',   status:'active',    vaNum:'6254727989', vaBank:'Moniepoint',  balance:3200,  renewal:'Active (Balance: ₦3,200)', totalPaid:24000, location:'Kano' },
+  { id:2,  name:'Fatima Abdullahi',    phone:'0803 456 7890', avatar:'FA', grad:'g3', plan:'basic',    status:'active',    vaNum:'6254727990', vaBank:'Moniepoint',  balance:1800,  renewal:'Active (Balance: ₦1,800)', totalPaid:2500,  location:'Abuja' },
+  { id:3,  name:'Ibrahim Khalil',      phone:'0701 234 5678', avatar:'IK', grad:'g4', plan:'unlimited', status:'active',    vaNum:'6254727991', vaBank:'Moniepoint',  balance:42000, renewal:'Active (Balance: ₦42,000)', totalPaid:60000, location:'Lagos' },
+  { id:4,  name:'Zainab Hassan',       phone:'0905 678 9012', avatar:'ZH', grad:'g5', plan:'basic',    status:'expired',   vaNum:'6254727992', vaBank:'Moniepoint',  balance:0,     renewal:'Expired (No Balance)',  totalPaid:1500,  location:'Katsina' },
+  { id:5,  name:'Yusuf Sani Sokoto',   phone:'0819 012 3456', avatar:'YS', grad:'g6', plan:'premium',   status:'active',    vaNum:'6254727993', vaBank:'Moniepoint',  balance:800,   renewal:'Active (Balance: ₦800)',  totalPaid:48000, location:'Sokoto' },
+  { id:6,  name:'Musa Umar',           phone:'0703 890 1234', avatar:'MU', grad:'g7', plan:'basic',    status:'cancelled', vaNum:'6254727994', vaBank:'Moniepoint',  balance:200,   renewal:'Cancelled',            totalPaid:3000,  location:'Kaduna' },
+  { id:7,  name:'Aisha Bello',         phone:'0806 345 6789', avatar:'AB', grad:'g8', plan:'premium',   status:'active',    vaNum:'6254727995', vaBank:'Moniepoint',  balance:5000,  renewal:'Active (Balance: ₦5,000)', totalPaid:24000, location:'Jos' },
+  { id:8,  name:'Ismail Raji',         phone:'0705 567 8901', avatar:'IR', grad:'g1', plan:'basic',    status:'active',    vaNum:'6254727996', vaBank:'Moniepoint',  balance:600,   renewal:'Active (Balance: ₦600)', totalPaid:4000,  location:'Ilorin' },
+  { id:9,  name:'Hafsat Garba',        phone:'0811 234 5670', avatar:'HG', grad:'g2', plan:'basic',    status:'active',    vaNum:'6254727997', vaBank:'Moniepoint',  balance:1200,  renewal:'Active (Balance: ₦1,200)',  totalPaid:2000,  location:'Zaria' },
+  { id:10, name:'Suleman Ahmed',       phone:'0908 901 2345', avatar:'SA', grad:'g3', plan:'premium',   status:'active',    vaNum:'6254727998', vaBank:'Moniepoint',  balance:2800,  renewal:'Active (Balance: ₦2,800)', totalPaid:48000, location:'Maiduguri' },
+  { id:11, name:'Khadija Musa',        phone:'0802 678 9012', avatar:'KM', grad:'g5', plan:'basic',    status:'expired',   vaNum:'6254727999', vaBank:'Moniepoint',  balance:0,     renewal:'Expired (No Balance)', totalPaid:1500,  location:'Bauchi' },
+  { id:12, name:'Abdulrahman Bello',   phone:'0706 123 4567', avatar:'AB', grad:'g6', plan:'unlimited', status:'active',    vaNum:'6254728000', vaBank:'Moniepoint',  balance:28000, renewal:'Active (Balance: ₦28,000)', totalPaid:120000, location:'Kano' }
+];
+
+var PLAN_STATS = [
+  { name:'Basic',     color:'var(--blue)',   count:680, pct:57, rev:'₦340K' },
+  { name:'Premium',   color:'var(--yellow)', count:484, pct:40, rev:'₦968K' },
+  { name:'Unlimited', color:'var(--purple)', count:40,  pct:3,  rev:'₦200K' }
+];
+
+var MONTHLY_REV = [1.8, 2.1, 2.3, 1.9, 2.6, 2.8, 2.84];
+var MONTHS      = ['Oct','Nov','Dec','Jan','Feb','Mar','Apr'];
+
+/* ── Revenue chart ── */
+function buildRevenueChart() {
+  var wrap = document.getElementById('revenueChart');
+  wrap.innerHTML = '';
+  var maxVal = Math.max.apply(null, MONTHLY_REV);
+  for (var i = 0; i < MONTHS.length; i++) {
+    var h = Math.round(MONTHLY_REV[i] / maxVal * 64);
+    var isLast = i === MONTHS.length - 1;
+    var col = isLast ? 'var(--green)' : 'var(--surface4)';
+    var bw = document.createElement('div');
+    bw.className = 'bc-bar-wrap';
+    bw.innerHTML =
+      '<div class="bc-val" style="color:' + (isLast ? 'var(--green)' : 'var(--text3)') + ';">₦' + MONTHLY_REV[i] + 'M</div>' +
+      '<div class="bc-bar" style="height:' + h + 'px;background:' + col + ';"></div>' +
+      '<div class="bc-label">' + MONTHS[i] + '</div>';
+    wrap.appendChild(bw);
+  }
+}
+
+/* ── Plan breakdown ── */
+function buildPlanBreakdown() {
+  var wrap = document.getElementById('planBreakdown');
+  wrap.innerHTML = '';
+  for (var i = 0; i < PLAN_STATS.length; i++) {
+    var p = PLAN_STATS[i];
+    var row = document.createElement('div');
+    row.className = 'pb-row';
+    row.innerHTML =
+      '<div class="pb-dot" style="background:' + p.color + ';"></div>' +
+      '<div class="pb-name">' + p.name + '</div>' +
+      '<div class="pb-bar-bg"><div class="pb-fill" style="width:' + p.pct + '%;background:' + p.color + ';"></div></div>' +
+      '<div class="pb-val" style="color:' + p.color + ';">' + p.rev + '</div>' +
+      '<div class="pb-count">' + p.count + ' users</div>';
+    wrap.appendChild(row);
+  }
+}
+
+/* ── Wallet panel ── */
+function buildWalletPanel(user) {
+  var txs = [
+    { desc:'Wallet top-up',      meta:'Transfer from GTBank',     amount:'+₦2,000', credit:true,  icon:'credit', time:'Today, 10:24 AM'     },
+    { desc:'Monthly renewal',    meta:'Auto-debit — Premium plan', amount:'-₦500',  credit:false, icon:'debit',  time:'Apr 1, 2026'         },
+    { desc:'Wallet top-up',      meta:'Transfer from First Bank',  amount:'+₦1,000',credit:true,  icon:'credit', time:'Mar 28, 2026'        },
+    { desc:'Monthly renewal',    meta:'Auto-debit — Premium plan', amount:'-₦500',  credit:false, icon:'debit',  time:'Mar 1, 2026'         },
+    { desc:'Admin credit',       meta:'Manual top-up by admin',    amount:'+₦500',  credit:true,  icon:'credit', time:'Feb 15, 2026'        }
+  ];
+
+  var planBadge;
+  if (user.plan === 'basic')  planBadge = '<span class="plan-badge plan-monthly">Basic</span>';
+  else if (user.plan === 'premium') planBadge = '<span class="plan-badge plan-yearly">Premium</span>';
+  else if (user.plan === 'unlimited') planBadge = '<span class="plan-badge plan-lifetime">Unlimited</span>';
+  else planBadge = '<span class="plan-badge plan-free">Free</span>';
+
+  var txHtml = '';
+  for (var i = 0; i < txs.length; i++) {
+    var t = txs[i];
+    var iconBg = t.credit ? 'rgba(46,204,143,.15)' : 'rgba(255,68,68,.12)';
+    var iconStroke = t.credit ? 'var(--green)' : 'var(--red)';
+    var iconPath = t.credit
+      ? '<line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/>'
+      : '<line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/>';
+    txHtml +=
+      '<div class="tx-row">' +
+        '<div class="tx-icon" style="background:' + iconBg + ';"><svg viewBox="0 0 24 24" fill="none" stroke="' + iconStroke + '" stroke-width="2">' + iconPath + '</svg></div>' +
+        '<div class="tx-info"><div class="tx-desc">' + t.desc + '</div><div class="tx-meta">' + t.meta + ' · ' + t.time + '</div></div>' +
+        '<div class="tx-amount ' + (t.credit ? 'credit' : 'debit') + '">' + t.amount + '</div>' +
+      '</div>';
+  }
+
+  return '<div class="va-card">' +
+    '<div class="va-header"><div class="va-bank">' + user.vaBank + '</div><div class="va-type">Virtual Account</div></div>' +
+    '<div class="va-acct-label">Account Number</div>' +
+    '<div class="va-acct-num">' + user.vaNum + '</div>' +
+    '<div class="va-acct-name">' + user.name.toUpperCase() + ' — SHURAFAH</div>' +
+    '<div class="va-balance-row">' +
+      '<div><div class="va-bal-label">Wallet Balance</div><div class="va-bal-amount">₦' + user.balance.toLocaleString() + '</div></div>' +
+      '<div class="va-copy-btn" onclick="showToast(\'Account number copied!\',\'success\')"><svg viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy</div>' +
+    '</div>' +
+  '</div>' +
+  '<div class="sub-info-grid">' +
+    '<div class="sig-item"><div class="sig-label">Plan</div><div class="sig-value">' + planBadge + '</div></div>' +
+    '<div class="sig-item"><div class="sig-label">Status</div><div class="sig-value"><span class="status-badge ' + (user.balance > 0 ? 'status-active' : 'status-expired') + '">' + (user.balance > 0 ? 'Active' : 'Expired') + '</span></div></div>' +
+    '<div class="sig-item"><div class="sig-label">Subscription</div><div class="sig-value" style="color:var(--green);">Balance-Based</div></div>' +
+    '<div class="sig-item"><div class="sig-label">Total Paid</div><div class="sig-value" style="color:var(--green);">₦' + user.totalPaid.toLocaleString() + '</div></div>' +
+  '</div>' +
+  '<div class="wallet-actions">' +
+    '<div class="wa-btn" onclick="manualTopupWallet(' + user.id + ',\'' + user.name + '\')"><div class="wa-btn-icon">💰</div>Add Balance</div>' +
+    '<div class="wa-btn" onclick="issueRefund(' + user.id + ',\'' + user.name + '\',' + user.balance + ')"><div class="wa-btn-icon">↩️</div>Issue Refund</div>' +
+    '<div class="wa-btn" onclick="createMonnifyVA(' + user.id + ',\'' + user.name + '\',\'user@email.com\',\'' + user.phone + '\')"><div class="wa-btn-icon">🏦</div>Create VA</div>' +
+    '<div class="wa-btn" onclick="extendSubscription(' + user.id + ',\'' + user.name + '\',0)"><div class="wa-btn-icon">➕</div>Extend Balance</div>' +
+  '</div>' +
+  '<div style="font-family:\'Syne\',sans-serif;font-size:12px;font-weight:700;margin-bottom:10px;">Transaction History</div>' +
+  '<div class="tx-list">' + txHtml + '</div>';
+}
+
+/* ── Table render ── */
+var currentPage = 1;
+var pageSize = 8;
+var searchQ = '';
+var planFilter = 'all';
+var statusFilter = 'all';
+var currentTab = 'subscribers';
+
+function getFiltered() {
+  return SUBSCRIBERS.filter(function(s) {
+    var matchPlan   = planFilter === 'all' || s.plan === planFilter;
+    var matchStatus = statusFilter === 'all' || s.status === statusFilter;
+    var matchSearch = !searchQ ||
+      s.name.toLowerCase().indexOf(searchQ) !== -1 ||
+      s.phone.indexOf(searchQ) !== -1 ||
+      s.vaNum.indexOf(searchQ) !== -1;
+    return matchPlan && matchStatus && matchSearch;
+  });
+}
+
+function renderTable() {
+  var filtered = getFiltered();
+  var total = filtered.length;
+  var start = (currentPage - 1) * pageSize;
+  var end   = Math.min(start + pageSize, total);
+  var paged = filtered.slice(start, end);
+
+  document.getElementById('tableCount').textContent = total;
+  document.getElementById('pageInfo').textContent = total === 0 ? 'No results' : 'Showing ' + (start + 1) + '–' + end + ' of ' + total;
+
+  var tbody = document.getElementById('subTableBody');
+  tbody.innerHTML = '';
+
+  for (var i = 0; i < paged.length; i++) {
+    var s = paged[i];
+    var planBadge;
+    if (s.plan === 'basic')  planBadge = '<span class="plan-badge plan-monthly">Basic</span>';
+    else if (s.plan === 'premium') planBadge = '<span class="plan-badge plan-yearly">Premium</span>';
+    else if (s.plan === 'unlimited') planBadge = '<span class="plan-badge plan-lifetime">Unlimited</span>';
+    else planBadge = '<span class="plan-badge plan-free">Free</span>';
+
+    var statusBadge;
+    if (s.status === 'active')    statusBadge = '<span class="status-badge status-active">Active</span>';
+    else if (s.status === 'expired')  statusBadge = '<span class="status-badge status-expired">Expired</span>';
+    else if (s.status === 'cancelled')statusBadge = '<span class="status-badge status-cancelled">Cancelled</span>';
+    else if (s.status === 'trial')    statusBadge = '<span class="status-badge status-trial">Trial</span>';
+    else statusBadge = '';
+
+    var lowBal = s.balance < 500 && s.plan !== 'lifetime';
+    var balColor = lowBal ? 'var(--red)' : 'var(--green)';
+
+    var tr = document.createElement('tr');
+    tr.innerHTML =
+      '<td><div class="td-user"><div class="td-avatar ' + s.grad + '">' + s.avatar + '</div><div><div class="td-name">' + s.name + '</div><div class="td-phone">' + s.phone + '</div></div></div></td>' +
+      '<td>' + planBadge + '</td>' +
+      '<td>' + statusBadge + '</td>' +
+      '<td><div class="wallet-cell"><div class="wallet-acct">' + s.vaNum + '</div><div class="wallet-bank">' + s.vaBank + '</div></div></td>' +
+      '<td><div class="wallet-bal" style="color:' + balColor + ';">₦' + s.balance.toLocaleString() + (lowBal ? ' ⚠' : '') + '</div></td>' +
+      '<td style="font-size:11px;color:var(--text2);">' + s.renewal + '</td>' +
+      '<td style="font-family:\'Syne\',sans-serif;font-size:11px;font-weight:700;color:var(--text);">₦' + s.totalPaid.toLocaleString() + '</td>' +
+      '<td><div class="td-actions">' +
+        '<div class="td-btn wallet" onclick="openPanel(SUBSCRIBERS[' + (start + i) + ']);event.stopPropagation();">💳 Wallet</div>' +
+        '<div class="td-btn extend" onclick="extendSubscription(' + s.id + ',\'' + s.name + '\',0);event.stopPropagation();">➕ Add</div>' +
+        '<div class="td-btn cancel" onclick="cancelSubscription(' + s.id + ',\'' + s.name + '\');event.stopPropagation();">Cancel</div>' +
+      '</div></td>';
+
+    (function(sub){ tr.onclick = function(){ openPanel(sub); }; }(s));
+    tbody.appendChild(tr);
+  }
+
+  renderPagination(total);
+}
+
+function renderPagination(total) {
+  var totalPages = Math.ceil(total / pageSize);
+  var btns = document.getElementById('pageBtns');
+  btns.innerHTML = '';
+  if (totalPages <= 1) return;
+  var prev = document.createElement('div');
+  prev.className = 'page-btn';
+  prev.innerHTML = '<svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>';
+  prev.onclick = function(){ if (currentPage > 1){ currentPage--; renderTable(); } };
+  btns.appendChild(prev);
+  for (var p = 1; p <= totalPages; p++) {
+    (function(pg){
+      var btn = document.createElement('div');
+      btn.className = 'page-btn' + (pg === currentPage ? ' active' : '');
+      btn.textContent = pg;
+      btn.onclick = function(){ currentPage = pg; renderTable(); };
+      btns.appendChild(btn);
+    }(p));
+  }
+  var next = document.createElement('div');
+  next.className = 'page-btn';
+  next.innerHTML = '<svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>';
+  next.onclick = function(){ var tp = Math.ceil(getFiltered().length / pageSize); if (currentPage < tp){ currentPage++; renderTable(); } };
+  btns.appendChild(next);
+}
+
+/* ── Tabs ── */
+document.getElementById('mainTabs').addEventListener('click', function(e) {
+  var btn = e.target.closest('.tab-btn');
+  if (!btn) return;
+  document.querySelectorAll('.tab-btn').forEach(function(b){ b.classList.remove('active'); });
+  btn.classList.add('active');
+  currentTab = btn.getAttribute('data-tab');
+  currentPage = 1;
+  if (currentTab === 'expiring') {
+    statusFilter = 'active';
+    document.getElementById('statusFilter').value = 'active';
+  }
+  renderTable();
+  var tabMsg = { subscribers:'Showing all subscribers', wallets:'Showing wallet overview', transactions:'Showing all transactions', expiring:'Filtering subscribers expiring soon' };
+  showToast(tabMsg[currentTab] || '', '');
+});
+
+/* ── Search + filters ── */
+var searchTimer = null;
+document.getElementById('searchInput').addEventListener('input', function(){
+  clearTimeout(searchTimer);
+  var val = this.value.toLowerCase();
+  searchTimer = setTimeout(function(){ searchQ = val; currentPage = 1; renderTable(); }, 250);
+});
+document.getElementById('planFilter').addEventListener('change', function(){ planFilter = this.value; currentPage = 1; renderTable(); });
+document.getElementById('statusFilter').addEventListener('change', function(){ statusFilter = this.value; currentPage = 1; renderTable(); });
+
+/* ── MONNIFY DVA INTEGRATION ── */
+/* 
+   Monnify API: https://developers.monnify.com/docs/collections/customer-reserved-account
+   
+   POST /api/v1/virtual-accounts
+   Headers: Authorization: Bearer {token}, Content-Type: application/json
+   Body: {
+     "accountReference": "unique_ref",
+     "accountName": "User Name",
+     "currencyCode": "NGN",
+     "contractCode": "your_contract_code",
+     "customerEmail": "user@email.com",
+     "customerName": "User Name",
+     "bvn": "user_bvn"
+   }
+   
+   Response: {
+     "accountNumber": "6254727989",
+     "bankName": "Moniepoint Microfinance Bank",
+     "accountName": "User Name",
+     "status": "ACTIVE"
+   }
+*/
+
+// Virtual Accounts Management
+var virtualAccounts = {};
+
+function createMonnifyVA(userId, userName, userEmail, userPhone) {
+  var modal = document.createElement('div');
+  modal.id = 'va-create-modal';
+  modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.8);display:flex;align-items:center;justify-content:center;z-index:10000;';
+  
+  modal.innerHTML = `
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:16px;width:100%;max-width:500px;padding:24px;box-shadow:0 20px 60px rgba(0,0,0,.8)">
+      <div style="font-size:18px;font-weight:800;margin-bottom:16px;color:var(--text)">Create Monnify Virtual Account</div>
+      <div style="margin-bottom:16px">
+        <label style="display:block;font-size:11px;font-weight:700;color:var(--text2);margin-bottom:6px;text-transform:uppercase">Account Name</label>
+        <input type="text" id="va-name" value="${userName}" style="width:100%;padding:10px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:inherit;font-size:13px">
+      </div>
+      <div style="margin-bottom:16px">
+        <label style="display:block;font-size:11px;font-weight:700;color:var(--text2);margin-bottom:6px;text-transform:uppercase">Email</label>
+        <input type="email" id="va-email" value="${userEmail}" style="width:100%;padding:10px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:inherit;font-size:13px">
+      </div>
+      <div style="margin-bottom:16px">
+        <label style="display:block;font-size:11px;font-weight:700;color:var(--text2);margin-bottom:6px;text-transform:uppercase">BVN (Optional)</label>
+        <input type="text" id="va-bvn" placeholder="11 digits" style="width:100%;padding:10px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:inherit;font-size:13px">
+      </div>
+      <div style="display:flex;gap:10px;justify-content:flex-end">
+        <button onclick="document.getElementById('va-create-modal').remove()" style="padding:10px 16px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text2);cursor:pointer;font-family:sans-serif;font-size:12px;font-weight:700">Cancel</button>
+        <button onclick="submitMonnifyVA(${userId},'${userName}')" style="padding:10px 16px;background:var(--green);border:none;border-radius:8px;color:white;cursor:pointer;font-family:sans-serif;font-size:12px;font-weight:700">Create Account</button>
+      </div>
+    </div>
+  `;
+  
+  document.body.appendChild(modal);
+}
+
+function submitMonnifyVA(userId, userName) {
+  var name = document.getElementById('va-name').value;
+  var email = document.getElementById('va-email').value;
+  var bvn = document.getElementById('va-bvn').value;
+  
+  if(!name || !email) {
+    showToast('Please fill in all required fields', 'danger');
+    return;
+  }
+  
+  document.getElementById('va-create-modal').remove();
+  showToast('Creating virtual account with Monnify API...', '');
+  
+  setTimeout(function() {
+    var accountNum = '625' + Math.floor(Math.random() * 10000000).toString().padStart(7, '0');
+    virtualAccounts[userId] = {
+      accountNumber: accountNum,
+      accountName: name,
+      bankName: 'Moniepoint Microfinance Bank',
+      status: 'ACTIVE',
+      createdDate: new Date().toLocaleDateString(),
+      email: email,
+      bvn: bvn || 'Not provided'
+    };
+    
+    showToast('✓ Virtual account created: ' + accountNum, 'success');
+    renderTable();
+  }, 1500);
+}
+
+function manualTopupWallet(userId, userName) {
+  var amount = prompt('Enter amount to top-up (₦):');
+  if(!amount || isNaN(amount)) return;
+  
+  showToast('Processing wallet top-up of ₦' + parseInt(amount).toLocaleString() + '...', '');
+  
+  setTimeout(function() {
+    var user = SUBSCRIBERS.find(s => s.id === userId);
+    if(user) {
+      user.balance += parseInt(amount);
+      showToast('✓ Wallet credited! New balance: ₦' + user.balance.toLocaleString(), 'success');
+      renderTable();
+    }
+  }, 1200);
+}
+
+function issueRefund(userId, userName, amount) {
+  if(!confirm('Issue refund of ₦' + amount.toLocaleString() + ' to ' + userName + '?')) return;
+  
+  showToast('Processing refund to Monnify account...', '');
+  
+  setTimeout(function() {
+    var user = SUBSCRIBERS.find(s => s.id === userId);
+    if(user) {
+      user.balance -= amount;
+      showToast('✓ Refund of ₦' + amount.toLocaleString() + ' processed!', 'success');
+      renderTable();
+    }
+  }, 1500);
+}
+
+function extendSubscription(userId, userName, days) {
+  var amount = prompt('Add balance to extend subscription (₦):');
+  if(!amount || isNaN(amount)) return;
+  
+  showToast('Adding ₦' + parseInt(amount).toLocaleString() + ' to ' + userName + '\'s wallet...', '');
+  
+  setTimeout(function() {
+    var user = SUBSCRIBERS.find(s => s.id === userId);
+    if(user) {
+      user.balance += parseInt(amount);
+      user.renewal = 'Active (Balance: ₦' + user.balance.toLocaleString() + ')';
+      user.status = 'active';
+      showToast('✓ Wallet extended! New balance: ₦' + user.balance.toLocaleString(), 'success');
+      renderTable();
+    }
+  }, 1000);
+}
+
+function cancelSubscription(userId, userName) {
+  if(!confirm('Cancel subscription for ' + userName + '? This action cannot be undone.')) return;
+  
+  showToast('Cancelling subscription...', '');
+  
+  setTimeout(function() {
+    var user = SUBSCRIBERS.find(s => s.id === userId);
+    if(user) {
+      user.status = 'cancelled';
+      showToast('✓ Subscription cancelled.', 'danger');
+      renderTable();
+    }
+  }, 1000);
+}
+
+function editPlanModal(planType) {
+  var planNames = {basic: 'Basic', premium: 'Premium', unlimited: 'Unlimited'};
+  var planPrices = {basic: 500, premium: 2000, unlimited: 5000};
+  var planDownloads = {basic: 10, premium: 100, unlimited: 999};
+  
+  var modal = document.createElement('div');
+  modal.id = 'plan-edit-modal';
+  modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.8);display:flex;align-items:center;justify-content:center;z-index:10000;';
+  
+  modal.innerHTML = `
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:16px;width:100%;max-width:500px;padding:24px;box-shadow:0 20px 60px rgba(0,0,0,.8)">
+      <div style="font-size:18px;font-weight:800;margin-bottom:16px;color:var(--text)">Edit ${planNames[planType]} Plan</div>
+      <div style="margin-bottom:16px">
+        <label style="display:block;font-size:11px;font-weight:700;color:var(--text2);margin-bottom:6px;text-transform:uppercase">Price (₦)</label>
+        <input type="number" id="plan-price" value="${planPrices[planType]}" style="width:100%;padding:10px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:inherit;font-size:13px">
+      </div>
+      <div style="margin-bottom:16px">
+        <label style="display:block;font-size:11px;font-weight:700;color:var(--text2);margin-bottom:6px;text-transform:uppercase">Downloads per Month</label>
+        <input type="number" id="plan-downloads" value="${planDownloads[planType]}" style="width:100%;padding:10px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:inherit;font-size:13px">
+      </div>
+      <div style="display:flex;gap:10px;justify-content:flex-end">
+        <button onclick="document.getElementById('plan-edit-modal').remove()" style="padding:10px 16px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text2);cursor:pointer;font-family:sans-serif;font-size:12px;font-weight:700">Cancel</button>
+        <button onclick="savePlanChanges('${planType}')" style="padding:10px 16px;background:var(--green);border:none;border-radius:8px;color:white;cursor:pointer;font-family:sans-serif;font-size:12px;font-weight:700">Save Changes</button>
+      </div>
+    </div>
+  `;
+  
+  document.body.appendChild(modal);
+}
+
+function savePlanChanges(planType) {
+  var newPrice = document.getElementById('plan-price').value;
+  var newDownloads = document.getElementById('plan-downloads').value;
+  
+  document.getElementById('plan-edit-modal').remove();
+  showToast('Saving plan changes...', '');
+  
+  setTimeout(function() {
+    showToast('✓ ' + planType.charAt(0).toUpperCase() + planType.slice(1) + ' plan updated!', 'success');
+  }, 800);
+}
+
+function openVASettings() {
+  var modal = document.createElement('div');
+  modal.id = 'va-settings-modal';
+  modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.8);display:flex;align-items:center;justify-content:center;z-index:10000;';
+  
+  modal.innerHTML = `
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:16px;width:100%;max-width:600px;padding:24px;box-shadow:0 20px 60px rgba(0,0,0,.8);max-height:80vh;overflow-y:auto">
+      <div style="font-size:18px;font-weight:800;margin-bottom:20px;color:var(--text)">Monnify Virtual Account Settings</div>
+      
+      <div style="margin-bottom:20px;padding:16px;background:var(--surface2);border-radius:10px;border:1px solid var(--border)">
+        <div style="font-size:12px;font-weight:700;color:var(--text2);margin-bottom:8px;text-transform:uppercase">Primary Provider</div>
+        <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:12px">Moniepoint Microfinance Bank</div>
+        <div style="font-size:11px;color:var(--text3)">Bank Code: 50515</div>
+      </div>
+      
+      <div style="margin-bottom:20px">
+        <label style="display:block;font-size:11px;font-weight:700;color:var(--text2);margin-bottom:8px;text-transform:uppercase">Contract Code</label>
+        <input type="text" value="8389328412" style="width:100%;padding:10px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:inherit;font-size:13px">
+      </div>
+      
+      <div style="margin-bottom:20px">
+        <label style="display:block;font-size:11px;font-weight:700;color:var(--text2);margin-bottom:8px;text-transform:uppercase">API Key</label>
+        <div style="display:flex;gap:8px">
+          <input type="password" id="va-api-key" value="sk_live_1234567890abcdef" style="flex:1;padding:10px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:monospace;font-size:12px">
+          <button onclick="toggleVAKeyVisibility()" style="padding:10px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text2);cursor:pointer;font-family:sans-serif;font-size:12px;font-weight:700">Show</button>
+        </div>
+      </div>
+      
+      <div style="margin-bottom:20px;padding:16px;background:rgba(46,204,143,.08);border-radius:10px;border:1px solid rgba(46,204,143,.2)">
+        <div style="font-size:12px;font-weight:700;color:var(--green);margin-bottom:8px">✓ Auto-debit Enabled</div>
+        <div style="font-size:11px;color:var(--text2)">Subscriptions will be automatically debited from wallet on renewal date</div>
+      </div>
+      
+      <div style="margin-bottom:20px">
+        <label style="display:block;font-size:11px;font-weight:700;color:var(--text2);margin-bottom:8px;text-transform:uppercase">Low Balance Threshold (₦)</label>
+        <input type="number" value="500" style="width:100%;padding:10px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:inherit;font-size:13px">
+      </div>
+      
+      <div style="margin-bottom:20px">
+        <label style="display:block;font-size:11px;font-weight:700;color:var(--text2);margin-bottom:8px;text-transform:uppercase">Renewal Reminder (Days Before)</label>
+        <input type="number" value="3" style="width:100%;padding:10px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:inherit;font-size:13px">
+      </div>
+      
+      <div style="margin-bottom:20px;padding:16px;background:var(--surface2);border-radius:10px;border:1px solid var(--border)">
+        <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:8px">Webhook URL</div>
+        <div style="font-size:11px;color:var(--text3);word-break:break-all;font-family:monospace">https://shurafah.com/webhooks/monnify</div>
+      </div>
+      
+      <div style="display:flex;gap:10px;justify-content:flex-end">
+        <button onclick="document.getElementById('va-settings-modal').remove()" style="padding:10px 16px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text2);cursor:pointer;font-family:sans-serif;font-size:12px;font-weight:700">Close</button>
+        <button onclick="saveVASettings()" style="padding:10px 16px;background:var(--green);border:none;border-radius:8px;color:white;cursor:pointer;font-family:sans-serif;font-size:12px;font-weight:700">Save Settings</button>
+      </div>
+    </div>
+  `;
+  
+  document.body.appendChild(modal);
+}
+
+function toggleVAKeyVisibility() {
+  var input = document.getElementById('va-api-key');
+  if(input.type === 'password') {
+    input.type = 'text';
+    event.target.textContent = 'Hide';
+  } else {
+    input.type = 'password';
+    event.target.textContent = 'Show';
+  }
+}
+
+function saveVASettings() {
+  document.getElementById('va-settings-modal').remove();
+  showToast('Saving Monnify VA settings...', '');
+  
+  setTimeout(function() {
+    showToast('✓ Virtual Account settings saved successfully!', 'success');
+  }, 1200);
+}
+
+function grantPremiumModal() {
+  var modal = document.createElement('div');
+  modal.id = 'grant-premium-modal';
+  modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.8);display:flex;align-items:center;justify-content:center;z-index:10000;';
+  
+  modal.innerHTML = `
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:16px;width:100%;max-width:500px;padding:24px;box-shadow:0 20px 60px rgba(0,0,0,.8)">
+      <div style="font-size:18px;font-weight:800;margin-bottom:16px;color:var(--text)">Grant Premium Subscription</div>
+      <div style="margin-bottom:16px">
+        <label style="display:block;font-size:11px;font-weight:700;color:var(--text2);margin-bottom:6px;text-transform:uppercase">User Phone Number</label>
+        <input type="text" id="grant-phone" placeholder="0812 345 6789" style="width:100%;padding:10px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:inherit;font-size:13px">
+      </div>
+      <div style="margin-bottom:16px">
+        <label style="display:block;font-size:11px;font-weight:700;color:var(--text2);margin-bottom:6px;text-transform:uppercase">Plan</label>
+        <select style="width:100%;padding:10px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:inherit;font-size:13px">
+          <option>Basic (10 downloads/month)</option>
+          <option>Premium (100 downloads/month)</option>
+          <option>Unlimited (Unlimited downloads)</option>
+        </select>
+      </div>
+      <div style="margin-bottom:16px">
+        <label style="display:block;font-size:11px;font-weight:700;color:var(--text2);margin-bottom:6px;text-transform:uppercase">Duration (Days)</label>
+        <input type="number" id="grant-days" value="30" style="width:100%;padding:10px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:inherit;font-size:13px">
+      </div>
+      <div style="display:flex;gap:10px;justify-content:flex-end">
+        <button onclick="document.getElementById('grant-premium-modal').remove()" style="padding:10px 16px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text2);cursor:pointer;font-family:sans-serif;font-size:12px;font-weight:700">Cancel</button>
+        <button onclick="submitGrantPremium()" style="padding:10px 16px;background:var(--green);border:none;border-radius:8px;color:white;cursor:pointer;font-family:sans-serif;font-size:12px;font-weight:700">Grant Premium</button>
+      </div>
+    </div>
+  `;
+  
+  document.body.appendChild(modal);
+}
+
+function submitGrantPremium() {
+  var phone = document.getElementById('grant-phone').value;
+  var days = document.getElementById('grant-days').value;
+  
+  if(!phone) {
+    showToast('Please enter a phone number', 'danger');
+    return;
+  }
+  
+  document.getElementById('grant-premium-modal').remove();
+  showToast('Granting premium to ' + phone + '...', '');
+  
+  setTimeout(function() {
+    showToast('✓ Premium granted! User will be notified via SMS.', 'success');
+    renderTable();
+  }, 1500);
+}
+
+function openPlanEditor() {
+  showToast('Opening plan management...', '');
+}
+
+function exportCSV() {
+  showToast('Exporting subscriber list as CSV...', '');
+  
+  setTimeout(function() {
+    var csv = 'Name,Phone,Plan,Status,Virtual Account,Balance,Renewal Date,Total Paid\n';
+    SUBSCRIBERS.forEach(function(s) {
+      csv += s.name + ',' + s.phone + ',' + s.plan + ',' + s.status + ',' + s.vaNum + ',' + s.balance + ',' + s.renewal + ',' + s.totalPaid + '\n';
+    });
+    
+    var blob = new Blob([csv], {type: 'text/csv'});
+    var url = window.URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = 'subscribers_' + new Date().toISOString().split('T')[0] + '.csv';
+    a.click();
+    
+    showToast('✓ CSV exported successfully!', 'success');
+  }, 1500);
+}
+
+/* ── Init ── */
+buildRevenueChart();
+buildPlanBreakdown();
+renderTable();
+</script>
+</body>
+</html>
