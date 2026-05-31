@@ -1,0 +1,15 @@
+includes:
+    - vendor/larastan/larastan/extension.neon
+
+parameters:
+    level: 5
+
+    paths:
+        - app
+        - Modules
+
+    excludePaths:
+        - Modules/*/vendor/*
+
+    # Allow Laravel's dynamic model/relation magic without false positives.
+    checkModelProperties: false
