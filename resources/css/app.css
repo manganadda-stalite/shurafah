@@ -1,0 +1,10 @@
+/*
+ * Shurafah — global stylesheet placeholder.
+ *
+ * Intentionally minimal: there is NO Tailwind and NO CSS framework here.
+ * All real UI styling lives inside the existing static HTML (ported to Blade
+ * views/partials verbatim). This file exists only so Vite has a CSS entry to
+ * fingerprint; add shared base rules here only if they must be global.
+ *
+ * See: architecture/05-blade-integration.md, architecture/06-frontend-asset-strategy.md
+ */
