@@ -1,0 +1,429 @@
+@extends('layouts.front')
+
+@push('head')
+@verbatim
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Shurafah — Explore</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&family=Amiri:ital,wght@0,400;0,700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#080B12; --surface:#0F1420; --surface2:#161C2E; --surface3:#1E2740;
+    --accent:#FF6B35; --accent2:#FFB347;
+    --gold:#C8860A; --gold2:#E8A020; --gold3:#F5C842;
+    --blue:#4D9FFF; --green:#2ECC8F; --purple:#9B6BFF; --pink:#FF4D8F;
+    --text:#F0F4FF; --text2:#8A94B0; --text3:#4A5270;
+    --border:rgba(255,255,255,0.06);
+  }
+  body.light {
+    --bg:#F4F6FC; --surface:#FFFFFF; --surface2:#E8ECF7; --surface3:#D8DEEF;
+    --text:#12172E; --text2:#5A6380; --text3:#9AA0BA;
+    --border:rgba(0,0,0,0.07);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--text);min-height:100vh;display:flex;flex-direction:column;}
+  .phone{width:100%;background:var(--bg);display:flex;flex-direction:column;min-height:100vh;position:relative;}
+  .scroll{flex:1;overflow-y:auto;overflow-x:hidden;scrollbar-width:none;}
+  .scroll::-webkit-scrollbar{display:none;}
+
+  /* HEADER */
+  .header{display:flex;justify-content:space-between;align-items:center;padding:16px 18px 0;}
+  .greeting{font-size:11px;color:var(--text2);margin-bottom:1px;}
+  .app-title{font-family:sans-serif;font-size:24px;font-weight:800;letter-spacing:-0.4px;background:linear-gradient(135deg,var(--purple),var(--blue),var(--gold2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+  .hr{display:flex;gap:8px;align-items:center;}
+  .theme-toggle{display:flex;align-items:center;gap:6px;cursor:pointer;background:var(--surface2);border-radius:50px;padding:5px 10px 5px 8px;border:1.5px solid var(--purple);flex-shrink:0;user-select:none;}
+  .theme-toggle .tt-icon{font-size:14px;line-height:1;}
+  .theme-toggle .tt-label{font-family:sans-serif;font-size:10px;font-weight:700;color:var(--purple);letter-spacing:0.3px;white-space:nowrap;}
+  .ib{width:36px;height:36px;background:var(--surface);border-radius:50%;display:flex;align-items:center;justify-content:center;border:1px solid var(--border);position:relative;cursor:pointer;}
+  .ib svg{width:15px;height:15px;fill:none;stroke:var(--text2);stroke-width:2;}
+  .av{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--purple),var(--blue));display:flex;align-items:center;justify-content:center;font-family:sans-serif;font-weight:700;font-size:12px;cursor:pointer;}
+
+  /* SEARCH */
+  .sw{padding:14px 18px 0;}
+  .sb{background:var(--surface);border:1px solid var(--border);border-radius:14px;display:flex;align-items:center;gap:10px;padding:11px 14px;}
+  .sb svg{width:15px;height:15px;fill:none;stroke:var(--text3);stroke-width:2;flex-shrink:0;}
+  .sb input{background:transparent;border:none;outline:none;color:var(--text);font-size:13px;flex:1;font-family:'DM Sans',sans-serif;}
+  .sb input::placeholder{color:var(--text3);}
+  .sf{width:28px;height:28px;background:linear-gradient(135deg,var(--purple),var(--blue));border-radius:9px;display:flex;align-items:center;justify-content:center;cursor:pointer;}
+  .sf svg{stroke:white;width:13px;height:13px;}
+
+  /* SCOPE TABS — All / Songs / Wa'azi */
+  .scope{display:flex;gap:6px;padding:14px 18px 0;}
+  .stab{flex:1;padding:9px 12px;border-radius:11px;background:var(--surface);border:1px solid var(--border);font-family:sans-serif;font-size:11px;font-weight:700;color:var(--text2);text-align:center;cursor:pointer;transition:all .15s;}
+  .stab.on{color:white;border-color:transparent;}
+  .stab.on[data-scope="all"]{background:linear-gradient(135deg,var(--purple),var(--blue));box-shadow:0 4px 12px rgba(155,107,255,.3);}
+  .stab.on[data-scope="songs"]{background:linear-gradient(135deg,var(--accent),var(--accent2));box-shadow:0 4px 12px rgba(255,107,53,.3);}
+  .stab.on[data-scope="waazi"]{background:linear-gradient(135deg,var(--gold),var(--gold2));color:#1A0800;box-shadow:0 4px 12px rgba(200,134,10,.3);}
+
+  /* SECTION HEADER */
+  .sh{display:flex;justify-content:space-between;align-items:center;padding:18px 18px 10px;}
+  .sh-t{font-family:sans-serif;font-size:14px;font-weight:700;letter-spacing:-0.2px;display:flex;align-items:center;gap:7px;}
+  .sh-icon{width:22px;height:22px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;}
+  .sh-a{font-size:11px;color:var(--purple);font-weight:600;cursor:pointer;font-family:sans-serif;}
+
+  /* FEATURED CAROUSEL — split card (song + lecture) */
+  .feat-split{padding:0 18px;display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .feat-card{border-radius:16px;padding:14px;position:relative;overflow:hidden;min-height:140px;display:flex;flex-direction:column;justify-content:flex-end;cursor:pointer;border:1px solid rgba(255,255,255,.06);}
+  .feat-song{background:linear-gradient(135deg,#1A0F2E 0%,#3A1A0E 100%);}
+  .feat-song::before{content:'';position:absolute;top:-20px;right:-20px;width:110px;height:110px;background:radial-gradient(circle,rgba(255,107,53,.28) 0%,transparent 65%);}
+  .feat-waazi{background:linear-gradient(135deg,#1A0E04 0%,#0E1A08 50%,#0A0C1A 100%);}
+  .feat-waazi::before{content:'';position:absolute;top:-20px;right:-20px;width:110px;height:110px;background:radial-gradient(circle,rgba(200,134,10,.28) 0%,transparent 65%);}
+  .feat-waazi::after{content:'﷽';position:absolute;top:6px;right:10px;font-family:'Amiri',serif;font-size:32px;color:var(--gold3);opacity:.12;}
+  .feat-badge{display:inline-flex;align-items:center;gap:4px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:6px;padding:3px 7px;font-family:sans-serif;font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;width:fit-content;margin-bottom:8px;}
+  .feat-badge.song{color:var(--accent2);background:rgba(255,107,53,.15);border-color:rgba(255,107,53,.3);}
+  .feat-badge.waazi{color:var(--gold3);background:rgba(200,134,10,.15);border-color:rgba(200,134,10,.3);}
+  .feat-title{font-family:sans-serif;font-size:13px;font-weight:800;letter-spacing:-0.2px;margin-bottom:2px;line-height:1.2;}
+  .feat-sub{font-size:10px;color:var(--text2);margin-bottom:9px;}
+  .feat-play{display:inline-flex;align-items:center;gap:5px;background:var(--accent);border-radius:50px;padding:5px 11px;font-size:10px;font-family:sans-serif;font-weight:700;color:white;width:fit-content;cursor:pointer;}
+  .feat-waazi .feat-play{background:linear-gradient(135deg,var(--gold),var(--gold2));color:#1A0800;}
+  .feat-play svg{width:9px;height:9px;fill:currentColor;}
+
+  /* PILL CHIPS */
+  .cs{display:flex;gap:8px;padding:0 18px;overflow-x:auto;scrollbar-width:none;}
+  .cs::-webkit-scrollbar{display:none;}
+  .pill{flex-shrink:0;padding:7px 14px;border-radius:50px;font-family:sans-serif;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;border:1px solid transparent;background:var(--surface);color:var(--text2);}
+  .pill.on{background:linear-gradient(135deg,var(--purple),var(--blue));color:white;border-color:transparent;box-shadow:0 3px 12px rgba(155,107,255,.3);}
+
+  /* HORIZ CARDS (artists + preachers) */
+  .hs{display:flex;gap:12px;padding:0 18px;overflow-x:auto;scrollbar-width:none;}
+  .hs::-webkit-scrollbar{display:none;}
+  .ec{flex-shrink:0;width:96px;cursor:pointer;text-align:center;}
+  .ec-img{width:80px;height:80px;border-radius:50%;margin:0 auto 7px;display:flex;align-items:center;justify-content:center;font-size:28px;position:relative;}
+  .ec-ring{padding:2px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));}
+  .ec-ring.waazi{background:linear-gradient(135deg,var(--gold),var(--gold2),var(--gold3));}
+  .ec-ring .ec-inner{width:100%;height:100%;border-radius:50%;background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:26px;}
+  .ec-name{font-family:sans-serif;font-size:11px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:2px;}
+  .ec-sub{font-size:9px;color:var(--text3);}
+  .ec-badge{position:absolute;bottom:0;right:0;background:var(--green);width:14px;height:14px;border-radius:50%;border:2px solid var(--bg);display:flex;align-items:center;justify-content:center;font-size:7px;color:white;font-family:sans-serif;font-weight:800;}
+
+  /* CATEGORY GRID — split into Songs & Wa'azi */
+  .cat-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;padding:0 18px;}
+  .cat-tile{border-radius:12px;padding:14px 10px;position:relative;overflow:hidden;cursor:pointer;min-height:78px;display:flex;flex-direction:column;justify-content:flex-end;border:1px solid rgba(255,255,255,.05);}
+  .cat-i{font-size:22px;position:absolute;top:8px;right:9px;opacity:.65;}
+  .cat-n{font-family:sans-serif;font-size:11px;font-weight:700;position:relative;line-height:1.1;}
+  .cat-c{font-size:9px;opacity:.6;position:relative;margin-top:2px;}
+  .cat-tag{font-family:sans-serif;font-size:8px;text-transform:uppercase;letter-spacing:.4px;padding:1px 6px;border-radius:4px;width:fit-content;margin-bottom:4px;font-weight:700;}
+  .cat-tag.song{background:rgba(255,107,53,.15);color:var(--accent2);border:1px solid rgba(255,107,53,.25);}
+  .cat-tag.waazi{background:rgba(200,134,10,.15);color:var(--gold3);border:1px solid rgba(200,134,10,.25);}
+  .cat1{background:linear-gradient(135deg,#1A0A2E,#2D1B69);}
+  .cat2{background:linear-gradient(135deg,#0A1F2E,#0D3B5E);}
+  .cat3{background:linear-gradient(135deg,#1A0A0A,#5E1B1B);}
+  .cat4{background:linear-gradient(135deg,#1A0E04,#5E3D0D);}
+  .cat5{background:linear-gradient(135deg,#04141A,#062A1A);}
+  .cat6{background:linear-gradient(135deg,#100414,#1A0628);}
+
+  /* ROW LIST (mixed songs + lectures) */
+  .rows{padding:0 18px;display:flex;flex-direction:column;gap:3px;}
+  .row{display:flex;align-items:center;gap:11px;padding:8px 9px;border-radius:12px;cursor:pointer;transition:background 0.15s;}
+  .row:hover{background:var(--surface);}
+  .row-art{width:46px;height:46px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0;position:relative;}
+  .row-art .typebadge{position:absolute;bottom:-3px;right:-3px;background:var(--bg);border:1.5px solid var(--bg);border-radius:50px;padding:1px 5px;font-family:sans-serif;font-size:7px;font-weight:800;text-transform:uppercase;letter-spacing:.3px;}
+  .row-art .typebadge.song{color:var(--accent2);background:#2A1A0A;}
+  .row-art .typebadge.waazi{color:var(--gold3);background:#1A0E04;}
+  .row-info{flex:1;min-width:0;}
+  .row-title{font-family:sans-serif;font-size:12px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:2px;}
+  .row-sub{font-size:10px;color:var(--text2);}
+  .row-meta{font-size:10px;color:var(--text3);font-family:sans-serif;font-weight:600;flex-shrink:0;}
+
+  /* GRADIENTS */
+  .g1{background:linear-gradient(135deg,#9B6BFF,#4D9FFF);}
+  .g2{background:linear-gradient(135deg,#FF6B35,#FFB347);}
+  .g3{background:linear-gradient(135deg,#FF4D8F,#FF6B35);}
+  .g4{background:linear-gradient(135deg,#2ECC8F,#4D9FFF);}
+  .g5{background:linear-gradient(135deg,#FFB347,#FF4D8F);}
+  .g6{background:linear-gradient(135deg,#4D9FFF,#9B6BFF);}
+  .g7{background:linear-gradient(135deg,#C8860A,#E8A020);}
+  .g8{background:linear-gradient(135deg,#2ECC8F,#9B6BFF);}
+
+  /* BOTTOM NAV — base */
+  .bnav{display:flex;justify-content:space-around;align-items:center;padding:10px 8px 14px;background:var(--surface);border-top:1px solid var(--border);flex-shrink:0;position:sticky;bottom:0;z-index:10;}
+  .ni{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:5px 10px;border-radius:10px;}
+  .ni.on{background:rgba(155,107,255,.12);}
+  .ni svg{width:19px;height:19px;fill:none;stroke:var(--text3);stroke-width:2;}
+  .ni.on svg{stroke:var(--purple);}
+  .nl{font-size:9px;font-family:sans-serif;font-weight:700;color:var(--text3);}
+  .ni.on .nl{color:var(--purple);}
+
+  @keyframes fup{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+  .phone>*{animation:fup 0.4s ease forwards;}
+
+  /* RESPONSIVE */
+  @media (min-width:1024px){
+    .phone{max-width:1200px;margin:0 auto;}
+    .feat-split{grid-template-columns:1fr 1fr 1fr;}
+    .cat-grid{grid-template-columns:repeat(6,1fr);}
+  }
+  @media (max-width:480px){
+    .cat-grid{grid-template-columns:1fr 1fr;gap:7px;}
+  }
+</style>
+@endverbatim
+@endpush
+
+@section('content')
+@verbatim
+<div class="phone">
+
+  <div id="ad-header-banner"></div>
+
+  <div class="scroll">
+
+    <!-- HEADER -->
+    <div class="header">
+      <div>
+        <div class="greeting">Discover something new</div>
+        <div class="app-title">Explore</div>
+      </div>
+      <div class="hr">
+        <div class="theme-toggle" id="themeToggle">
+          <span class="tt-icon" id="ttIcon">🌙</span>
+          <span class="tt-label" id="ttLabel">Dark</span>
+        </div>
+        <div class="ib">
+          <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        </div>
+        <a class="av" href="user_profile_page.html" style="text-decoration:none;color:inherit;">DN</a>
+      </div>
+    </div>
+
+    <!-- SEARCH -->
+    <div class="sw">
+      <div class="sb">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" placeholder="Search songs, lectures, artists, preachers…" id="searchInput">
+        <div class="sf"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="11" y1="18" x2="13" y2="18"/></svg></div>
+      </div>
+    </div>
+
+    <!-- SCOPE TABS -->
+    <div class="scope" id="scopeTabs">
+      <div class="stab on" data-scope="all">All</div>
+      <div class="stab" data-scope="songs">Songs</div>
+      <div class="stab" data-scope="waazi">Wa'azi</div>
+    </div>
+
+    <!-- FEATURED SPLIT BANNER -->
+    <div class="sh"><div class="sh-t"><div class="sh-icon" style="background:rgba(155,107,255,.15);">✨</div>Featured Today</div><div class="sh-a">See all</div></div>
+    <div class="feat-split">
+      <a class="feat-card feat-song" href="song_detail_page.html" style="text-decoration:none;color:inherit;" data-type="songs">
+        <div class="feat-badge song">🔥 Trending Song</div>
+        <div class="feat-title">Kurmus</div>
+        <div class="feat-sub">Uzairu Badamasi</div>
+        <div class="feat-play"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>Play</div>
+      </a>
+      <a class="feat-card feat-waazi" href="shurafah_waazi_detail.html" style="text-decoration:none;color:inherit;" data-type="waazi">
+        <div class="feat-badge waazi">🔥 Trending Lecture</div>
+        <div class="feat-title">Hanyar Gaskiya</div>
+        <div class="feat-sub">Sheikh Ahmad Gumi</div>
+        <div class="feat-play"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>Play</div>
+      </a>
+    </div>
+
+    <!-- GENRE PILLS -->
+    <div class="sh"><div class="sh-t"><div class="sh-icon" style="background:rgba(77,159,255,.15);">🎨</div>Browse by Genre</div></div>
+    <div class="cs" id="genrePills">
+      <div class="pill on" data-genre="all">All</div>
+      <div class="pill" data-genre="ashura">Ashura</div>
+      <div class="pill" data-genre="ahlul-baiti">Ahlul-baiti</div>
+      <div class="pill" data-genre="maulud">Maulud</div>
+      <div class="pill" data-genre="tafsir">Tafsir</div>
+      <div class="pill" data-genre="aqeedah">Aqeedah</div>
+      <div class="pill" data-genre="fiqh">Fiqh</div>
+      <div class="pill" data-genre="seerah">Seerah</div>
+    </div>
+
+    <!-- CATEGORIES GRID — mixed (songs + Wa'azi) -->
+    <div class="sh"><div class="sh-t"><div class="sh-icon" style="background:rgba(255,107,53,.12);">📂</div>Categories</div><a class="sh-a" href="all_categories.html" style="text-decoration:none;">See all</a></div>
+    <div class="cat-grid">
+      <a class="cat-tile cat1" href="all_categories.html" style="text-decoration:none;color:inherit;" data-type="songs">
+        <div class="cat-i">🙏</div><div class="cat-tag song">Song</div><div class="cat-n">Ashura</div><div class="cat-c">142 songs</div>
+      </a>
+      <a class="cat-tile cat2" href="all_categories.html" style="text-decoration:none;color:inherit;" data-type="songs">
+        <div class="cat-i">🎤</div><div class="cat-tag song">Song</div><div class="cat-n">Maulud</div><div class="cat-c">76 songs</div>
+      </a>
+      <a class="cat-tile cat3" href="all_categories.html" style="text-decoration:none;color:inherit;" data-type="songs">
+        <div class="cat-i">🥁</div><div class="cat-tag song">Song</div><div class="cat-n">Shuhada</div><div class="cat-c">210 songs</div>
+      </a>
+      <a class="cat-tile cat4" href="all_waazi_categories.html" style="text-decoration:none;color:inherit;" data-type="waazi">
+        <div class="cat-i">📖</div><div class="cat-tag waazi">Wa'azi</div><div class="cat-n">Tafsir</div><div class="cat-c">312 lectures</div>
+      </a>
+      <a class="cat-tile cat5" href="all_waazi_categories.html" style="text-decoration:none;color:inherit;" data-type="waazi">
+        <div class="cat-i">⚖️</div><div class="cat-tag waazi">Wa'azi</div><div class="cat-n">Fiqh</div><div class="cat-c">189 lectures</div>
+      </a>
+      <a class="cat-tile cat6" href="all_waazi_categories.html" style="text-decoration:none;color:inherit;" data-type="waazi">
+        <div class="cat-i">🕊️</div><div class="cat-tag waazi">Wa'azi</div><div class="cat-n">Seerah</div><div class="cat-c">142 lectures</div>
+      </a>
+    </div>
+
+    <!-- TOP ARTISTS -->
+    <div class="sh"><div class="sh-t"><div class="sh-icon" style="background:rgba(255,107,53,.12);">🎤</div>Top Artists</div><a class="sh-a" href="all_top_artists.html" style="text-decoration:none;">See all</a></div>
+    <div class="hs">
+      <a class="ec" href="artist_profile_page.html" style="text-decoration:none;color:inherit;" data-type="songs">
+        <div class="ec-img ec-ring"><div class="ec-inner">🎤</div></div>
+        <div class="ec-name">Uzairu Badamasi</div><div class="ec-sub">1.2M plays</div>
+      </a>
+      <a class="ec" href="artist_profile_page.html" style="text-decoration:none;color:inherit;" data-type="songs">
+        <div class="ec-img ec-ring"><div class="ec-inner">🎵</div></div>
+        <div class="ec-name">Shamsudden Fudiyya</div><div class="ec-sub">980K plays</div>
+      </a>
+      <a class="ec" href="artist_profile_page.html" style="text-decoration:none;color:inherit;" data-type="songs">
+        <div class="ec-img ec-ring"><div class="ec-inner">🎼</div></div>
+        <div class="ec-name">Maishurafah</div><div class="ec-sub">640K plays</div>
+      </a>
+      <a class="ec" href="artist_profile_page.html" style="text-decoration:none;color:inherit;" data-type="songs">
+        <div class="ec-img ec-ring"><div class="ec-inner">🥁</div></div>
+        <div class="ec-name">Hafiz Abdullahi</div><div class="ec-sub">510K plays</div>
+      </a>
+    </div>
+
+    <!-- FEATURED PREACHERS -->
+    <div class="sh"><div class="sh-t"><div class="sh-icon" style="background:rgba(200,134,10,.15);">🎙️</div>Featured Preachers</div><a class="sh-a" href="all_top_preachers.html" style="text-decoration:none;">See all</a></div>
+    <div class="hs">
+      <a class="ec" href="shurafah_preacher_profile.html" style="text-decoration:none;color:inherit;" data-type="waazi">
+        <div class="ec-img ec-ring waazi"><div class="ec-inner">🎙️</div></div>
+        <div class="ec-name">Sh. Ahmad Gumi</div><div class="ec-sub">2.4M followers</div>
+      </a>
+      <a class="ec" href="shurafah_preacher_profile.html" style="text-decoration:none;color:inherit;" data-type="waazi">
+        <div class="ec-img ec-ring waazi"><div class="ec-inner">📖</div></div>
+        <div class="ec-name">Sh. Isah Ali</div><div class="ec-sub">1.8M followers</div>
+      </a>
+      <a class="ec" href="shurafah_preacher_profile.html" style="text-decoration:none;color:inherit;" data-type="waazi">
+        <div class="ec-img ec-ring waazi"><div class="ec-inner">⚖️</div></div>
+        <div class="ec-name">Dr. Aminu Daurawa</div><div class="ec-sub">1.2M followers</div>
+      </a>
+      <a class="ec" href="shurafah_preacher_profile.html" style="text-decoration:none;color:inherit;" data-type="waazi">
+        <div class="ec-img ec-ring waazi"><div class="ec-inner">🕌</div></div>
+        <div class="ec-name">Sh. Abdallah Usman</div><div class="ec-sub">980K followers</div>
+      </a>
+    </div>
+
+    <!-- TRENDING THIS WEEK — mixed -->
+    <div class="sh"><div class="sh-t"><div class="sh-icon" style="background:rgba(46,204,143,.15);">📈</div>Trending This Week</div><div class="sh-a">See all</div></div>
+    <div class="rows" id="trendingRows">
+      <a class="row" href="song_detail_page.html" style="text-decoration:none;color:inherit;" data-type="songs">
+        <div class="row-art g2">🎵<span class="typebadge song">Song</span></div>
+        <div class="row-info"><div class="row-title">Juyin Juya Hali</div><div class="row-sub">Uzairu Badamasi</div></div>
+        <div class="row-meta">2.4M plays</div>
+      </a>
+      <a class="row" href="shurafah_waazi_detail.html" style="text-decoration:none;color:inherit;" data-type="waazi">
+        <div class="row-art g7">🎙️<span class="typebadge waazi">Wa'azi</span></div>
+        <div class="row-info"><div class="row-title">Tafsir Suratul Baqarah</div><div class="row-sub">Sh. Isah Ali Ibrahim</div></div>
+        <div class="row-meta">2.4M plays</div>
+      </a>
+      <a class="row" href="song_detail_page.html" style="text-decoration:none;color:inherit;" data-type="songs">
+        <div class="row-art g3">🎶<span class="typebadge song">Song</span></div>
+        <div class="row-info"><div class="row-title">Yan Siyasa</div><div class="row-sub">Uzairu Badamasi</div></div>
+        <div class="row-meta">1.9M plays</div>
+      </a>
+      <a class="row" href="shurafah_waazi_detail.html" style="text-decoration:none;color:inherit;" data-type="waazi">
+        <div class="row-art g7">📖<span class="typebadge waazi">Wa'azi</span></div>
+        <div class="row-info"><div class="row-title">Hanyar Gaskiya Vol.3</div><div class="row-sub">Sh. Ahmad Gumi</div></div>
+        <div class="row-meta">1.8M plays</div>
+      </a>
+      <a class="row" href="song_detail_page.html" style="text-decoration:none;color:inherit;" data-type="songs">
+        <div class="row-art g5">🎸<span class="typebadge song">Song</span></div>
+        <div class="row-info"><div class="row-title">Qudus Remix</div><div class="row-sub">Uzairu Badamasi</div></div>
+        <div class="row-meta">1.4M plays</div>
+      </a>
+      <a class="row" href="shurafah_waazi_detail.html" style="text-decoration:none;color:inherit;" data-type="waazi">
+        <div class="row-art g7">⚖️<span class="typebadge waazi">Wa'azi</span></div>
+        <div class="row-info"><div class="row-title">Fiqhul Ibadah — Part 12</div><div class="row-sub">Dr. Aminu Daurawa</div></div>
+        <div class="row-meta">980K plays</div>
+      </a>
+    </div>
+
+    <!-- NEW THIS WEEK — mixed -->
+    <div class="sh"><div class="sh-t"><div class="sh-icon" style="background:rgba(255,77,143,.12);">✨</div>New This Week</div><a class="sh-a" href="all_recently_added.html" style="text-decoration:none;">See all</a></div>
+    <div class="rows" id="newRows">
+      <a class="row" href="song_detail_page.html" style="text-decoration:none;color:inherit;" data-type="songs">
+        <div class="row-art g4">🎼<span class="typebadge song">Song</span></div>
+        <div class="row-info"><div class="row-title">A Kasar nan</div><div class="row-sub">Uzairu Badamasi · 2h ago</div></div>
+        <div class="row-meta">3:42</div>
+      </a>
+      <a class="row" href="shurafah_waazi_detail.html" style="text-decoration:none;color:inherit;" data-type="waazi">
+        <div class="row-art g7">🤲<span class="typebadge waazi">Wa'azi</span></div>
+        <div class="row-info"><div class="row-title">Du'a of the 10 Days</div><div class="row-sub">Dr. Auwal Albani · 5h ago</div></div>
+        <div class="row-meta">32:44</div>
+      </a>
+      <a class="row" href="song_detail_page.html" style="text-decoration:none;color:inherit;" data-type="songs">
+        <div class="row-art g6">🎹<span class="typebadge song">Song</span></div>
+        <div class="row-info"><div class="row-title">Wakar Sallah</div><div class="row-sub">Shamsudden Fudiyya · Yesterday</div></div>
+        <div class="row-meta">4:18</div>
+      </a>
+      <a class="row" href="shurafah_waazi_detail.html" style="text-decoration:none;color:inherit;" data-type="waazi">
+        <div class="row-art g7">🌿<span class="typebadge waazi">Wa'azi</span></div>
+        <div class="row-info"><div class="row-title">Manners in Islam</div><div class="row-sub">Sh. Aliyu Maikwaru · Yesterday</div></div>
+        <div class="row-meta">44:10</div>
+      </a>
+    </div>
+
+    <div style="height:14px;"></div>
+  </div><!-- /scroll -->
+
+  <!-- BOTTOM NAV (Home · Wa'azi · Explore · Favourites · Profile) -->
+  <div class="bnav">
+    <a class="ni" href="song_portal_web.html" style="text-decoration:none;color:inherit;"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><div class="nl">Home</div></a>
+    <a class="ni" href="shurafah_waazi.html" style="text-decoration:none;color:inherit;"><svg viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg><div class="nl">Wa'azi</div></a>
+    <a class="ni on" href="shurafah_explore.html" style="text-decoration:none;color:inherit;"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><div class="nl">Explore</div></a>
+    <a class="ni" href="favourites_page.html" style="text-decoration:none;color:inherit;"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg><div class="nl">Favourites</div></a>
+    <a class="ni" href="user_profile_page.html" style="text-decoration:none;color:inherit;"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><div class="nl">Profile</div></a>
+  </div>
+</div>
+
+@endverbatim
+@endsection
+
+@push('scripts')
+@verbatim
+<script>
+  /* ── Theme ── */
+  var toggle = document.getElementById('themeToggle');
+  var ttIcon = document.getElementById('ttIcon');
+  var ttLabel = document.getElementById('ttLabel');
+  var body = document.body;
+  function applyTheme(isLight){
+    if(isLight){ body.classList.add('light'); ttIcon.textContent='☀️'; ttLabel.textContent='Light'; }
+    else { body.classList.remove('light'); ttIcon.textContent='🌙'; ttLabel.textContent='Dark'; }
+  }
+  applyTheme(localStorage.getItem('shurafah-theme') === 'light');
+  toggle.addEventListener('click', function(){
+    var isLight = !body.classList.contains('light');
+    applyTheme(isLight);
+    localStorage.setItem('shurafah-theme', isLight ? 'light' : 'dark');
+  });
+
+  /* ── Scope filter — All / Songs / Wa'azi ── */
+  var scopeTabs = document.querySelectorAll('#scopeTabs .stab');
+  function applyScope(scope){
+    document.querySelectorAll('[data-type]').forEach(function(el){
+      if(scope === 'all'){ el.style.display = ''; }
+      else { el.style.display = (el.getAttribute('data-type') === scope) ? '' : 'none'; }
+    });
+  }
+  scopeTabs.forEach(function(tab){
+    tab.addEventListener('click', function(){
+      scopeTabs.forEach(function(t){ t.classList.remove('on'); });
+      tab.classList.add('on');
+      applyScope(tab.getAttribute('data-scope'));
+    });
+  });
+
+  /* ── Genre pills (visual only) ── */
+  document.querySelectorAll('#genrePills .pill').forEach(function(p){
+    p.addEventListener('click', function(){
+      document.querySelectorAll('#genrePills .pill').forEach(function(x){ x.classList.remove('on'); });
+      p.classList.add('on');
+    });
+  });
+
+  /* ── Ads (lazy init if ads.js loaded) ── */
+  if(window.ADS){
+    ADS.setUserType('guest');
+    ADS.init({
+      enabled:true,
+      placements:{ headerBanner:{enabled:true}, inFeed:{enabled:true,frequency:5}, downloadModal:{enabled:true,timer:5} }
+    });
+  }
+</script>
+<script src="/js/ads.js"></script>
+@endverbatim
+@endpush
