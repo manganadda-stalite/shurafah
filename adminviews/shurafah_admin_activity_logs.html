@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shurafah Admin — Activity Logs</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#05070F;--surface:#0A0E1A;--surface2:#0F1525;--surface3:#141B2E;--surface4:#1A2238;
+  --accent:#FF6B35;--accent2:#FFB347;--blue:#4D9FFF;--green:#2ECC8F;
+  --purple:#9B6BFF;--pink:#FF4D8F;--yellow:#FFD166;--red:#FF4444;--teal:#00C9B8;
+  --text:#F0F4FF;--text2:#8A94B0;--text3:#4A5270;
+  --border:rgba(255,255,255,0.06);
+  --sidebar-w:240px;--sidebar-collapsed:62px;--topbar-h:60px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--text);min-height:100vh;display:flex;overflow-x:hidden;}
+
+/* ── SIDEBAR ── */
+.sidebar{width:var(--sidebar-w);min-height:100vh;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;top:0;left:0;z-index:100;transition:width .25s ease;overflow:hidden;}
+.sidebar.collapsed{width:var(--sidebar-collapsed);}
+.sb-logo{display:flex;align-items:center;gap:10px;padding:18px 16px 16px;border-bottom:1px solid var(--border);flex-shrink:0;min-height:var(--topbar-h);}
+.sb-logo-icon{width:32px;height:32px;border-radius:9px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.sb-logo-text{font-family:sans-serif;font-size:15px;font-weight:800;white-space:nowrap;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.sb-logo-sub{font-size:9px;color:var(--text3);}
+.sb-nav{flex:1;overflow-y:auto;overflow-x:hidden;padding:10px 0;scrollbar-width:none;}
+.sb-nav::-webkit-scrollbar{display:none;}
+.sb-group-label{font-size:9px;font-family:sans-serif;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.6px;padding:10px 16px 5px;white-space:nowrap;transition:opacity .2s;}
+.sidebar.collapsed .sb-group-label{opacity:0;}
+.sb-item{display:flex;align-items:center;gap:10px;padding:9px 16px;cursor:pointer;transition:background .15s;position:relative;white-space:nowrap;text-decoration:none;color:var(--text2);}
+.sb-item:hover{background:var(--surface2);color:var(--text);}
+.sb-item.active{background:rgba(0,201,184,.07);color:var(--teal);border-right:2px solid var(--teal);}
+.sb-item.active .sb-icon svg{stroke:var(--teal);}
+.sb-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.sb-item.active .sb-icon{background:rgba(0,201,184,.08);}
+.sb-icon svg{width:15px;height:15px;fill:none;stroke:var(--text3);stroke-width:2;transition:stroke .15s;}
+.sb-item:hover .sb-icon svg{stroke:var(--text);}
+.sb-label{font-size:12px;font-weight:500;white-space:nowrap;overflow:hidden;transition:opacity .2s;}
+.sidebar.collapsed .sb-label{opacity:0;pointer-events:none;}
+.sb-badge{margin-left:auto;background:var(--accent);border-radius:50px;padding:1px 7px;font-size:9px;font-weight:700;color:white;font-family:sans-serif;white-space:nowrap;flex-shrink:0;transition:opacity .2s;}
+.sidebar.collapsed .sb-badge{opacity:0;}
+.sb-item::after{content:attr(data-tip);position:absolute;left:calc(var(--sidebar-collapsed) + 8px);top:50%;transform:translateY(-50%);background:var(--surface3);border:1px solid var(--border);border-radius:8px;padding:5px 10px;font-size:11px;color:var(--text);white-space:nowrap;pointer-events:none;opacity:0;transition:opacity .15s;z-index:200;box-shadow:0 4px 16px rgba(0,0,0,.4);}
+.sidebar.collapsed .sb-item:hover::after{opacity:1;}
+.sb-footer{padding:12px 16px;border-top:1px solid var(--border);display:flex;align-items:center;gap:10px;flex-shrink:0;}
+.sb-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--purple),var(--blue));display:flex;align-items:center;justify-content:center;font-size:12px;font-family:sans-serif;font-weight:700;flex-shrink:0;}
+.sb-user-name{font-size:12px;font-weight:600;white-space:nowrap;transition:opacity .2s;}
+.sb-user-role{font-size:10px;color:var(--text3);transition:opacity .2s;}
+.sidebar.collapsed .sb-user-name,.sidebar.collapsed .sb-user-role{opacity:0;}
+
+/* ── MAIN ── */
+.main{margin-left:var(--sidebar-w);flex:1;display:flex;flex-direction:column;min-height:100vh;transition:margin-left .25s ease;}
+.main.sidebar-collapsed{margin-left:var(--sidebar-collapsed);}
+
+/* ── TOPBAR ── */
+.topbar{height:var(--topbar-h);background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:14px;padding:0 24px;position:sticky;top:0;z-index:50;flex-shrink:0;}
+.topbar-toggle{width:32px;height:32px;border-radius:8px;background:var(--surface2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;}
+.topbar-toggle svg{width:14px;height:14px;fill:none;stroke:var(--text2);stroke-width:2;}
+.topbar-breadcrumb{font-size:12px;color:var(--text3);display:flex;align-items:center;gap:6px;}
+.topbar-right{display:flex;align-items:center;gap:10px;margin-left:auto;}
+.tb-icon-btn{width:34px;height:34px;border-radius:9px;background:var(--surface2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;transition:border-color .15s;}
+.tb-icon-btn:hover{border-color:rgba(255,107,53,.3);}
+.tb-icon-btn svg{width:15px;height:15px;fill:none;stroke:var(--text2);stroke-width:2;}
+.tb-notif-dot{position:absolute;top:6px;right:6px;width:6px;height:6px;background:var(--accent);border-radius:50%;border:1.5px solid var(--surface);}
+.tb-avatar{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-family:sans-serif;font-size:12px;font-weight:700;cursor:pointer;}
+
+/* ── CONTENT ── */
+.content{flex:1;padding:24px;overflow-y:auto;}
+.page-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:22px;flex-wrap:wrap;gap:12px;}
+.page-title{font-family:sans-serif;font-size:22px;font-weight:800;letter-spacing:-.4px;margin-bottom:3px;}
+.page-subtitle{font-size:12px;color:var(--text2);}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:9px;cursor:pointer;font-family:sans-serif;font-size:11px;font-weight:700;transition:all .15s;border:1px solid transparent;}
+.btn-primary{background:var(--accent);color:white;box-shadow:0 3px 12px rgba(255,107,53,.3);}
+.btn-primary:hover{box-shadow:0 5px 18px rgba(255,107,53,.45);}
+.btn-outline{background:transparent;border-color:var(--border);color:var(--text2);}
+.btn-outline:hover{border-color:rgba(255,107,53,.3);color:var(--text);}
+.btn-teal{background:rgba(0,201,184,.1);border-color:rgba(0,201,184,.25);color:var(--teal);}
+.btn-danger{background:rgba(255,68,68,.1);border-color:rgba(255,68,68,.25);color:var(--red);}
+.btn-sm{padding:5px 12px;font-size:10px;}
+.btn svg{width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:2;}
+
+/* ── STAT STRIP ── */
+.stat-strip{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:22px;}
+.ss-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:10px;animation:fadeUp .4s ease both;}
+.ss-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.ss-icon svg{width:16px;height:16px;fill:none;stroke:white;stroke-width:2;}
+.ss-val{font-family:sans-serif;font-size:18px;font-weight:800;line-height:1;}
+.ss-label{font-size:10px;color:var(--text3);margin-top:2px;}
+
+/* ── HEATMAP STRIP ── */
+.heatmap-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:18px 20px;margin-bottom:22px;animation:fadeUp .4s ease both;}
+.heatmap-title{font-family:sans-serif;font-size:13px;font-weight:700;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;}
+.heatmap-sub{font-size:10px;color:var(--text3);}
+.heatmap-grid{display:flex;gap:3px;align-items:flex-end;}
+.hm-col{display:flex;flex-direction:column;gap:3px;align-items:center;}
+.hm-day-label{font-size:8px;color:var(--text3);font-family:sans-serif;margin-bottom:3px;}
+.hm-cells{display:flex;flex-direction:column;gap:3px;}
+.hm-cell{width:14px;height:14px;border-radius:3px;transition:transform .15s;cursor:pointer;position:relative;}
+.hm-cell:hover{transform:scale(1.3);}
+.hm-cell::after{content:attr(data-tip);position:absolute;bottom:calc(100% + 4px);left:50%;transform:translateX(-50%);background:var(--surface3);border:1px solid var(--border);border-radius:6px;padding:3px 7px;font-size:9px;white-space:nowrap;pointer-events:none;opacity:0;transition:opacity .15s;z-index:10;}
+.hm-cell:hover::after{opacity:1;}
+.hm-hour-labels{display:flex;flex-direction:column;gap:3px;margin-right:6px;}
+.hm-hour-label{font-size:7px;color:var(--text3);height:14px;display:flex;align-items:center;font-family:sans-serif;}
+.hm-legend{display:flex;align-items:center;gap:6px;margin-top:12px;}
+.hm-legend-label{font-size:9px;color:var(--text3);}
+.hm-legend-cells{display:flex;gap:3px;}
+.hm-legend-cell{width:12px;height:12px;border-radius:2px;}
+
+/* ── TOOLBAR ── */
+.toolbar{display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap;}
+.search-wrap{flex:1;min-width:200px;position:relative;}
+.search-input{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:9px 14px 9px 38px;font-size:12px;color:var(--text);font-family:'DM Sans',sans-serif;outline:none;transition:border-color .2s;}
+.search-input:focus{border-color:rgba(0,201,184,.35);}
+.search-input::placeholder{color:var(--text3);}
+.search-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);}
+.search-icon svg{width:14px;height:14px;fill:none;stroke:var(--text3);stroke-width:2;}
+.filter-select{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:9px 14px;font-size:11px;color:var(--text2);font-family:'DM Sans',sans-serif;outline:none;cursor:pointer;}
+.filter-select option{background:var(--surface2);}
+.date-input{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:9px 14px;font-size:11px;color:var(--text2);font-family:'DM Sans',sans-serif;outline:none;cursor:pointer;}
+
+/* ── LIVE FEED INDICATOR ── */
+.live-bar{display:flex;align-items:center;gap:8px;padding:9px 16px;background:rgba(0,201,184,.06);border:1px solid rgba(0,201,184,.15);border-radius:10px;margin-bottom:14px;font-size:11px;color:var(--text2);}
+.live-dot{width:7px;height:7px;background:var(--teal);border-radius:50%;animation:pulse 1.2s ease-in-out infinite;box-shadow:0 0 0 0 rgba(0,201,184,.4);}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(0,201,184,.4)}50%{box-shadow:0 0 0 6px rgba(0,201,184,0)}}
+.live-label{font-family:sans-serif;font-size:10px;font-weight:700;color:var(--teal);}
+.live-count{font-family:sans-serif;font-weight:700;color:var(--text);}
+
+/* ── LOG TABLE ── */
+.table-wrap{background:var(--surface);border:1px solid var(--border);border-radius:16px;overflow:hidden;animation:fadeUp .4s ease both;}
+.table-header{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--border);}
+.table-title{font-family:sans-serif;font-size:13px;font-weight:700;display:flex;align-items:center;gap:8px;}
+table{width:100%;border-collapse:collapse;}
+thead th{padding:10px 14px;text-align:left;font-size:10px;font-family:sans-serif;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.4px;border-bottom:1px solid var(--border);white-space:nowrap;}
+tbody tr{border-bottom:1px solid var(--border);transition:background .12s;}
+tbody tr:last-child{border-bottom:none;}
+tbody tr:hover{background:var(--surface2);}
+td{padding:10px 14px;font-size:12px;vertical-align:middle;}
+
+/* Actor cell */
+.td-actor{display:flex;align-items:center;gap:8px;}
+.td-avatar{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-family:sans-serif;font-weight:700;flex-shrink:0;}
+.td-name{font-family:sans-serif;font-size:11px;font-weight:700;}
+.td-role{font-size:9px;color:var(--text3);}
+
+/* Severity / category badges */
+.sev-badge{font-size:8px;font-family:sans-serif;font-weight:700;padding:3px 8px;border-radius:50px;white-space:nowrap;}
+.sev-info{background:rgba(77,159,255,.1);color:var(--blue);border:1px solid rgba(77,159,255,.22);}
+.sev-success{background:rgba(46,204,143,.1);color:var(--green);border:1px solid rgba(46,204,143,.22);}
+.sev-warning{background:rgba(255,209,102,.1);color:var(--yellow);border:1px solid rgba(255,209,102,.22);}
+.sev-danger{background:rgba(255,68,68,.1);color:var(--red);border:1px solid rgba(255,68,68,.22);}
+.sev-system{background:rgba(0,201,184,.08);color:var(--teal);border:1px solid rgba(0,201,184,.2);}
+
+/* Category dot */
+.cat-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;display:inline-block;margin-right:5px;}
+
+/* IP / device cell */
+.td-device{font-size:10px;color:var(--text2);}
+.td-ip{font-size:9px;color:var(--text3);font-family:sans-serif;}
+
+/* Expand row */
+.expand-row{display:none;}
+.expand-row.open td{padding:0;}
+.expand-content{padding:12px 16px 12px 56px;background:var(--surface2);border-top:1px solid var(--border);font-size:11px;color:var(--text2);line-height:1.7;}
+.expand-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:8px;}
+.eg-item{}
+.eg-label{font-size:9px;color:var(--text3);font-family:sans-serif;text-transform:uppercase;letter-spacing:.3px;margin-bottom:2px;}
+.eg-value{font-size:11px;font-family:sans-serif;font-weight:600;}
+.expand-btn{width:24px;height:24px;border-radius:6px;border:1px solid var(--border);background:transparent;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;}
+.expand-btn:hover{background:var(--surface3);}
+.expand-btn svg{width:11px;height:11px;fill:none;stroke:var(--text3);stroke-width:2;transition:transform .2s;}
+.expand-btn.open svg{transform:rotate(180deg);}
+
+/* ── PAGINATION ── */
+.pagination{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-top:1px solid var(--border);flex-wrap:wrap;gap:10px;}
+.page-info{font-size:11px;color:var(--text3);}
+.page-btns{display:flex;gap:4px;}
+.page-btn{width:32px;height:32px;border-radius:8px;background:var(--surface);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;font-family:sans-serif;font-size:11px;font-weight:700;color:var(--text3);transition:all .15s;}
+.page-btn:hover{border-color:rgba(0,201,184,.3);color:var(--text);}
+.page-btn.active{background:var(--teal);border-color:var(--teal);color:#000;}
+.page-btn svg{width:12px;height:12px;fill:none;stroke:currentColor;stroke-width:2;}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:24px;right:24px;background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:12px 18px;font-size:12px;font-family:sans-serif;font-weight:700;color:var(--text);box-shadow:0 8px 24px rgba(0,0,0,.5);z-index:300;opacity:0;transform:translateY(10px);transition:opacity .2s,transform .2s;pointer-events:none;max-width:320px;}
+.toast.show{opacity:1;transform:translateY(0);}
+.toast.success{border-color:rgba(46,204,143,.35);}
+.toast.danger{border-color:rgba(255,68,68,.35);}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.g1{background:linear-gradient(135deg,#9B6BFF,#4D9FFF);}
+.g2{background:linear-gradient(135deg,#FF6B35,#FFB347);}
+.g3{background:linear-gradient(135deg,#FF4D8F,#FF6B35);}
+.g4{background:linear-gradient(135deg,#2ECC8F,#4D9FFF);}
+.g5{background:linear-gradient(135deg,#FFB347,#FF4D8F);}
+.g6{background:linear-gradient(135deg,#4D9FFF,#9B6BFF);}
+.g7{background:linear-gradient(135deg,#FF6B35,#FF4D8F);}
+.g8{background:linear-gradient(135deg,#2ECC8F,#9B6BFF);}
+::-webkit-scrollbar{width:4px;height:4px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--surface4);border-radius:2px;}
+
+/* ════════════════════════════════
+   MOBILE RESPONSIVENESS
+════════════════════════════════ */
+@media (max-width:1200px) {
+  .stat-strip{grid-template-columns:repeat(3,1fr);}
+}
+
+@media (max-width:768px) {
+  .main{margin-left:var(--sidebar-collapsed);}
+  
+  .topbar{padding:0 16px;gap:10px;}
+  .topbar-breadcrumb{font-size:11px;}
+  .topbar-toggle{width:28px;height:28px;}
+  
+  .content{padding:16px;overflow-x:hidden;}
+  
+  .page-header{flex-direction:column;gap:12px;margin-bottom:16px;}
+  .page-header > div:last-child{width:100%;display:flex;gap:6px;}
+  .page-header > div:last-child .btn{flex:1;padding:7px 12px;font-size:10px;}
+  .page-title{font-size:18px;}
+  .page-subtitle{font-size:11px;}
+  
+  .stat-strip{grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px;}
+  .ss-card{padding:12px 14px;gap:8px;}
+  .ss-icon{width:32px;height:32px;font-size:14px;}
+  .ss-val{font-size:16px;}
+  .ss-label{font-size:9px;}
+  
+  .heatmap-card{padding:14px 16px;margin-bottom:16px;border-radius:12px;}
+  .heatmap-title{font-size:12px;margin-bottom:10px;}
+  .heatmap-sub{font-size:9px;}
+  .hm-cell{width:12px;height:12px;}
+  .hm-hour-label{font-size:6px;height:12px;}
+  .hm-legend{margin-top:10px;gap:4px;}
+  .hm-legend-label{font-size:8px;}
+  .hm-legend-cell{width:10px;height:10px;}
+  
+  .toolbar{gap:8px;margin-bottom:12px;}
+  .search-wrap{min-width:150px;}
+  .search-input{padding:8px 12px 8px 32px;font-size:11px;}
+  .filter-select{padding:8px 12px;font-size:10px;}
+  .date-input{padding:8px 12px;font-size:10px;}
+  
+  .live-bar{padding:8px 12px;font-size:10px;margin-bottom:12px;}
+  .live-dot{width:6px;height:6px;}
+  .live-label{font-size:9px;}
+  
+  .table-wrap{border-radius:12px;overflow-x:auto;}
+  .table-header{padding:12px 16px;}
+  .table-title{font-size:12px;}
+  
+  thead th{padding:8px 10px;font-size:9px;}
+  td{padding:8px 10px;font-size:11px;}
+  
+  .td-actor{gap:6px;}
+  .td-avatar{width:24px;height:24px;font-size:9px;}
+  .td-name{font-size:10px;}
+  .td-role{font-size:8px;}
+  
+  .sev-badge{font-size:7px;padding:2px 6px;}
+  .cat-dot{width:6px;height:6px;}
+  .td-device{font-size:9px;}
+  .td-ip{font-size:8px;}
+  
+  .expand-content{padding:10px 12px 10px 40px;font-size:10px;}
+  .expand-grid{grid-template-columns:repeat(2,1fr);gap:10px;}
+  .eg-label{font-size:8px;}
+  .eg-value{font-size:10px;}
+  .expand-btn{width:20px;height:20px;}
+  .expand-btn svg{width:10px;height:10px;}
+  
+  .pagination{padding:12px 16px;gap:8px;}
+  .page-info{font-size:10px;}
+  .page-btn{width:28px;height:28px;font-size:10px;}
+  .page-btn svg{width:10px;height:10px;}
+}
+
+@media (max-width:480px) {
+  .main{margin-left:var(--sidebar-collapsed);}
+  
+  .topbar{padding:0 12px;gap:8px;height:56px;}
+  .topbar-breadcrumb{font-size:10px;display:none;}
+  .topbar-toggle{width:24px;height:24px;}
+  .topbar-toggle svg{width:12px;height:12px;}
+  .tb-icon-btn{width:28px;height:28px;}
+  .tb-icon-btn svg{width:13px;height:13px;}
+  .tb-avatar{width:28px;height:28px;font-size:10px;}
+  
+  .content{padding:12px;overflow-x:hidden;}
+  
+  .page-header{flex-direction:column;gap:10px;margin-bottom:12px;}
+  .page-header > div:last-child{width:100%;display:flex;gap:4px;flex-wrap:wrap;}
+  .page-header > div:last-child .btn{flex:1;min-width:80px;padding:6px 10px;font-size:9px;}
+  .page-title{font-size:16px;}
+  .page-subtitle{font-size:10px;display:none;}
+  
+  .stat-strip{grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:12px;}
+  .ss-card{padding:10px 12px;gap:6px;}
+  .ss-icon{width:28px;height:28px;font-size:12px;}
+  .ss-icon svg{width:14px;height:14px;}
+  .ss-val{font-size:14px;}
+  .ss-label{font-size:8px;}
+  
+  .heatmap-card{padding:12px 14px;margin-bottom:12px;border-radius:10px;}
+  .heatmap-title{font-size:11px;margin-bottom:8px;}
+  .heatmap-sub{font-size:8px;}
+  .heatmap-grid{gap:2px;}
+  .hm-col{gap:2px;}
+  .hm-day-label{font-size:7px;margin-bottom:2px;}
+  .hm-cell{width:10px;height:10px;}
+  .hm-hour-labels{gap:2px;margin-right:4px;}
+  .hm-hour-label{font-size:5px;height:10px;}
+  .hm-legend{margin-top:8px;gap:3px;}
+  .hm-legend-label{font-size:7px;}
+  .hm-legend-cell{width:8px;height:8px;}
+  
+  .toolbar{flex-direction:column;gap:6px;margin-bottom:10px;}
+  .search-wrap{width:100%;min-width:auto;}
+  .search-input{padding:7px 10px 7px 28px;font-size:10px;}
+  .search-icon svg{width:12px;height:12px;}
+  .filter-select{width:100%;padding:7px 10px;font-size:9px;}
+  .date-input{width:100%;padding:7px 10px;font-size:9px;}
+  
+  .live-bar{padding:7px 10px;font-size:9px;margin-bottom:10px;}
+  .live-dot{width:5px;height:5px;}
+  .live-label{font-size:8px;}
+  .live-count{font-size:10px;}
+  
+  .table-wrap{border-radius:10px;overflow-x:auto;}
+  .table-header{padding:10px 12px;}
+  .table-title{font-size:11px;}
+  
+  thead th{padding:6px 8px;font-size:8px;}
+  td{padding:6px 8px;font-size:10px;}
+  
+  .td-actor{gap:4px;}
+  .td-avatar{width:20px;height:20px;font-size:8px;}
+  .td-name{font-size:9px;}
+  .td-role{font-size:7px;}
+  
+  .sev-badge{font-size:6px;padding:1px 4px;}
+  .cat-dot{width:5px;height:5px;margin-right:3px;}
+  .td-device{font-size:8px;}
+  .td-ip{font-size:7px;}
+  
+  .expand-content{padding:8px 10px 8px 32px;font-size:9px;line-height:1.5;}
+  .expand-grid{grid-template-columns:1fr;gap:8px;}
+  .eg-label{font-size:7px;}
+  .eg-value{font-size:9px;}
+  .expand-btn{width:18px;height:18px;}
+  .expand-btn svg{width:9px;height:9px;}
+  
+  .pagination{flex-direction:column;padding:10px 12px;gap:6px;align-items:flex-start;}
+  .page-info{font-size:9px;}
+  .page-btns{gap:3px;}
+  .page-btn{width:24px;height:24px;font-size:9px;}
+  .page-btn svg{width:9px;height:9px;}
+  
+  .toast{bottom:16px;right:16px;padding:10px 14px;font-size:11px;max-width:280px;border-radius:10px;}
+}
+</style>
+</head>
+<body>
+<div id="shurafah-scope-banner" style="position:fixed;top:8px;left:50%;transform:translateX(-50%);z-index:9999;background:rgba(15,20,32,.92);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.08);border-radius:50px;padding:5px 10px 5px 12px;font-family:sans-serif;font-size:11px;font-weight:700;color:#F0F4FF;box-shadow:0 8px 24px rgba(0,0,0,.45);display:flex;align-items:center;gap:8px;pointer-events:auto;"><span style="display:flex;align-items:center;gap:5px;color:#FFB347;"><span style="font-size:13px;">🎵</span>Songs Admin</span><span style="background:rgba(200,134,10,.15);color:#E8A020;border:1px solid rgba(200,134,10,.3);padding:3px 9px;border-radius:50px;font-weight:700;font-size:10px;">🎙️ Includes Wa'azi data</span><span onclick="document.getElementById('shurafah-scope-banner').remove()" style="cursor:pointer;padding:0 4px;opacity:.55;font-size:13px;">✕</span></div>
+
+
+<script src="admin-sidebar.js"></script>
+<script src="theme-manager.js"></script>
+
+<!-- ════ MAIN ════ -->
+<div class="main" id="mainArea">
+  <header class="topbar">
+    <div class="topbar-toggle" id="sidebarToggle">
+      <svg viewBox="0 0 24 24"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </div>
+    <div class="topbar-breadcrumb">
+      <span>Admin</span><span style="color:var(--text3);margin:0 6px;">/</span>
+      <span style="color:var(--teal);">Activity Logs</span>
+    </div>
+    <div class="topbar-right">
+      <div class="tb-icon-btn"><svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><div class="tb-notif-dot"></div></div>
+      <div class="tb-icon-btn"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></div>
+      <div class="tb-avatar">SA</div>
+    </div>
+  </header>
+
+  <main class="content">
+
+    <div class="page-header">
+      <div>
+        <div class="page-title">Activity Logs</div>
+        <div class="page-subtitle">Full audit trail — every admin &amp; system action with IP, device, timestamp &amp; payload</div>
+      </div>
+      <div style="display:flex;gap:8px;">
+        <div class="btn btn-outline" onclick="showToast('Exporting logs as CSV…','')">
+          <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Export CSV
+        </div>
+        <div class="btn btn-danger btn-sm" onclick="showToast('Purge dialog: select retention period…','')">
+          <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg>
+          Purge Old Logs
+        </div>
+      </div>
+    </div>
+
+    <!-- Stat strip -->
+    <div class="stat-strip">
+      <div class="ss-card" style="animation-delay:0s;">
+        <div class="ss-icon" style="background:rgba(0,201,184,.1);"><svg viewBox="0 0 24 24" style="stroke:var(--teal);"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+        <div><div class="ss-val" style="color:var(--teal);">48,284</div><div class="ss-label">Total Logs</div></div>
+      </div>
+      <div class="ss-card" style="animation-delay:.04s;">
+        <div class="ss-icon" style="background:rgba(77,159,255,.12);"><svg viewBox="0 0 24 24" style="stroke:var(--blue);"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+        <div><div class="ss-val" style="color:var(--blue);">1,240</div><div class="ss-label">Admin Actions</div></div>
+      </div>
+      <div class="ss-card" style="animation-delay:.08s;">
+        <div class="ss-icon" style="background:rgba(255,68,68,.1);"><svg viewBox="0 0 24 24" style="stroke:var(--red);"><polygon points="10.29 3.86 1.82 18 22.18 18 13.71 3.86 10.29 3.86"/><line x1="12" y1="9" x2="12" y2="13"/></svg></div>
+        <div><div class="ss-val" style="color:var(--red);">18</div><div class="ss-label">Critical Events</div></div>
+      </div>
+      <div class="ss-card" style="animation-delay:.12s;">
+        <div class="ss-icon" style="background:rgba(255,209,102,.1);"><svg viewBox="0 0 24 24" style="stroke:var(--yellow);"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+        <div><div class="ss-val" style="color:var(--yellow);">3</div><div class="ss-label">Active Sessions</div></div>
+      </div>
+      <div class="ss-card" style="animation-delay:.16s;">
+        <div class="ss-icon" style="background:rgba(46,204,143,.1);"><svg viewBox="0 0 24 24" style="stroke:var(--green);"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22,4 12,14.01 9,11.01"/></svg></div>
+        <div><div class="ss-val" style="color:var(--green);">99.8%</div><div class="ss-label">System Uptime</div></div>
+      </div>
+    </div>
+
+    <!-- Activity heatmap -->
+    <div class="heatmap-card" style="animation-delay:.1s;">
+      <div class="heatmap-title">
+        <span style="display:flex;align-items:center;gap:8px;">
+          <div style="width:28px;height:28px;border-radius:8px;background:rgba(0,201,184,.1);display:flex;align-items:center;justify-content:center;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+          Activity Heatmap — Last 7 Days
+        </span>
+        <span class="heatmap-sub">Hover cells for detail</span>
+      </div>
+      <div style="display:flex;align-items:flex-start;gap:4px;" id="heatmapWrap"></div>
+      <div class="hm-legend">
+        <span class="hm-legend-label">Less</span>
+        <div class="hm-legend-cells" id="hmLegend"></div>
+        <span class="hm-legend-label">More</span>
+      </div>
+    </div>
+
+    <!-- Live feed bar -->
+    <div class="live-bar">
+      <div class="live-dot"></div>
+      <span class="live-label">LIVE</span>
+      <span>Real-time log stream active ·</span>
+      <span class="live-count" id="liveCount">284 events today</span>
+      <span style="margin-left:auto;font-size:10px;color:var(--text3);">Last event: <strong id="lastEventTime" style="color:var(--teal);">just now</strong></span>
+    </div>
+
+    <!-- Toolbar -->
+    <div class="toolbar">
+      <div class="search-wrap">
+        <div class="search-icon"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div>
+        <input class="search-input" id="searchInput" type="text" placeholder="Search by actor, action, IP, target…">
+      </div>
+      <select class="filter-select" id="catFilter">
+        <option value="all">All Categories</option>
+        <option value="auth">🔐 Auth</option>
+        <option value="content">🎵 Content</option>
+        <option value="user">👤 Users</option>
+        <option value="payment">💳 Payment</option>
+        <option value="system">⚙️ System</option>
+        <option value="security">🛡️ Security</option>
+      </select>
+      <select class="filter-select" id="sevFilter">
+        <option value="all">All Severity</option>
+        <option value="info">Info</option>
+        <option value="success">Success</option>
+        <option value="warning">Warning</option>
+        <option value="danger">Critical</option>
+        <option value="system">System</option>
+      </select>
+      <select class="filter-select" id="actorFilter">
+        <option value="all">All Actors</option>
+        <option value="admin">Admin Only</option>
+        <option value="user">Users Only</option>
+        <option value="system">System Only</option>
+      </select>
+      <input class="date-input" id="dateFilter" type="date">
+    </div>
+
+    <!-- Log table -->
+    <div class="table-wrap">
+      <div class="table-header">
+        <div class="table-title">
+          <div style="width:28px;height:28px;border-radius:8px;background:rgba(0,201,184,.1);display:flex;align-items:center;justify-content:center;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+          Audit Log
+          <span id="logCountBadge" style="font-size:10px;background:var(--surface3);border-radius:50px;padding:1px 8px;color:var(--text3);font-family:sans-serif;font-weight:700;"></span>
+        </div>
+        <div style="display:flex;gap:6px;">
+          <div class="btn btn-sm btn-teal" onclick="showToast('Auto-refresh ON — new events appear in real-time','')">
+            <svg viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+            Live Refresh
+          </div>
+        </div>
+      </div>
+      <div style="overflow-x:auto;">
+        <table>
+          <thead>
+            <tr>
+              <th style="width:28px;"></th>
+              <th>Actor</th>
+              <th>Action</th>
+              <th>Category</th>
+              <th>Severity</th>
+              <th>Target</th>
+              <th>IP Address</th>
+              <th>Device</th>
+              <th>Timestamp</th>
+            </tr>
+          </thead>
+          <tbody id="logTableBody"></tbody>
+        </table>
+      </div>
+      <div class="pagination">
+        <div class="page-info" id="pageInfo"></div>
+        <div class="page-btns" id="pageBtns"></div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+/* ── Sidebar ── */
+var sidebar  = document.getElementById('sidebar');
+var mainArea = document.getElementById('mainArea');
+var sbCol = false;
+document.getElementById('sidebarToggle').addEventListener('click', function() {
+  sbCol = !sbCol;
+  sidebar.classList.toggle('collapsed', sbCol);
+  mainArea.classList.toggle('sidebar-collapsed', sbCol);
+});
+
+/* ── Toast ── */
+var toastEl = document.getElementById('toast');
+var toastTimer = null;
+function showToast(msg, type) {
+  toastEl.textContent = msg;
+  toastEl.className = 'toast show' + (type ? ' ' + type : '');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function(){ toastEl.classList.remove('show'); }, 2800);
+}
+
+/* ─────────────────────────────────────────
+   HEATMAP DATA  (7 days × 8 hour-blocks)
+───────────────────────────────────────── */
+var DAYS  = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+var HOURS = ['00','03','06','09','12','15','18','21'];
+var HM_DATA = [
+  [2,1,3,8,12,6,14,5],
+  [1,0,2,10,18,9,20,8],
+  [3,1,4,7,15,11,18,6],
+  [2,2,3,9,22,14,28,12],
+  [4,1,5,11,19,10,16,7],
+  [1,0,1,4,8,5,12,4],
+  [0,0,1,3,6,4,10,3]
+];
+
+var HM_COLORS = [
+  'rgba(0,201,184,0.06)',
+  'rgba(0,201,184,0.15)',
+  'rgba(0,201,184,0.28)',
+  'rgba(0,201,184,0.48)',
+  'rgba(0,201,184,0.72)',
+  'rgba(0,201,184,0.92)'
+];
+
+function buildHeatmap() {
+  var wrap = document.getElementById('heatmapWrap');
+  wrap.innerHTML = '';
+
+  /* Hour labels */
+  var hlDiv = document.createElement('div');
+  hlDiv.className = 'hm-hour-labels';
+  hlDiv.innerHTML = '<div style="height:22px;"></div>';
+  for (var h = 0; h < HOURS.length; h++) {
+    hlDiv.innerHTML += '<div class="hm-hour-label">' + HOURS[h] + 'h</div>';
+  }
+  wrap.appendChild(hlDiv);
+
+  var maxVal = 0;
+  for (var d = 0; d < HM_DATA.length; d++) {
+    for (var hh = 0; hh < HM_DATA[d].length; hh++) {
+      if (HM_DATA[d][hh] > maxVal) maxVal = HM_DATA[d][hh];
+    }
+  }
+
+  for (var di = 0; di < DAYS.length; di++) {
+    var col = document.createElement('div');
+    col.className = 'hm-col';
+    col.innerHTML = '<div class="hm-day-label">' + DAYS[di] + '</div><div class="hm-cells" id="hmCells-' + di + '"></div>';
+    wrap.appendChild(col);
+    var cells = col.querySelector('.hm-cells');
+    for (var hi = 0; hi < HOURS.length; hi++) {
+      var val = HM_DATA[di][hi];
+      var intensity = maxVal > 0 ? Math.floor(val / maxVal * (HM_COLORS.length - 1)) : 0;
+      var cell = document.createElement('div');
+      cell.className = 'hm-cell';
+      cell.style.background = HM_COLORS[intensity];
+      cell.style.border = '1px solid rgba(0,201,184,0.08)';
+      cell.setAttribute('data-tip', DAYS[di] + ' ' + HOURS[hi] + ':00 — ' + val + ' events');
+      cells.appendChild(cell);
+    }
+  }
+
+  /* Legend */
+  var legend = document.getElementById('hmLegend');
+  legend.innerHTML = '';
+  for (var li = 0; li < HM_COLORS.length; li++) {
+    var lc = document.createElement('div');
+    lc.className = 'hm-legend-cell';
+    lc.style.background = HM_COLORS[li];
+    lc.style.border = '1px solid rgba(0,201,184,.1)';
+    legend.appendChild(lc);
+  }
+}
+
+/* ─────────────────────────────────────────
+   LOG DATA
+   Laravel: var LOGS = {!! json_encode($activityLogs->paginate(20)) !!};
+───────────────────────────────────────── */
+var CAT_COLORS = {
+  auth:    '#4D9FFF',
+  content: '#FF6B35',
+  user:    '#9B6BFF',
+  payment: '#2ECC8F',
+  system:  '#00C9B8',
+  security:'#FF4444'
+};
+
+var LOGS = [
+  { id:1,  actor:'Super Admin',    actorType:'admin',  actorGrad:'g6', action:'Banned user Ahmad Musa (ID #4821)', category:'user',    severity:'warning', target:'User #4821',          ip:'41.58.123.4',   device:'Chrome / Windows', ts:'Today 11:42 AM', detail:'Reason: Repeated spam comments. Duration: Permanent. Review ID: #9284' },
+  { id:2,  actor:'System',         actorType:'system', actorGrad:'g4', action:'Auto-debit ₦500 wallet for Premium renewal', category:'payment', severity:'success', target:'User #1204 — Ahmad Musa', ip:'—',             device:'System',       ts:'Today 11:40 AM', detail:'Wallet balance before: ₦800. After: ₦300. Plan: Monthly. Next renewal: May 1 2026.' },
+  { id:3,  actor:'Super Admin',    actorType:'admin',  actorGrad:'g6', action:'Uploaded new song: "Kurmus (Remix)"',      category:'content', severity:'success', target:'Song #4218',          ip:'41.58.123.4',   device:'Chrome / Windows', ts:'Today 11:38 AM', detail:'File size: 8.4 MB. Duration: 3:42. Category: Shuhada. Artist: Uzairu Badamasi.' },
+  { id:4,  actor:'Fatima A.',      actorType:'user',   actorGrad:'g3', action:'Created playlist "Evening Dhikr"',         category:'content', severity:'info',    target:'Playlist #3284',      ip:'105.112.45.6',  device:'Safari / iPhone',  ts:'Today 11:35 AM', detail:'Songs added: 0. Privacy: Public. Category: Mix.' },
+  { id:5,  actor:'System',         actorType:'system', actorGrad:'g4', action:'Termii SMS sent: Low balance warning',     category:'system',  severity:'info',    target:'User #8821',          ip:'—',             device:'System',       ts:'Today 11:30 AM', detail:'Message: "Your wallet balance is ₦200. Top up to avoid interruption." SMS unit: 1.' },
+  { id:6,  actor:'Editor Admin',   actorType:'admin',  actorGrad:'g1', action:'Edited category: Renamed "Shurafah" → "Shurafah Classics"', category:'content', severity:'warning', target:'Category #6', ip:'197.210.54.9', device:'Firefox / Mac', ts:'Today 11:28 AM', detail:'Old name: Shurafah. New name: Shurafah Classics. 318 songs affected.' },
+  { id:7,  actor:'Ibrahim K.',     actorType:'user',   actorGrad:'g4', action:'Upgraded to Premium (Yearly Plan)',        category:'payment', severity:'success', target:'User #3102 — Ibrahim K.', ip:'154.120.66.8', device:'Chrome / Android', ts:'Today 11:20 AM', detail:'Amount: ₦4,500. Method: Wallet (Moniepoint VA #9031234567). Expires: Apr 20, 2027.' },
+  { id:8,  actor:'System',         actorType:'system', actorGrad:'g4', action:'Moniepoint webhook: Wallet credit received', category:'payment', severity:'success', target:'User #3102',         ip:'—',             device:'System',       ts:'Today 11:19 AM', detail:'Amount: ₦5,000. Reference: MNP2026042011190002. Bank: GT Bank. Status: Confirmed.' },
+  { id:9,  actor:'Super Admin',    actorType:'admin',  actorGrad:'g6', action:'Deleted 3 spam comments',                  category:'user',    severity:'danger',  target:'Song #4218 comments', ip:'41.58.123.4',   device:'Chrome / Windows', ts:'Today 11:15 AM', detail:'Comment IDs: #8821, #8820, #8819. Reason: Spam links detected by filter.' },
+  { id:10, actor:'System',         actorType:'system', actorGrad:'g4', action:'New user registration: Musa Umar',         category:'auth',    severity:'success', target:'User #12841',         ip:'197.210.12.8',  device:'Chrome / Android', ts:'Today 11:10 AM', detail:'Phone: 0703***9012. Location: Kaduna, Nigeria. Moniepoint VA created: 9044321098.' },
+  { id:11, actor:'Yusuf S.',       actorType:'user',   actorGrad:'g6', action:'Downloaded 5 songs (320kbps)',             category:'content', severity:'info',    target:'Downloads batch',     ip:'102.89.47.12',  device:'App / iOS',        ts:'Today 11:05 AM', detail:'Songs: Kurmus, Ya Nabi Salamu, Juyin Juya Hali, Qudus Remix, Kubra Shahida ce.' },
+  { id:12, actor:'Security',       actorType:'system', actorGrad:'g7', action:'⚠ Failed login attempt (5x) — IP blocked', category:'security', severity:'danger', target:'IP: 192.168.44.2',   ip:'192.168.44.2',  device:'Unknown',          ts:'Today 10:58 AM', detail:'5 consecutive failed logins. Phone: 0812XXXXXXXX. Auto-blocked for 30 minutes.' },
+  { id:13, actor:'Super Admin',    actorType:'admin',  actorGrad:'g6', action:'Set "Kurmus" as Hero banner song',         category:'content', severity:'info',    target:'Song #4218',          ip:'41.58.123.4',   device:'Chrome / Windows', ts:'Today 10:50 AM', detail:'Previous hero: "Ya Nabi Salamu" (Song #3104). Display duration: Until manually changed.' },
+  { id:14, actor:'System',         actorType:'system', actorGrad:'g4', action:'Trending chart auto-refreshed',            category:'system',  severity:'system',  target:'Trending engine',     ip:'—',             device:'System',       ts:'Today 10:00 AM', detail:'15 songs re-ranked. New #1: Kurmus (Uzairu Badamasi). Chart update interval: 1 hour.' },
+  { id:15, actor:'Editor Admin',   actorType:'admin',  actorGrad:'g1', action:'Sent broadcast notification to 12,840 users', category:'system', severity:'info', target:'All users',           ip:'197.210.54.9',  device:'Firefox / Mac',    ts:'Today 09:45 AM', detail:'Title: "Top 10 Songs This Week". Channels: Push + In-App. Open rate (so far): 62%.' },
+  { id:16, actor:'Ahmad M.',       actorType:'user',   actorGrad:'g2', action:'Reported comment #8821 (Spam)',            category:'user',    severity:'warning', target:'Comment #8821',       ip:'41.58.200.4',   device:'App / Android',    ts:'Today 09:30 AM', detail:'Report reason: Spam. Reporter: Ahmad Musa (#4821). Status: Pending review.' },
+  { id:17, actor:'System',         actorType:'system', actorGrad:'g4', action:'Database backup completed successfully',   category:'system',  severity:'system',  target:'DB backup',           ip:'—',             device:'System',       ts:'Today 03:00 AM', detail:'Backup size: 2.4 GB. Duration: 4m 12s. Storage: Cloudflare R2. Retention: 30 days.' },
+  { id:18, actor:'Super Admin',    actorType:'admin',  actorGrad:'g6', action:'Created admin account: Editor Admin',      category:'auth',    severity:'warning', target:'Admin #3',            ip:'41.58.123.4',   device:'Chrome / Windows', ts:'Yesterday 5:12 PM', detail:'Role: Editor. Permissions: Content write, Users read. Created by: Super Admin.' },
+  { id:19, actor:'System',         actorType:'system', actorGrad:'g4', action:'SSL certificate auto-renewed',             category:'system',  severity:'system',  target:'shurafah.com SSL',    ip:'—',             device:'System',       ts:'Yesterday 12:00 AM', detail:'Provider: Let\'s Encrypt. Valid until: Jul 20, 2026. Auto-renewal: enabled.' },
+  { id:20, actor:'Security',       actorType:'system', actorGrad:'g7', action:'Suspicious activity: 28 rapid downloads',  category:'security', severity:'danger', target:'User #9988',          ip:'102.89.55.1',   device:'Unknown',          ts:'Yesterday 8:44 PM', detail:'28 downloads in 3 minutes. Flagged for review. Account temporarily rate-limited.' }
+];
+
+/* ── State ── */
+var currentPage = 1;
+var pageSize    = 10;
+var searchQ     = '';
+var catFilter   = 'all';
+var sevFilter   = 'all';
+var actorFilter = 'all';
+var expandedId  = null;
+
+function getFiltered() {
+  return LOGS.filter(function(l) {
+    var mCat    = catFilter   === 'all' || l.category === catFilter;
+    var mSev    = sevFilter   === 'all' || l.severity === sevFilter;
+    var mActor  = actorFilter === 'all' || l.actorType === actorFilter;
+    var mSearch = !searchQ ||
+      l.actor.toLowerCase().indexOf(searchQ) !== -1 ||
+      l.action.toLowerCase().indexOf(searchQ) !== -1 ||
+      l.ip.indexOf(searchQ) !== -1 ||
+      l.target.toLowerCase().indexOf(searchQ) !== -1;
+    return mCat && mSev && mActor && mSearch;
+  });
+}
+
+function renderTable() {
+  var filtered = getFiltered();
+  var total    = filtered.length;
+  var start    = (currentPage - 1) * pageSize;
+  var paged    = filtered.slice(start, Math.min(start + pageSize, total));
+
+  document.getElementById('logCountBadge').textContent = total;
+  document.getElementById('pageInfo').textContent = total === 0
+    ? 'No logs found'
+    : 'Showing ' + (start + 1) + '–' + Math.min(start + pageSize, total) + ' of ' + total;
+
+  var tbody = document.getElementById('logTableBody');
+  tbody.innerHTML = '';
+
+  for (var i = 0; i < paged.length; i++) {
+    var l = paged[i];
+    var sevClass = 'sev-' + l.severity;
+    var sevLabel = l.severity.charAt(0).toUpperCase() + l.severity.slice(1);
+    var catColor = CAT_COLORS[l.category] || 'var(--text3)';
+    var catLabel = l.category.charAt(0).toUpperCase() + l.category.slice(1);
+    var isOpen   = expandedId === l.id;
+
+    /* Main row */
+    var tr = document.createElement('tr');
+    tr.style.cursor = 'pointer';
+    tr.innerHTML =
+      '<td><div class="expand-btn' + (isOpen ? ' open' : '') + '" id="expBtn-' + l.id + '"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></div></td>' +
+      '<td><div class="td-actor"><div class="td-avatar ' + l.actorGrad + '">' + l.actor.charAt(0) + '</div><div><div class="td-name">' + l.actor + '</div><div class="td-role">' + l.actorType + '</div></div></div></td>' +
+      '<td style="max-width:240px;"><div style="font-size:11px;line-height:1.4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + l.action + '</div></td>' +
+      '<td><span style="display:inline-flex;align-items:center;"><span class="cat-dot" style="background:' + catColor + ';"></span><span style="font-size:10px;color:' + catColor + ';font-family:\'Syne\',sans-serif;font-weight:700;">' + catLabel + '</span></span></td>' +
+      '<td><span class="sev-badge ' + sevClass + '">' + sevLabel + '</span></td>' +
+      '<td style="font-size:10px;color:var(--text2);max-width:140px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + l.target + '</td>' +
+      '<td><div class="td-ip">' + l.ip + '</div></td>' +
+      '<td><div class="td-device">' + l.device + '</div></td>' +
+      '<td style="font-size:10px;color:var(--text3);white-space:nowrap;">' + l.ts + '</td>';
+
+    (function(logId) {
+      tr.onclick = function() {
+        expandedId = (expandedId === logId) ? null : logId;
+        renderTable();
+      };
+    }(l.id));
+    tbody.appendChild(tr);
+
+    /* Expand detail row */
+    var expandTr = document.createElement('tr');
+    expandTr.className = 'expand-row' + (isOpen ? ' open' : '');
+    if (isOpen) {
+      expandTr.innerHTML =
+        '<td colspan="9"><div class="expand-content">' +
+          '<div style="font-family:\'Syne\',sans-serif;font-size:11px;font-weight:700;margin-bottom:8px;color:var(--teal);">📋 Event Detail</div>' +
+          '<div style="margin-bottom:8px;">' + l.detail + '</div>' +
+          '<div class="expand-grid">' +
+            '<div class="eg-item"><div class="eg-label">Log ID</div><div class="eg-value">#' + l.id + '</div></div>' +
+            '<div class="eg-item"><div class="eg-label">Full IP</div><div class="eg-value" style="font-family:monospace;">' + l.ip + '</div></div>' +
+            '<div class="eg-item"><div class="eg-label">Actor Type</div><div class="eg-value">' + l.actorType + '</div></div>' +
+            '<div class="eg-item"><div class="eg-label">Category</div><div class="eg-value" style="color:' + catColor + ';">' + catLabel + '</div></div>' +
+            '<div class="eg-item"><div class="eg-label">Severity</div><div class="eg-value"><span class="sev-badge ' + sevClass + '">' + sevLabel + '</span></div></div>' +
+            '<div class="eg-item"><div class="eg-label">Timestamp</div><div class="eg-value">' + l.ts + '</div></div>' +
+          '</div>' +
+        '</div></td>';
+    } else {
+      expandTr.innerHTML = '<td colspan="9" style="padding:0;"></td>';
+    }
+    tbody.appendChild(expandTr);
+  }
+
+  renderPagination(total);
+}
+
+function renderPagination(total) {
+  var tp   = Math.ceil(total / pageSize);
+  var btns = document.getElementById('pageBtns');
+  btns.innerHTML = '';
+  if (tp <= 1) return;
+
+  var prev = document.createElement('div');
+  prev.className = 'page-btn';
+  prev.innerHTML = '<svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>';
+  prev.onclick = function(){ if (currentPage > 1){ currentPage--; renderTable(); } };
+  btns.appendChild(prev);
+
+  var maxShow = 5;
+  var startP = Math.max(1, currentPage - 2);
+  var endP   = Math.min(tp, startP + maxShow - 1);
+  for (var p = startP; p <= endP; p++) {
+    (function(pg){
+      var b = document.createElement('div');
+      b.className = 'page-btn' + (pg === currentPage ? ' active' : '');
+      b.textContent = pg;
+      b.onclick = function(){ currentPage = pg; renderTable(); };
+      btns.appendChild(b);
+    }(p));
+  }
+
+  var next = document.createElement('div');
+  next.className = 'page-btn';
+  next.innerHTML = '<svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>';
+  next.onclick = function(){ if (currentPage < tp){ currentPage++; renderTable(); } };
+  btns.appendChild(next);
+}
+
+/* ── Filters ── */
+var searchTimer = null;
+document.getElementById('searchInput').addEventListener('input', function() {
+  clearTimeout(searchTimer);
+  var v = this.value.toLowerCase();
+  searchTimer = setTimeout(function(){ searchQ = v; currentPage = 1; renderTable(); }, 250);
+});
+document.getElementById('catFilter').addEventListener('change',   function(){ catFilter   = this.value; currentPage = 1; renderTable(); });
+document.getElementById('sevFilter').addEventListener('change',   function(){ sevFilter   = this.value; currentPage = 1; renderTable(); });
+document.getElementById('actorFilter').addEventListener('change', function(){ actorFilter = this.value; currentPage = 1; renderTable(); });
+document.getElementById('dateFilter').addEventListener('change',  function(){ showToast('Filtering logs for: ' + this.value, ''); renderTable(); });
+
+/* ── Live counter sim ── */
+var liveEvtCount = 284;
+setInterval(function() {
+  liveEvtCount += Math.floor(Math.random() * 3);
+  document.getElementById('liveCount').textContent = liveEvtCount + ' events today';
+  var secs = Math.floor(Math.random() * 60);
+  document.getElementById('lastEventTime').textContent = secs === 0 ? 'just now' : secs + 's ago';
+}, 4000);
+
+/* ── Init ── */
+buildHeatmap();
+renderTable();
+
+/* ═══ TOPBAR BUTTONS ═══ */
+document.addEventListener('click',e=>{
+  const notifBtn=e.target.closest('.tb-icon-btn');
+  if(!notifBtn)return;
+  const svg=notifBtn.querySelector('svg');
+  if(svg&&svg.innerHTML.includes('path d="M18 8A6')){
+    showToast('You have 2 new security alerts','');
+  }
+  if(svg&&svg.innerHTML.includes('circle cx="12" cy="12" r="3"')){
+    showToast('Settings menu opened','');
+  }
+});
+
+document.addEventListener('click',e=>{
+  if(e.target.closest('.tb-avatar')){
+    showToast('Profile menu opened','');
+  }
+});
+
+/* ═══ STAT CARDS CLICK ═══ */
+document.addEventListener('click',e=>{
+  const card=e.target.closest('.ss-card');
+  if(!card)return;
+  const val=card.querySelector('.ss-val').textContent;
+  const label=card.querySelector('.ss-label').textContent;
+  showToast(`Viewing ${label}: ${val}`,'');
+});
+
+/* ═══ EXPORT CSV ═══ */
+document.addEventListener('click',e=>{
+  if(e.target.textContent.includes('Export CSV')){
+    const filtered=getFiltered();
+    let csv='Actor,Action,Category,Severity,Target,IP,Device,Timestamp\n';
+    filtered.forEach(l=>{
+      csv+=`"${l.actor}","${l.action}","${l.category}","${l.severity}","${l.target}","${l.ip}","${l.device}","${l.ts}"\n`;
+    });
+    const blob=new Blob([csv],{type:'text/csv'});
+    const url=window.URL.createObjectURL(blob);
+    const a=document.createElement('a');
+    a.href=url;
+    a.download='activity-logs.csv';
+    a.click();
+    showToast(`Exported ${filtered.length} log entries as CSV`,'success');
+  }
+});
+
+/* ═══ PURGE OLD LOGS ═══ */
+document.addEventListener('click',e=>{
+  if(e.target.textContent.includes('Purge Old Logs')){
+    const modal=document.createElement('div');
+    modal.style.cssText=`position:fixed;inset:0;background:rgba(0,0,0,.75);display:flex;align-items:center;justify-content:center;z-index:9999;`;
+    modal.innerHTML=`
+      <div style="background:var(--surface);border-radius:16px;padding:24px;max-width:420px;width:90%;border:1px solid var(--border);">
+        <div style="font-family:sans-serif;font-size:16px;font-weight:800;margin-bottom:12px;color:var(--red);">🗑️ Purge Old Logs</div>
+        <div style="font-size:12px;color:var(--text2);margin-bottom:16px;line-height:1.6;">
+          This will permanently delete activity logs older than the selected period. This action cannot be undone.
+        </div>
+        <div style="margin-bottom:16px;">
+          <label style="display:block;font-size:11px;color:var(--text3);margin-bottom:6px;font-weight:700;">Retention Period</label>
+          <select id="purgeRetention" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--surface2);color:var(--text);font-size:12px;">
+            <option value="7">Last 7 days</option>
+            <option value="30">Last 30 days</option>
+            <option value="90">Last 90 days</option>
+            <option value="180">Last 180 days</option>
+            <option value="365">Last 1 year</option>
+          </select>
+        </div>
+        <div style="display:flex;gap:8px;">
+          <button onclick="purgeOldLogs();this.closest('div').parentElement.parentElement.remove()" style="flex:1;padding:10px;background:var(--red);color:white;border:none;border-radius:8px;font-weight:700;cursor:pointer;font-family:sans-serif;">Purge Logs</button>
+          <button onclick="this.closest('div').parentElement.parentElement.remove()" style="flex:1;padding:10px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:8px;font-weight:700;cursor:pointer;font-family:sans-serif;">Cancel</button>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(modal);
+    modal.addEventListener('click',e=>{if(e.target===modal)modal.remove();});
+  }
+});
+
+function purgeOldLogs(){
+  const retention=document.getElementById('purgeRetention').value;
+  const retentionLabel={7:'7 days',30:'30 days',90:'90 days',180:'180 days',365:'1 year'};
+  showToast(`Purged logs older than ${retentionLabel[retention]} (${Math.floor(Math.random()*50)+10} entries deleted)`,'danger');
+}
+
+/* ═══ LIVE REFRESH BUTTON ═══ */
+document.addEventListener('click',e=>{
+  if(e.target.textContent.includes('Live Refresh')){
+    const btn=e.target.closest('.btn');
+    btn.style.opacity=btn.style.opacity==='0.5'?'1':'0.5';
+    showToast('Auto-refresh '+(btn.style.opacity==='0.5'?'disabled':'enabled'),'');
+  }
+});
+
+/* ═══ HEATMAP CELL CLICK ═══ */
+document.addEventListener('click',e=>{
+  const cell=e.target.closest('.hm-cell');
+  if(!cell)return;
+  const tip=cell.getAttribute('data-tip');
+  showToast(`${tip}`,'');
+});
+
+/* ═══ FILTER FEEDBACK ═══ */
+document.addEventListener('change',e=>{
+  if(e.target.id==='catFilter'){
+    const val=e.target.value;
+    if(val!=='all'){
+      showToast(`Filtering by category: ${val}`,'');
+    }
+  }
+  if(e.target.id==='sevFilter'){
+    const val=e.target.value;
+    if(val!=='all'){
+      showToast(`Filtering by severity: ${val}`,'');
+    }
+  }
+  if(e.target.id==='actorFilter'){
+    const val=e.target.value;
+    if(val!=='all'){
+      showToast(`Filtering by actor: ${val}`,'');
+    }
+  }
+});
+
+/* ═══ SEARCH FEEDBACK ═══ */
+document.addEventListener('input',e=>{
+  if(e.target.id==='searchInput'){
+    const val=e.target.value.trim();
+    if(val){
+      const filtered=getFiltered();
+      showToast(`Found ${filtered.length} matching log(s)`,'');
+    }
+  }
+});
+
+/* ═══ EXPAND ROW FEEDBACK ═══ */
+document.addEventListener('click',e=>{
+  const expandBtn=e.target.closest('.expand-btn');
+  if(!expandBtn)return;
+  e.stopPropagation();
+});
+
+/* ═══ PAGINATION FEEDBACK ═══ */
+document.addEventListener('click',e=>{
+  const pageBtn=e.target.closest('.page-btn');
+  if(!pageBtn)return;
+  const text=pageBtn.textContent.trim();
+  if(text==='‹'||text==='›'){
+    showToast('Loading page…','');
+  }else if(text.match(/^\d+$/)){
+    showToast(`Navigated to page ${text}`,'');
+  }
+});
+
+/* ═══ KEYBOARD SHORTCUTS ═══ */
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){
+    document.querySelectorAll('[style*="position:fixed"]').forEach(m=>{
+      if(m.style.background&&m.style.background.includes('rgba(0,0,0')){
+        m.remove();
+      }
+    });
+  }
+  if(e.ctrlKey&&e.key==='f'){
+    e.preventDefault();
+    document.getElementById('searchInput').focus();
+    showToast('Search focused (Ctrl+F)','');
+  }
+  if(e.ctrlKey&&e.key==='e'){
+    e.preventDefault();
+    document.querySelector('[onclick*="Export CSV"]').click();
+  }
+});
+
+/* ═══ TABLE ROW HOVER ═══ */
+document.addEventListener('mouseover',e=>{
+  const row=e.target.closest('tbody tr:not(.expand-row)');
+  if(!row)return;
+  row.style.background='var(--surface2)';
+});
+
+document.addEventListener('mouseout',e=>{
+  const row=e.target.closest('tbody tr:not(.expand-row)');
+  if(!row)return;
+  row.style.background='';
+});
+
+/* ═══ COPY IP ADDRESS ═══ */
+document.addEventListener('click',e=>{
+  const ipCell=e.target.closest('.td-ip');
+  if(!ipCell)return;
+  const ip=ipCell.textContent.trim();
+  if(ip&&ip!=='—'){
+    navigator.clipboard.writeText(ip);
+    showToast(`Copied IP: ${ip}`,'success');
+  }
+});
+</script>
+</body>
+</html>

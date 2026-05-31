@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shurafah Admin — Artist Management</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#05070F;--surface:#0A0E1A;--surface2:#0F1525;--surface3:#141B2E;--surface4:#1A2238;
+  --accent:#FF6B35;--accent2:#FFB347;--blue:#4D9FFF;--green:#2ECC8F;
+  --purple:#9B6BFF;--pink:#FF4D8F;--yellow:#FFD166;--red:#FF4444;
+  --text:#F0F4FF;--text2:#8A94B0;--text3:#4A5270;
+  --border:rgba(255,255,255,0.06);
+  --sidebar-w:240px;--sidebar-collapsed:62px;--topbar-h:60px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--text);min-height:100vh;display:flex;overflow-x:hidden;}
+
+/* ── SIDEBAR ── */
+.sidebar{width:var(--sidebar-w);min-height:100vh;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;top:0;left:0;z-index:100;transition:width .25s ease;overflow:hidden;}
+.sidebar.collapsed{width:var(--sidebar-collapsed);}
+.sb-logo{display:flex;align-items:center;gap:10px;padding:18px 16px 16px;border-bottom:1px solid var(--border);flex-shrink:0;min-height:var(--topbar-h);}
+.sb-logo-icon{width:32px;height:32px;border-radius:9px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;box-shadow:0 4px 12px rgba(255,107,53,.35);}
+.sb-logo-text{font-family:sans-serif;font-size:15px;font-weight:800;letter-spacing:-.3px;white-space:nowrap;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.sb-logo-sub{font-size:9px;color:var(--text3);white-space:nowrap;}
+.sb-nav{flex:1;overflow-y:auto;overflow-x:hidden;padding:10px 0;scrollbar-width:none;}
+.sb-nav::-webkit-scrollbar{display:none;}
+.sb-group-label{font-size:9px;font-family:sans-serif;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.6px;padding:10px 16px 5px;white-space:nowrap;overflow:hidden;transition:opacity .2s;}
+.sidebar.collapsed .sb-group-label{opacity:0;}
+.sb-item{display:flex;align-items:center;gap:10px;padding:9px 16px;cursor:pointer;transition:background .15s;position:relative;white-space:nowrap;text-decoration:none;color:var(--text2);}
+.sb-item:hover{background:var(--surface2);color:var(--text);}
+.sb-item.active{background:rgba(255,107,53,.1);color:var(--accent);border-right:2px solid var(--accent);}
+.sb-item.active .sb-icon svg{stroke:var(--accent);}
+.sb-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.sb-item.active .sb-icon{background:rgba(255,107,53,.12);}
+.sb-icon svg{width:15px;height:15px;fill:none;stroke:var(--text3);stroke-width:2;transition:stroke .15s;}
+.sb-item:hover .sb-icon svg{stroke:var(--text);}
+.sb-label{font-size:12px;font-weight:500;white-space:nowrap;overflow:hidden;transition:opacity .2s;}
+.sidebar.collapsed .sb-label{opacity:0;pointer-events:none;}
+.sb-badge{margin-left:auto;background:var(--accent);border-radius:50px;padding:1px 7px;font-size:9px;font-weight:700;color:white;font-family:sans-serif;white-space:nowrap;flex-shrink:0;transition:opacity .2s;}
+.sidebar.collapsed .sb-badge{opacity:0;}
+.sb-item::after{content:attr(data-tip);position:absolute;left:calc(var(--sidebar-collapsed) + 8px);top:50%;transform:translateY(-50%);background:var(--surface3);border:1px solid var(--border);border-radius:8px;padding:5px 10px;font-size:11px;color:var(--text);white-space:nowrap;pointer-events:none;opacity:0;transition:opacity .15s;z-index:200;box-shadow:0 4px 16px rgba(0,0,0,.4);}
+.sidebar.collapsed .sb-item:hover::after{opacity:1;}
+.sb-footer{padding:12px 16px;border-top:1px solid var(--border);display:flex;align-items:center;gap:10px;flex-shrink:0;}
+.sb-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--purple),var(--blue));display:flex;align-items:center;justify-content:center;font-size:12px;font-family:sans-serif;font-weight:700;flex-shrink:0;}
+.sb-user-name{font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;transition:opacity .2s;}
+.sb-user-role{font-size:10px;color:var(--text3);white-space:nowrap;transition:opacity .2s;}
+.sidebar.collapsed .sb-user-name,.sidebar.collapsed .sb-user-role{opacity:0;}
+
+/* ── MAIN ── */
+.main{margin-left:var(--sidebar-w);flex:1;display:flex;flex-direction:column;min-height:100vh;transition:margin-left .25s ease;}
+.main.sidebar-collapsed{margin-left:var(--sidebar-collapsed);}
+
+/* ── TOPBAR ── */
+.topbar{height:var(--topbar-h);background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:14px;padding:0 24px;position:sticky;top:0;z-index:50;flex-shrink:0;}
+.topbar-toggle{width:32px;height:32px;border-radius:8px;background:var(--surface2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;}
+.topbar-toggle svg{width:14px;height:14px;fill:none;stroke:var(--text2);stroke-width:2;}
+.topbar-breadcrumb{font-size:12px;color:var(--text3);display:flex;align-items:center;gap:6px;}
+.topbar-right{display:flex;align-items:center;gap:10px;margin-left:auto;}
+.tb-icon-btn{width:34px;height:34px;border-radius:9px;background:var(--surface2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;transition:border-color .15s;}
+.tb-icon-btn:hover{border-color:rgba(255,107,53,.3);}
+.tb-icon-btn svg{width:15px;height:15px;fill:none;stroke:var(--text2);stroke-width:2;}
+.tb-notif-dot{position:absolute;top:6px;right:6px;width:6px;height:6px;background:var(--accent);border-radius:50%;border:1.5px solid var(--surface);}
+.tb-avatar{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-family:sans-serif;font-size:12px;font-weight:700;cursor:pointer;}
+
+/* ── CONTENT ── */
+.content{flex:1;padding:24px;overflow-y:auto;}
+.page-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:22px;flex-wrap:wrap;gap:12px;}
+.page-title{font-family:sans-serif;font-size:22px;font-weight:800;letter-spacing:-.4px;margin-bottom:3px;}
+.page-subtitle{font-size:12px;color:var(--text2);}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:9px;cursor:pointer;font-family:sans-serif;font-size:11px;font-weight:700;transition:all .15s;border:1px solid transparent;}
+.btn-primary{background:var(--accent);color:white;box-shadow:0 3px 12px rgba(255,107,53,.3);}
+.btn-primary:hover{box-shadow:0 5px 18px rgba(255,107,53,.45);}
+.btn-outline{background:transparent;border-color:var(--border);color:var(--text2);}
+.btn-outline:hover{border-color:rgba(255,107,53,.3);color:var(--text);}
+.btn-green{background:rgba(46,204,143,.1);border-color:rgba(46,204,143,.25);color:var(--green);}
+.btn-green:hover{background:rgba(46,204,143,.18);}
+.btn-danger{background:rgba(255,68,68,.1);border-color:rgba(255,68,68,.25);color:var(--red);}
+.btn svg{width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:2;}
+
+/* ── STAT STRIP ── */
+.stat-strip{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:20px;}
+.ss-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:10px;animation:fadeUp .4s ease both;}
+.ss-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.ss-icon svg{width:16px;height:16px;fill:none;stroke:white;stroke-width:2;}
+.ss-val{font-family:sans-serif;font-size:18px;font-weight:800;line-height:1;}
+.ss-label{font-size:10px;color:var(--text3);margin-top:2px;}
+
+/* ── TABS ── */
+.tab-bar{display:flex;gap:4px;background:var(--surface);border:1px solid var(--border);border-radius:11px;padding:4px;margin-bottom:16px;width:fit-content;}
+.tab-btn{padding:7px 18px;border-radius:8px;font-family:sans-serif;font-size:11px;font-weight:700;cursor:pointer;color:var(--text3);transition:all .15s;display:flex;align-items:center;gap:5px;white-space:nowrap;}
+.tab-btn.active{background:var(--accent);color:white;box-shadow:0 2px 8px rgba(255,107,53,.3);}
+.tab-count{font-size:9px;background:rgba(255,255,255,.15);border-radius:50px;padding:0px 5px;font-weight:700;}
+.tab-btn:not(.active) .tab-count{background:var(--surface3);color:var(--text3);}
+
+/* ── TOOLBAR ── */
+.toolbar{display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap;}
+.search-box{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:8px 14px;flex:1;min-width:220px;transition:border-color .2s;}
+.search-box:focus-within{border-color:rgba(255,107,53,.35);}
+.search-box svg{width:14px;height:14px;fill:none;stroke:var(--text3);stroke-width:2;flex-shrink:0;}
+.search-box input{background:transparent;border:none;outline:none;font-size:12px;color:var(--text);font-family:'DM Sans',sans-serif;width:100%;}
+.search-box input::placeholder{color:var(--text3);}
+.filter-select{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:8px 12px;font-size:11px;color:var(--text2);font-family:'DM Sans',sans-serif;outline:none;cursor:pointer;}
+.filter-select option{background:var(--surface2);color:var(--text);}
+
+/* ── ARTIST CARDS GRID ── */
+.artists-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px;margin-bottom:20px;}
+
+.artist-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;overflow:hidden;cursor:pointer;transition:border-color .2s,transform .15s;animation:fadeUp .35s ease both;}
+.artist-card:hover{border-color:rgba(255,107,53,.25);transform:translateY(-2px);}
+.artist-card.pending{border-color:rgba(255,209,102,.2);}
+.artist-card.pending:hover{border-color:rgba(255,209,102,.4);}
+
+/* Card cover */
+.ac-cover{height:80px;position:relative;overflow:hidden;}
+.ac-cover::after{content:'';position:absolute;inset:0;background:linear-gradient(to bottom,transparent 40%,rgba(10,14,26,.9));}
+
+/* Avatar overlapping cover */
+.ac-avatar-wrap{position:absolute;bottom:-20px;left:16px;z-index:2;}
+.ac-avatar{width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;font-family:sans-serif;font-weight:700;border:3px solid var(--surface);box-shadow:0 4px 12px rgba(0,0,0,.4);}
+.ac-verified-badge{position:absolute;bottom:0;right:0;width:18px;height:18px;background:var(--blue);border-radius:50%;border:2px solid var(--surface);display:flex;align-items:center;justify-content:center;}
+.ac-verified-badge svg{width:9px;height:9px;fill:white;}
+.ac-pending-badge{position:absolute;bottom:0;right:0;width:18px;height:18px;background:var(--yellow);border-radius:50%;border:2px solid var(--surface);display:flex;align-items:center;justify-content:center;font-size:10px;}
+
+/* Card body */
+.ac-body{padding:28px 16px 14px;}
+.ac-name{font-family:sans-serif;font-size:13px;font-weight:800;margin-bottom:2px;}
+.ac-genre{font-size:10px;color:var(--text2);margin-bottom:8px;}
+.ac-stats-row{display:flex;gap:10px;margin-bottom:10px;}
+.ac-stat{text-align:center;}
+.ac-stat-n{font-family:sans-serif;font-size:12px;font-weight:700;}
+.ac-stat-l{font-size:8px;color:var(--text3);margin-top:1px;}
+.ac-tags{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:10px;}
+.ac-tag{font-size:8px;font-family:sans-serif;font-weight:700;padding:2px 7px;border-radius:4px;background:var(--surface2);color:var(--text3);border:1px solid var(--border);}
+
+/* Card footer actions */
+.ac-footer{display:flex;gap:6px;padding:10px 16px 14px;border-top:1px solid var(--border);}
+.acf-btn{flex:1;padding:7px;border-radius:8px;font-family:sans-serif;font-size:10px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px;border:1px solid;transition:all .15s;}
+.acf-btn svg{width:11px;height:11px;fill:none;stroke:currentColor;stroke-width:2;}
+.acf-view{background:transparent;border-color:var(--border);color:var(--text2);}
+.acf-view:hover{border-color:rgba(77,159,255,.3);color:var(--blue);}
+.acf-verify{background:rgba(46,204,143,.1);border-color:rgba(46,204,143,.25);color:var(--green);}
+.acf-verify:hover{background:rgba(46,204,143,.18);}
+.acf-reject{background:rgba(255,68,68,.08);border-color:rgba(255,68,68,.2);color:var(--red);}
+.acf-reject:hover{background:rgba(255,68,68,.15);}
+.acf-edit{background:rgba(255,107,53,.08);border-color:rgba(255,107,53,.2);color:var(--accent);}
+.acf-edit:hover{background:rgba(255,107,53,.15);}
+.acf-ban{background:rgba(255,68,68,.08);border-color:rgba(255,68,68,.2);color:var(--red);}
+.acf-ban:hover{background:rgba(255,68,68,.15);}
+
+/* Status strip on card */
+.ac-status-strip{height:3px;width:100%;}
+
+/* ── PENDING VERIFICATION SECTION ── */
+.pending-section{margin-bottom:20px;}
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.section-title{font-family:sans-serif;font-size:13px;font-weight:700;display:flex;align-items:center;gap:7px;}
+.pending-dot{width:8px;height:8px;border-radius:50%;background:var(--yellow);animation:blink 1.2s ease-in-out infinite;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+
+/* ── PAGINATION ── */
+.pagination{display:flex;align-items:center;justify-content:space-between;padding:14px 0 0;}
+.pag-info{font-size:11px;color:var(--text3);}
+.pag-info b{color:var(--text2);}
+.pag-controls{display:flex;align-items:center;gap:4px;}
+.pag-btn{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;border:1px solid var(--border);background:transparent;font-family:sans-serif;font-size:11px;font-weight:700;color:var(--text2);transition:all .15s;}
+.pag-btn:hover{border-color:rgba(255,107,53,.3);color:var(--text);}
+.pag-btn.active{background:var(--accent);border-color:var(--accent);color:white;}
+.pag-btn.disabled{opacity:.35;pointer-events:none;}
+.pag-btn svg{width:12px;height:12px;fill:none;stroke:currentColor;stroke-width:2;}
+
+/* ── DETAIL PANEL ── */
+.detail-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;display:none;backdrop-filter:blur(2px);}
+.detail-overlay.open{display:block;}
+.detail-panel{position:fixed;top:0;right:0;width:400px;height:100vh;background:var(--surface);border-left:1px solid var(--border);z-index:201;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .3s ease;overflow:hidden;}
+.detail-panel.open{transform:translateX(0);}
+.dp-header{display:flex;align-items:center;justify-content:space-between;padding:18px 20px;border-bottom:1px solid var(--border);flex-shrink:0;}
+.dp-title{font-family:sans-serif;font-size:14px;font-weight:700;}
+.dp-close{width:30px;height:30px;border-radius:8px;background:var(--surface2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;}
+.dp-close svg{width:14px;height:14px;fill:none;stroke:var(--text2);stroke-width:2;}
+.dp-body{flex:1;overflow-y:auto;padding:0;scrollbar-width:none;}
+.dp-body::-webkit-scrollbar{display:none;}
+
+/* Detail panel cover */
+.dp-cover{height:110px;position:relative;}
+.dp-cover::after{content:'';position:absolute;inset:0;background:linear-gradient(to bottom,transparent 40%,var(--surface));}
+.dp-avatar-over{position:absolute;bottom:-28px;left:20px;z-index:2;}
+.dp-avatar-lg{width:70px;height:70px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;font-family:sans-serif;font-weight:700;border:3px solid var(--surface);box-shadow:0 6px 20px rgba(0,0,0,.4);}
+.dp-content{padding:40px 20px 20px;}
+.dp-artist-name{font-family:sans-serif;font-size:18px;font-weight:800;margin-bottom:2px;}
+.dp-genre{font-size:11px;color:var(--text2);margin-bottom:12px;}
+.dp-badges{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px;}
+.dp-section-title{font-family:sans-serif;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;margin-top:16px;}
+.dp-stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:4px;}
+.dp-stat-item{background:var(--surface2);border-radius:10px;padding:10px;border:1px solid var(--border);text-align:center;}
+.dp-stat-val{font-family:sans-serif;font-size:13px;font-weight:800;margin-bottom:2px;}
+.dp-stat-lbl{font-size:9px;color:var(--text3);}
+.dp-info-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.dp-info-item{background:var(--surface2);border-radius:10px;padding:10px 12px;border:1px solid var(--border);}
+.dp-info-lbl{font-size:9px;color:var(--text3);margin-bottom:3px;text-transform:uppercase;letter-spacing:.3px;}
+.dp-info-val{font-family:sans-serif;font-size:11px;font-weight:700;}
+.dp-action-btns{display:flex;flex-direction:column;gap:8px;margin-top:4px;}
+.dp-act{width:100%;padding:10px;border-radius:10px;font-family:sans-serif;font-size:11px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;border:1px solid;transition:all .15s;}
+.dp-act svg{width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:2;}
+.dpa-primary{background:var(--accent);color:white;border-color:var(--accent);box-shadow:0 3px 12px rgba(255,107,53,.3);}
+.dpa-green{background:rgba(46,204,143,.12);color:var(--green);border-color:rgba(46,204,143,.28);}
+.dpa-yellow{background:rgba(255,209,102,.12);color:var(--yellow);border-color:rgba(255,209,102,.28);}
+.dpa-danger{background:rgba(255,68,68,.1);color:var(--red);border-color:rgba(255,68,68,.25);}
+.dpa-outline{background:transparent;color:var(--text2);border-color:var(--border);}
+
+/* ── STATUS BADGES ── */
+.status-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:50px;font-size:9px;font-family:sans-serif;font-weight:700;white-space:nowrap;}
+.sb-verified{background:rgba(77,159,255,.12);color:var(--blue);border:1px solid rgba(77,159,255,.25);}
+.sb-pending{background:rgba(255,209,102,.12);color:var(--yellow);border:1px solid rgba(255,209,102,.25);}
+.sb-rejected{background:rgba(255,68,68,.12);color:var(--red);border:1px solid rgba(255,68,68,.25);}
+.sb-active{background:rgba(46,204,143,.12);color:var(--green);border:1px solid rgba(46,204,143,.25);}
+.sb-suspended{background:rgba(138,148,176,.1);color:var(--text3);border:1px solid var(--border);}
+.status-dot{width:5px;height:5px;border-radius:50%;background:currentColor;flex-shrink:0;}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:24px;right:24px;background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:12px 18px;font-size:12px;font-family:sans-serif;font-weight:700;color:var(--text);box-shadow:0 8px 24px rgba(0,0,0,.5);z-index:300;opacity:0;transform:translateY(10px);transition:opacity .2s,transform .2s;pointer-events:none;display:flex;align-items:center;gap:8px;max-width:320px;}
+.toast.show{opacity:1;transform:translateY(0);}
+.toast.success{border-color:rgba(46,204,143,.35);}
+.toast.danger{border-color:rgba(255,68,68,.35);}
+.toast.warn{border-color:rgba(255,209,102,.35);}
+
+/* gradients */
+.g1{background:linear-gradient(135deg,#9B6BFF,#4D9FFF);}
+.g2{background:linear-gradient(135deg,#FF6B35,#FFB347);}
+.g3{background:linear-gradient(135deg,#FF4D8F,#FF6B35);}
+.g4{background:linear-gradient(135deg,#2ECC8F,#4D9FFF);}
+.g5{background:linear-gradient(135deg,#FFB347,#FF4D8F);}
+.g6{background:linear-gradient(135deg,#4D9FFF,#9B6BFF);}
+.g7{background:linear-gradient(135deg,#FF6B35,#FF4D8F);}
+.g8{background:linear-gradient(135deg,#2ECC8F,#9B6BFF);}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+::-webkit-scrollbar{width:4px;height:4px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--surface4);border-radius:2px;}
+</style>
+</head>
+<body>
+
+<script src="admin-sidebar.js"></script>
+
+<!-- ════ MAIN ════ -->
+<div class="main" id="mainArea">
+  <header class="topbar">
+    <div class="topbar-toggle" id="sidebarToggle">
+      <svg viewBox="0 0 24 24"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </div>
+    <div class="topbar-breadcrumb">
+      <span>Admin</span><span style="color:var(--text3);margin:0 6px;">/</span>
+      <span style="color:var(--accent);">Artist Management</span>
+    </div>
+    <div class="topbar-right">
+      <div class="tb-icon-btn">
+        <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        <div class="tb-notif-dot"></div>
+      </div>
+      <div class="tb-icon-btn">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      </div>
+      <div class="tb-avatar">SA</div>
+    </div>
+  </header>
+
+  <main class="content">
+
+    <!-- Page header -->
+    <div class="page-header">
+      <div>
+        <div class="page-title">Artist Management</div>
+        <div class="page-subtitle">Manage, verify and monitor all platform artists · 86 total</div>
+      </div>
+      <div style="display:flex;gap:8px;">
+        <div class="btn btn-outline">
+          <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Export
+        </div>
+        <div class="btn btn-primary" onclick="showToast('Add Artist form opening…','')">
+          <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Add Artist
+        </div>
+      </div>
+    </div>
+
+    <!-- Stat strip -->
+    <div class="stat-strip">
+      <div class="ss-card" style="animation-delay:0s;">
+        <div class="ss-icon" style="background:rgba(255,107,53,.15);"><svg viewBox="0 0 24 24" style="stroke:var(--accent);"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+        <div><div class="ss-val" style="color:var(--accent);">86</div><div class="ss-label">Total Artists</div></div>
+      </div>
+      <div class="ss-card" style="animation-delay:.05s;">
+        <div class="ss-icon" style="background:rgba(77,159,255,.15);"><svg viewBox="0 0 24 24" style="stroke:var(--blue);"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22,4 12,14.01 9,11.01"/></svg></div>
+        <div><div class="ss-val" style="color:var(--blue);">52</div><div class="ss-label">Verified</div></div>
+      </div>
+      <div class="ss-card" style="animation-delay:.1s;">
+        <div class="ss-icon" style="background:rgba(255,209,102,.15);"><svg viewBox="0 0 24 24" style="stroke:var(--yellow);"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>
+        <div><div class="ss-val" style="color:var(--yellow);">8</div><div class="ss-label">Pending Review</div></div>
+      </div>
+      <div class="ss-card" style="animation-delay:.15s;">
+        <div class="ss-icon" style="background:rgba(46,204,143,.15);"><svg viewBox="0 0 24 24" style="stroke:var(--green);"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+        <div><div class="ss-val" style="color:var(--green);">9.8M</div><div class="ss-label">Total Plays</div></div>
+      </div>
+      <div class="ss-card" style="animation-delay:.2s;">
+        <div class="ss-icon" style="background:rgba(155,107,255,.15);"><svg viewBox="0 0 24 24" style="stroke:var(--purple);"><path d="M12 3v10M8 9l4 4 4-4"/><path d="M5 19h14"/></svg></div>
+        <div><div class="ss-val" style="color:var(--purple);">1.4M</div><div class="ss-label">Total Downloads</div></div>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tab-bar" id="tabBar">
+      <div class="tab-btn active" data-tab="all">All Artists <span class="tab-count" id="tc-all">86</span></div>
+      <div class="tab-btn" data-tab="verified">✅ Verified <span class="tab-count" id="tc-verified">52</span></div>
+      <div class="tab-btn" data-tab="pending">⏳ Pending <span class="tab-count" id="tc-pending">8</span></div>
+      <div class="tab-btn" data-tab="rejected">❌ Rejected <span class="tab-count" id="tc-rejected">4</span></div>
+      <div class="tab-btn" data-tab="suspended">🚫 Suspended <span class="tab-count" id="tc-suspended">3</span></div>
+    </div>
+
+    <!-- Toolbar -->
+    <div class="toolbar">
+      <div class="search-box">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" id="searchInput" placeholder="Search by name, genre or location…">
+      </div>
+      <select class="filter-select" id="genreFilter">
+        <option value="all">All Genres</option>
+        <option value="Nasheed">Nasheed</option>
+        <option value="Shuhada">Shuhada</option>
+        <option value="Maulud">Maulud</option>
+        <option value="Ashura">Ashura</option>
+        <option value="Shurafah">Shurafah</option>
+      </select>
+      <select class="filter-select" id="sortSelect">
+        <option value="plays">Most Plays</option>
+        <option value="songs">Most Songs</option>
+        <option value="followers">Most Followers</option>
+        <option value="newest">Newest</option>
+      </select>
+    </div>
+
+    <!-- Artists container -->
+    <div id="artistsContainer"></div>
+
+    <!-- Pagination -->
+    <div class="pagination" id="paginationWrap">
+      <div class="pag-info">Showing <b id="pagFrom">1</b>–<b id="pagTo">12</b> of <b id="pagTotal">0</b></div>
+      <div class="pag-controls">
+        <div class="pag-btn disabled" id="prevBtn" onclick="changePage(-1)">
+          <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+        </div>
+        <div id="pageNumbers"></div>
+        <div class="pag-btn" id="nextBtn" onclick="changePage(1)">
+          <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- ════ DETAIL PANEL ════ -->
+<div class="detail-overlay" id="detailOverlay" onclick="closePanel()"></div>
+<div class="detail-panel" id="detailPanel">
+  <div class="dp-header">
+    <div class="dp-title">Artist Profile</div>
+    <div class="dp-close" onclick="closePanel()"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>
+  </div>
+  <div class="dp-body" id="dpBody"></div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+/* ── Sidebar ── */
+var sidebar = document.getElementById('sidebar');
+var mainArea = document.getElementById('mainArea');
+var collapsed = false;
+document.getElementById('sidebarToggle').addEventListener('click', function() {
+  collapsed = !collapsed;
+  sidebar.classList.toggle('collapsed', collapsed);
+  mainArea.classList.toggle('sidebar-collapsed', collapsed);
+});
+
+/* ── Toast ── */
+var toastEl = document.getElementById('toast');
+var toastTimer = null;
+function showToast(msg, type) {
+  toastEl.textContent = msg;
+  toastEl.className = 'toast show' + (type ? ' ' + type : '');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function() { toastEl.classList.remove('show'); }, 2800);
+}
+
+/* ─────────────────────────────────────────────
+   STATIC DATA — 24 artists (2 pages of 12)
+   Laravel: var ALL_ARTISTS = {!! json_encode($artists) !!};
+───────────────────────────────────────────── */
+var ALL_ARTISTS = [
+  { id:1,  name:'Uzairu Badamasi',       initials:'UB', grad:'g1', genre:'Nasheed · Shuhada',  status:'verified',  songs:1348, plays:'4.2M', followers:'320K', downloads:'840K', joined:'Mar 2022', location:'Kano, Nigeria',    tags:['Nasheed','Shuhada'],   bio:'Leading Hausa nasheed artist with over 4M plays. Known for emotionally charged shuhada recitations.',    social:'@uzairuB' },
+  { id:2,  name:'Shamsudden Fudiyya',    initials:'SF', grad:'g2', genre:'Nasheed · Ashura',   status:'verified',  songs:612,  plays:'2.8M', followers:'210K', downloads:'620K', joined:'Jan 2022', location:'Katsina, Nigeria', tags:['Nasheed','Ashura'],    bio:'Veteran nasheed artist from Katsina. Renowned for authentic ashura commemorations.',                  social:'@ShamsFud' },
+  { id:3,  name:'Ahmad Isah Katsina',    initials:'AI', grad:'g3', genre:'Shuhada · Maulud',   status:'verified',  songs:480,  plays:'1.9M', followers:'180K', downloads:'490K', joined:'Jun 2022', location:'Katsina, Nigeria', tags:['Shuhada','Maulud'],    bio:'Prolific producer of maulud songs and shuhada recitations from Northern Nigeria.',                    social:'@AhmadIsah' },
+  { id:4,  name:'Yusuf Badamasi',        initials:'YB', grad:'g4', genre:'Shurafah · Nasheed', status:'verified',  songs:340,  plays:'1.4M', followers:'145K', downloads:'320K', joined:'Sep 2022', location:'Kaduna, Nigeria',  tags:['Shurafah','Nasheed'],  bio:'Multi-genre artist combining shurafah tradition with modern nasheed production.',                     social:'@YusufBada' },
+  { id:5,  name:'Maishurafah',           initials:'MS', grad:'g5', genre:'Shurafah',           status:'verified',  songs:290,  plays:'1.1M', followers:'98K',  downloads:'255K', joined:'Nov 2022', location:'Sokoto, Nigeria',  tags:['Shurafah'],            bio:'Dedicated shurafah specialist preserving the noble tradition of Hausa Islamic chanting.',            social:'@Maishurafah' },
+  { id:6,  name:'Ibrahim Khali',         initials:'IK', grad:'g6', genre:'Maulud · Nasheed',   status:'verified',  songs:210,  plays:'870K', followers:'76K',  downloads:'198K', joined:'Feb 2023', location:'Bauchi, Nigeria',  tags:['Maulud','Nasheed'],   bio:'Singer and composer of maulud songs with a focus on Hausa lyrical tradition.',                       social:'@IbrahimK' },
+  { id:7,  name:'Saidu Arzika',          initials:'SA', grad:'g7', genre:'Shuhada',            status:'verified',  songs:198,  plays:'740K', followers:'64K',  downloads:'170K', joined:'Apr 2023', location:'Zamfara, Nigeria', tags:['Shuhada'],             bio:'Dedicated shuhada vocalist from Zamfara known for deep, spiritual delivery.',                         social:'@SaiduArz' },
+  { id:8,  name:'Malam Kasim',           initials:'MK', grad:'g8', genre:'Maulud · Ashura',    status:'verified',  songs:175,  plays:'620K', followers:'54K',  downloads:'142K', joined:'May 2023', location:'Borno, Nigeria',   tags:['Maulud','Ashura'],    bio:'Scholar-musician from Borno combining religious knowledge with musical expression.',                  social:'@MalamKasim' },
+  { id:9,  name:'Abdullahi Dan Maraya',  initials:'AD', grad:'g1', genre:'Nasheed',            status:'verified',  songs:160,  plays:'510K', followers:'44K',  downloads:'118K', joined:'Jul 2023', location:'Jigawa, Nigeria',  tags:['Nasheed'],             bio:'Traditional nasheed vocalist from Jigawa specialising in prophetic poetry.',                          social:'@AbdullahiD' },
+  { id:10, name:'Hafiz Abdullahi',       initials:'HA', grad:'g2', genre:'Shuhada · Maulud',   status:'verified',  songs:144,  plays:'440K', followers:'38K',  downloads:'100K', joined:'Aug 2023', location:'Kano, Nigeria',    tags:['Shuhada','Maulud'],   bio:'Young artist making waves with fusion of shuhada and maulud styles.',                                social:'@HafizAbd' },
+  { id:11, name:'Bello Maiangwa',        initials:'BM', grad:'g3', genre:'Maulud',             status:'verified',  songs:108,  plays:'310K', followers:'27K',  downloads:'71K',  joined:'Oct 2023', location:'Kaduna, Nigeria',  tags:['Maulud'],              bio:'Specialist in Barzanji and Diba\'i style maulud recitations.',                                        social:'@BelloMai' },
+  { id:12, name:'Sani Aliyu',            initials:'SA', grad:'g4', genre:'Shuhada · Ashura',   status:'verified',  songs:96,   plays:'270K', followers:'23K',  downloads:'62K',  joined:'Dec 2023', location:'Gombe, Nigeria',   tags:['Shuhada','Ashura'],   bio:'Rising star in shuhada and ashura vocal traditions from Gombe State.',                               social:'@SaniAliyu' },
+  { id:13, name:'Kabiru Gombe',          initials:'KG', grad:'g5', genre:'Nasheed',            status:'pending',   songs:44,   plays:'82K',  followers:'8K',   downloads:'19K',  joined:'Feb 2024', location:'Gombe, Nigeria',   tags:['Nasheed'],             bio:'Emerging nasheed artist applying for official verification on the platform.' },
+  { id:14, name:'Hussaini Danko',        initials:'HD', grad:'g6', genre:'Shuhada',            status:'pending',   songs:36,   plays:'61K',  followers:'6.2K', downloads:'14K',  joined:'Mar 2024', location:'Kebbi, Nigeria',   tags:['Shuhada'],             bio:'Traditional shuhada singer from Kebbi awaiting content compliance review.' },
+  { id:15, name:'Muhammad Lawal',        initials:'ML', grad:'g7', genre:'Nasheed · Maulud',   status:'pending',   songs:28,   plays:'44K',  followers:'4.8K', downloads:'10K',  joined:'Mar 2024', location:'Niger, Nigeria',   tags:['Nasheed','Maulud'],   bio:'New artist submitting verification request with initial song catalogue.' },
+  { id:16, name:'Zahrau Maidabino',      initials:'ZM', grad:'g8', genre:'Maulud',             status:'pending',   songs:18,   plays:'28K',  followers:'3.1K', downloads:'6.4K', joined:'Apr 2024', location:'Sokoto, Nigeria',  tags:['Maulud'],              bio:'Female maulud vocalist — first of its kind on the platform, awaiting review.' },
+  { id:17, name:'Ismail Dankwairo',      initials:'ID', grad:'g1', genre:'Shuhada',            status:'pending',   songs:22,   plays:'35K',  followers:'3.8K', downloads:'8K',   joined:'Apr 2024', location:'Kebbi, Nigeria',   tags:['Shuhada'],             bio:'Local artist with strong community support applying for platform verification.' },
+  { id:18, name:'Alhaji Maikasuwa',      initials:'AM', grad:'g2', genre:'Nasheed · Shuhada',  status:'pending',   songs:14,   plays:'21K',  followers:'2.4K', downloads:'4.8K', joined:'Apr 2024', location:'Sokoto, Nigeria',  tags:['Nasheed'],             bio:'Veteran community performer seeking formal digital platform presence.' },
+  { id:19, name:'Hassan Ringim',         initials:'HR', grad:'g3', genre:'Shurafah',           status:'pending',   songs:9,    plays:'14K',  followers:'1.8K', downloads:'3.2K', joined:'Apr 2024', location:'Jigawa, Nigeria',  tags:['Shurafah'],            bio:'Newcomer shurafah artist with 3 months of activity on the platform.' },
+  { id:20, name:'Nuhu Zaria',            initials:'NZ', grad:'g4', genre:'Nasheed',            status:'pending',   songs:7,    plays:'10K',  followers:'1.2K', downloads:'2.1K', joined:'Apr 2024', location:'Kaduna, Nigeria',  tags:['Nasheed'],             bio:'Recent upload request — content review in progress.' },
+  { id:21, name:'Lawal Birni',           initials:'LB', grad:'g5', genre:'Ashura',             status:'rejected',  songs:12,   plays:'8K',   followers:'820',  downloads:'1.8K', joined:'Jan 2024', location:'Borno, Nigeria',   tags:['Ashura'],              bio:'Rejected: content did not meet platform guidelines. Can reapply in 30 days.' },
+  { id:22, name:'Garba Sokoto',          initials:'GS', grad:'g6', genre:'Nasheed',            status:'rejected',  songs:4,    plays:'2K',   followers:'210',  downloads:'440',  joined:'Feb 2024', location:'Sokoto, Nigeria',  tags:['Nasheed'],             bio:'Rejected: duplicate account — primary account already exists.' },
+  { id:23, name:'Kabir Dan Juma',        initials:'KD', grad:'g7', genre:'Maulud',             status:'suspended', songs:88,   plays:'180K', followers:'14K',  downloads:'41K',  joined:'Oct 2022', location:'Kano, Nigeria',    tags:['Maulud'],              bio:'Suspended: violation of community standards. Under review by content team.' },
+  { id:24, name:'Aminu Funtua',          initials:'AF', grad:'g8', genre:'Shuhada · Nasheed',  status:'suspended', songs:64,   plays:'120K', followers:'10K',  downloads:'27K',  joined:'May 2023', location:'Katsina, Nigeria', tags:['Shuhada'],             bio:'Suspended: multiple copyright complaints received from third-party rights holders.' }
+];
+
+var PER_PAGE     = 12;
+var currentPage  = 1;
+var currentTab   = 'all';
+var searchQuery  = '';
+var genreFilter  = 'all';
+var sortField    = 'plays';
+
+function getFiltered() {
+  var list = ALL_ARTISTS.slice();
+  if (currentTab !== 'all') list = list.filter(function(a){ return a.status === currentTab; });
+  if (genreFilter !== 'all') list = list.filter(function(a){ return a.genre.indexOf(genreFilter) !== -1; });
+  if (searchQuery) {
+    var q = searchQuery.toLowerCase();
+    list = list.filter(function(a){
+      return a.name.toLowerCase().indexOf(q) !== -1 ||
+             a.genre.toLowerCase().indexOf(q) !== -1 ||
+             a.location.toLowerCase().indexOf(q) !== -1;
+    });
+  }
+  if (sortField === 'songs')     list = list.slice().sort(function(a,b){ return b.songs - a.songs; });
+  if (sortField === 'followers') list = list.slice().sort(function(a,b){ return parseFloat(b.followers) - parseFloat(a.followers); });
+  if (sortField === 'newest')    list = list.slice().reverse();
+  return list;
+}
+
+function totalPages(filtered) { return Math.max(1, Math.ceil(filtered.length / PER_PAGE)); }
+
+/* Cover gradient colours per grad */
+var COVER_STYLES = {
+  g1:'linear-gradient(135deg,#1A0A3A,#0A1A3A)',
+  g2:'linear-gradient(135deg,#2A1000,#1A1000)',
+  g3:'linear-gradient(135deg,#2A0A1A,#1A0A0A)',
+  g4:'linear-gradient(135deg,#0A2A1A,#0A1A2A)',
+  g5:'linear-gradient(135deg,#2A1A00,#1A0A1A)',
+  g6:'linear-gradient(135deg,#0A1A2A,#1A0A2A)',
+  g7:'linear-gradient(135deg,#2A1000,#2A0A1A)',
+  g8:'linear-gradient(135deg,#0A2A1A,#1A0A2A)'
+};
+
+var STATUS_STRIP = {
+  verified:'var(--blue)',
+  pending:'var(--yellow)',
+  rejected:'var(--red)',
+  suspended:'var(--text3)',
+  active:'var(--green)'
+};
+
+function verifyArtist(id) {
+  for (var i = 0; i < ALL_ARTISTS.length; i++) {
+    if (ALL_ARTISTS[i].id === id) { ALL_ARTISTS[i].status = 'verified'; break; }
+  }
+  updateTabCounts();
+  renderArtists();
+  showToast('Artist verified successfully!', 'success');
+}
+function rejectArtist(id) {
+  for (var i = 0; i < ALL_ARTISTS.length; i++) {
+    if (ALL_ARTISTS[i].id === id) { ALL_ARTISTS[i].status = 'rejected'; break; }
+  }
+  updateTabCounts();
+  renderArtists();
+  showToast('Artist application rejected.', 'danger');
+}
+function suspendArtist(id) {
+  for (var i = 0; i < ALL_ARTISTS.length; i++) {
+    if (ALL_ARTISTS[i].id === id) {
+      ALL_ARTISTS[i].status = ALL_ARTISTS[i].status === 'suspended' ? 'verified' : 'suspended';
+      showToast(ALL_ARTISTS[i].name + (ALL_ARTISTS[i].status === 'suspended' ? ' suspended.' : ' unsuspended.'), ALL_ARTISTS[i].status === 'suspended' ? 'danger' : 'success');
+      break;
+    }
+  }
+  updateTabCounts();
+  renderArtists();
+}
+
+function updateTabCounts() {
+  var counts = { all:ALL_ARTISTS.length, verified:0, pending:0, rejected:0, suspended:0 };
+  ALL_ARTISTS.forEach(function(a){ if (counts[a.status] !== undefined) counts[a.status]++; });
+  document.getElementById('tc-all').textContent       = counts.all;
+  document.getElementById('tc-verified').textContent  = counts.verified;
+  document.getElementById('tc-pending').textContent   = counts.pending;
+  document.getElementById('tc-rejected').textContent  = counts.rejected;
+  document.getElementById('tc-suspended').textContent = counts.suspended;
+}
+
+function renderArtists() {
+  var filtered = getFiltered();
+  var tp    = totalPages(filtered);
+  if (currentPage > tp) currentPage = 1;
+  var start = (currentPage - 1) * PER_PAGE;
+  var end   = Math.min(start + PER_PAGE, filtered.length);
+  var page  = filtered.slice(start, end);
+
+  document.getElementById('pagFrom').textContent  = filtered.length ? start + 1 : 0;
+  document.getElementById('pagTo').textContent    = end;
+  document.getElementById('pagTotal').textContent = filtered.length;
+  document.getElementById('prevBtn').classList.toggle('disabled', currentPage === 1);
+  document.getElementById('nextBtn').classList.toggle('disabled', currentPage === tp);
+  document.getElementById('paginationWrap').style.display = filtered.length ? 'flex' : 'none';
+
+  /* Page numbers */
+  var pnEl = document.getElementById('pageNumbers');
+  pnEl.innerHTML = '';
+  for (var p = Math.max(1, currentPage - 2); p <= Math.min(tp, currentPage + 2); p++) {
+    var pb = document.createElement('div');
+    pb.className = 'pag-btn' + (p === currentPage ? ' active' : '');
+    pb.textContent = p;
+    (function(pp){ pb.onclick = function(){ currentPage = pp; renderArtists(); }; }(p));
+    pnEl.appendChild(pb);
+  }
+
+  var container = document.getElementById('artistsContainer');
+  container.innerHTML = '';
+
+  if (page.length === 0) {
+    container.innerHTML = '<div style="text-align:center;padding:48px;color:var(--text3);font-size:12px;">No artists found.</div>';
+    return;
+  }
+
+  var grid = document.createElement('div');
+  grid.className = 'artists-grid';
+
+  for (var i = 0; i < page.length; i++) {
+    var a = page[i];
+    var isPending   = a.status === 'pending';
+    var isVerified  = a.status === 'verified';
+    var isSuspended = a.status === 'suspended';
+    var isRejected  = a.status === 'rejected';
+
+    var statusBadgeClass = 'sb-' + a.status;
+    var statusLabel = a.status.charAt(0).toUpperCase() + a.status.slice(1);
+
+    /* Tags html */
+    var tagsHtml = '';
+    for (var t = 0; t < a.tags.length; t++) {
+      tagsHtml += '<span class="ac-tag">' + a.tags[t] + '</span>';
+    }
+
+    /* Footer buttons */
+    var footerHtml = '';
+    if (isPending) {
+      footerHtml =
+        '<div class="acf-btn acf-view" onclick="openPanel(' + a.id + ',event)">' +
+          '<svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>View' +
+        '</div>' +
+        '<div class="acf-btn acf-verify" onclick="verifyArtist(' + a.id + ');event.stopPropagation();">' +
+          '<svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22,4 12,14.01 9,11.01"/></svg>Verify' +
+        '</div>' +
+        '<div class="acf-btn acf-reject" onclick="rejectArtist(' + a.id + ');event.stopPropagation();">' +
+          '<svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>Reject' +
+        '</div>';
+    } else {
+      footerHtml =
+        '<div class="acf-btn acf-view" onclick="openPanel(' + a.id + ',event)">' +
+          '<svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>View' +
+        '</div>' +
+        '<div class="acf-btn acf-edit" onclick="showToast(\'Edit: ' + a.name + '\',\'\');event.stopPropagation();">' +
+          '<svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>Edit' +
+        '</div>' +
+        '<div class="acf-btn acf-ban" onclick="suspendArtist(' + a.id + ');event.stopPropagation();">' +
+          '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>' +
+          (isSuspended ? 'Restore' : 'Suspend') +
+        '</div>';
+    }
+
+    /* Verified / pending badge on avatar */
+    var avBadgeHtml = '';
+    if (isVerified) {
+      avBadgeHtml = '<div class="ac-verified-badge"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>';
+    } else if (isPending) {
+      avBadgeHtml = '<div class="ac-pending-badge">⏳</div>';
+    }
+
+    var card = document.createElement('div');
+    card.className = 'artist-card' + (isPending ? ' pending' : '');
+    card.style.animationDelay = (i * 0.04) + 's';
+
+    card.innerHTML =
+      /* Status strip */
+      '<div class="ac-status-strip" style="background:' + (STATUS_STRIP[a.status] || 'var(--text3)') + ';"></div>' +
+      /* Cover */
+      '<div class="ac-cover" style="background:' + (COVER_STYLES[a.grad] || 'var(--surface3)') + ';">' +
+        '<div class="ac-avatar-wrap">' +
+          '<div class="ac-avatar ' + a.grad + '">' + a.initials + avBadgeHtml + '</div>' +
+        '</div>' +
+      '</div>' +
+      /* Body */
+      '<div class="ac-body">' +
+        '<div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:2px;">' +
+          '<div class="ac-name">' + a.name + '</div>' +
+          '<span class="status-badge ' + statusBadgeClass + '"><div class="status-dot"></div>' + statusLabel + '</span>' +
+        '</div>' +
+        '<div class="ac-genre">' + a.genre + ' · ' + a.location + '</div>' +
+        '<div class="ac-stats-row">' +
+          '<div class="ac-stat"><div class="ac-stat-n" style="color:var(--accent);">' + a.songs + '</div><div class="ac-stat-l">Songs</div></div>' +
+          '<div class="ac-stat"><div class="ac-stat-n" style="color:var(--blue);">' + a.followers + '</div><div class="ac-stat-l">Followers</div></div>' +
+          '<div class="ac-stat"><div class="ac-stat-n" style="color:var(--green);">' + a.plays + '</div><div class="ac-stat-l">Plays</div></div>' +
+        '</div>' +
+        '<div class="ac-tags">' + tagsHtml + '</div>' +
+      '</div>' +
+      /* Footer */
+      '<div class="ac-footer">' + footerHtml + '</div>';
+
+    grid.appendChild(card);
+  }
+
+  container.appendChild(grid);
+}
+
+function changePage(dir) {
+  var tp = totalPages(getFiltered());
+  var next = currentPage + dir;
+  if (next >= 1 && next <= tp) { currentPage = next; renderArtists(); }
+}
+
+/* Tabs */
+document.getElementById('tabBar').addEventListener('click', function(e) {
+  var btn = e.target.closest('.tab-btn');
+  if (!btn) return;
+  document.querySelectorAll('.tab-btn').forEach(function(b){ b.classList.remove('active'); });
+  btn.classList.add('active');
+  currentTab  = btn.getAttribute('data-tab');
+  currentPage = 1;
+  renderArtists();
+});
+
+/* Search */
+var searchTimer = null;
+document.getElementById('searchInput').addEventListener('input', function() {
+  clearTimeout(searchTimer);
+  var val = this.value;
+  searchTimer = setTimeout(function() { searchQuery = val.trim(); currentPage = 1; renderArtists(); }, 250);
+});
+document.getElementById('genreFilter').addEventListener('change', function() { genreFilter = this.value; currentPage = 1; renderArtists(); });
+document.getElementById('sortSelect').addEventListener('change',  function() { sortField   = this.value; currentPage = 1; renderArtists(); });
+
+/* ── Detail Panel ── */
+function openPanel(id, e) {
+  if (e) e.stopPropagation();
+  var a = null;
+  for (var i = 0; i < ALL_ARTISTS.length; i++) { if (ALL_ARTISTS[i].id === id) { a = ALL_ARTISTS[i]; break; } }
+  if (!a) return;
+
+  var statusCls = 'sb-' + a.status;
+  var statusLabel = a.status.charAt(0).toUpperCase() + a.status.slice(1);
+  var isPending   = a.status === 'pending';
+  var isVerified  = a.status === 'verified';
+  var isSuspended = a.status === 'suspended';
+
+  var tagsHtml = '';
+  for (var t = 0; t < a.tags.length; t++) {
+    tagsHtml += '<span class="ac-tag">' + a.tags[t] + '</span>';
+  }
+
+  var actionBtns = '';
+  if (isPending) {
+    actionBtns =
+      '<div class="dp-act dpa-green" onclick="verifyArtist(' + a.id + ');closePanel();">' +
+        '<svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22,4 12,14.01 9,11.01"/></svg>Verify Artist' +
+      '</div>' +
+      '<div class="dp-act dpa-yellow" onclick="showToast(\'Verification request on hold.\',\'warn\');closePanel();">' +
+        '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Put On Hold' +
+      '</div>' +
+      '<div class="dp-act dpa-danger" onclick="rejectArtist(' + a.id + ');closePanel();">' +
+        '<svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>Reject Application' +
+      '</div>';
+  } else {
+    actionBtns =
+      '<div class="dp-act dpa-primary" onclick="showToast(\'Editing ' + a.name + '…\',\'\');closePanel();">' +
+        '<svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>Edit Profile' +
+      '</div>' +
+      '<div class="dp-act dpa-outline" onclick="showToast(\'Message sent to ' + a.name + '.\',\'success\');closePanel();">' +
+        '<svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Send Message' +
+      '</div>' +
+      '<div class="dp-act ' + (isSuspended ? 'dpa-green' : 'dpa-danger') + '" onclick="suspendArtist(' + a.id + ');closePanel();">' +
+        '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>' +
+        (isSuspended ? 'Restore Artist' : 'Suspend Artist') +
+      '</div>';
+  }
+
+  document.getElementById('dpBody').innerHTML =
+    '<div class="dp-cover" style="background:' + (COVER_STYLES[a.grad] || 'var(--surface3)') + ';">' +
+      '<div class="dp-avatar-over"><div class="dp-avatar-lg ' + a.grad + '">' + a.initials + '</div></div>' +
+    '</div>' +
+    '<div class="dp-content">' +
+      '<div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:4px;">' +
+        '<div class="dp-artist-name">' + a.name + '</div>' +
+        '<span class="status-badge ' + statusCls + '"><div class="status-dot"></div>' + statusLabel + '</span>' +
+      '</div>' +
+      '<div class="dp-genre">' + a.genre + ' · ' + a.location + '</div>' +
+      '<div class="dp-badges">' + tagsHtml + (a.social ? '<span class="ac-tag">' + a.social + '</span>' : '') + '</div>' +
+
+      '<div style="background:var(--surface2);border-radius:10px;padding:10px 12px;border:1px solid var(--border);margin-bottom:4px;">' +
+        '<div style="font-size:10px;color:var(--text3);margin-bottom:4px;text-transform:uppercase;letter-spacing:.3px;font-family:\'Syne\',sans-serif;font-weight:700;">Bio</div>' +
+        '<div style="font-size:11px;color:var(--text2);line-height:1.6;">' + (a.bio || '—') + '</div>' +
+      '</div>' +
+
+      '<div class="dp-section-title">Stats</div>' +
+      '<div class="dp-stat-grid">' +
+        '<div class="dp-stat-item"><div class="dp-stat-val" style="color:var(--accent);">' + a.songs + '</div><div class="dp-stat-lbl">Songs</div></div>' +
+        '<div class="dp-stat-item"><div class="dp-stat-val" style="color:var(--blue);">' + a.followers + '</div><div class="dp-stat-lbl">Followers</div></div>' +
+        '<div class="dp-stat-item"><div class="dp-stat-val" style="color:var(--green);">' + a.plays + '</div><div class="dp-stat-lbl">Plays</div></div>' +
+      '</div>' +
+
+      '<div class="dp-section-title">Details</div>' +
+      '<div class="dp-info-grid">' +
+        '<div class="dp-info-item"><div class="dp-info-lbl">Downloads</div><div class="dp-info-val" style="color:var(--purple);">' + a.downloads + '</div></div>' +
+        '<div class="dp-info-item"><div class="dp-info-lbl">Joined</div><div class="dp-info-val">' + a.joined + '</div></div>' +
+        '<div class="dp-info-item"><div class="dp-info-lbl">Location</div><div class="dp-info-val">' + a.location + '</div></div>' +
+        '<div class="dp-info-item"><div class="dp-info-lbl">Account</div><div class="dp-info-val">Artist #' + a.id + '</div></div>' +
+      '</div>' +
+
+      '<div class="dp-section-title">Actions</div>' +
+      '<div class="dp-action-btns">' + actionBtns + '</div>' +
+    '</div>';
+
+  document.getElementById('detailOverlay').classList.add('open');
+  document.getElementById('detailPanel').classList.add('open');
+}
+
+function closePanel() {
+  document.getElementById('detailOverlay').classList.remove('open');
+  document.getElementById('detailPanel').classList.remove('open');
+}
+
+/* Init */
+updateTabCounts();
+renderArtists();
+</script>
+</body>
+</html>

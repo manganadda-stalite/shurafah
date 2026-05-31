@@ -1,0 +1,1382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Seerah Admin — Preacher Management</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#05070F;--surface:#0A0E1A;--surface2:#0F1525;--surface3:#141B2E;--surface4:#1A2238;
+  --accent:#FF6B35;--accent2:#FFB347;--blue:#4D9FFF;--green:#2ECC8F;
+  --purple:#9B6BFF;--pink:#FF4D8F;--yellow:#FFD166;--red:#FF4444;
+  --text:#F0F4FF;--text2:#8A94B0;--text3:#4A5270;
+  --border:rgba(255,255,255,0.06);
+  --sidebar-w:240px;--sidebar-collapsed:62px;--topbar-h:60px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--text);min-height:100vh;display:flex;overflow-x:hidden;}
+
+/* ── SIDEBAR ── */
+.sidebar{width:var(--sidebar-w);min-height:100vh;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;top:0;left:0;z-index:100;transition:width .25s ease;overflow:hidden;}
+.sidebar.collapsed{width:var(--sidebar-collapsed);}
+.sb-logo{display:flex;align-items:center;gap:10px;padding:18px 16px 16px;border-bottom:1px solid var(--border);flex-shrink:0;min-height:var(--topbar-h);}
+.sb-logo-icon{width:32px;height:32px;border-radius:9px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;box-shadow:0 4px 12px rgba(255,107,53,.35);}
+.sb-logo-text{font-family:sans-serif;font-size:15px;font-weight:800;letter-spacing:-.3px;white-space:nowrap;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.sb-logo-sub{font-size:9px;color:var(--text3);white-space:nowrap;}
+.sb-nav{flex:1;overflow-y:auto;overflow-x:hidden;padding:10px 0;scrollbar-width:none;}
+.sb-nav::-webkit-scrollbar{display:none;}
+.sb-group-label{font-size:9px;font-family:sans-serif;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.6px;padding:10px 16px 5px;white-space:nowrap;overflow:hidden;transition:opacity .2s;}
+.sidebar.collapsed .sb-group-label{opacity:0;}
+.sb-item{display:flex;align-items:center;gap:10px;padding:9px 16px;cursor:pointer;transition:background .15s;position:relative;white-space:nowrap;text-decoration:none;color:var(--text2);}
+.sb-item:hover{background:var(--surface2);color:var(--text);}
+.sb-item.active{background:rgba(255,107,53,.1);color:var(--accent);border-right:2px solid var(--accent);}
+.sb-item.active .sb-icon svg{stroke:var(--accent);}
+.sb-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.sb-item.active .sb-icon{background:rgba(255,107,53,.12);}
+.sb-icon svg{width:15px;height:15px;fill:none;stroke:var(--text3);stroke-width:2;transition:stroke .15s;}
+.sb-item:hover .sb-icon svg{stroke:var(--text);}
+.sb-label{font-size:12px;font-weight:500;white-space:nowrap;overflow:hidden;transition:opacity .2s;}
+.sidebar.collapsed .sb-label{opacity:0;pointer-events:none;}
+.sb-badge{margin-left:auto;background:var(--accent);border-radius:50px;padding:1px 7px;font-size:9px;font-weight:700;color:white;font-family:sans-serif;white-space:nowrap;flex-shrink:0;transition:opacity .2s;}
+.sidebar.collapsed .sb-badge{opacity:0;}
+.sb-item::after{content:attr(data-tip);position:absolute;left:calc(var(--sidebar-collapsed) + 8px);top:50%;transform:translateY(-50%);background:var(--surface3);border:1px solid var(--border);border-radius:8px;padding:5px 10px;font-size:11px;color:var(--text);white-space:nowrap;pointer-events:none;opacity:0;transition:opacity .15s;z-index:200;box-shadow:0 4px 16px rgba(0,0,0,.4);}
+.sidebar.collapsed .sb-item:hover::after{opacity:1;}
+.sb-footer{padding:12px 16px;border-top:1px solid var(--border);display:flex;align-items:center;gap:10px;flex-shrink:0;}
+.sb-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--purple),var(--blue));display:flex;align-items:center;justify-content:center;font-size:12px;font-family:sans-serif;font-weight:700;flex-shrink:0;}
+.sb-user-name{font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;transition:opacity .2s;}
+.sb-user-role{font-size:10px;color:var(--text3);white-space:nowrap;transition:opacity .2s;}
+.sidebar.collapsed .sb-user-name,.sidebar.collapsed .sb-user-role{opacity:0;}
+
+/* ── MAIN ── */
+.main{margin-left:var(--sidebar-w);flex:1;display:flex;flex-direction:column;min-height:100vh;transition:margin-left .25s ease;}
+.main.sidebar-collapsed{margin-left:var(--sidebar-collapsed);}
+
+/* ── TOPBAR ── */
+.topbar{height:var(--topbar-h);background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:14px;padding:0 24px;position:sticky;top:0;z-index:50;flex-shrink:0;}
+.topbar-toggle{width:32px;height:32px;border-radius:8px;background:var(--surface2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;}
+.topbar-toggle svg{width:14px;height:14px;fill:none;stroke:var(--text2);stroke-width:2;}
+.topbar-breadcrumb{font-size:12px;color:var(--text3);display:flex;align-items:center;gap:6px;}
+.topbar-right{display:flex;align-items:center;gap:10px;margin-left:auto;}
+.tb-icon-btn{width:34px;height:34px;border-radius:9px;background:var(--surface2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;transition:border-color .15s;}
+.tb-icon-btn:hover{border-color:rgba(255,107,53,.3);}
+.tb-icon-btn svg{width:15px;height:15px;fill:none;stroke:var(--text2);stroke-width:2;}
+.tb-notif-dot{position:absolute;top:6px;right:6px;width:6px;height:6px;background:var(--accent);border-radius:50%;border:1.5px solid var(--surface);}
+.tb-avatar{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-family:sans-serif;font-size:12px;font-weight:700;cursor:pointer;}
+
+/* ── CONTENT ── */
+.content{flex:1;padding:24px;overflow-y:auto;overflow-x:hidden;}
+
+@media (max-width:768px) {
+  .content{padding:16px;}
+}
+
+@media (max-width:480px) {
+  .content{padding:12px;}
+}
+.page-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:22px;flex-wrap:wrap;gap:12px;}
+.page-title{font-family:sans-serif;font-size:22px;font-weight:800;letter-spacing:-.4px;margin-bottom:3px;}
+.page-subtitle{font-size:12px;color:var(--text2);}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:9px;cursor:pointer;font-family:sans-serif;font-size:11px;font-weight:700;transition:all .15s;border:1px solid transparent;}
+.btn-primary{background:var(--accent);color:white;box-shadow:0 3px 12px rgba(255,107,53,.3);}
+.btn-primary:hover{box-shadow:0 5px 18px rgba(255,107,53,.45);}
+.btn-outline{background:transparent;border-color:var(--border);color:var(--text2);}
+.btn-outline:hover{border-color:rgba(255,107,53,.3);color:var(--text);}
+.btn-green{background:rgba(46,204,143,.1);border-color:rgba(46,204,143,.25);color:var(--green);}
+.btn-green:hover{background:rgba(46,204,143,.18);}
+.btn-danger{background:rgba(255,68,68,.1);border-color:rgba(255,68,68,.25);color:var(--red);}
+.btn svg{width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:2;}
+
+/* ── STAT STRIP ── */
+.stat-strip{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:20px;}
+.ss-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:10px;animation:fadeUp .4s ease both;}
+.ss-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.ss-icon svg{width:16px;height:16px;fill:none;stroke:white;stroke-width:2;}
+.ss-val{font-family:sans-serif;font-size:18px;font-weight:800;line-height:1;}
+.ss-label{font-size:10px;color:var(--text3);margin-top:2px;}
+
+/* ── TABS ── */
+.tab-bar{display:flex;gap:4px;background:var(--surface);border:1px solid var(--border);border-radius:11px;padding:4px;margin-bottom:16px;width:fit-content;}
+.tab-btn{padding:7px 18px;border-radius:8px;font-family:sans-serif;font-size:11px;font-weight:700;cursor:pointer;color:var(--text3);transition:all .15s;display:flex;align-items:center;gap:5px;white-space:nowrap;}
+.tab-btn.active{background:var(--accent);color:white;box-shadow:0 2px 8px rgba(255,107,53,.3);}
+.tab-count{font-size:9px;background:rgba(255,255,255,.15);border-radius:50px;padding:0px 5px;font-weight:700;}
+.tab-btn:not(.active) .tab-count{background:var(--surface3);color:var(--text3);}
+
+/* ── TOOLBAR ── */
+.toolbar{display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap;}
+.search-box{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:8px 14px;flex:1;min-width:220px;transition:border-color .2s;}
+.search-box:focus-within{border-color:rgba(255,107,53,.35);}
+.search-box svg{width:14px;height:14px;fill:none;stroke:var(--text3);stroke-width:2;flex-shrink:0;}
+.search-box input{background:transparent;border:none;outline:none;font-size:12px;color:var(--text);font-family:'DM Sans',sans-serif;width:100%;}
+.search-box input::placeholder{color:var(--text3);}
+.filter-select{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:8px 12px;font-size:11px;color:var(--text2);font-family:'DM Sans',sans-serif;outline:none;cursor:pointer;}
+.filter-select option{background:var(--surface2);color:var(--text);}
+
+/* ── ARTIST CARDS GRID ── */
+.preachers-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px;margin-bottom:20px;}
+
+.preacher-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;overflow:hidden;cursor:pointer;transition:border-color .2s,transform .15s;animation:fadeUp .35s ease both;}
+.preacher-card:hover{border-color:rgba(255,107,53,.25);transform:translateY(-2px);}
+.preacher-card.pending{border-color:rgba(255,209,102,.2);}
+.preacher-card.pending:hover{border-color:rgba(255,209,102,.4);}
+
+/* Card cover */
+.ac-cover{height:80px;position:relative;overflow:hidden;}
+.ac-cover::after{content:'';position:absolute;inset:0;background:linear-gradient(to bottom,transparent 40%,rgba(10,14,26,.9));}
+
+/* Avatar overlapping cover */
+.ac-avatar-wrap{position:absolute;bottom:-20px;left:16px;z-index:2;}
+.ac-avatar{width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;font-family:sans-serif;font-weight:700;border:3px solid var(--surface);box-shadow:0 4px 12px rgba(0,0,0,.4);}
+.ac-verified-badge{position:absolute;bottom:0;right:0;width:18px;height:18px;background:var(--blue);border-radius:50%;border:2px solid var(--surface);display:flex;align-items:center;justify-content:center;}
+.ac-verified-badge svg{width:9px;height:9px;fill:white;}
+.ac-pending-badge{position:absolute;bottom:0;right:0;width:18px;height:18px;background:var(--yellow);border-radius:50%;border:2px solid var(--surface);display:flex;align-items:center;justify-content:center;font-size:10px;}
+
+/* Card body */
+.ac-body{padding:28px 16px 14px;}
+.ac-name{font-family:sans-serif;font-size:13px;font-weight:800;margin-bottom:2px;}
+.ac-genre{font-size:10px;color:var(--text2);margin-bottom:8px;}
+.ac-stats-row{display:flex;gap:10px;margin-bottom:10px;}
+.ac-stat{text-align:center;}
+.ac-stat-n{font-family:sans-serif;font-size:12px;font-weight:700;}
+.ac-stat-l{font-size:8px;color:var(--text3);margin-top:1px;}
+.ac-tags{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:10px;}
+.ac-tag{font-size:8px;font-family:sans-serif;font-weight:700;padding:2px 7px;border-radius:4px;background:var(--surface2);color:var(--text3);border:1px solid var(--border);}
+
+/* Card footer actions */
+.ac-footer{display:flex;gap:6px;padding:10px 16px 14px;border-top:1px solid var(--border);}
+.acf-btn{flex:1;padding:7px;border-radius:8px;font-family:sans-serif;font-size:10px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px;border:1px solid;transition:all .15s;}
+.acf-btn svg{width:11px;height:11px;fill:none;stroke:currentColor;stroke-width:2;}
+.acf-view{background:transparent;border-color:var(--border);color:var(--text2);}
+.acf-view:hover{border-color:rgba(77,159,255,.3);color:var(--blue);}
+.acf-verify{background:rgba(46,204,143,.1);border-color:rgba(46,204,143,.25);color:var(--green);}
+.acf-verify:hover{background:rgba(46,204,143,.18);}
+.acf-reject{background:rgba(255,68,68,.08);border-color:rgba(255,68,68,.2);color:var(--red);}
+.acf-reject:hover{background:rgba(255,68,68,.15);}
+.acf-edit{background:rgba(255,107,53,.08);border-color:rgba(255,107,53,.2);color:var(--accent);}
+.acf-edit:hover{background:rgba(255,107,53,.15);}
+.acf-ban{background:rgba(255,68,68,.08);border-color:rgba(255,68,68,.2);color:var(--red);}
+.acf-ban:hover{background:rgba(255,68,68,.15);}
+
+/* Status strip on card */
+.ac-status-strip{height:3px;width:100%;}
+
+/* ── PENDING VERIFICATION SECTION ── */
+.pending-section{margin-bottom:20px;}
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.section-title{font-family:sans-serif;font-size:13px;font-weight:700;display:flex;align-items:center;gap:7px;}
+.pending-dot{width:8px;height:8px;border-radius:50%;background:var(--yellow);animation:blink 1.2s ease-in-out infinite;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+
+/* ── PAGINATION ── */
+.paginationWrap{display:flex;align-items:center;justify-content:space-between;padding:14px 0 0;gap:12px;flex-wrap:nowrap;}
+.pag-info{font-size:11px;color:var(--text3);white-space:nowrap;flex-shrink:0;}
+.pag-info b{color:var(--text2);}
+.pag-controls{display:flex;align-items:center;gap:4px;flex-shrink:0;}
+.pag-btn{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;border:1px solid var(--border);background:transparent;font-family:sans-serif;font-size:11px;font-weight:700;color:var(--text2);transition:all .15s;flex-shrink:0;}
+.pag-btn:hover{border-color:rgba(255,107,53,.3);color:var(--text);}
+.pag-btn.active{background:var(--accent);border-color:var(--accent);color:white;}
+.pag-btn.disabled{opacity:.35;pointer-events:none;}
+.pag-btn svg{width:12px;height:12px;fill:none;stroke:currentColor;stroke-width:2;}
+
+/* ── DETAIL PANEL ── */
+.detail-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;display:none;backdrop-filter:blur(2px);}
+.detail-overlay.open{display:block;}
+.detail-panel{position:fixed;top:0;right:0;width:400px;height:100vh;background:var(--surface);border-left:1px solid var(--border);z-index:201;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .3s ease;overflow:hidden;}
+.detail-panel.open{transform:translateX(0);}
+
+@media (max-width:768px) {
+  .detail-panel{top:auto;bottom:0;right:0;width:100%;height:auto;max-height:80vh;border-left:none;border-top:1px solid var(--border);border-radius:16px 16px 0 0;transform:translateY(100%);transition:transform .3s ease;}
+  .detail-panel.open{transform:translateY(0);}
+}
+.dp-header{display:flex;align-items:center;justify-content:space-between;padding:18px 20px;border-bottom:1px solid var(--border);flex-shrink:0;}
+.dp-title{font-family:sans-serif;font-size:14px;font-weight:700;}
+.dp-close{width:30px;height:30px;border-radius:8px;background:var(--surface2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;}
+.dp-close svg{width:14px;height:14px;fill:none;stroke:var(--text2);stroke-width:2;}
+.dp-body{flex:1;overflow-y:auto;padding:0;scrollbar-width:none;}
+.dp-body::-webkit-scrollbar{display:none;}
+
+/* Detail panel cover */
+.dp-cover{height:110px;position:relative;}
+.dp-cover::after{content:'';position:absolute;inset:0;background:linear-gradient(to bottom,transparent 40%,var(--surface));}
+.dp-avatar-over{position:absolute;bottom:-28px;left:20px;z-index:2;}
+.dp-avatar-lg{width:70px;height:70px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;font-family:sans-serif;font-weight:700;border:3px solid var(--surface);box-shadow:0 6px 20px rgba(0,0,0,.4);}
+.dp-content{padding:40px 20px 20px;}
+.dp-preacher-name{font-family:sans-serif;font-size:18px;font-weight:800;margin-bottom:2px;}
+.dp-genre{font-size:11px;color:var(--text2);margin-bottom:12px;}
+.dp-badges{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px;}
+.dp-section-title{font-family:sans-serif;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;margin-top:16px;}
+.dp-stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:4px;}
+.dp-stat-item{background:var(--surface2);border-radius:10px;padding:10px;border:1px solid var(--border);text-align:center;}
+.dp-stat-val{font-family:sans-serif;font-size:13px;font-weight:800;margin-bottom:2px;}
+.dp-stat-lbl{font-size:9px;color:var(--text3);}
+.dp-info-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.dp-info-item{background:var(--surface2);border-radius:10px;padding:10px 12px;border:1px solid var(--border);}
+.dp-info-lbl{font-size:9px;color:var(--text3);margin-bottom:3px;text-transform:uppercase;letter-spacing:.3px;}
+.dp-info-val{font-family:sans-serif;font-size:11px;font-weight:700;}
+.dp-action-btns{display:flex;flex-direction:column;gap:8px;margin-top:4px;}
+.dp-act{width:100%;padding:10px;border-radius:10px;font-family:sans-serif;font-size:11px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;border:1px solid;transition:all .15s;}
+.dp-act svg{width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:2;}
+.dpa-primary{background:var(--accent);color:white;border-color:var(--accent);box-shadow:0 3px 12px rgba(255,107,53,.3);}
+.dpa-green{background:rgba(46,204,143,.12);color:var(--green);border-color:rgba(46,204,143,.28);}
+.dpa-yellow{background:rgba(255,209,102,.12);color:var(--yellow);border-color:rgba(255,209,102,.28);}
+.dpa-danger{background:rgba(255,68,68,.1);color:var(--red);border-color:rgba(255,68,68,.25);}
+.dpa-outline{background:transparent;color:var(--text2);border-color:var(--border);}
+
+/* ── EDIT/ADD ARTIST MODAL ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.65);backdrop-filter:blur(4px);z-index:240;opacity:0;pointer-events:none;transition:opacity .25s cubic-bezier(.4,0,.2,1);}
+.modal-overlay.open{opacity:1;pointer-events:auto;}
+.modal-container{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(.92);width:94%;max-width:600px;background:var(--surface);border:1px solid var(--border);border-radius:18px;z-index:241;box-shadow:0 20px 60px rgba(0,0,0,.7);opacity:0;pointer-events:none;transition:opacity .25s cubic-bezier(.4,0,.2,1),transform .25s cubic-bezier(.4,0,.2,1);max-height:90vh;overflow-y:auto;}
+.modal-container.open{opacity:1;pointer-events:auto;transform:translate(-50%,-50%) scale(1);}
+.modal-header{display:flex;align-items:center;justify-content:space-between;padding:20px 24px;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--surface);z-index:10;}
+.modal-title{font-family:sans-serif;font-size:16px;font-weight:800;letter-spacing:-.3px;}
+.modal-close{width:36px;height:36px;border-radius:10px;background:var(--surface2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;}
+.modal-close:hover{background:rgba(255,107,53,.1);border-color:rgba(255,107,53,.3);}
+.modal-close svg{width:16px;height:16px;fill:none;stroke:var(--text2);stroke-width:2;}
+.modal-body{padding:24px;display:flex;flex-direction:column;gap:18px;}
+.form-section{display:flex;flex-direction:column;gap:12px;}
+.form-section-title{font-size:10px;color:var(--text3);font-family:sans-serif;font-weight:800;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;}
+.avatar-upload-box{display:flex;flex-direction:column;align-items:center;gap:12px;padding:20px;background:var(--surface2);border:2px dashed var(--border);border-radius:14px;cursor:pointer;transition:all .2s;position:relative;}
+.avatar-upload-box:hover{border-color:rgba(255,107,53,.4);background:rgba(255,107,53,.05);}
+.avatar-preview{width:80px;height:80px;border-radius:14px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:800;color:white;font-family:sans-serif;flex-shrink:0;}
+.avatar-upload-text{text-align:center;}
+.avatar-upload-text .label{font-size:11px;font-weight:700;color:var(--text);}
+.avatar-upload-text .hint{font-size:10px;color:var(--text3);margin-top:2px;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.form-row.full{grid-template-columns:1fr;}
+.form-group{display:flex;flex-direction:column;gap:8px;}
+.form-label{font-size:10px;color:var(--text3);font-family:sans-serif;font-weight:800;text-transform:uppercase;letter-spacing:.4px;}
+.form-input,.form-select,.form-textarea{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:11px;padding:11px 13px;font-size:12px;color:var(--text);font-family:'DM Sans',sans-serif;outline:none;transition:all .15s;}
+.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:rgba(255,107,53,.4);background:var(--surface3);box-shadow:0 0 0 3px rgba(255,107,53,.08);}
+.form-textarea{min-height:100px;resize:vertical;}
+.modal-footer{padding:18px 24px;border-top:1px solid var(--border);display:flex;gap:10px;justify-content:flex-end;position:sticky;bottom:0;background:var(--surface);}
+.modal-footer .btn{padding:10px 18px;font-size:12px;}
+
+/* ── MEDIA TABS ── */
+.media-tab{background:transparent;color:var(--text3);border-bottom:2px solid transparent;transition:all .15s;}
+.media-tab.active{color:var(--accent);border-bottom-color:var(--accent);}
+.media-tab:hover{color:var(--text2);}
+
+/* ── STATUS BADGES ── */
+.status-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:50px;font-size:9px;font-family:sans-serif;font-weight:700;white-space:nowrap;}
+.sb-verified{background:rgba(77,159,255,.12);color:var(--blue);border:1px solid rgba(77,159,255,.25);}
+.sb-pending{background:rgba(255,209,102,.12);color:var(--yellow);border:1px solid rgba(255,209,102,.25);}
+.sb-rejected{background:rgba(255,68,68,.12);color:var(--red);border:1px solid rgba(255,68,68,.25);}
+.sb-active{background:rgba(46,204,143,.12);color:var(--green);border:1px solid rgba(46,204,143,.25);}
+.sb-suspended{background:rgba(138,148,176,.1);color:var(--text3);border:1px solid var(--border);}
+.status-dot{width:5px;height:5px;border-radius:50%;background:currentColor;flex-shrink:0;}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:24px;right:24px;background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:12px 18px;font-size:12px;font-family:sans-serif;font-weight:700;color:var(--text);box-shadow:0 8px 24px rgba(0,0,0,.5);z-index:300;opacity:0;transform:translateY(10px);transition:opacity .2s,transform .2s;pointer-events:none;display:flex;align-items:center;gap:8px;max-width:320px;}
+.toast.show{opacity:1;transform:translateY(0);}
+.toast.success{border-color:rgba(46,204,143,.35);}
+.toast.danger{border-color:rgba(255,68,68,.35);}
+.toast.warn{border-color:rgba(255,209,102,.35);}
+
+/* gradients */
+.g1{background:linear-gradient(135deg,#9B6BFF,#4D9FFF);}
+.g2{background:linear-gradient(135deg,#FF6B35,#FFB347);}
+.g3{background:linear-gradient(135deg,#FF4D8F,#FF6B35);}
+.g4{background:linear-gradient(135deg,#2ECC8F,#4D9FFF);}
+.g5{background:linear-gradient(135deg,#FFB347,#FF4D8F);}
+.g6{background:linear-gradient(135deg,#4D9FFF,#9B6BFF);}
+.g7{background:linear-gradient(135deg,#FF6B35,#FF4D8F);}
+.g8{background:linear-gradient(135deg,#2ECC8F,#9B6BFF);}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+::-webkit-scrollbar{width:4px;height:4px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--surface4);border-radius:2px;}
+
+/* ── MOBILE RESPONSIVENESS ── */
+@media (max-width:1200px) {
+  .preachers-grid{grid-template-columns:repeat(auto-fill,minmax(240px,1fr));}
+}
+
+@media (max-width:768px) {
+  .page-header{flex-direction:column;gap:16px;}
+  .page-header > div:last-child{width:100%;display:flex;gap:8px;}
+  .page-header > div:last-child .btn{flex:1;}
+  
+  .stat-strip{grid-template-columns:repeat(2,1fr);gap:10px;}
+  
+  .toolbar{flex-direction:column;gap:12px;}
+  .search-box{min-width:100%;}
+  .filter-select{width:100%;}
+  
+  .preachers-grid{grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;}
+  
+  .ac-body{padding:24px 12px 10px;}
+  .ac-name{font-size:12px;}
+  .ac-genre{font-size:9px;}
+  .ac-stats-row{gap:8px;}
+  .ac-stat-n{font-size:11px;}
+  .ac-stat-l{font-size:7px;}
+  .ac-footer{gap:4px;padding:8px 12px 10px;}
+  .acf-btn{padding:6px;font-size:9px;gap:3px;}
+  .acf-btn svg{width:10px;height:10px;}
+  
+  .detail-panel{width:100%;max-width:100%;border-left:none;border-top:1px solid var(--border);}
+  .detail-panel.open{transform:translateY(0);}
+  
+  .modal-container{width:96%;max-width:100%;max-height:95vh;}
+  .modal-body{padding:16px;gap:14px;}
+  .form-row{grid-template-columns:1fr;gap:10px;}
+  .form-section-title{font-size:9px;}
+  .form-input,.form-select,.form-textarea{padding:10px 12px;font-size:11px;}
+  .modal-header{padding:16px 18px;}
+  .modal-title{font-size:14px;}
+  .modal-footer{padding:14px 18px;}
+  .modal-footer .btn{padding:8px 14px;font-size:11px;}
+  
+  .avatar-preview{width:70px;height:70px;font-size:28px;}
+  .avatar-upload-box{padding:16px;gap:10px;}
+  .avatar-upload-text .label{font-size:10px;}
+  .avatar-upload-text .hint{font-size:9px;}
+  
+  .paginationWrap{flex-wrap:wrap;gap:10px;}
+  .pag-controls{flex-wrap:wrap;gap:3px;}
+  
+  .tab-bar{width:100%;overflow-x:auto;flex-wrap:nowrap;}
+  .tab-btn{white-space:nowrap;flex-shrink:0;}
+}
+
+@media (max-width:480px) {
+  .page-title{font-size:18px;}
+  .page-subtitle{font-size:11px;}
+  
+  .stat-strip{grid-template-columns:1fr;gap:8px;}
+  .ss-card{padding:12px 14px;}
+  .ss-val{font-size:16px;}
+  .ss-label{font-size:9px;}
+  
+  .preachers-grid{grid-template-columns:1fr;gap:10px;}
+  
+  .ac-cover{height:70px;}
+  .ac-avatar-wrap{bottom:-18px;left:12px;}
+  .ac-avatar{width:50px;height:50px;font-size:18px;}
+  .ac-body{padding:22px 12px 10px;}
+  .ac-name{font-size:11px;}
+  .ac-stats-row{gap:6px;margin-bottom:8px;}
+  .ac-stat-n{font-size:10px;}
+  .ac-tags{gap:3px;}
+  .ac-tag{font-size:7px;padding:2px 5px;}
+  .ac-footer{gap:3px;padding:6px 12px 10px;}
+  .acf-btn{padding:5px;font-size:8px;}
+  .acf-btn svg{width:9px;height:9px;}
+  
+  .detail-panel{width:100%;}
+  .dp-header{padding:14px 16px;}
+  .dp-title{font-size:13px;}
+  .dp-close{width:28px;height:28px;}
+  .dp-content{padding:32px 16px 16px;}
+  .dp-preacher-name{font-size:16px;}
+  .dp-genre{font-size:10px;}
+  .dp-stat-grid{grid-template-columns:1fr;}
+  .dp-info-grid{grid-template-columns:1fr;}
+  
+  .modal-container{width:98%;max-height:92vh;}
+  .modal-header{padding:14px 16px;}
+  .modal-title{font-size:13px;}
+  .modal-body{padding:14px;gap:12px;}
+  .modal-footer{padding:12px 16px;gap:8px;}
+  .modal-footer .btn{padding:7px 12px;font-size:10px;}
+  
+  .form-section-title{font-size:8px;margin-bottom:8px;}
+  .form-label{font-size:9px;}
+  .form-input,.form-select,.form-textarea{padding:9px 11px;font-size:11px;}
+  .form-textarea{min-height:80px;}
+  
+  .avatar-preview{width:60px;height:60px;font-size:24px;}
+  .avatar-upload-box{padding:14px;gap:8px;}
+  .avatar-upload-text .label{font-size:9px;}
+  .avatar-upload-text .hint{font-size:8px;}
+  
+  .pag-btn{width:28px;height:28px;font-size:10px;}
+  .pag-info{font-size:10px;}
+  
+  .tab-bar{padding:3px;}
+  .tab-btn{padding:6px 12px;font-size:10px;}
+  .tab-count{font-size:8px;padding:0 4px;}
+  
+  .search-box{padding:7px 12px;font-size:11px;}
+  .filter-select{padding:7px 10px;font-size:10px;}
+}
+</style>
+</head>
+<body>
+<div id="waazi-scope-banner" style="position:fixed;top:8px;left:50%;transform:translateX(-50%);z-index:9999;background:linear-gradient(135deg,#C8860A,#E8A020);color:#1A0800;padding:5px 14px 5px 12px;border-radius:50px;font-family:sans-serif;font-size:11px;font-weight:700;box-shadow:0 6px 20px rgba(200,134,10,.35);display:flex;align-items:center;gap:8px;pointer-events:auto;"><span>🎙️ Wa'azi Admin</span><a href="shurafah_admin_artist_management.html" style="color:#1A0800;text-decoration:underline;font-weight:600;">Switch &rarr; Songs view: Artist Management</a><span onclick="document.getElementById('waazi-scope-banner').remove()" style="cursor:pointer;padding-left:6px;opacity:.7;">✕</span></div>
+
+
+<script src="admin-sidebar.js"></script>
+<script src="theme-manager.js"></script>
+
+<!-- ════ MAIN ════ -->
+<div class="main" id="mainArea">
+  <header class="topbar">
+    <div class="topbar-toggle" id="sidebarToggle">
+      <svg viewBox="0 0 24 24"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </div>
+    <div class="topbar-breadcrumb">
+      <span>Admin</span><span style="color:var(--text3);margin:0 6px;">/</span>
+      <span style="color:var(--accent);">Preacher Management</span>
+    </div>
+    <div class="topbar-right">
+      <div class="tb-icon-btn">
+        <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        <div class="tb-notif-dot"></div>
+      </div>
+      <div class="tb-icon-btn">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      </div>
+      <div class="tb-avatar">SA</div>
+    </div>
+  </header>
+
+  <main class="content">
+
+    <!-- Page header -->
+    <div class="page-header">
+      <div>
+        <div class="page-title">Preacher Management</div>
+        <div class="page-subtitle">Manage, verify and monitor all platform preachers · 86 total</div>
+      </div>
+      <div style="display:flex;gap:8px;">
+        <div class="btn btn-outline" onclick="exportPreachers()">
+          <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Export
+        </div>
+        <div class="btn btn-primary" onclick="openAddPreacher()">
+          <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Add Preacher
+        </div>
+      </div>
+    </div>
+
+    <!-- Stat strip -->
+    <div class="stat-strip">
+      <div class="ss-card" style="animation-delay:0s;">
+        <div class="ss-icon" style="background:rgba(255,107,53,.15);"><svg viewBox="0 0 24 24" style="stroke:var(--accent);"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+        <div><div class="ss-val" style="color:var(--accent);">86</div><div class="ss-label">Total Preachers</div></div>
+      </div>
+      <div class="ss-card" style="animation-delay:.05s;">
+        <div class="ss-icon" style="background:rgba(77,159,255,.15);"><svg viewBox="0 0 24 24" style="stroke:var(--blue);"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22,4 12,14.01 9,11.01"/></svg></div>
+        <div><div class="ss-val" style="color:var(--blue);">52</div><div class="ss-label">Verified</div></div>
+      </div>
+      <div class="ss-card" style="animation-delay:.1s;">
+        <div class="ss-icon" style="background:rgba(255,209,102,.15);"><svg viewBox="0 0 24 24" style="stroke:var(--yellow);"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>
+        <div><div class="ss-val" style="color:var(--yellow);">8</div><div class="ss-label">Pending Review</div></div>
+      </div>
+      <div class="ss-card" style="animation-delay:.15s;">
+        <div class="ss-icon" style="background:rgba(46,204,143,.15);"><svg viewBox="0 0 24 24" style="stroke:var(--green);"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+        <div><div class="ss-val" style="color:var(--green);">9.8M</div><div class="ss-label">Total Plays</div></div>
+      </div>
+      <div class="ss-card" style="animation-delay:.2s;">
+        <div class="ss-icon" style="background:rgba(155,107,255,.15);"><svg viewBox="0 0 24 24" style="stroke:var(--purple);"><path d="M12 3v10M8 9l4 4 4-4"/><path d="M5 19h14"/></svg></div>
+        <div><div class="ss-val" style="color:var(--purple);">1.4M</div><div class="ss-label">Total Downloads</div></div>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tab-bar" id="tabBar">
+      <div class="tab-btn active" data-tab="all">All Preachers <span class="tab-count" id="tc-all">86</span></div>
+      <div class="tab-btn" data-tab="verified">✅ Verified <span class="tab-count" id="tc-verified">52</span></div>
+      <div class="tab-btn" data-tab="pending">⏳ Pending <span class="tab-count" id="tc-pending">8</span></div>
+      <div class="tab-btn" data-tab="rejected">❌ Rejected <span class="tab-count" id="tc-rejected">4</span></div>
+      <div class="tab-btn" data-tab="suspended">🚫 Suspended <span class="tab-count" id="tc-suspended">3</span></div>
+    </div>
+
+    <!-- Toolbar -->
+    <div class="toolbar">
+      <div class="search-box">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" id="searchInput" placeholder="Search by name, genre or location…">
+      </div>
+      <select class="filter-select" id="genreFilter">
+        <option value="all">All Genres</option>
+        <option value="Tafsir">Tafsir</option>
+        <option value="Aqeedah">Aqeedah</option>
+        <option value="Tafsir">Tafsir</option>
+        <option value="Hadith">Hadith</option>
+        <option value="Seerah">Seerah</option>
+      </select>
+      <select class="filter-select" id="sortSelect">
+        <option value="plays">Most Plays</option>
+        <option value="lectures">Most Lectures</option>
+        <option value="followers">Most Followers</option>
+        <option value="newest">Newest</option>
+      </select>
+    </div>
+
+    <!-- Preachers container -->
+    <div id="preachersContainer"></div>
+
+    <!-- Pagination -->
+    <div class="pagination" id="paginationWrap">
+      <div class="pag-info">Showing <b id="pagFrom">1</b>–<b id="pagTo">12</b> of <b id="pagTotal">0</b></div>
+      <div class="pag-controls">
+        <div class="pag-btn disabled" id="prevBtn" onclick="changePage(-1)">
+          <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+        </div>
+        <div id="pageNumbers"></div>
+        <div class="pag-btn" id="nextBtn" onclick="changePage(1)">
+          <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- ════ DETAIL PANEL ════ -->
+<div class="detail-overlay" id="detailOverlay" onclick="closePanel()"></div>
+<div class="detail-panel" id="detailPanel">
+  <div class="dp-header">
+    <div class="dp-title">Preacher Profile</div>
+    <div class="dp-close" onclick="closePanel()"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>
+  </div>
+  <div class="dp-body" id="dpBody"></div>
+</div>
+
+<!-- ════ EDIT ARTIST MODAL ════ -->
+<div class="modal-overlay" id="editPreacherOverlay" onclick="closeEditPreacher()"></div>
+<div class="modal-container" id="editPreacherModal">
+  <div class="modal-header">
+    <div class="modal-title">Edit Preacher Profile</div>
+    <div class="modal-close" onclick="closeEditPreacher()"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>
+  </div>
+  <div class="modal-body">
+    <!-- Media Upload Section -->
+    <div class="form-section">
+      <div class="form-section-title">Media</div>
+      <div style="display:flex;gap:8px;margin-bottom:12px;border-bottom:1px solid var(--border);padding-bottom:12px;">
+        <div class="media-tab active" data-tab="avatar" onclick="switchMediaTab('avatar')" style="flex:1;padding:8px;text-align:center;border-radius:8px;cursor:pointer;font-size:11px;font-weight:700;color:var(--text3);transition:all .15s;">
+          <svg viewBox="0 0 24 24" style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;margin-bottom:4px;display:inline-block;margin-right:4px;"><circle cx="12" cy="8" r="4"/><path d="M6 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/></svg>Avatar
+        </div>
+        <div class="media-tab" data-tab="thumbnail" onclick="switchMediaTab('thumbnail')" style="flex:1;padding:8px;text-align:center;border-radius:8px;cursor:pointer;font-size:11px;font-weight:700;color:var(--text3);transition:all .15s;">
+          <svg viewBox="0 0 24 24" style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;margin-bottom:4px;display:inline-block;margin-right:4px;"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>Thumbnail
+        </div>
+      </div>
+
+      <!-- Avatar Upload -->
+      <div id="avatarTab" class="media-tab-content">
+        <div class="avatar-upload-box" onclick="document.getElementById('editAvatarInput').click()">
+          <div class="avatar-preview" id="editAvatarPreview">AB</div>
+          <div class="avatar-upload-text">
+            <div class="label">Click to upload avatar</div>
+            <div class="hint">PNG, JPG up to 5MB</div>
+          </div>
+          <input type="file" id="editAvatarInput" accept="image/*" style="display:none;" onchange="handleAvatarUpload(event)">
+        </div>
+      </div>
+
+      <!-- Thumbnail Upload -->
+      <div id="thumbnailTab" class="media-tab-content" style="display:none;">
+        <div class="avatar-upload-box" onclick="document.getElementById('editThumbnailInput').click()">
+          <div style="width:100%;height:120px;border-radius:12px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;color:white;font-size:48px;margin-bottom:8px;" id="editThumbnailPreview">🖼️</div>
+          <div class="avatar-upload-text">
+            <div class="label">Click to upload thumbnail</div>
+            <div class="hint">PNG, JPG up to 10MB · Recommended 1200x600px</div>
+          </div>
+          <input type="file" id="editThumbnailInput" accept="image/*" style="display:none;" onchange="handleThumbnailUpload(event)">
+        </div>
+      </div>
+    </div>
+
+    <!-- Basic Info -->
+    <div class="form-section">
+      <div class="form-section-title">Basic Information</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Preacher Name</label>
+          <input class="form-input" id="editPreacherName" placeholder="Preacher name">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Status</label>
+          <select class="form-select" id="editPreacherStatus">
+            <option value="verified">Verified</option>
+            <option value="pending">Pending</option>
+            <option value="rejected">Rejected</option>
+            <option value="suspended">Suspended</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Genre</label>
+          <input class="form-input" id="editPreacherGenre" placeholder="Tafsir · Aqeedah">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Location</label>
+          <input class="form-input" id="editPreacherLocation" placeholder="Kano, Nigeria">
+        </div>
+      </div>
+    </div>
+
+    <!-- Statistics -->
+    <div class="form-section">
+      <div class="form-section-title">Statistics</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Followers</label>
+          <input class="form-input" id="editPreacherFollowers" placeholder="320K">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Downloads</label>
+          <input class="form-input" id="editPreacherDownloads" placeholder="840K">
+        </div>
+      </div>
+    </div>
+
+    <!-- Additional Info -->
+    <div class="form-section">
+      <div class="form-section-title">Additional Information</div>
+      <div class="form-group">
+        <label class="form-label">Social Handle</label>
+        <input class="form-input" id="editPreacherSocial" placeholder="@preacher">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Bio</label>
+        <textarea class="form-textarea" id="editPreacherBio" placeholder="Short preacher bio…"></textarea>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <div class="btn btn-outline" onclick="closeEditPreacher()">Cancel</div>
+    <div class="btn btn-primary" onclick="saveEditPreacher()">Save Changes</div>
+  </div>
+</div>
+
+<!-- ════ ADD ARTIST MODAL ════ -->
+<div class="modal-overlay" id="addPreacherOverlay" onclick="closeAddPreacher()"></div>
+<div class="modal-container" id="addPreacherModal">
+  <div class="modal-header">
+    <div class="modal-title">Add New Preacher</div>
+    <div class="modal-close" onclick="closeAddPreacher()"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>
+  </div>
+  <div class="modal-body">
+    <!-- Media Upload Section -->
+    <div class="form-section">
+      <div class="form-section-title">Media</div>
+      <div style="display:flex;gap:8px;margin-bottom:12px;border-bottom:1px solid var(--border);padding-bottom:12px;">
+        <div class="media-tab active" data-tab="avatar" onclick="switchAddMediaTab('avatar')" style="flex:1;padding:8px;text-align:center;border-radius:8px;cursor:pointer;font-size:11px;font-weight:700;color:var(--text3);transition:all .15s;">
+          <svg viewBox="0 0 24 24" style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;margin-bottom:4px;display:inline-block;margin-right:4px;"><circle cx="12" cy="8" r="4"/><path d="M6 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/></svg>Avatar
+        </div>
+        <div class="media-tab" data-tab="thumbnail" onclick="switchAddMediaTab('thumbnail')" style="flex:1;padding:8px;text-align:center;border-radius:8px;cursor:pointer;font-size:11px;font-weight:700;color:var(--text3);transition:all .15s;">
+          <svg viewBox="0 0 24 24" style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;margin-bottom:4px;display:inline-block;margin-right:4px;"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>Thumbnail
+        </div>
+      </div>
+
+      <!-- Avatar Upload -->
+      <div id="addAvatarTab" class="media-tab-content">
+        <div class="avatar-upload-box" onclick="document.getElementById('addAvatarInput').click()">
+          <div class="avatar-preview" id="addAvatarPreview">AB</div>
+          <div class="avatar-upload-text">
+            <div class="label">Click to upload avatar</div>
+            <div class="hint">PNG, JPG up to 5MB</div>
+          </div>
+          <input type="file" id="addAvatarInput" accept="image/*" style="display:none;" onchange="handleAddAvatarUpload(event)">
+        </div>
+      </div>
+
+      <!-- Thumbnail Upload -->
+      <div id="addThumbnailTab" class="media-tab-content" style="display:none;">
+        <div class="avatar-upload-box" onclick="document.getElementById('addThumbnailInput').click()">
+          <div style="width:100%;height:120px;border-radius:12px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;color:white;font-size:48px;margin-bottom:8px;" id="addThumbnailPreview">🖼️</div>
+          <div class="avatar-upload-text">
+            <div class="label">Click to upload thumbnail</div>
+            <div class="hint">PNG, JPG up to 10MB · Recommended 1200x600px</div>
+          </div>
+          <input type="file" id="addThumbnailInput" accept="image/*" style="display:none;" onchange="handleAddThumbnailUpload(event)">
+        </div>
+      </div>
+    </div>
+
+    <!-- Basic Info -->
+    <div class="form-section">
+      <div class="form-section-title">Basic Information</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Preacher Name</label>
+          <input class="form-input" id="addPreacherName" placeholder="Preacher name">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Status</label>
+          <select class="form-select" id="addPreacherStatus">
+            <option value="verified">Verified</option>
+            <option value="pending">Pending</option>
+            <option value="rejected">Rejected</option>
+            <option value="suspended">Suspended</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Genre</label>
+          <input class="form-input" id="addPreacherGenre" placeholder="Tafsir · Aqeedah">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Location</label>
+          <input class="form-input" id="addPreacherLocation" placeholder="Kano, Nigeria">
+        </div>
+      </div>
+    </div>
+
+    <!-- Statistics -->
+    <div class="form-section">
+      <div class="form-section-title">Statistics</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Followers</label>
+          <input class="form-input" id="addPreacherFollowers" placeholder="0">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Downloads</label>
+          <input class="form-input" id="addPreacherDownloads" placeholder="0">
+        </div>
+      </div>
+    </div>
+
+    <!-- Additional Info -->
+    <div class="form-section">
+      <div class="form-section-title">Additional Information</div>
+      <div class="form-group">
+        <label class="form-label">Social Handle</label>
+        <input class="form-input" id="addPreacherSocial" placeholder="@preacher">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Bio</label>
+        <textarea class="form-textarea" id="addPreacherBio" placeholder="Short preacher bio…"></textarea>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <div class="btn btn-outline" onclick="closeAddPreacher()">Cancel</div>
+    <div class="btn btn-primary" onclick="saveAddPreacher()">Add Preacher</div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+/* ── Sidebar ── */
+var sidebar = document.getElementById('sidebar');
+var mainArea = document.getElementById('mainArea');
+var collapsed = false;
+document.getElementById('sidebarToggle').addEventListener('click', function() {
+  collapsed = !collapsed;
+  sidebar.classList.toggle('collapsed', collapsed);
+  mainArea.classList.toggle('sidebar-collapsed', collapsed);
+});
+
+/* ── Toast ── */
+var toastEl = document.getElementById('toast');
+var toastTimer = null;
+function showToast(msg, type) {
+  toastEl.textContent = msg;
+  toastEl.className = 'toast show' + (type ? ' ' + type : '');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function() { toastEl.classList.remove('show'); }, 2800);
+}
+
+/* ─────────────────────────────────────────────
+   STATIC DATA — 24 preachers (2 pages of 12)
+   Laravel: var ALL_ARTISTS = {!! json_encode($preachers) !!};
+───────────────────────────────────────────── */
+var ALL_ARTISTS = [
+  { id:1,  name:'Uzairu Badamasi',       initials:'UB', grad:'g1', genre:'Tafsir · Aqeedah',  status:'verified',  lectures:1348, plays:'4.2M', followers:'320K', downloads:'840K', joined:'Mar 2022', location:'Kano, Nigeria',    tags:['Tafsir','Aqeedah'],   bio:'Leading Hausa Islamic preacher with over 4M plays. Known for emotionally engaging tafsir and aqeedah lectures.',    social:'@uzairuB' },
+  { id:2,  name:'Shamsudden Fudiyya',    initials:'SF', grad:'g2', genre:'Tafsir · Hadith',   status:'verified',  lectures:612,  plays:'2.8M', followers:'210K', downloads:'620K', joined:'Jan 2022', location:'Katsina, Nigeria', tags:['Tafsir','Hadith'],    bio:'Veteran scholar from Katsina. Renowned for authoritative hadith and tafsir lectures rooted in classical scholarship.',                  social:'@ShamsFud' },
+  { id:3,  name:'Ahmad Isah Katsina',    initials:'AI', grad:'g3', genre:'Aqeedah · Tafsir',   status:'verified',  lectures:480,  plays:'1.9M', followers:'180K', downloads:'490K', joined:'Jun 2022', location:'Katsina, Nigeria', tags:['Aqeedah','Tafsir'],    bio:'Prolific producer of tafsir and aqeedah lectures from Northern Nigeria.',                    social:'@AhmadIsah' },
+  { id:4,  name:'Yusuf Badamasi',        initials:'YB', grad:'g4', genre:'Seerah · Tafsir', status:'verified',  lectures:340,  plays:'1.4M', followers:'145K', downloads:'320K', joined:'Sep 2022', location:'Kaduna, Nigeria',  tags:['Seerah','Tafsir'],  bio:'Versatile preacher whose lectures bridge classical seerah scholarship with contemporary delivery.',                     social:'@YusufBada' },
+  { id:5,  name:'Maishurafah',           initials:'MS', grad:'g5', genre:'Seerah',           status:'verified',  lectures:290,  plays:'1.1M', followers:'98K',  downloads:'255K', joined:'Nov 2022', location:'Sokoto, Nigeria',  tags:['Seerah'],            bio:'Dedicated seerah specialist preserving the noble tradition of Hausa Islamic scholarship.',            social:'@Maishurafah' },
+  { id:6,  name:'Ibrahim Khalil',        initials:'IK', grad:'g6', genre:'Tafsir · Akhlaq',   status:'verified',  lectures:210,  plays:'870K', followers:'76K',  downloads:'198K', joined:'Feb 2023', location:'Bauchi, Nigeria',  tags:['Tafsir','Akhlaq'],   bio:'Preacher and Qur\'an reciter focused on tafsir of the shorter surahs and refinement of character.',     social:'@IbrahimK' },
+  { id:7,  name:'Saidu Arzika',          initials:'SA', grad:'g7', genre:'Aqeedah',            status:'verified',  lectures:198,  plays:'740K', followers:'64K',  downloads:'170K', joined:'Apr 2023', location:'Zamfara, Nigeria', tags:['Aqeedah'],             bio:'Dedicated aqeedah preacher from Zamfara known for deep, spiritually anchored delivery.',                         social:'@SaiduArz' },
+  { id:8,  name:'Malam Kasim',           initials:'MK', grad:'g8', genre:'Tafsir · Hadith',    status:'verified',  lectures:175,  plays:'620K', followers:'54K',  downloads:'142K', joined:'May 2023', location:'Borno, Nigeria',   tags:['Tafsir','Hadith'],    bio:'Borno scholar combining classical knowledge with accessible, modern lecture formats.',                  social:'@MalamKasim' },
+  { id:9,  name:'Abdullahi Dan Maraya',  initials:'AD', grad:'g1', genre:'Tafsir',            status:'verified',  lectures:160,  plays:'510K', followers:'44K',  downloads:'118K', joined:'Jul 2023', location:'Jigawa, Nigeria',  tags:['Tafsir'],             bio:'Traditional Islamic preacher from Jigawa specialising in prophetic seerah and poetry.',                          social:'@AbdullahiD' },
+  { id:10, name:'Hafiz Abdullahi',       initials:'HA', grad:'g2', genre:'Aqeedah · Tafsir',   status:'verified',  lectures:144,  plays:'440K', followers:'38K',  downloads:'100K', joined:'Aug 2023', location:'Kano, Nigeria',    tags:['Aqeedah','Tafsir'],   bio:'Young preacher making waves with a fresh delivery of aqeedah and tafsir lectures.',                                social:'@HafizAbd' },
+  { id:11, name:'Bello Maiangwa',        initials:'BM', grad:'g3', genre:'Tafsir',             status:'verified',  lectures:108,  plays:'310K', followers:'27K',  downloads:'71K',  joined:'Oct 2023', location:'Kaduna, Nigeria',  tags:['Tafsir'],              bio:'Specialist in classical Islamic poetry recitation and tafsir of the shorter surahs.',                                        social:'@BelloMai' },
+  { id:12, name:'Sani Aliyu',            initials:'SA', grad:'g4', genre:'Aqeedah · Hadith',   status:'verified',  lectures:96,   plays:'270K', followers:'23K',  downloads:'62K',  joined:'Dec 2023', location:'Gombe, Nigeria',   tags:['Aqeedah','Hadith'],   bio:'Rising-star scholar from Gombe State teaching aqeedah and hadith to youth.',                               social:'@SaniAliyu' },
+  { id:13, name:'Kabiru Gombe',          initials:'KG', grad:'g5', genre:'Tafsir',            status:'pending',   lectures:44,   plays:'82K',  followers:'8K',   downloads:'19K',  joined:'Feb 2024', location:'Gombe, Nigeria',   tags:['Tafsir'],             bio:'Emerging preacher applying for official verification on the platform.' },
+  { id:14, name:'Hussaini Danko',        initials:'HD', grad:'g6', genre:'Aqeedah',            status:'pending',   lectures:36,   plays:'61K',  followers:'6.2K', downloads:'14K',  joined:'Mar 2024', location:'Kebbi, Nigeria',   tags:['Aqeedah'],             bio:'Traditional aqeedah preacher from Kebbi awaiting content compliance review.' },
+  { id:15, name:'Muhammad Lawal',        initials:'ML', grad:'g7', genre:'Aqeedah · Akhlaq',   status:'pending',   lectures:28,   plays:'44K',  followers:'4.8K', downloads:'10K',  joined:'Mar 2024', location:'Niger, Nigeria',   tags:['Aqeedah','Akhlaq'],  bio:'New preacher submitting verification request with initial lecture catalogue.' },
+  { id:16, name:'Zahrau Maidabino',      initials:'ZM', grad:'g8', genre:'Tafsir',             status:'pending',   lectures:18,   plays:'28K',  followers:'3.1K', downloads:'6.4K', joined:'Apr 2024', location:'Sokoto, Nigeria',  tags:['Tafsir'],              bio:'Female preacher — first of its kind on the platform, awaiting review.' },
+  { id:17, name:'Ismail Dankwairo',      initials:'ID', grad:'g1', genre:'Aqeedah',            status:'pending',   lectures:22,   plays:'35K',  followers:'3.8K', downloads:'8K',   joined:'Apr 2024', location:'Kebbi, Nigeria',   tags:['Aqeedah'],             bio:'Local preacher with strong community support applying for platform verification.' },
+  { id:18, name:'Alhaji Maikasuwa',      initials:'AM', grad:'g2', genre:'Tafsir · Aqeedah',  status:'pending',   lectures:14,   plays:'21K',  followers:'2.4K', downloads:'4.8K', joined:'Apr 2024', location:'Sokoto, Nigeria',  tags:['Tafsir'],             bio:'Veteran community performer seeking formal digital platform presence.' },
+  { id:19, name:'Hassan Ringim',         initials:'HR', grad:'g3', genre:'Seerah',           status:'pending',   lectures:9,    plays:'14K',  followers:'1.8K', downloads:'3.2K', joined:'Apr 2024', location:'Jigawa, Nigeria',  tags:['Seerah'],            bio:'Newcomer preacher with 3 months of activity on the platform.' },
+  { id:20, name:'Nuhu Zaria',            initials:'NZ', grad:'g4', genre:'Tafsir',            status:'pending',   lectures:7,    plays:'10K',  followers:'1.2K', downloads:'2.1K', joined:'Apr 2024', location:'Kaduna, Nigeria',  tags:['Tafsir'],             bio:'Recent upload request — content review in progress.' },
+  { id:21, name:'Lawal Birni',           initials:'LB', grad:'g5', genre:'Hadith',             status:'rejected',  lectures:12,   plays:'8K',   followers:'820',  downloads:'1.8K', joined:'Jan 2024', location:'Borno, Nigeria',   tags:['Hadith'],              bio:'Rejected: content did not meet platform guidelines. Can reapply in 30 days.' },
+  { id:22, name:'Garba Sokoto',          initials:'GS', grad:'g6', genre:'Tafsir',            status:'rejected',  lectures:4,    plays:'2K',   followers:'210',  downloads:'440',  joined:'Feb 2024', location:'Sokoto, Nigeria',  tags:['Tafsir'],             bio:'Rejected: duplicate account — primary account already exists.' },
+  { id:23, name:'Kabir Dan Juma',        initials:'KD', grad:'g7', genre:'Tafsir',             status:'suspended', lectures:88,   plays:'180K', followers:'14K',  downloads:'41K',  joined:'Oct 2022', location:'Kano, Nigeria',    tags:['Tafsir'],              bio:'Suspended: violation of community standards. Under review by content team.' },
+  { id:24, name:'Aminu Funtua',          initials:'AF', grad:'g8', genre:'Aqeedah · Tafsir',  status:'suspended', lectures:64,   plays:'120K', followers:'10K',  downloads:'27K',  joined:'May 2023', location:'Katsina, Nigeria', tags:['Aqeedah'],             bio:'Suspended: multiple copyright complaints received from third-party rights holders.' }
+];
+
+var PER_PAGE     = 12;
+var currentPage  = 1;
+var currentTab   = 'all';
+var searchQuery  = '';
+var genreFilter  = 'all';
+var sortField    = 'plays';
+
+function getFiltered() {
+  var list = ALL_ARTISTS.slice();
+  if (currentTab !== 'all') list = list.filter(function(a){ return a.status === currentTab; });
+  if (genreFilter !== 'all') list = list.filter(function(a){ return a.genre.indexOf(genreFilter) !== -1; });
+  if (searchQuery) {
+    var q = searchQuery.toLowerCase();
+    list = list.filter(function(a){
+      return a.name.toLowerCase().indexOf(q) !== -1 ||
+             a.genre.toLowerCase().indexOf(q) !== -1 ||
+             a.location.toLowerCase().indexOf(q) !== -1;
+    });
+  }
+  if (sortField === 'lectures')     list = list.slice().sort(function(a,b){ return b.lectures - a.lectures; });
+  if (sortField === 'followers') list = list.slice().sort(function(a,b){ return parseFloat(b.followers) - parseFloat(a.followers); });
+  if (sortField === 'newest')    list = list.slice().reverse();
+  return list;
+}
+
+function totalPages(filtered) { return Math.max(1, Math.ceil(filtered.length / PER_PAGE)); }
+
+/* Cover gradient colours per grad */
+var COVER_STYLES = {
+  g1:'linear-gradient(135deg,#1A0A3A,#0A1A3A)',
+  g2:'linear-gradient(135deg,#2A1000,#1A1000)',
+  g3:'linear-gradient(135deg,#2A0A1A,#1A0A0A)',
+  g4:'linear-gradient(135deg,#0A2A1A,#0A1A2A)',
+  g5:'linear-gradient(135deg,#2A1A00,#1A0A1A)',
+  g6:'linear-gradient(135deg,#0A1A2A,#1A0A2A)',
+  g7:'linear-gradient(135deg,#2A1000,#2A0A1A)',
+  g8:'linear-gradient(135deg,#0A2A1A,#1A0A2A)'
+};
+
+var STATUS_STRIP = {
+  verified:'var(--blue)',
+  pending:'var(--yellow)',
+  rejected:'var(--red)',
+  suspended:'var(--text3)',
+  active:'var(--green)'
+};
+
+function verifyPreacher(id) {
+  for (var i = 0; i < ALL_ARTISTS.length; i++) {
+    if (ALL_ARTISTS[i].id === id) { ALL_ARTISTS[i].status = 'verified'; break; }
+  }
+  updateTabCounts();
+  renderPreachers();
+  showToast('Preacher verified successfully!', 'success');
+}
+function rejectPreacher(id) {
+  for (var i = 0; i < ALL_ARTISTS.length; i++) {
+    if (ALL_ARTISTS[i].id === id) { ALL_ARTISTS[i].status = 'rejected'; break; }
+  }
+  updateTabCounts();
+  renderPreachers();
+  showToast('Preacher application rejected.', 'danger');
+}
+function suspendPreacher(id) {
+  for (var i = 0; i < ALL_ARTISTS.length; i++) {
+    if (ALL_ARTISTS[i].id === id) {
+      ALL_ARTISTS[i].status = ALL_ARTISTS[i].status === 'suspended' ? 'verified' : 'suspended';
+      showToast(ALL_ARTISTS[i].name + (ALL_ARTISTS[i].status === 'suspended' ? ' suspended.' : ' unsuspended.'), ALL_ARTISTS[i].status === 'suspended' ? 'danger' : 'success');
+      break;
+    }
+  }
+  updateTabCounts();
+  renderPreachers();
+}
+
+function updateTabCounts() {
+  var counts = { all:ALL_ARTISTS.length, verified:0, pending:0, rejected:0, suspended:0 };
+  ALL_ARTISTS.forEach(function(a){ if (counts[a.status] !== undefined) counts[a.status]++; });
+  document.getElementById('tc-all').textContent       = counts.all;
+  document.getElementById('tc-verified').textContent  = counts.verified;
+  document.getElementById('tc-pending').textContent   = counts.pending;
+  document.getElementById('tc-rejected').textContent  = counts.rejected;
+  document.getElementById('tc-suspended').textContent = counts.suspended;
+}
+
+function renderPreachers() {
+  var filtered = getFiltered();
+  var tp    = totalPages(filtered);
+  if (currentPage > tp) currentPage = 1;
+  var start = (currentPage - 1) * PER_PAGE;
+  var end   = Math.min(start + PER_PAGE, filtered.length);
+  var page  = filtered.slice(start, end);
+
+  document.getElementById('pagFrom').textContent  = filtered.length ? start + 1 : 0;
+  document.getElementById('pagTo').textContent    = end;
+  document.getElementById('pagTotal').textContent = filtered.length;
+  document.getElementById('prevBtn').classList.toggle('disabled', currentPage === 1);
+  document.getElementById('nextBtn').classList.toggle('disabled', currentPage === tp);
+  document.getElementById('paginationWrap').style.display = filtered.length ? 'flex' : 'none';
+
+  /* Page numbers */
+  var pnEl = document.getElementById('pageNumbers');
+  pnEl.innerHTML = '';
+  for (var p = Math.max(1, currentPage - 2); p <= Math.min(tp, currentPage + 2); p++) {
+    var pb = document.createElement('div');
+    pb.className = 'pag-btn' + (p === currentPage ? ' active' : '');
+    pb.textContent = p;
+    (function(pp){ pb.onclick = function(){ currentPage = pp; renderPreachers(); }; }(p));
+    pnEl.appendChild(pb);
+  }
+
+  var container = document.getElementById('preachersContainer');
+  container.innerHTML = '';
+
+  if (page.length === 0) {
+    container.innerHTML = '<div style="text-align:center;padding:48px;color:var(--text3);font-size:12px;">No preachers found.</div>';
+    return;
+  }
+
+  var grid = document.createElement('div');
+  grid.className = 'preachers-grid';
+
+  for (var i = 0; i < page.length; i++) {
+    var a = page[i];
+    var isPending   = a.status === 'pending';
+    var isVerified  = a.status === 'verified';
+    var isSuspended = a.status === 'suspended';
+    var isRejected  = a.status === 'rejected';
+
+    var statusBadgeClass = 'sb-' + a.status;
+    var statusLabel = a.status.charAt(0).toUpperCase() + a.status.slice(1);
+
+    /* Tags html */
+    var tagsHtml = '';
+    for (var t = 0; t < a.tags.length; t++) {
+      tagsHtml += '<span class="ac-tag">' + a.tags[t] + '</span>';
+    }
+
+    /* Footer buttons */
+    var footerHtml = '';
+    if (isPending) {
+      footerHtml =
+        '<div class="acf-btn acf-view" onclick="openPanel(' + a.id + ',event)">' +
+          '<svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>View' +
+        '</div>' +
+        '<div class="acf-btn acf-verify" onclick="verifyPreacher(' + a.id + ');event.stopPropagation();">' +
+          '<svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22,4 12,14.01 9,11.01"/></svg>Verify' +
+        '</div>' +
+        '<div class="acf-btn acf-reject" onclick="rejectPreacher(' + a.id + ');event.stopPropagation();">' +
+          '<svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>Reject' +
+        '</div>';
+    } else {
+      footerHtml =
+        '<div class="acf-btn acf-view" onclick="openPanel(' + a.id + ',event)">' +
+          '<svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>View' +
+        '</div>' +
+        '<div class="acf-btn acf-edit" onclick="openEditPreacher(' + a.id + ');event.stopPropagation();">' +
+          '<svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>Edit' +
+        '</div>' +
+        '<div class="acf-btn acf-ban" onclick="suspendPreacher(' + a.id + ');event.stopPropagation();">' +
+          '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>' +
+          (isSuspended ? 'Restore' : 'Suspend') +
+        '</div>';
+    }
+
+    /* Verified / pending badge on avatar */
+    var avBadgeHtml = '';
+    if (isVerified) {
+      avBadgeHtml = '<div class="ac-verified-badge"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>';
+    } else if (isPending) {
+      avBadgeHtml = '<div class="ac-pending-badge">⏳</div>';
+    }
+
+    var card = document.createElement('div');
+    card.className = 'preacher-card' + (isPending ? ' pending' : '');
+    card.style.animationDelay = (i * 0.04) + 's';
+    card.onclick = function(){ openPanel(a.id); };
+
+    card.innerHTML =
+      /* Status strip */
+      '<div class="ac-status-strip" style="background:' + (STATUS_STRIP[a.status] || 'var(--text3)') + ';"></div>' +
+      /* Cover */
+      '<div class="ac-cover" style="background:' + (COVER_STYLES[a.grad] || 'var(--surface3)') + ';">' +
+        '<div class="ac-avatar-wrap">' +
+          '<div class="ac-avatar ' + a.grad + '">' + a.initials + avBadgeHtml + '</div>' +
+        '</div>' +
+      '</div>' +
+      /* Body */
+      '<div class="ac-body">' +
+        '<div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:2px;">' +
+          '<div class="ac-name">' + a.name + '</div>' +
+          '<span class="status-badge ' + statusBadgeClass + '"><div class="status-dot"></div>' + statusLabel + '</span>' +
+        '</div>' +
+        '<div class="ac-genre">' + a.genre + ' · ' + a.location + '</div>' +
+        '<div class="ac-stats-row">' +
+          '<div class="ac-stat"><div class="ac-stat-n" style="color:var(--accent);">' + a.lectures + '</div><div class="ac-stat-l">Lectures</div></div>' +
+          '<div class="ac-stat"><div class="ac-stat-n" style="color:var(--blue);">' + a.followers + '</div><div class="ac-stat-l">Followers</div></div>' +
+          '<div class="ac-stat"><div class="ac-stat-n" style="color:var(--green);">' + a.plays + '</div><div class="ac-stat-l">Plays</div></div>' +
+        '</div>' +
+        '<div class="ac-tags">' + tagsHtml + '</div>' +
+      '</div>' +
+      /* Footer */
+      '<div class="ac-footer">' + footerHtml + '</div>';
+
+    grid.appendChild(card);
+  }
+
+  container.appendChild(grid);
+}
+
+function changePage(dir) {
+  var tp = totalPages(getFiltered());
+  var next = currentPage + dir;
+  if (next >= 1 && next <= tp) { currentPage = next; renderPreachers(); }
+}
+
+/* Tabs */
+document.getElementById('tabBar').addEventListener('click', function(e) {
+  var btn = e.target.closest('.tab-btn');
+  if (!btn) return;
+  document.querySelectorAll('.tab-btn').forEach(function(b){ b.classList.remove('active'); });
+  btn.classList.add('active');
+  currentTab  = btn.getAttribute('data-tab');
+  currentPage = 1;
+  renderPreachers();
+});
+
+/* Search */
+var searchTimer = null;
+document.getElementById('searchInput').addEventListener('input', function() {
+  clearTimeout(searchTimer);
+  var val = this.value;
+  searchTimer = setTimeout(function() { searchQuery = val.trim(); currentPage = 1; renderPreachers(); }, 250);
+});
+document.getElementById('genreFilter').addEventListener('change', function() { genreFilter = this.value; currentPage = 1; renderPreachers(); });
+document.getElementById('sortSelect').addEventListener('change',  function() { sortField   = this.value; currentPage = 1; renderPreachers(); });
+
+/* ── Detail Panel ── */
+function openPanel(id, e) {
+  if (e) e.stopPropagation();
+  var a = null;
+  for (var i = 0; i < ALL_ARTISTS.length; i++) { if (ALL_ARTISTS[i].id === id) { a = ALL_ARTISTS[i]; break; } }
+  if (!a) return;
+
+  var statusCls = 'sb-' + a.status;
+  var statusLabel = a.status.charAt(0).toUpperCase() + a.status.slice(1);
+  var isPending   = a.status === 'pending';
+  var isVerified  = a.status === 'verified';
+  var isSuspended = a.status === 'suspended';
+
+  var tagsHtml = '';
+  for (var t = 0; t < a.tags.length; t++) {
+    tagsHtml += '<span class="ac-tag">' + a.tags[t] + '</span>';
+  }
+
+  var actionBtns = '';
+  if (isPending) {
+    actionBtns =
+      '<div class="dp-act dpa-green" onclick="verifyPreacher(' + a.id + ');closePanel();">' +
+        '<svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22,4 12,14.01 9,11.01"/></svg>Verify Preacher' +
+      '</div>' +
+      '<div class="dp-act dpa-yellow" onclick="showToast(\'Verification request on hold.\',\'warn\');closePanel();">' +
+        '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Put On Hold' +
+      '</div>' +
+      '<div class="dp-act dpa-danger" onclick="rejectPreacher(' + a.id + ');closePanel();">' +
+        '<svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>Reject Application' +
+      '</div>';
+  } else {
+    actionBtns =
+      '<div class="dp-act dpa-primary" onclick="openEditPreacher(' + a.id + ');closePanel();">' +
+        '<svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>Edit Profile' +
+      '</div>' +
+      '<div class="dp-act ' + (isSuspended ? 'dpa-green' : 'dpa-danger') + '" onclick="suspendPreacher(' + a.id + ');closePanel();">' +
+        '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>' +
+        (isSuspended ? 'Restore Preacher' : 'Suspend Preacher') +
+      '</div>';
+  }
+
+  document.getElementById('dpBody').innerHTML =
+    '<div class="dp-cover" style="background:' + (COVER_STYLES[a.grad] || 'var(--surface3)') + ';">' +
+      '<div class="dp-avatar-over"><div class="dp-avatar-lg ' + a.grad + '">' + a.initials + '</div></div>' +
+    '</div>' +
+    '<div class="dp-content">' +
+      '<div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:4px;">' +
+        '<div class="dp-preacher-name">' + a.name + '</div>' +
+        '<span class="status-badge ' + statusCls + '"><div class="status-dot"></div>' + statusLabel + '</span>' +
+      '</div>' +
+      '<div class="dp-genre">' + a.genre + ' · ' + a.location + '</div>' +
+      '<div class="dp-badges">' + tagsHtml + (a.social ? '<span class="ac-tag">' + a.social + '</span>' : '') + '</div>' +
+
+      '<div style="background:var(--surface2);border-radius:10px;padding:10px 12px;border:1px solid var(--border);margin-bottom:4px;">' +
+        '<div style="font-size:10px;color:var(--text3);margin-bottom:4px;text-transform:uppercase;letter-spacing:.3px;font-family:sans-serif;font-weight:700;">Bio</div>' +
+        '<div style="font-size:11px;color:var(--text2);line-height:1.6;">' + (a.bio || '—') + '</div>' +
+      '</div>' +
+
+      '<div class="dp-section-title">Stats</div>' +
+      '<div class="dp-stat-grid">' +
+        '<div class="dp-stat-item"><div class="dp-stat-val" style="color:var(--accent);">' + a.lectures + '</div><div class="dp-stat-lbl">Lectures</div></div>' +
+        '<div class="dp-stat-item"><div class="dp-stat-val" style="color:var(--blue);">' + a.followers + '</div><div class="dp-stat-lbl">Followers</div></div>' +
+        '<div class="dp-stat-item"><div class="dp-stat-val" style="color:var(--green);">' + a.plays + '</div><div class="dp-stat-lbl">Plays</div></div>' +
+      '</div>' +
+
+      '<div class="dp-section-title">Details</div>' +
+      '<div class="dp-info-grid">' +
+        '<div class="dp-info-item"><div class="dp-info-lbl">Downloads</div><div class="dp-info-val" style="color:var(--purple);">' + a.downloads + '</div></div>' +
+        '<div class="dp-info-item"><div class="dp-info-lbl">Joined</div><div class="dp-info-val">' + a.joined + '</div></div>' +
+        '<div class="dp-info-item"><div class="dp-info-lbl">Location</div><div class="dp-info-val">' + a.location + '</div></div>' +
+        '<div class="dp-info-item"><div class="dp-info-lbl">Account</div><div class="dp-info-val">Preacher #' + a.id + '</div></div>' +
+      '</div>' +
+
+      '<div class="dp-section-title">Actions</div>' +
+      '<div class="dp-action-btns">' + actionBtns + '</div>' +
+    '</div>';
+
+  document.getElementById('detailOverlay').classList.add('open');
+  document.getElementById('detailPanel').classList.add('open');
+}
+
+function closePanel() {
+  document.getElementById('detailOverlay').classList.remove('open');
+  document.getElementById('detailPanel').classList.remove('open');
+}
+
+/* ── Edit Preacher Modal ── */
+var editPreacherId = null;
+var editPreacherInitials = '';
+
+function switchMediaTab(tab) {
+  document.querySelectorAll('.media-tab').forEach(function(t){ t.classList.remove('active'); });
+  document.querySelectorAll('.media-tab-content').forEach(function(c){ c.style.display = 'none'; });
+  document.querySelector('[data-tab="' + tab + '"]').classList.add('active');
+  document.getElementById(tab + 'Tab').style.display = 'block';
+}
+
+function handleAvatarUpload(e) {
+  var file = e.target.files[0];
+  if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function(evt) {
+    var img = new Image();
+    img.onload = function() {
+      var canvas = document.createElement('canvas');
+      canvas.width = 80;
+      canvas.height = 80;
+      var ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, 80, 80);
+      document.getElementById('editAvatarPreview').style.backgroundImage = 'url(' + canvas.toDataURL() + ')';
+      document.getElementById('editAvatarPreview').style.backgroundSize = 'cover';
+      document.getElementById('editAvatarPreview').style.backgroundPosition = 'center';
+      document.getElementById('editAvatarPreview').textContent = '';
+    };
+    img.src = evt.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function handleThumbnailUpload(e) {
+  var file = e.target.files[0];
+  if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function(evt) {
+    var img = new Image();
+    img.onload = function() {
+      var canvas = document.createElement('canvas');
+      canvas.width = 400;
+      canvas.height = 200;
+      var ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, 400, 200);
+      document.getElementById('editThumbnailPreview').style.backgroundImage = 'url(' + canvas.toDataURL() + ')';
+      document.getElementById('editThumbnailPreview').style.backgroundSize = 'cover';
+      document.getElementById('editThumbnailPreview').style.backgroundPosition = 'center';
+      document.getElementById('editThumbnailPreview').textContent = '';
+    };
+    img.src = evt.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function openEditPreacher(id) {
+  var a = ALL_ARTISTS.find(function(x){ return x.id === id; });
+  if (!a) return;
+  editPreacherId = id;
+  editPreacherInitials = a.initials;
+  document.getElementById('editPreacherName').value = a.name || '';
+  document.getElementById('editPreacherStatus').value = a.status || 'verified';
+  document.getElementById('editPreacherGenre').value = a.genre || '';
+  document.getElementById('editPreacherLocation').value = a.location || '';
+  document.getElementById('editPreacherFollowers').value = a.followers || '';
+  document.getElementById('editPreacherDownloads').value = a.downloads || '';
+  document.getElementById('editPreacherSocial').value = a.social || '';
+  document.getElementById('editPreacherBio').value = a.bio || '';
+  document.getElementById('editAvatarPreview').textContent = a.initials;
+  document.getElementById('editAvatarPreview').style.backgroundImage = 'none';
+  document.getElementById('editThumbnailPreview').textContent = '🖼️';
+  document.getElementById('editThumbnailPreview').style.backgroundImage = 'none';
+  switchMediaTab('avatar');
+  document.getElementById('editPreacherOverlay').classList.add('open');
+  document.getElementById('editPreacherModal').classList.add('open');
+}
+
+function closeEditPreacher() {
+  document.getElementById('editPreacherOverlay').classList.remove('open');
+  document.getElementById('editPreacherModal').classList.remove('open');
+}
+
+function saveEditPreacher() {
+  if (!editPreacherId) return;
+  var a = ALL_ARTISTS.find(function(x){ return x.id === editPreacherId; });
+  if (!a) return;
+  a.name = document.getElementById('editPreacherName').value.trim() || a.name;
+  a.status = document.getElementById('editPreacherStatus').value || a.status;
+  a.genre = document.getElementById('editPreacherGenre').value.trim() || a.genre;
+  a.location = document.getElementById('editPreacherLocation').value.trim() || a.location;
+  a.followers = document.getElementById('editPreacherFollowers').value.trim() || a.followers;
+  a.downloads = document.getElementById('editPreacherDownloads').value.trim() || a.downloads;
+  a.social = document.getElementById('editPreacherSocial').value.trim() || a.social;
+  a.bio = document.getElementById('editPreacherBio').value.trim() || a.bio;
+  updateTabCounts();
+  renderPreachers();
+  closeEditPreacher();
+  showToast('Preacher profile updated', 'success');
+}
+
+/* ── Add Preacher Modal ── */
+function switchAddMediaTab(tab) {
+  document.querySelectorAll('#addPreacherModal .media-tab').forEach(function(t){ t.classList.remove('active'); });
+  document.querySelectorAll('#addPreacherModal .media-tab-content').forEach(function(c){ c.style.display = 'none'; });
+  document.querySelector('#addPreacherModal [data-tab="' + tab + '"]').classList.add('active');
+  document.getElementById('add' + tab.charAt(0).toUpperCase() + tab.slice(1) + 'Tab').style.display = 'block';
+}
+
+function handleAddAvatarUpload(e) {
+  var file = e.target.files[0];
+  if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function(evt) {
+    var img = new Image();
+    img.onload = function() {
+      var canvas = document.createElement('canvas');
+      canvas.width = 80;
+      canvas.height = 80;
+      var ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, 80, 80);
+      document.getElementById('addAvatarPreview').style.backgroundImage = 'url(' + canvas.toDataURL() + ')';
+      document.getElementById('addAvatarPreview').style.backgroundSize = 'cover';
+      document.getElementById('addAvatarPreview').style.backgroundPosition = 'center';
+      document.getElementById('addAvatarPreview').textContent = '';
+    };
+    img.src = evt.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function handleAddThumbnailUpload(e) {
+  var file = e.target.files[0];
+  if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function(evt) {
+    var img = new Image();
+    img.onload = function() {
+      var canvas = document.createElement('canvas');
+      canvas.width = 400;
+      canvas.height = 200;
+      var ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, 400, 200);
+      document.getElementById('addThumbnailPreview').style.backgroundImage = 'url(' + canvas.toDataURL() + ')';
+      document.getElementById('addThumbnailPreview').style.backgroundSize = 'cover';
+      document.getElementById('addThumbnailPreview').style.backgroundPosition = 'center';
+      document.getElementById('addThumbnailPreview').textContent = '';
+    };
+    img.src = evt.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function openAddPreacher() {
+  document.getElementById('addPreacherName').value = '';
+  document.getElementById('addPreacherStatus').value = 'pending';
+  document.getElementById('addPreacherGenre').value = '';
+  document.getElementById('addPreacherLocation').value = '';
+  document.getElementById('addPreacherFollowers').value = '0';
+  document.getElementById('addPreacherDownloads').value = '0';
+  document.getElementById('addPreacherSocial').value = '';
+  document.getElementById('addPreacherBio').value = '';
+  document.getElementById('addAvatarPreview').textContent = 'AB';
+  document.getElementById('addAvatarPreview').style.backgroundImage = 'none';
+  document.getElementById('addThumbnailPreview').textContent = '🖼️';
+  document.getElementById('addThumbnailPreview').style.backgroundImage = 'none';
+  switchAddMediaTab('avatar');
+  document.getElementById('addPreacherOverlay').classList.add('open');
+  document.getElementById('addPreacherModal').classList.add('open');
+}
+
+function closeAddPreacher() {
+  document.getElementById('addPreacherOverlay').classList.remove('open');
+  document.getElementById('addPreacherModal').classList.remove('open');
+}
+
+function saveAddPreacher() {
+  var name = document.getElementById('addPreacherName').value.trim();
+  if (!name) { showToast('Please enter preacher name', 'warn'); return; }
+  var newId = Math.max.apply(null, ALL_ARTISTS.map(function(a){ return a.id; })) + 1;
+  var initials = name.split(' ').map(function(w){ return w[0]; }).join('').toUpperCase().slice(0, 2);
+  var newPreacher = {
+    id: newId,
+    name: name,
+    initials: initials,
+    grad: 'g' + ((newId % 8) + 1),
+    genre: document.getElementById('addPreacherGenre').value.trim() || 'Tafsir',
+    status: document.getElementById('addPreacherStatus').value || 'pending',
+    lectures: 0,
+    plays: '0',
+    followers: document.getElementById('addPreacherFollowers').value.trim() || '0',
+    downloads: document.getElementById('addPreacherDownloads').value.trim() || '0',
+    joined: new Date().toLocaleDateString('en-US', {year:'numeric', month:'short', day:'numeric'}),
+    location: document.getElementById('addPreacherLocation').value.trim() || 'Unknown',
+    tags: document.getElementById('addPreacherGenre').value.trim().split('·').map(function(t){ return t.trim(); }) || ['Tafsir'],
+    bio: document.getElementById('addPreacherBio').value.trim() || '',
+    social: document.getElementById('addPreacherSocial').value.trim() || ''
+  };
+  ALL_ARTISTS.push(newPreacher);
+  updateTabCounts();
+  renderPreachers();
+  closeAddPreacher();
+  showToast('Preacher added successfully', 'success');
+}
+
+/* ── Export CSV ── */
+function exportPreachers() {
+  var rows = [['Name','Genre','Status','Lectures','Plays','Followers','Downloads','Joined','Location','Social']];
+  ALL_ARTISTS.forEach(function(a){
+    rows.push([
+      a.name,
+      a.genre,
+      a.status,
+      a.lectures,
+      a.plays,
+      a.followers,
+      a.downloads,
+      a.joined,
+      a.location,
+      a.social || ''
+    ]);
+  });
+  var csv = rows.map(function(r){
+    return r.map(function(v){
+      var s = String(v).replace(/"/g,'""');
+      return '"' + s + '"';
+    }).join(',');
+  }).join('\n');
+  var blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url;
+  a.download = 'preachers_export.csv';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  showToast('Exported preachers CSV', 'success');
+}
+
+/* Init */
+updateTabCounts();
+renderPreachers();
+</script>
+</body>
+</html>

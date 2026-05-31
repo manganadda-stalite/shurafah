@@ -1,0 +1,1228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shurafah Admin — User Management</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#070A11;--sidebar:#0B0F1A;--surface:#0F1520;--surface2:#141C2E;--surface3:#1A2340;--accent:#FF6B35;--accent2:#FFB347;--blue:#4D9FFF;--green:#2ECC8F;--purple:#9B6BFF;--pink:#FF4D8F;--yellow:#FFD166;--red:#FF4444;--teal:#00D4AA;--text:#F0F4FF;--text2:#8A94B0;--text3:#3D4B6A;--border:rgba(255,255,255,0.06);--sidebar-w:220px;--header-h:60px;--radius:14px;}
+*{margin:0;padding:0;box-sizing:border-box;}html,body{height:100%;overflow:hidden;}
+body{font-family:'DM Sans',sans-serif;color:var(--text);background:var(--bg);display:flex;height:100vh;}
+
+/* SIDEBAR */
+.sidebar{width:var(--sidebar-w);flex-shrink:0;background:var(--sidebar);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;position:relative;z-index:20;}
+.sidebar::before{content:'';position:absolute;top:0;left:0;right:0;height:200px;background:linear-gradient(180deg,rgba(255,107,53,0.06) 0%,transparent 100%);pointer-events:none;}
+.sb-logo{padding:20px 18px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;flex-shrink:0;}
+.sb-logo-icon{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:16px;box-shadow:0 4px 12px rgba(255,107,53,0.35);}
+.sb-logo-text{font-family:sans-serif;font-size:15px;font-weight:800;letter-spacing:-0.3px;}
+.sb-logo-text span{background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.sb-logo-badge{margin-left:auto;font-size:8px;font-family:sans-serif;font-weight:700;background:rgba(255,107,53,0.15);color:var(--accent);border:1px solid rgba(255,107,53,0.3);border-radius:4px;padding:2px 6px;}
+.sb-nav{flex:1;overflow-y:auto;overflow-x:hidden;padding:12px 10px;scrollbar-width:none;}
+.sb-nav::-webkit-scrollbar{display:none;}
+.sb-section{font-size:9px;font-family:sans-serif;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:1px;padding:8px 8px 4px;}
+.sb-item{display:flex;align-items:center;gap:9px;padding:9px 10px;border-radius:10px;cursor:pointer;font-size:13px;font-family:'DM Sans',sans-serif;font-weight:500;color:var(--text2);transition:background .15s,color .15s;margin-bottom:1px;text-decoration:none;}
+.sb-item:hover{background:rgba(255,255,255,0.04);color:var(--text);}
+.sb-item.active{background:rgba(255,107,53,0.12);color:var(--accent);font-weight:600;}
+.sb-item.active .sb-icon{stroke:var(--accent);}
+.sb-icon{width:16px;height:16px;fill:none;stroke:var(--text3);stroke-width:2;flex-shrink:0;transition:stroke .15s;}
+.sb-item:hover .sb-icon{stroke:var(--text2);}
+.sb-badge{margin-left:auto;background:var(--accent);color:white;font-size:9px;font-family:sans-serif;font-weight:800;border-radius:50px;padding:1px 7px;min-width:20px;text-align:center;}
+.sb-badge.blue{background:var(--blue);}.sb-badge.red{background:var(--red);}.sb-badge.green{background:var(--green);}
+.sb-footer{padding:12px 10px;border-top:1px solid var(--border);flex-shrink:0;}
+.sb-user{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:10px;cursor:pointer;}
+.sb-user:hover{background:rgba(255,255,255,0.04);}
+.sb-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--purple),var(--blue));display:flex;align-items:center;justify-content:center;font-size:12px;font-family:sans-serif;font-weight:700;flex-shrink:0;}
+.sb-user-name{font-family:sans-serif;font-size:12px;font-weight:700;}.sb-user-role{font-size:10px;color:var(--text3);}
+
+/* MAIN */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+.header{height:var(--header-h);background:var(--sidebar);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:16px;padding:0 24px;flex-shrink:0;}
+.header-title{font-family:sans-serif;font-size:17px;font-weight:800;letter-spacing:-0.3px;}
+.header-search{flex:1;max-width:380px;margin-left:auto;position:relative;}
+.header-search svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:14px;height:14px;fill:none;stroke:var(--text3);stroke-width:2;pointer-events:none;}
+.header-search input{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:9px 12px 9px 34px;font-size:13px;color:var(--text);font-family:'DM Sans',sans-serif;outline:none;}
+.header-search input::placeholder{color:var(--text3);}
+.header-actions{display:flex;align-items:center;gap:8px;}
+.hbtn{width:36px;height:36px;border-radius:10px;background:var(--surface2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;}
+.hbtn svg{width:16px;height:16px;fill:none;stroke:var(--text2);stroke-width:2;}
+.hbtn .dot{position:absolute;top:7px;right:7px;width:7px;height:7px;border-radius:50%;background:var(--red);border:2px solid var(--sidebar);}
+
+/* CONTENT */
+.content{flex:1;overflow-y:auto;padding:24px;scrollbar-width:thin;scrollbar-color:var(--surface3) transparent;}
+.content::-webkit-scrollbar{width:5px;}.content::-webkit-scrollbar-thumb{background:var(--surface3);border-radius:3px;}
+
+/* PAGE HEADER */
+.page-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:24px;gap:16px;flex-wrap:wrap;}
+.page-title{font-family:sans-serif;font-size:22px;font-weight:800;letter-spacing:-0.4px;}
+.page-sub{font-size:13px;color:var(--text2);margin-top:3px;}
+.page-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:7px;padding:9px 18px;border-radius:10px;font-size:13px;font-family:sans-serif;font-weight:700;cursor:pointer;transition:all .15s;border:none;text-decoration:none;white-space:nowrap;}
+.btn svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;flex-shrink:0;}
+.btn-primary{background:var(--accent);color:white;box-shadow:0 4px 14px rgba(255,107,53,0.35);}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(255,107,53,0.45);}
+.btn-secondary{background:var(--surface2);color:var(--text2);border:1px solid var(--border);}
+.btn-secondary:hover{background:var(--surface3);color:var(--text);}
+.btn-danger{background:rgba(255,68,68,0.12);color:var(--red);border:1px solid rgba(255,68,68,0.2);}
+.btn-danger:hover{background:rgba(255,68,68,0.2);}
+.btn-success{background:rgba(46,204,143,0.12);color:var(--green);border:1px solid rgba(46,204,143,0.2);}
+.btn-success:hover{background:rgba(46,204,143,0.22);}
+.btn-warning{background:rgba(255,209,102,0.12);color:var(--yellow);border:1px solid rgba(255,209,102,0.2);}
+.btn-warning:hover{background:rgba(255,209,102,0.22);}
+.btn-sm{padding:6px 13px;font-size:11px;}
+.btn-xs{padding:4px 9px;font-size:10px;}
+
+/* STATS */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px;}
+.stats-grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:16px;}
+.stat-card{background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);padding:18px 20px;position:relative;overflow:hidden;transition:transform .15s,box-shadow .15s;}
+.stat-card:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(0,0,0,.3);}
+.sc-icon{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:12px;}
+.sc-icon svg{width:18px;height:18px;fill:none;stroke:white;stroke-width:2;}
+.sc-val{font-family:sans-serif;font-size:26px;font-weight:800;letter-spacing:-0.5px;margin-bottom:4px;}
+.sc-label{font-size:12px;color:var(--text2);}
+.sc-change{font-size:11px;font-family:sans-serif;font-weight:700;margin-top:8px;display:flex;align-items:center;gap:3px;}
+.sc-change.up{color:var(--green);}.sc-change.down{color:var(--red);}
+.sc-change svg{width:12px;height:12px;fill:none;stroke:currentColor;stroke-width:2.5;}
+
+/* CARD */
+.card{background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);padding:20px;margin-bottom:16px;}
+.card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+.card-title{font-family:sans-serif;font-size:14px;font-weight:700;}
+
+/* TABS */
+.tab-bar{display:flex;gap:0;background:var(--surface2);border-radius:11px;padding:3px;margin-bottom:16px;border:1px solid var(--border);width:fit-content;flex-wrap:wrap;}
+.tab-btn{padding:7px 15px;border-radius:8px;font-size:12px;font-family:sans-serif;font-weight:700;cursor:pointer;color:var(--text3);transition:all .15s;border:none;background:transparent;white-space:nowrap;}
+.tab-btn.active{background:var(--surface);color:var(--accent);box-shadow:0 2px 8px rgba(0,0,0,.2);}
+
+/* FILTER BAR */
+.filter-bar{display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap;}
+.filter-input{flex:1;min-width:200px;position:relative;}
+.filter-input svg{position:absolute;left:11px;top:50%;transform:translateY(-50%);width:14px;height:14px;fill:none;stroke:var(--text3);stroke-width:2;pointer-events:none;}
+.filter-input input{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:9px 12px 9px 32px;font-size:13px;color:var(--text);font-family:'DM Sans',sans-serif;outline:none;transition:border-color .2s;}
+.filter-input input:focus{border-color:rgba(255,107,53,0.4);}
+.filter-input input::placeholder{color:var(--text3);}
+.filter-select{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:9px 12px;font-size:12px;font-family:'DM Sans',sans-serif;color:var(--text2);outline:none;cursor:pointer;}
+
+/* TABLE */
+.table-wrap{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;min-width:900px;}
+thead th{font-family:sans-serif;font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;padding:10px 14px;text-align:left;border-bottom:1px solid var(--border);white-space:nowrap;}
+tbody tr{border-bottom:1px solid var(--border);transition:background .12s;}
+tbody tr:last-child{border-bottom:none;}
+tbody tr:hover{background:rgba(255,255,255,0.025);}
+tbody td{padding:11px 14px;font-size:13px;vertical-align:middle;}
+.td-user{display:flex;align-items:center;gap:10px;}
+.u-avatar{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-family:sans-serif;font-weight:800;flex-shrink:0;}
+.td-name{font-family:sans-serif;font-size:13px;font-weight:700;}
+.td-sub{font-size:11px;color:var(--text2);margin-top:1px;}
+.td-num{font-family:sans-serif;font-size:13px;font-weight:700;}
+.td-actions{display:flex;align-items:center;gap:5px;}
+.act-btn{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .15s;border:none;background:transparent;}
+.act-btn svg{width:13px;height:13px;fill:none;stroke:var(--text3);stroke-width:2;}
+.act-btn:hover{background:var(--surface3);}
+.act-btn.view:hover{background:rgba(46,204,143,0.12);}.act-btn.view:hover svg{stroke:var(--green);}
+.act-btn.edit:hover{background:rgba(77,159,255,0.12);}.act-btn.edit:hover svg{stroke:var(--blue);}
+.act-btn.ban:hover{background:rgba(255,68,68,0.12);}.act-btn.ban:hover svg{stroke:var(--red);}
+.act-btn.unban:hover{background:rgba(46,204,143,0.12);}.act-btn.unban:hover svg{stroke:var(--green);}
+.act-btn.del:hover{background:rgba(255,68,68,0.12);}.act-btn.del:hover svg{stroke:var(--red);}
+.act-btn.msg:hover{background:rgba(155,107,255,0.12);}.act-btn.msg:hover svg{stroke:var(--purple);}
+
+/* BADGES */
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:50px;font-size:10px;font-family:sans-serif;font-weight:700;}
+.badge-green{background:rgba(46,204,143,0.12);color:var(--green);border:1px solid rgba(46,204,143,0.2);}
+.badge-red{background:rgba(255,68,68,0.12);color:var(--red);border:1px solid rgba(255,68,68,0.2);}
+.badge-blue{background:rgba(77,159,255,0.12);color:var(--blue);border:1px solid rgba(77,159,255,0.2);}
+.badge-yellow{background:rgba(255,209,102,0.12);color:var(--yellow);border:1px solid rgba(255,209,102,0.2);}
+.badge-purple{background:rgba(155,107,255,0.12);color:var(--purple);border:1px solid rgba(155,107,255,0.2);}
+.badge-gray{background:rgba(255,255,255,0.06);color:var(--text2);border:1px solid var(--border);}
+.badge-dot{width:5px;height:5px;border-radius:50%;background:currentColor;flex-shrink:0;}
+
+/* BULK BAR */
+.bulk-bar{display:none;align-items:center;gap:10px;background:rgba(255,107,53,0.08);border:1px solid rgba(255,107,53,0.2);border-radius:10px;padding:10px 16px;margin-bottom:12px;}
+.bulk-bar.show{display:flex;}
+.bulk-info{font-size:13px;font-family:sans-serif;font-weight:700;color:var(--accent);}
+
+/* PAGINATION */
+.pagination{display:flex;align-items:center;gap:6px;margin-top:16px;padding-top:16px;border-top:1px solid var(--border);}
+.pag-info{font-size:12px;color:var(--text3);margin-right:auto;}
+.pag-btn{width:32px;height:32px;border-radius:8px;background:var(--surface2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:12px;font-family:sans-serif;font-weight:700;transition:all .15s;user-select:none;}
+.pag-btn:hover{background:var(--surface3);}
+.pag-btn.active{background:var(--accent);color:white;border-color:var(--accent);}
+.pag-btn svg{width:12px;height:12px;fill:none;stroke:var(--text2);stroke-width:2;}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.75);backdrop-filter:blur(6px);z-index:100;display:none;align-items:center;justify-content:center;padding:16px;}
+.modal-overlay.show{display:flex;}
+.modal{background:var(--surface);border-radius:18px;border:1px solid var(--border);padding:26px;width:520px;max-width:100%;max-height:calc(100vh - 48px);overflow-y:auto;box-shadow:0 28px 80px rgba(0,0,0,.65);animation:modalIn .2s ease;}
+.modal-wide{width:640px;}
+@keyframes modalIn{from{opacity:0;transform:scale(.93) translateY(8px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.modal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;}
+.modal-title{font-family:sans-serif;font-size:17px;font-weight:800;}
+.modal-close{width:32px;height:32px;border-radius:9px;background:var(--surface2);display:flex;align-items:center;justify-content:center;cursor:pointer;border:none;}
+.modal-close svg{width:14px;height:14px;fill:none;stroke:var(--text2);stroke-width:2;}
+.modal-footer{display:flex;gap:10px;justify-content:flex-end;margin-top:22px;padding-top:18px;border-top:1px solid var(--border);}
+
+/* FORM */
+.form-group{margin-bottom:16px;}
+.form-label{font-size:11px;font-family:sans-serif;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.4px;margin-bottom:6px;display:block;}
+.form-input,.form-select,.form-textarea{width:100%;background:var(--surface2);border:1.5px solid var(--border);border-radius:11px;padding:11px 13px;font-size:13px;color:var(--text);font-family:'DM Sans',sans-serif;outline:none;transition:border-color .2s,box-shadow .2s;}
+.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:rgba(255,107,53,0.5);box-shadow:0 0 0 3px rgba(255,107,53,0.09);}
+.form-input::placeholder,.form-textarea::placeholder{color:var(--text3);}
+.form-select{cursor:pointer;}
+.form-textarea{resize:vertical;min-height:80px;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.form-hint{font-size:10px;color:var(--text3);margin-top:4px;}
+
+/* TOGGLE */
+.toggle-row{display:flex;align-items:center;gap:10px;}
+.toggle{width:40px;height:22px;border-radius:11px;position:relative;cursor:pointer;flex-shrink:0;transition:background .2s;}
+.toggle.on{background:var(--accent);}.toggle.off{background:var(--surface3);}
+.toggle-thumb{position:absolute;top:3px;width:16px;height:16px;background:white;border-radius:50%;transition:left .2s;box-shadow:0 1px 4px rgba(0,0,0,.3);}
+.toggle.on .toggle-thumb{left:21px;}.toggle.off .toggle-thumb{left:3px;}
+
+/* USER PROFILE CARD */
+.user-profile-hero{background:linear-gradient(135deg,var(--surface2),var(--surface3));border-radius:14px;padding:20px;margin-bottom:20px;display:flex;align-items:center;gap:16px;border:1px solid var(--border);}
+.up-avatar{width:64px;height:64px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;font-family:sans-serif;font-weight:800;flex-shrink:0;box-shadow:0 4px 16px rgba(0,0,0,.3);}
+.up-name{font-family:sans-serif;font-size:18px;font-weight:800;margin-bottom:4px;}
+.up-phone{font-size:13px;color:var(--text2);margin-bottom:8px;}
+.up-pills{display:flex;gap:6px;flex-wrap:wrap;}
+.up-pill{display:inline-flex;align-items:center;gap:4px;background:var(--surface);border:1px solid var(--border);border-radius:50px;padding:3px 10px;font-size:11px;color:var(--text2);}
+.up-pill svg{width:10px;height:10px;fill:none;stroke:var(--accent);stroke-width:2;}
+.up-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px;}
+.up-stat{background:var(--surface2);border-radius:10px;padding:12px;text-align:center;}
+.up-stat-n{font-family:sans-serif;font-size:18px;font-weight:800;margin-bottom:2px;}
+.up-stat-l{font-size:10px;color:var(--text3);}
+
+/* ACTIVITY TIMELINE */
+.timeline{display:flex;flex-direction:column;gap:0;}
+.tl-item{display:flex;gap:12px;padding:10px 0;position:relative;}
+.tl-item:not(:last-child)::after{content:'';position:absolute;left:15px;top:36px;bottom:0;width:1px;background:var(--border);}
+.tl-dot{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;background:var(--surface2);border:1px solid var(--border);}
+.tl-body{flex:1;padding-top:4px;}
+.tl-text{font-size:12px;color:var(--text2);line-height:1.5;margin-bottom:2px;}
+.tl-text strong{color:var(--text);font-weight:600;}
+.tl-time{font-size:10px;color:var(--text3);}
+
+/* PROGRESS BAR */
+.progress{height:5px;background:var(--surface3);border-radius:3px;overflow:hidden;margin-top:4px;}
+.progress-fill{height:100%;border-radius:3px;transition:width .4s;}
+
+/* MINI CHART */
+.mini-bars{display:flex;align-items:flex-end;gap:3px;height:36px;}
+.mb-bar{flex:1;border-radius:2px 2px 0 0;min-height:4px;}
+
+/* GROWTH CHART */
+.growth-chart{display:flex;align-items:flex-end;gap:4px;height:80px;padding:0 4px;}
+.gc-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;}
+.gc-bar{width:100%;border-radius:3px 3px 0 0;min-height:4px;}
+.gc-lbl{font-size:8px;color:var(--text3);font-family:sans-serif;}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;right:24px;background:var(--surface2);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:13px 18px;font-size:13px;font-family:sans-serif;font-weight:700;color:var(--text);box-shadow:0 8px 32px rgba(0,0,0,.55);z-index:300;opacity:0;transform:translateY(10px);transition:opacity .2s,transform .2s;display:flex;align-items:center;gap:10px;max-width:320px;pointer-events:none;}
+.toast.show{opacity:1;transform:translateY(0);}
+.toast svg{width:16px;height:16px;fill:none;stroke-width:2;flex-shrink:0;}
+.toast.ok svg{stroke:var(--green);}.toast.err svg{stroke:var(--red);}.toast.info svg{stroke:var(--blue);}
+
+/* GRADIENTS */
+.g1{background:linear-gradient(135deg,#9B6BFF,#4D9FFF);}.g2{background:linear-gradient(135deg,#FF6B35,#FFB347);}.g3{background:linear-gradient(135deg,#FF4D8F,#FF6B35);}.g4{background:linear-gradient(135deg,#2ECC8F,#4D9FFF);}.g5{background:linear-gradient(135deg,#FFB347,#FF4D8F);}.g6{background:linear-gradient(135deg,#4D9FFF,#9B6BFF);}.g7{background:linear-gradient(135deg,#FF6B35,#FF4D8F);}.g8{background:linear-gradient(135deg,#2ECC8F,#9B6BFF);}
+@keyframes fup{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.content>*{animation:fup .3s ease forwards;}
+
+/* ════════════════════════════════
+   MOBILE RESPONSIVENESS
+════════════════════════════════ */
+@media (max-width:768px) {
+  .main{margin-left:0;}
+  .content{padding:14px;}
+  .page-header{margin-bottom:16px;gap:10px;}
+  .page-title{font-size:18px;}
+  .page-sub{font-size:11px;}
+  .stat-strip{gap:8px;}
+  .ss-card{padding:12px;}
+  .ss-icon{width:32px;height:32px;}
+  .ss-icon svg{width:14px;height:14px;}
+  .ss-val{font-size:16px;}
+  .ss-label{font-size:9px;}
+  .toolbar{gap:8px;}
+  .search-box{max-width:100%;padding:8px 12px;font-size:11px;}
+  .tab-buttons{gap:4px;}
+  .tab-btn{padding:6px 12px;font-size:10px;}
+  .table-wrap{overflow-x:auto;}
+  table{font-size:10px;}
+  thead th{padding:8px 10px;font-size:8px;}
+  tbody td{padding:8px 10px;}
+  .td-avatar{width:28px;height:28px;font-size:10px;}
+  .td-name{font-size:10px;}
+  .td-sub{font-size:8px;}
+  .td-actions{gap:3px;}
+  .act-btn{width:24px;height:24px;}
+  .act-btn svg{width:11px;height:11px;}
+  .badge{font-size:8px;padding:2px 6px;}
+  .pag-info{font-size:10px;}
+  .pag-btn{width:28px;height:28px;font-size:10px;}
+  .modal{width:90%;max-width:480px;padding:18px;}
+  .modal-title{font-size:14px;}
+  .form-input,.form-select,.form-textarea{padding:9px 11px;font-size:11px;}
+  .form-label{font-size:9px;}
+  .form-row{grid-template-columns:1fr;}
+  .user-profile-hero{padding:14px;gap:12px;}
+  .up-avatar{width:48px;height:48px;font-size:18px;}
+  .up-name{font-size:14px;}
+  .up-phone{font-size:11px;}
+  .up-stats{grid-template-columns:repeat(2,1fr);gap:8px;}
+  .up-stat-n{font-size:14px;}
+  .up-stat-l{font-size:9px;}
+  .toast{bottom:16px;right:16px;padding:10px 14px;font-size:11px;}
+}
+
+@media (max-width:480px) {
+  .main{margin-left:0;}
+  .content{padding:10px;}
+  .page-header{margin-bottom:12px;gap:8px;flex-direction:column;}
+  .page-title{font-size:16px;}
+  .page-sub{font-size:10px;display:none;}
+  .stat-strip{grid-template-columns:repeat(2,1fr);gap:6px;}
+  .ss-card{padding:10px;}
+  .ss-icon{width:28px;height:28px;}
+  .ss-icon svg{width:12px;height:12px;}
+  .ss-val{font-size:14px;}
+  .ss-label{font-size:8px;}
+  .toolbar{gap:6px;flex-direction:column;}
+  .search-box{width:100%;max-width:100%;padding:7px 10px;font-size:10px;}
+  .tab-buttons{gap:3px;overflow-x:auto;}
+  .tab-btn{padding:5px 10px;font-size:9px;}
+  .table-wrap{overflow-x:auto;}
+  table{font-size:9px;}
+  thead th{padding:6px 8px;font-size:7px;}
+  tbody td{padding:6px 8px;}
+  .td-avatar{width:24px;height:24px;font-size:9px;}
+  .td-name{font-size:9px;}
+  .td-sub{font-size:7px;}
+  .td-actions{gap:2px;}
+  .act-btn{width:20px;height:20px;}
+  .act-btn svg{width:10px;height:10px;}
+  .badge{font-size:7px;padding:1px 4px;}
+  .pag-info{font-size:9px;}
+  .pag-btn{width:24px;height:24px;font-size:9px;}
+  .modal{width:95%;max-width:100%;padding:14px;}
+  .modal-title{font-size:12px;}
+  .form-input,.form-select,.form-textarea{padding:8px 10px;font-size:10px;}
+  .form-label{font-size:8px;}
+  .form-row{grid-template-columns:1fr;gap:10px;}
+  .user-profile-hero{padding:10px;gap:10px;flex-direction:column;}
+  .up-avatar{width:40px;height:40px;font-size:14px;}
+  .up-name{font-size:12px;}
+  .up-phone{font-size:10px;}
+  .up-stats{grid-template-columns:repeat(2,1fr);gap:6px;}
+  .up-stat-n{font-size:12px;}
+  .up-stat-l{font-size:8px;}
+  .toast{bottom:12px;right:12px;padding:8px 12px;font-size:10px;}
+}
+</style>
+</head>
+<body>
+
+<!-- TOAST -->
+<div class="toast" id="toast"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg><span id="toastMsg"></span></div>
+
+<!-- ══════════════════════════════════════
+     VIEW USER MODAL
+══════════════════════════════════════ -->
+<div class="modal-overlay" id="viewUserModal">
+  <div class="modal modal-wide">
+    <div class="modal-header">
+      <div class="modal-title">👤 User Profile</div>
+      <button class="modal-close" onclick="closeModal('viewUserModal')"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+
+    <!-- Hero -->
+    <div class="user-profile-hero">
+      <div class="up-avatar g1" id="vu-avatar">DN</div>
+      <div style="flex:1;">
+        <div class="up-name" id="vu-name">Daniel Nwosu</div>
+        <div class="up-phone" id="vu-phone">+234 812 345 6789</div>
+        <div class="up-pills">
+          <div class="up-pill"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg><span id="vu-state">Lagos</span></div>
+          <div class="up-pill"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg><span id="vu-lga">Ikeja LGA</span></div>
+          <div id="vu-plan-pill" class="up-pill" style="background:rgba(255,209,102,0.1);border-color:rgba(255,209,102,0.3);color:var(--yellow);">⭐ PRO Plan</div>
+        </div>
+      </div>
+      <div style="text-align:right;">
+        <div id="vu-status-badge"><span class="badge badge-green"><span class="badge-dot"></span>Active</span></div>
+        <div style="font-size:10px;color:var(--text3);margin-top:6px;" id="vu-joined">Joined Jan 15, 2025</div>
+        <div style="font-size:10px;color:var(--text3);margin-top:2px;" id="vu-last">Last active 2 hrs ago</div>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="up-stats">
+      <div class="up-stat"><div class="up-stat-n" style="color:var(--blue);" id="vu-downloads">24</div><div class="up-stat-l">Downloads</div></div>
+      <div class="up-stat"><div class="up-stat-n" style="color:var(--pink);" id="vu-favourites">42</div><div class="up-stat-l">Favourites</div></div>
+      <div class="up-stat"><div class="up-stat-n" style="color:var(--accent);" id="vu-plays">186</div><div class="up-stat-l">Songs Played</div></div>
+      <div class="up-stat"><div class="up-stat-n" style="color:var(--purple);" id="vu-comments">8</div><div class="up-stat-l">Comments</div></div>
+    </div>
+
+    <!-- Genre Preferences -->
+    <div style="margin-bottom:16px;">
+      <div class="form-label" style="margin-bottom:10px;">Top Genre Preferences</div>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <div><div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:3px;"><span>Gospel</span><span style="color:var(--accent);">68%</span></div><div class="progress"><div class="progress-fill" style="width:68%;background:var(--accent);"></div></div></div>
+        <div><div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:3px;"><span>Worship</span><span style="color:var(--blue);">22%</span></div><div class="progress"><div class="progress-fill" style="width:22%;background:var(--blue);"></div></div></div>
+        <div><div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:3px;"><span>Afrobeat</span><span style="color:var(--green);">10%</span></div><div class="progress"><div class="progress-fill" style="width:10%;background:var(--green);"></div></div></div>
+      </div>
+    </div>
+
+    <!-- Activity Timeline -->
+    <div style="margin-bottom:4px;">
+      <div class="form-label" style="margin-bottom:10px;">Recent Activity</div>
+      <div class="timeline">
+        <div class="tl-item"><div class="tl-dot">🎵</div><div class="tl-body"><div class="tl-text">Played <strong>Fallen Stars</strong> by Amara Soul</div><div class="tl-time">2 hours ago</div></div></div>
+        <div class="tl-item"><div class="tl-dot">⬇️</div><div class="tl-body"><div class="tl-text">Downloaded <strong>Way Maker</strong> · 320 kbps</div><div class="tl-time">5 hours ago</div></div></div>
+        <div class="tl-item"><div class="tl-dot">❤️</div><div class="tl-body"><div class="tl-text">Added <strong>Holy Ground</strong> to Favourites</div><div class="tl-time">Yesterday</div></div></div>
+        <div class="tl-item"><div class="tl-dot">💬</div><div class="tl-body"><div class="tl-text">Commented on <strong>Open Heaven</strong> — "This song is a blessing 🙏"</div><div class="tl-time">2 days ago</div></div></div>
+        <div class="tl-item"><div class="tl-dot">🔔</div><div class="tl-body"><div class="tl-text">Followed artist <strong>Nathaniel Bassey</strong></div><div class="tl-time">3 days ago</div></div></div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn btn-danger btn-sm" onclick="banFromView()"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>Ban User</button>
+      <button class="btn btn-warning btn-sm" onclick="showToast('Password reset link sent','info')"><svg viewBox="0 0 24 24"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>Reset Login</button>
+      <button class="btn btn-secondary" onclick="closeModal('viewUserModal')">Close</button>
+      <button class="btn btn-primary btn-sm" onclick="closeModal('viewUserModal');openModal('editUserModal')"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>Edit User</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     ADD USER MODAL
+══════════════════════════════════════ -->
+<div class="modal-overlay" id="addUserModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">➕ Add New User</div>
+      <button class="modal-close" onclick="closeModal('addUserModal')"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Full Name <span style="color:var(--accent);">*</span></label><input class="form-input" id="add-name" type="text" placeholder="e.g. Daniel Nwosu"></div>
+      <div class="form-group"><label class="form-label">Phone Number <span style="color:var(--accent);">*</span></label><input class="form-input" id="add-phone" type="tel" placeholder="+234 812 345 6789"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">State <span style="color:var(--accent);">*</span></label>
+        <select class="form-select" id="add-state" onchange="populateLGA(this.value,'add-lga')">
+          <option value="">Select state…</option>
+          <option>Abia</option><option>Adamawa</option><option>Akwa Ibom</option><option>Anambra</option><option>Bauchi</option><option>Bayelsa</option><option>Benue</option><option>Borno</option><option>Cross River</option><option>Delta</option><option>Ebonyi</option><option>Edo</option><option>Ekiti</option><option>Enugu</option><option>FCT — Abuja</option><option>Gombe</option><option>Imo</option><option>Jigawa</option><option>Kaduna</option><option>Kano</option><option>Katsina</option><option>Kebbi</option><option>Kogi</option><option>Kwara</option><option selected>Lagos</option><option>Nasarawa</option><option>Niger</option><option>Ogun</option><option>Ondo</option><option>Osun</option><option>Oyo</option><option>Plateau</option><option>Rivers</option><option>Sokoto</option><option>Taraba</option><option>Yobe</option><option>Zamfara</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">LGA <span style="color:var(--accent);">*</span></label>
+        <select class="form-select" id="add-lga"><option>Select state first…</option></select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Account Plan</label>
+        <select class="form-select">
+          <option>Free</option>
+          <option>Premium / Pro</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Account Status</label>
+        <select class="form-select">
+          <option>Active</option>
+          <option>Suspended</option>
+          <option>Banned</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Admin Notes</label>
+      <textarea class="form-textarea" placeholder="Internal notes about this user (not visible to user)…"></textarea>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('addUserModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="submitAddUser()"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add User</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     EDIT USER MODAL
+══════════════════════════════════════ -->
+<div class="modal-overlay" id="editUserModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">✏️ Edit User</div>
+      <button class="modal-close" onclick="closeModal('editUserModal')"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px;background:var(--surface2);border-radius:11px;padding:12px 14px;margin-bottom:18px;">
+      <div class="u-avatar g1" id="eu-avatar" style="width:40px;height:40px;font-size:14px;">DN</div>
+      <div><div style="font-family:sans-serif;font-size:14px;font-weight:700;" id="eu-name-display">Daniel Nwosu</div><div style="font-size:11px;color:var(--text2);" id="eu-phone-display">+234 812 345 6789</div></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Full Name</label><input class="form-input" id="eu-name" value="Daniel Nwosu"></div>
+      <div class="form-group"><label class="form-label">Phone Number</label><input class="form-input" id="eu-phone" value="+234 812 345 6789"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">State</label>
+        <select class="form-select" id="eu-state" onchange="populateLGA(this.value,'eu-lga')">
+          <option value="">Select state…</option>
+          <option selected>Lagos</option><option>Abuja (FCT)</option><option>Rivers</option><option>Kano</option><option>Oyo</option><option>Enugu</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">LGA</label>
+        <select class="form-select" id="eu-lga"><option selected>Ikeja</option><option>Surulere</option><option>Eti-Osa</option><option>Alimosho</option></select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Account Plan</label>
+        <select class="form-select">
+          <option selected>Premium / Pro</option>
+          <option>Free</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Account Status</label>
+        <select class="form-select">
+          <option selected>Active</option>
+          <option>Suspended</option>
+          <option>Banned</option>
+        </select>
+      </div>
+    </div>
+    <div style="background:var(--surface2);border-radius:11px;padding:14px;margin-bottom:16px;">
+      <div class="form-label" style="margin-bottom:8px;">Notification Permissions</div>
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <div class="toggle-row"><div class="toggle on" onclick="this.classList.toggle('on');this.classList.toggle('off');"><div class="toggle-thumb"></div></div><span style="font-size:12px;color:var(--text2);">Allow push notifications</span></div>
+        <div class="toggle-row"><div class="toggle on" onclick="this.classList.toggle('on');this.classList.toggle('off');"><div class="toggle-thumb"></div></div><span style="font-size:12px;color:var(--text2);">Allow new song alerts</span></div>
+        <div class="toggle-row"><div class="toggle off" onclick="this.classList.toggle('on');this.classList.toggle('off');"><div class="toggle-thumb"></div></div><span style="font-size:12px;color:var(--text2);">Allow marketing messages</span></div>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Admin Notes</label>
+      <textarea class="form-textarea">Premium user, no issues reported. High engagement — 24 downloads, 42 favourites.</textarea>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-danger btn-sm" onclick="if(confirm('Delete this user permanently?')){showToast('User deleted','ok');closeModal('editUserModal')}"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>Delete</button>
+      <button class="btn btn-secondary" onclick="closeModal('editUserModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="showToast('User updated successfully ✓','ok');closeModal('editUserModal')">Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     MESSAGE USER MODAL
+══════════════════════════════════════ -->
+<div class="modal-overlay" id="msgUserModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">💬 Send Message to User</div>
+      <button class="modal-close" onclick="closeModal('msgUserModal')"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div style="background:var(--surface2);border-radius:10px;padding:12px 14px;margin-bottom:16px;display:flex;align-items:center;gap:10px;">
+      <span style="font-size:20px;">👤</span>
+      <div><div style="font-family:sans-serif;font-size:13px;font-weight:700;" id="msg-name">Daniel Nwosu</div><div style="font-size:11px;color:var(--text2);" id="msg-phone">+234 812 345 6789</div></div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Message Type</label>
+      <select class="form-select">
+        <option>Push Notification</option>
+        <option>In-App Message</option>
+        <option>SMS (via provider)</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Subject / Title</label>
+      <input class="form-input" type="text" placeholder="e.g. Account Notice">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Message Body</label>
+      <textarea class="form-textarea" placeholder="Enter your message here…" style="min-height:100px;"></textarea>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('msgUserModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="showToast('Message sent to user ✓','ok');closeModal('msgUserModal')"><svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>Send Message</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     BULK ACTION MODAL
+══════════════════════════════════════ -->
+<div class="modal-overlay" id="bulkModal">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title">⚡ Bulk Action</div><button class="modal-close" onclick="closeModal('bulkModal')"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
+    <p style="font-size:13px;color:var(--text2);margin-bottom:16px;">Apply action to <strong id="bulkCount" style="color:var(--accent);">0</strong> selected users:</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+      <button class="btn btn-success" onclick="showToast('Users activated ✓','ok');closeModal('bulkModal');clearChecks()"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Activate All</button>
+      <button class="btn btn-warning" onclick="showToast('Users suspended','ok');closeModal('bulkModal');clearChecks()"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Suspend All</button>
+      <button class="btn btn-secondary" onclick="showToast('Plan upgraded ✓','ok');closeModal('bulkModal');clearChecks()"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>Upgrade to Pro</button>
+      <button class="btn btn-danger" onclick="if(confirm('Ban all selected users?')){showToast('Users banned','ok');closeModal('bulkModal');clearChecks()}"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>Ban All</button>
+    </div>
+    <div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal('bulkModal')">Cancel</button></div>
+  </div>
+</div>
+
+<script src="admin-sidebar.js"></script>
+<script src="theme-manager.js"></script>
+
+<!-- ══════════════════════════════════════
+     MAIN
+══════════════════════════════════════ -->
+<div class="main">
+  <header class="header">
+    <div><div class="header-title">User Management</div></div>
+    <div class="header-search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input type="text" placeholder="Search by name or phone…" oninput="filterUsers(this.value)"></div>
+    <div class="header-actions">
+      <div class="hbtn" onclick="showToast('You have 5 new notifications','info')"><svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><div class="dot"></div></div>
+      <div class="hbtn" onclick="showToast('Profile menu opening…','info')"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+    </div>
+  </header>
+
+  <div class="content">
+
+    <!-- Page Header -->
+    <div class="page-header">
+      <div>
+        <div class="page-title">User Management</div>
+        <div class="page-sub">View, manage and moderate all 32,416 registered users on SoundWave</div>
+      </div>
+      <div class="page-actions">
+        <button class="btn btn-secondary" onclick="exportToCSV()"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Export CSV</button>
+        <button class="btn btn-secondary" onclick="generateReport()"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Report</button>
+        <button class="btn btn-primary" onclick="openModal('addUserModal')"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add User</button>
+      </div>
+    </div>
+
+    <!-- Stat Cards -->
+    <div class="stats-grid">
+      <div class="stat-card" style="border-color:rgba(77,159,255,0.15);">
+        <div class="sc-icon" style="background:linear-gradient(135deg,var(--blue),var(--purple));"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+        <div class="sc-val" style="color:var(--blue);">32,416</div>
+        <div class="sc-label">Total Users</div>
+        <div class="sc-change up"><svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg>+1,240 this month</div>
+      </div>
+      <div class="stat-card" style="border-color:rgba(46,204,143,0.15);">
+        <div class="sc-icon" style="background:linear-gradient(135deg,var(--green),var(--teal));"><svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22,4 12,14.01 9,11.01"/></svg></div>
+        <div class="sc-val" style="color:var(--green);">28,140</div>
+        <div class="sc-label">Active Users</div>
+        <div class="sc-change up"><svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg>86.8% active rate</div>
+      </div>
+      <div class="stat-card" style="border-color:rgba(255,209,102,0.15);">
+        <div class="sc-icon" style="background:linear-gradient(135deg,var(--yellow),var(--accent2));"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
+        <div class="sc-val" style="color:var(--yellow);">2,840</div>
+        <div class="sc-label">Pro / Premium Users</div>
+        <div class="sc-change up"><svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg>8.7% of total</div>
+      </div>
+      <div class="stat-card" style="border-color:rgba(255,68,68,0.15);">
+        <div class="sc-icon" style="background:linear-gradient(135deg,var(--red),var(--pink));"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg></div>
+        <div class="sc-val" style="color:var(--red);">236</div>
+        <div class="sc-label">Banned / Suspended</div>
+        <div class="sc-change down"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>0.72% of total</div>
+      </div>
+    </div>
+
+    <!-- Growth + Top States -->
+    <div style="display:grid;grid-template-columns:2fr 1fr;gap:16px;margin-bottom:16px;">
+
+      <!-- User Growth Chart -->
+      <div class="card" style="margin-bottom:0;">
+        <div class="card-header">
+          <div class="card-title">📈 User Growth (Last 8 Months)</div>
+          <span style="font-size:11px;color:var(--text3);">New registrations per month</span>
+        </div>
+        <div class="growth-chart">
+          <div class="gc-col"><div class="gc-bar" style="height:38%;background:rgba(77,159,255,0.5);"></div><div class="gc-lbl">Aug</div></div>
+          <div class="gc-col"><div class="gc-bar" style="height:48%;background:rgba(77,159,255,0.55);"></div><div class="gc-lbl">Sep</div></div>
+          <div class="gc-col"><div class="gc-bar" style="height:56%;background:rgba(77,159,255,0.6);"></div><div class="gc-lbl">Oct</div></div>
+          <div class="gc-col"><div class="gc-bar" style="height:70%;background:rgba(77,159,255,0.7);"></div><div class="gc-lbl">Nov</div></div>
+          <div class="gc-col"><div class="gc-bar" style="height:82%;background:rgba(77,159,255,0.8);"></div><div class="gc-lbl">Dec</div></div>
+          <div class="gc-col"><div class="gc-bar" style="height:64%;background:rgba(77,159,255,0.65);"></div><div class="gc-lbl">Jan</div></div>
+          <div class="gc-col"><div class="gc-bar" style="height:78%;background:rgba(77,159,255,0.75);"></div><div class="gc-lbl">Feb</div></div>
+          <div class="gc-col"><div class="gc-bar" style="height:100%;background:var(--blue);"></div><div class="gc-lbl">Mar</div></div>
+        </div>
+        <div style="display:flex;gap:16px;margin-top:12px;">
+          <div style="text-align:center;flex:1;background:var(--surface2);border-radius:8px;padding:8px;"><div style="font-family:sans-serif;font-size:15px;font-weight:800;color:var(--blue);">1,240</div><div style="font-size:10px;color:var(--text3);">This Month</div></div>
+          <div style="text-align:center;flex:1;background:var(--surface2);border-radius:8px;padding:8px;"><div style="font-family:sans-serif;font-size:15px;font-weight:800;color:var(--green);">+18.4%</div><div style="font-size:10px;color:var(--text3);">Growth Rate</div></div>
+          <div style="text-align:center;flex:1;background:var(--surface2);border-radius:8px;padding:8px;"><div style="font-family:sans-serif;font-size:15px;font-weight:800;color:var(--accent);">41</div><div style="font-size:10px;color:var(--text3);">Today So Far</div></div>
+          <div style="text-align:center;flex:1;background:var(--surface2);border-radius:8px;padding:8px;"><div style="font-family:sans-serif;font-size:15px;font-weight:800;color:var(--purple);">6.8K</div><div style="font-size:10px;color:var(--text3);">This Quarter</div></div>
+        </div>
+      </div>
+
+      <!-- Top States -->
+      <div class="card" style="margin-bottom:0;">
+        <div class="card-header"><div class="card-title">🗺️ Top States</div></div>
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          <div>
+            <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;"><span style="font-family:sans-serif;font-weight:600;">Lagos</span><span style="color:var(--accent);font-weight:700;">38%</span></div>
+            <div class="progress"><div class="progress-fill" style="width:38%;background:var(--accent);"></div></div>
+          </div>
+          <div>
+            <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;"><span style="font-family:sans-serif;font-weight:600;">Abuja (FCT)</span><span style="color:var(--blue);font-weight:700;">18%</span></div>
+            <div class="progress"><div class="progress-fill" style="width:18%;background:var(--blue);"></div></div>
+          </div>
+          <div>
+            <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;"><span style="font-family:sans-serif;font-weight:600;">Rivers</span><span style="color:var(--green);font-weight:700;">12%</span></div>
+            <div class="progress"><div class="progress-fill" style="width:12%;background:var(--green);"></div></div>
+          </div>
+          <div>
+            <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;"><span style="font-family:sans-serif;font-weight:600;">Kano</span><span style="color:var(--purple);font-weight:700;">9%</span></div>
+            <div class="progress"><div class="progress-fill" style="width:9%;background:var(--purple);"></div></div>
+          </div>
+          <div>
+            <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;"><span style="font-family:sans-serif;font-weight:600;">Oyo</span><span style="color:var(--yellow);font-weight:700;">7%</span></div>
+            <div class="progress"><div class="progress-fill" style="width:7%;background:var(--yellow);"></div></div>
+          </div>
+          <div>
+            <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;"><span style="font-family:sans-serif;font-weight:600;">Others</span><span style="color:var(--text3);font-weight:700;">16%</span></div>
+            <div class="progress"><div class="progress-fill" style="width:16%;background:var(--text3);"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tab-bar">
+      <button class="tab-btn active" onclick="switchTab(this)">All Users (32,416)</button>
+      <button class="tab-btn" onclick="switchTab(this)">✅ Active (28,140)</button>
+      <button class="tab-btn" onclick="switchTab(this)">⭐ Premium (2,840)</button>
+      <button class="tab-btn" onclick="switchTab(this)">💤 Inactive (4,040)</button>
+      <button class="tab-btn" onclick="switchTab(this)">🚫 Banned (236)</button>
+    </div>
+
+    <!-- Table Card -->
+    <div class="card">
+
+      <!-- Bulk Bar -->
+      <div class="bulk-bar" id="bulkBar">
+        <span class="bulk-info" id="bulkInfo">0 users selected</span>
+        <button class="btn btn-success btn-sm" onclick="openModal('bulkModal')"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>Bulk Action</button>
+        <button class="btn btn-secondary btn-sm" onclick="clearChecks()">Clear</button>
+      </div>
+
+      <!-- Filter Bar -->
+      <div class="filter-bar">
+        <div class="filter-input">
+          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" id="tableSearch" placeholder="Search by name or phone number…" oninput="filterUsers(this.value)">
+        </div>
+        <select class="filter-select" onchange="filterByState(this.value)">
+          <option value="">All States</option><option value="Lagos">Lagos</option><option value="Abuja">Abuja (FCT)</option><option value="Rivers">Rivers</option><option value="Kano">Kano</option><option value="Oyo">Oyo</option><option value="Enugu">Enugu</option><option value="Delta">Delta</option><option value="Kaduna">Kaduna</option>
+        </select>
+        <select class="filter-select" onchange="filterByPlan(this.value)">
+          <option value="">All Plans</option><option value="Free">Free</option><option value="PRO">Premium / Pro</option>
+        </select>
+        <select class="filter-select" onchange="filterByStatus(this.value)">
+          <option value="">All Status</option><option value="Active">Active</option><option value="Inactive">Inactive</option><option value="Suspended">Suspended</option><option value="Banned">Banned</option>
+        </select>
+        <select class="filter-select" onchange="sortUsers(this.value)">
+          <option value="">Newest First</option><option value="oldest">Oldest First</option><option value="downloads">Most Downloads</option><option value="active">Most Active</option><option value="a-z">A – Z</option>
+        </select>
+        <button class="btn btn-secondary btn-sm" onclick="resetAllFilters()">
+          <svg viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>Reset
+        </button>
+      </div>
+
+      <!-- Table -->
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th><input type="checkbox" id="selectAll" onchange="toggleAll(this)"></th>
+              <th>User</th>
+              <th>Phone</th>
+              <th>State</th>
+              <th>LGA</th>
+              <th>Downloads</th>
+              <th>Favourites</th>
+              <th>Plays</th>
+              <th>Plan</th>
+              <th>Status</th>
+              <th>Joined</th>
+              <th>Last Active</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="usersBody">
+
+            <tr data-name="daniel nwosu" data-phone="0812">
+              <td><input type="checkbox" class="rc" onchange="updateBulk()"></td>
+              <td><div class="td-user"><div class="u-avatar g1">DN</div><div><div class="td-name">Daniel Nwosu</div></div></div></td>
+              <td style="color:var(--text2);font-size:12px;">+234 812 345 6789</td>
+              <td style="color:var(--text2);font-size:12px;">Lagos</td>
+              <td style="color:var(--text2);font-size:12px;">Ikeja</td>
+              <td class="td-num" style="color:var(--blue);">24</td>
+              <td class="td-num" style="color:var(--pink);">42</td>
+              <td class="td-num" style="color:var(--accent);">186</td>
+              <td><span class="badge badge-yellow">⭐ PRO</span></td>
+              <td><span class="badge badge-green"><span class="badge-dot"></span>Active</span></td>
+              <td style="color:var(--text3);font-size:11px;white-space:nowrap;">Jan 15, 2025</td>
+              <td style="color:var(--text3);font-size:11px;white-space:nowrap;">2 hrs ago</td>
+              <td><div class="td-actions">
+                <button class="act-btn view" title="View Profile" onclick="viewUser('Daniel Nwosu','DN','g1','+234 812 345 6789','Lagos','Ikeja','24','42','186','8','Jan 15, 2025','2 hrs ago','active','pro')"><svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+                <button class="act-btn edit" title="Edit" onclick="editUser('Daniel Nwosu','DN','g1','+234 812 345 6789')"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+                <button class="act-btn msg" title="Message" onclick="msgUser('Daniel Nwosu','+234 812 345 6789')"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></button>
+                <button class="act-btn ban" title="Ban" onclick="if(confirm('Ban Daniel Nwosu?')){showToast('User banned','ok')}"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg></button>
+              </div></td>
+            </tr>
+
+            <tr data-name="sarah afolabi" data-phone="0813">
+              <td><input type="checkbox" class="rc" onchange="updateBulk()"></td>
+              <td><div class="td-user"><div class="u-avatar g4">SA</div><div><div class="td-name">Sarah Afolabi</div></div></div></td>
+              <td style="color:var(--text2);font-size:12px;">+234 813 456 7890</td>
+              <td style="color:var(--text2);font-size:12px;">Oyo</td>
+              <td style="color:var(--text2);font-size:12px;">Ibadan North</td>
+              <td class="td-num" style="color:var(--blue);">8</td>
+              <td class="td-num" style="color:var(--pink);">18</td>
+              <td class="td-num" style="color:var(--accent);">74</td>
+              <td><span class="badge badge-gray">Free</span></td>
+              <td><span class="badge badge-green"><span class="badge-dot"></span>Active</span></td>
+              <td style="color:var(--text3);font-size:11px;white-space:nowrap;">Feb 3, 2025</td>
+              <td style="color:var(--text3);font-size:11px;white-space:nowrap;">1 day ago</td>
+              <td><div class="td-actions">
+                <button class="act-btn view" title="View" onclick="viewUser('Sarah Afolabi','SA','g4','+234 813 456 7890','Oyo','Ibadan North','8','18','74','3','Feb 3, 2025','1 day ago','active','free')"><svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+                <button class="act-btn edit" title="Edit" onclick="editUser('Sarah Afolabi','SA','g4','+234 813 456 7890')"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+                <button class="act-btn msg" title="Message" onclick="msgUser('Sarah Afolabi','+234 813 456 7890')"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></button>
+                <button class="act-btn ban" title="Ban" onclick="if(confirm('Ban Sarah Afolabi?')){showToast('User banned','ok')}"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg></button>
+              </div></td>
+            </tr>
+
+            <tr data-name="kemi adeyemi" data-phone="0814" style="background:rgba(255,68,68,0.03);">
+              <td><input type="checkbox" class="rc" onchange="updateBulk()"></td>
+              <td><div class="td-user"><div class="u-avatar g3">KA</div><div><div class="td-name">Kemi Adeyemi</div></div></div></td>
+              <td style="color:var(--text2);font-size:12px;">+234 814 567 8901</td>
+              <td style="color:var(--text2);font-size:12px;">Rivers</td>
+              <td style="color:var(--text2);font-size:12px;">Port Harcourt</td>
+              <td class="td-num" style="color:var(--blue);">31</td>
+              <td class="td-num" style="color:var(--pink);">56</td>
+              <td class="td-num" style="color:var(--accent);">290</td>
+              <td><span class="badge badge-yellow">⭐ PRO</span></td>
+              <td><span class="badge badge-red"><span class="badge-dot"></span>Banned</span></td>
+              <td style="color:var(--text3);font-size:11px;white-space:nowrap;">Dec 10, 2024</td>
+              <td style="color:var(--text3);font-size:11px;white-space:nowrap;">Banned</td>
+              <td><div class="td-actions">
+                <button class="act-btn view" title="View" onclick="viewUser('Kemi Adeyemi','KA','g3','+234 814 567 8901','Rivers','Port Harcourt','31','56','290','12','Dec 10, 2024','Banned','banned','pro')"><svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+                <button class="act-btn unban" title="Unban" onclick="showToast('Kemi Adeyemi unbanned ✓','ok')"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></button>
+                <button class="act-btn del" title="Delete" onclick="if(confirm('Permanently delete Kemi Adeyemi?')){showToast('User deleted','ok')}"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button>
+              </div></td>
+            </tr>
+
+            <tr data-name="tunde okafor" data-phone="0815">
+              <td><input type="checkbox" class="rc" onchange="updateBulk()"></td>
+              <td><div class="td-user"><div class="u-avatar g6">TO</div><div><div class="td-name">Tunde Okafor</div></div></div></td>
+              <td style="color:var(--text2);font-size:12px;">+234 815 678 9012</td>
+              <td style="color:var(--text2);font-size:12px;">Kano</td>
+              <td style="color:var(--text2);font-size:12px;">Kano Municipal</td>
+              <td class="td-num" style="color:var(--blue);">3</td>
+              <td class="td-num" style="color:var(--pink);">7</td>
+              <td class="td-num" style="color:var(--accent);">28</td>
+              <td><span class="badge badge-gray">Free</span></td>
+              <td><span class="badge badge-green"><span class="badge-dot"></span>Active</span></td>
+              <td style="color:var(--text3);font-size:11px;white-space:nowrap;">Mar 5, 2025</td>
+              <td style="color:var(--text3);font-size:11px;white-space:nowrap;">3 hrs ago</td>
+              <td><div class="td-actions">
+                <button class="act-btn view" title="View" onclick="viewUser('Tunde Okafor','TO','g6','+234 815 678 9012','Kano','Kano Municipal','3','7','28','1','Mar 5, 2025','3 hrs ago','active','free')"><svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+                <button class="act-btn edit" title="Edit" onclick="editUser('Tunde Okafor','TO','g6','+234 815 678 9012')"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+                <button class="act-btn msg" title="Message" onclick="msgUser('Tunde Okafor','+234 815 678 9012')"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></button>
+                <button class="act-btn ban" title="Ban" onclick="if(confirm('Ban Tunde Okafor?')){showToast('User banned','ok')}"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg></button>
+              </div></td>
+            </tr>
+
+            <tr data-name="amaka obi" data-phone="0816">
+              <td><input type="checkbox" class="rc" onchange="updateBulk()"></td>
+              <td><div class="td-user"><div class="u-avatar g5">AO</div><div><div class="td-name">Amaka Obi</div></div></div></td>
+              <td style="color:var(--text2);font-size:12px;">+234 816 789 0123</td>
+              <td style="color:var(--text2);font-size:12px;">Enugu</td>
+              <td style="color:var(--text2);font-size:12px;">Enugu North</td>
+              <td class="td-num" style="color:var(--blue);">16</td>
+              <td class="td-num" style="color:var(--pink);">29</td>
+              <td class="td-num" style="color:var(--accent);">142</td>
+              <td><span class="badge badge-yellow">⭐ PRO</span></td>
+              <td><span class="badge badge-green"><span class="badge-dot"></span>Active</span></td>
+              <td style="color:var(--text3);font-size:11px;white-space:nowrap;">Jan 28, 2025</td>
+              <td style="color:var(--text3);font-size:11px;white-space:nowrap;">Just now</td>
+              <td><div class="td-actions">
+                <button class="act-btn view" title="View" onclick="viewUser('Amaka Obi','AO','g5','+234 816 789 0123','Enugu','Enugu North','16','29','142','5','Jan 28, 2025','Just now','active','pro')"><svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+                <button class="act-btn edit" title="Edit" onclick="editUser('Amaka Obi','AO','g5','+234 816 789 0123')"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+                <button class="act-btn msg" title="Message" onclick="msgUser('Amaka Obi','+234 816 789 0123')"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></button>
+                <button class="act-btn ban" title="Ban" onclick="if(confirm('Ban Amaka Obi?')){showToast('User banned','ok')}"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg></button>
+              </div></td>
+            </tr>
+
+            <tr data-name="ibrahim musa" data-phone="0817" style="background:rgba(255,209,102,0.03);">
+              <td><input type="checkbox" class="rc" onchange="updateBulk()"></td>
+              <td><div class="td-user"><div class="u-avatar g2">IM</div><div><div class="td-name">Ibrahim Musa</div></div></div></td>
+              <td style="color:var(--text2);font-size:12px;">+234 817 890 1234</td>
+              <td style="color:var(--text2);font-size:12px;">Kano</td>
+              <td style="color:var(--text2);font-size:12px;">Dala</td>
+              <td class="td-num" style="color:var(--blue);">2</td>
+              <td class="td-num" style="color:var(--pink);">4</td>
+              <td class="td-num" style="color:var(--accent);">12</td>
+              <td><span class="badge badge-gray">Free</span></td>
+              <td><span class="badge badge-yellow"><span class="badge-dot"></span>Inactive</span></td>
+              <td style="color:var(--text3);font-size:11px;white-space:nowrap;">Mar 18, 2025</td>
+              <td style="color:var(--text3);font-size:11px;white-space:nowrap;">14 days ago</td>
+              <td><div class="td-actions">
+                <button class="act-btn view" title="View" onclick="viewUser('Ibrahim Musa','IM','g2','+234 817 890 1234','Kano','Dala','2','4','12','0','Mar 18, 2025','14 days ago','inactive','free')"><svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+                <button class="act-btn edit" title="Edit" onclick="editUser('Ibrahim Musa','IM','g2','+234 817 890 1234')"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+                <button class="act-btn msg" title="Message" onclick="msgUser('Ibrahim Musa','+234 817 890 1234')"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></button>
+                <button class="act-btn ban" title="Ban" onclick="if(confirm('Ban Ibrahim Musa?')){showToast('User banned','ok')}"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg></button>
+              </div></td>
+            </tr>
+
+            <tr data-name="blessing effiong" data-phone="0818">
+              <td><input type="checkbox" class="rc" onchange="updateBulk()"></td>
+              <td><div class="td-user"><div class="u-avatar g8">BE</div><div><div class="td-name">Blessing Effiong</div></div></div></td>
+              <td style="color:var(--text2);font-size:12px;">+234 818 901 2345</td>
+              <td style="color:var(--text2);font-size:12px;">Akwa Ibom</td>
+              <td style="color:var(--text2);font-size:12px;">Uyo</td>
+              <td class="td-num" style="color:var(--blue);">11</td>
+              <td class="td-num" style="color:var(--pink);">33</td>
+              <td class="td-num" style="color:var(--accent);">98</td>
+              <td><span class="badge badge-gray">Free</span></td>
+              <td><span class="badge badge-green"><span class="badge-dot"></span>Active</span></td>
+              <td style="color:var(--text3);font-size:11px;white-space:nowrap;">Feb 20, 2025</td>
+              <td style="color:var(--text3);font-size:11px;white-space:nowrap;">5 hrs ago</td>
+              <td><div class="td-actions">
+                <button class="act-btn view" title="View" onclick="viewUser('Blessing Effiong','BE','g8','+234 818 901 2345','Akwa Ibom','Uyo','11','33','98','2','Feb 20, 2025','5 hrs ago','active','free')"><svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+                <button class="act-btn edit" title="Edit" onclick="editUser('Blessing Effiong','BE','g8','+234 818 901 2345')"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+                <button class="act-btn msg" title="Message" onclick="msgUser('Blessing Effiong','+234 818 901 2345')"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></button>
+                <button class="act-btn ban" title="Ban" onclick="if(confirm('Ban Blessing Effiong?')){showToast('User banned','ok')}"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg></button>
+              </div></td>
+            </tr>
+
+            <tr data-name="chidi okonkwo" data-phone="0819">
+              <td><input type="checkbox" class="rc" onchange="updateBulk()"></td>
+              <td><div class="td-user"><div class="u-avatar g7">CO</div><div><div class="td-name">Chidi Okonkwo</div></div></div></td>
+              <td style="color:var(--text2);font-size:12px;">+234 819 012 3456</td>
+              <td style="color:var(--text2);font-size:12px;">Anambra</td>
+              <td style="color:var(--text2);font-size:12px;">Onitsha</td>
+              <td class="td-num" style="color:var(--blue);">19</td>
+              <td class="td-num" style="color:var(--pink);">48</td>
+              <td class="td-num" style="color:var(--accent);">220</td>
+              <td><span class="badge badge-yellow">⭐ PRO</span></td>
+              <td><span class="badge badge-green"><span class="badge-dot"></span>Active</span></td>
+              <td style="color:var(--text3);font-size:11px;white-space:nowrap;">Nov 8, 2024</td>
+              <td style="color:var(--text3);font-size:11px;white-space:nowrap;">30 min ago</td>
+              <td><div class="td-actions">
+                <button class="act-btn view" title="View" onclick="viewUser('Chidi Okonkwo','CO','g7','+234 819 012 3456','Anambra','Onitsha','19','48','220','6','Nov 8, 2024','30 min ago','active','pro')"><svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+                <button class="act-btn edit" title="Edit" onclick="editUser('Chidi Okonkwo','CO','g7','+234 819 012 3456')"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+                <button class="act-btn msg" title="Message" onclick="msgUser('Chidi Okonkwo','+234 819 012 3456')"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></button>
+                <button class="act-btn ban" title="Ban" onclick="if(confirm('Ban Chidi Okonkwo?')){showToast('User banned','ok')}"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg></button>
+              </div></td>
+            </tr>
+
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination -->
+      <div class="pagination">
+        <div class="pag-info" id="pagInfo">Showing 1–8 of 32,416 users · Page 1 of 4,052</div>
+        <div class="pag-btn" onclick="goToPage(Math.max(1,currentPage-1))" id="prevBtn"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></div>
+        <div class="pag-btn active" id="page1" onclick="goToPage(1)">1</div>
+        <div class="pag-btn" id="page2" onclick="goToPage(2)">2</div>
+        <div class="pag-btn" id="page3" onclick="goToPage(3)">3</div>
+        <div class="pag-btn" style="cursor:default;" id="dots">…</div>
+        <div class="pag-btn" id="pageLast" onclick="goToPage(4052)">4,052</div>
+        <div class="pag-btn" onclick="goToPage(Math.min(4052,currentPage+1))" id="nextBtn"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div>
+        <select class="filter-select" style="margin-left:8px;" id="pageSize" onchange="changePageSize(this.value)">
+          <option value="8">8 per page</option><option value="20">20 per page</option><option value="50">50 per page</option><option value="100">100 per page</option>
+        </select>
+      </div>
+    </div>
+
+    <div style="height:16px;"></div>
+  </div><!-- /content -->
+</div><!-- /main -->
+
+<script>
+/* ── TOAST ── */
+const toastEl=document.getElementById('toast');let toastT=null;
+function showToast(msg,type='ok'){document.getElementById('toastMsg').textContent=msg;toastEl.className='toast show '+(type||'ok');clearTimeout(toastT);toastT=setTimeout(()=>toastEl.classList.remove('show'),2800);}
+
+/* ── MODAL ── */
+function openModal(id){document.getElementById(id).classList.add('show');}
+function closeModal(id){document.getElementById(id).classList.remove('show');}
+document.querySelectorAll('.modal-overlay').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('show');}));
+document.querySelectorAll('.toggle').forEach(t=>t.addEventListener('click',()=>{t.classList.toggle('on');t.classList.toggle('off');}));
+
+/* ── TABS ── */
+function switchTab(btn){document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');showToast('Viewing: '+btn.textContent.trim(),'info');}
+
+/* ── PAGINATION ── */
+var currentPage=1;var pageSize=8;var totalUsers=32416;var totalPages=Math.ceil(totalUsers/pageSize);
+function goToPage(page){
+  if(page<1||page>totalPages) return;
+  currentPage=page;
+  updatePaginationUI();
+  showToast('Page '+page,'info');
+}
+function changePageSize(size){
+  pageSize=parseInt(size);
+  totalPages=Math.ceil(totalUsers/pageSize);
+  currentPage=1;
+  updatePaginationUI();
+  showToast('Showing '+size+' users per page','info');
+}
+function updatePaginationUI(){
+  const start=(currentPage-1)*pageSize+1;
+  const end=Math.min(currentPage*pageSize,totalUsers);
+  document.getElementById('pagInfo').textContent='Showing '+start+'–'+end+' of '+totalUsers+' users · Page '+currentPage+' of '+totalPages;
+  document.querySelectorAll('.pag-btn').forEach(b=>b.classList.remove('active'));
+  if(currentPage===1) document.getElementById('page1').classList.add('active');
+  else if(currentPage===2) document.getElementById('page2').classList.add('active');
+  else if(currentPage===3) document.getElementById('page3').classList.add('active');
+  else if(currentPage===totalPages) document.getElementById('pageLast').classList.add('active');
+  document.getElementById('prevBtn').style.opacity=currentPage===1?'0.5':'1';
+  document.getElementById('prevBtn').style.cursor=currentPage===1?'not-allowed':'pointer';
+  document.getElementById('nextBtn').style.opacity=currentPage===totalPages?'0.5':'1';
+  document.getElementById('nextBtn').style.cursor=currentPage===totalPages?'not-allowed':'pointer';
+}
+
+/* ── FILTER ── */
+var currentFilters={search:'',state:'',plan:'',status:''};
+function filterUsers(q){
+  currentFilters.search=q.toLowerCase().trim();
+  applyAllFilters();
+}
+function filterByState(state){
+  currentFilters.state=state;
+  applyAllFilters();
+  if(state) showToast('Filtering by: '+state,'info');
+}
+function filterByPlan(plan){
+  currentFilters.plan=plan;
+  applyAllFilters();
+  if(plan) showToast('Filtering by: '+plan,'info');
+}
+function filterByStatus(status){
+  currentFilters.status=status;
+  applyAllFilters();
+  if(status) showToast('Filtering by: '+status,'info');
+}
+function applyAllFilters(){
+  document.querySelectorAll('#usersBody tr').forEach(r=>{
+    const n=(r.dataset.name||'').toLowerCase();
+    const p=(r.dataset.phone||'').toLowerCase();
+    const state=r.querySelector('td:nth-child(4)')?.textContent.trim()||'';
+    const plan=r.querySelector('.badge-yellow')?'PRO':'Free';
+    const status=r.querySelector('.badge-green')?'Active':r.querySelector('.badge-red')?'Banned':'Inactive';
+    
+    const matchSearch=!currentFilters.search||n.includes(currentFilters.search)||p.includes(currentFilters.search);
+    const matchState=!currentFilters.state||state.includes(currentFilters.state);
+    const matchPlan=!currentFilters.plan||plan.includes(currentFilters.plan);
+    const matchStatus=!currentFilters.status||status.includes(currentFilters.status);
+    
+    r.style.display=(matchSearch&&matchState&&matchPlan&&matchStatus)?'':'none';
+  });
+}
+function resetAllFilters(){
+  currentFilters={search:'',state:'',plan:'',status:''};
+  document.getElementById('tableSearch').value='';
+  document.querySelectorAll('.filter-select').forEach(s=>s.value='');
+  applyAllFilters();
+  showToast('All filters cleared','info');
+}
+
+/* ── SORTING ── */
+var currentSort='';
+function sortUsers(sortType){
+  currentSort=sortType;
+  const rows=Array.from(document.querySelectorAll('#usersBody tr'));
+  
+  if(sortType==='a-z'){
+    rows.sort((a,b)=>{
+      const nameA=a.dataset.name||'';
+      const nameB=b.dataset.name||'';
+      return nameA.localeCompare(nameB);
+    });
+    showToast('Sorted A – Z','info');
+  }else if(sortType==='oldest'){
+    rows.reverse();
+    showToast('Sorted: Oldest First','info');
+  }else if(sortType==='downloads'){
+    rows.sort((a,b)=>{
+      const dlA=parseInt(a.querySelector('td:nth-child(6)')?.textContent||0);
+      const dlB=parseInt(b.querySelector('td:nth-child(6)')?.textContent||0);
+      return dlB-dlA;
+    });
+    showToast('Sorted: Most Downloads','info');
+  }else if(sortType==='active'){
+    rows.sort((a,b)=>{
+      const playsA=parseInt(a.querySelector('td:nth-child(8)')?.textContent||0);
+      const playsB=parseInt(b.querySelector('td:nth-child(8)')?.textContent||0);
+      return playsB-playsA;
+    });
+    showToast('Sorted: Most Active','info');
+  }
+  
+  const tbody=document.getElementById('usersBody');
+  rows.forEach(row=>tbody.appendChild(row));
+}
+
+/* ── EXPORT & REPORT ── */
+function exportToCSV(){
+  const rows=document.querySelectorAll('#usersBody tr:not([style*="display: none"])');
+  let csv='Name,Phone,State,LGA,Downloads,Favourites,Plays,Plan,Status,Joined,Last Active\n';
+  rows.forEach(row=>{
+    const cells=row.querySelectorAll('td');
+    if(cells.length>1){
+      const name=cells[1]?.textContent.trim()||'';
+      const phone=cells[2]?.textContent.trim()||'';
+      const state=cells[3]?.textContent.trim()||'';
+      const lga=cells[4]?.textContent.trim()||'';
+      const dl=cells[5]?.textContent.trim()||'';
+      const fav=cells[6]?.textContent.trim()||'';
+      const plays=cells[7]?.textContent.trim()||'';
+      const plan=cells[8]?.textContent.trim()||'';
+      const status=cells[9]?.textContent.trim()||'';
+      const joined=cells[10]?.textContent.trim()||'';
+      const lastActive=cells[11]?.textContent.trim()||'';
+      csv+=`"${name}","${phone}","${state}","${lga}","${dl}","${fav}","${plays}","${plan}","${status}","${joined}","${lastActive}"\n`;
+    }
+  });
+  const blob=new Blob([csv],{type:'text/csv'});
+  const url=window.URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;
+  a.download='users_export_'+new Date().toISOString().split('T')[0]+'.csv';
+  a.click();
+  window.URL.revokeObjectURL(url);
+  showToast('CSV exported successfully ✓','ok');
+}
+
+function generateReport(){
+  const totalRows=document.querySelectorAll('#usersBody tr').length;
+  const activeRows=document.querySelectorAll('#usersBody tr:has(.badge-green)').length;
+  const bannedRows=document.querySelectorAll('#usersBody tr:has(.badge-red)').length;
+  const proRows=document.querySelectorAll('#usersBody tr:has(.badge-yellow)').length;
+  
+  const reportData={
+    generatedAt:new Date().toLocaleString(),
+    totalUsers:totalRows,
+    activeUsers:activeRows,
+    bannedUsers:bannedRows,
+    proUsers:proRows,
+    freeUsers:totalRows-proRows
+  };
+  
+  let reportText='USER MANAGEMENT REPORT\n';
+  reportText+='Generated: '+reportData.generatedAt+'\n\n';
+  reportText+='SUMMARY\n';
+  reportText+='Total Users: '+reportData.totalUsers+'\n';
+  reportText+='Active Users: '+reportData.activeUsers+'\n';
+  reportText+='Banned Users: '+reportData.bannedUsers+'\n';
+  reportText+='Pro Users: '+reportData.proUsers+'\n';
+  reportText+='Free Users: '+reportData.freeUsers+'\n';
+  
+  const blob=new Blob([reportText],{type:'text/plain'});
+  const url=window.URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;
+  a.download='user_report_'+new Date().toISOString().split('T')[0]+'.txt';
+  a.click();
+  window.URL.revokeObjectURL(url);
+  showToast('Report generated and downloaded ✓','ok');
+}
+
+/* ── SELECT ALL ── */
+function toggleAll(master){document.querySelectorAll('.rc').forEach(c=>c.checked=master.checked);updateBulk();}
+function updateBulk(){
+  const n=document.querySelectorAll('.rc:checked').length;
+  document.getElementById('bulkCount').textContent=n;
+  document.getElementById('bulkInfo').textContent=n+' user'+(n!==1?'s':'')+' selected';
+  document.getElementById('bulkBar').classList.toggle('show',n>0);
+}
+function clearChecks(){document.querySelectorAll('.rc').forEach(c=>c.checked=false);document.getElementById('selectAll').checked=false;document.getElementById('bulkBar').classList.remove('show');}
+
+/* ── VIEW USER ── */
+function viewUser(name,initials,grad,phone,state,lga,dl,fav,plays,comments,joined,lastActive,status,plan){
+  document.getElementById('vu-avatar').textContent=initials;
+  document.getElementById('vu-avatar').className='up-avatar '+grad;
+  document.getElementById('vu-name').textContent=name;
+  document.getElementById('vu-phone').textContent=phone;
+  document.getElementById('vu-state').textContent=state;
+  document.getElementById('vu-lga').textContent=lga+' LGA';
+  document.getElementById('vu-downloads').textContent=dl;
+  document.getElementById('vu-favourites').textContent=fav;
+  document.getElementById('vu-plays').textContent=plays;
+  document.getElementById('vu-comments').textContent=comments;
+  document.getElementById('vu-joined').textContent='Joined '+joined;
+  document.getElementById('vu-last').textContent='Last active '+lastActive;
+  const planPill=document.getElementById('vu-plan-pill');
+  planPill.textContent=plan==='pro'?'⭐ PRO Plan':'🆓 Free Plan';
+  planPill.style.cssText=plan==='pro'?'background:rgba(255,209,102,0.1);border-color:rgba(255,209,102,0.3);color:var(--yellow);':'background:var(--surface);border-color:var(--border);color:var(--text2);';
+  const sb=document.getElementById('vu-status-badge');
+  const badgeMap={active:'<span class="badge badge-green"><span class="badge-dot"></span>Active</span>',banned:'<span class="badge badge-red"><span class="badge-dot"></span>Banned</span>',inactive:'<span class="badge badge-yellow"><span class="badge-dot"></span>Inactive</span>'};
+  sb.innerHTML=badgeMap[status]||badgeMap.active;
+  openModal('viewUserModal');
+}
+
+/* ── EDIT USER ── */
+function editUser(name,initials,grad,phone){
+  document.getElementById('eu-avatar').textContent=initials;
+  document.getElementById('eu-avatar').className='u-avatar '+grad;
+  document.getElementById('eu-name-display').textContent=name;
+  document.getElementById('eu-phone-display').textContent=phone;
+  document.getElementById('eu-name').value=name;
+  document.getElementById('eu-phone').value=phone;
+  openModal('editUserModal');
+}
+
+/* ── MESSAGE USER ── */
+function msgUser(name,phone){
+  document.getElementById('msg-name').textContent=name;
+  document.getElementById('msg-phone').textContent=phone;
+  openModal('msgUserModal');
+}
+
+/* ── BAN FROM VIEW ── */
+function banFromView(){
+  const name=document.getElementById('vu-name').textContent;
+  if(confirm('Ban '+name+'?')){showToast(name+' has been banned','ok');closeModal('viewUserModal');}
+}
+
+/* ── ADD USER ── */
+function submitAddUser(){
+  const n=document.getElementById('add-name').value.trim();
+  const p=document.getElementById('add-phone').value.trim();
+  const s=document.getElementById('add-state').value;
+  const l=document.getElementById('add-lga').value;
+  if(!n){showToast('Full name is required','err');return;}
+  if(!p){showToast('Phone number is required','err');return;}
+  if(!s){showToast('Please select a state','err');return;}
+  if(!l||l==='Select state first…'){showToast('Please select an LGA','err');return;}
+  showToast('User "'+n+'" added successfully ✓','ok');
+  closeModal('addUserModal');
+}
+
+/* ── LGA DATA ── */
+const LGA_DATA={
+  'Lagos':['Agege','Ajeromi-Ifelodun','Alimosho','Amuwo-Odofin','Apapa','Badagry','Epe','Eti-Osa','Ibeju-Lekki','Ifako-Ijaiye','Ikeja','Ikorodu','Kosofe','Lagos Island','Lagos Mainland','Mushin','Ojo','Oshodi-Isolo','Shomolu','Surulere'],
+  'Kano':['Dala','Fagge','Gwale','Kano Municipal','Nassarawa','Tarauni','Ungogo','Doguwa','Kura','Garun Mallam','Madobi','Kabo','Bichi','Wudil','Gwarzo'],
+  'Rivers':['Abua/Odual','Ahoada East','Ahoada West','Andoni','Bonny','Degema','Eleme','Emohua','Etche','Gokana','Ikwerre','Khana','Obio/Akpor','Ogba/Egbema/Ndoni','Port Harcourt','Tai'],
+  'FCT — Abuja':['Abuja Municipal','Bwari','Gwagwalada','Kuje','Kwali','Abaji'],
+  'Oyo':['Afijio','Akinyele','Atiba','Egbeda','Ibadan North','Ibadan North-East','Ibadan North-West','Ibadan South-East','Ibadan South-West','Ibarapa Central','Ido','Ogbomosho North','Oyo East','Oyo West'],
+  'Enugu':['Aninri','Awgu','Enugu East','Enugu North','Enugu South','Ezeagu','Igbo Etiti','Nsukka','Oji River','Udenu','Udi'],
+  'Anambra':['Aguata','Anambra East','Anambra West','Awka North','Awka South','Idemili North','Idemili South','Ogbaru','Onitsha North','Onitsha South','Nnewi North'],
+  'Akwa Ibom':['Abak','Eastern Obolo','Eket','Esit Eket','Ini','Itu','Mbo','Mkpat-Enin','Nsit-Ubium','Obot Akara','Okobo','Uyo'],
+  '_default':['LGA 1','LGA 2','LGA 3','LGA 4','LGA 5','LGA 6']
+};
+function populateLGA(state,targetId){
+  const sel=document.getElementById(targetId);
+  sel.innerHTML='<option value="">Select LGA…</option>';
+  (LGA_DATA[state]||LGA_DATA['_default']).forEach(l=>{const o=document.createElement('option');o.value=l;o.textContent=l;sel.appendChild(o);});
+}
+// Pre-populate Lagos LGAs for add form
+populateLGA('Lagos','add-lga');
+</script>
+</body>
+</html>

@@ -1,0 +1,2322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shurafah Admin — Wa'azi Management</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#05070F;--surface:#0A0E1A;--surface2:#111828;--surface3:#182035;--surface4:#1E2840;
+  --accent:#FF6B35;--accent2:#FFB347;--blue:#4D9FFF;--green:#2ECC8F;--purple:#9B6BFF;
+  --pink:#FF4D8F;--yellow:#FFD166;--teal:#00C9B8;--red:#FF4444;
+  --text:#F0F4FF;--text2:#8A94B0;--text3:#4A5270;
+  --border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.11);
+  --sw:240px;--scw:62px;--hh:62px;--tr:0.28s cubic-bezier(.4,0,.2,1);--r:14px;--rs:9px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--text);min-height:100vh;display:flex;overflow-x:hidden;}
+::-webkit-scrollbar{width:5px;height:5px;}
+::-webkit-scrollbar-track{background:var(--surface);}
+::-webkit-scrollbar-thumb{background:var(--surface4);border-radius:3px;}
+
+/* ══ SIDEBAR ══ */
+.sidebar{width:var(--sw);min-height:100vh;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;left:0;top:0;bottom:0;z-index:200;overflow:hidden;transition:width var(--tr);}
+.sidebar.collapsed{width:var(--scw);}
+.sb-scroll{flex:1;overflow-y:auto;overflow-x:hidden;scrollbar-width:none;display:flex;flex-direction:column;}
+.sb-scroll::-webkit-scrollbar{display:none;}
+.sb-brand{padding:16px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;flex-shrink:0;min-height:var(--hh);}
+.brand-logo{width:34px;height:34px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:15px;box-shadow:0 4px 14px rgba(255,107,53,.4);flex-shrink:0;}
+.brand-txt{overflow:hidden;white-space:nowrap;display:flex;align-items:center;gap:8px;opacity:1;transition:opacity var(--tr);}
+.sidebar.collapsed .brand-txt{opacity:0;pointer-events:none;}
+.b-name{font-family:sans-serif;font-size:16px;font-weight:800;letter-spacing:-.3px;}
+.b-name span{color:var(--accent);}
+.b-badge{font-size:8px;background:rgba(255,107,53,.15);border:1px solid rgba(255,107,53,.3);border-radius:4px;padding:1px 5px;color:var(--accent);font-family:sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:.4px;flex-shrink:0;}
+.sb-sec{padding:14px 8px 4px;}
+.sb-sec-lbl{font-size:9px;font-family:sans-serif;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;padding:0 8px;margin-bottom:6px;white-space:nowrap;opacity:1;transition:opacity var(--tr);}
+.sidebar.collapsed .sb-sec-lbl{opacity:0;}
+.nav-item{display:flex;align-items:center;gap:9px;padding:9px 10px;border-radius:10px;cursor:pointer;font-size:12px;font-weight:500;color:var(--text2);transition:all .15s;margin-bottom:1px;position:relative;white-space:nowrap;overflow:hidden;}
+.nav-item:hover{background:var(--surface2);color:var(--text);}
+.nav-item.active{background:rgba(255,107,53,.1);color:var(--accent);font-weight:600;}
+.nav-item.active::before{content:'';position:absolute;left:0;top:20%;bottom:20%;width:3px;background:var(--accent);border-radius:0 3px 3px 0;}
+.nav-item svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:2;flex-shrink:0;}
+.nav-lbl{overflow:hidden;white-space:nowrap;opacity:1;transition:opacity var(--tr);flex:1;}
+.sidebar.collapsed .nav-lbl{opacity:0;}
+.n-badge{margin-left:auto;background:var(--accent);color:white;font-size:8px;font-family:sans-serif;font-weight:800;border-radius:50px;padding:1px 6px;min-width:18px;text-align:center;flex-shrink:0;opacity:1;transition:opacity var(--tr);}
+.sidebar.collapsed .n-badge{opacity:0;}
+.n-badge.g{background:var(--green);}.n-badge.b{background:var(--blue);}.n-badge.pk{background:var(--pink);}
+.sidebar.collapsed .nav-item{justify-content:center;padding:9px;}
+.sidebar.collapsed .nav-item:hover::after{content:attr(data-tip);position:absolute;left:calc(var(--scw) + 8px);top:50%;transform:translateY(-50%);background:var(--surface3);border:1px solid var(--border2);border-radius:8px;padding:5px 10px;font-size:11px;color:var(--text);white-space:nowrap;pointer-events:none;z-index:999;font-family:'DM Sans',sans-serif;font-weight:600;box-shadow:0 4px 16px rgba(0,0,0,.5);}
+.sb-footer{padding:12px 8px;border-top:1px solid var(--border);flex-shrink:0;}
+.admin-row{display:flex;align-items:center;gap:10px;padding:8px;border-radius:10px;cursor:pointer;transition:background .15s;overflow:hidden;}
+.admin-row:hover{background:var(--surface2);}
+.admin-av{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--purple),var(--blue));display:flex;align-items:center;justify-content:center;font-family:sans-serif;font-size:11px;font-weight:700;flex-shrink:0;}
+.admin-info{overflow:hidden;white-space:nowrap;flex:1;opacity:1;transition:opacity var(--tr);}
+.sidebar.collapsed .admin-info{opacity:0;width:0;}
+.admin-name-t{font-size:11px;font-weight:600;margin-bottom:1px;}
+.admin-role-t{font-size:9px;color:var(--text3);}
+
+/* ══ MAIN ══ */
+.main{margin-left:var(--sw);flex:1;display:flex;flex-direction:column;min-height:100vh;transition:margin-left var(--tr);}
+.main.expanded{margin-left:var(--scw);}
+
+/* ══ TOPBAR ══ */
+.topbar{height:var(--hh);background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 24px;gap:12px;position:sticky;top:0;z-index:100;flex-shrink:0;}
+.toggle-btn{width:36px;height:36px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:border-color .15s,background .15s;}
+.toggle-btn:hover{border-color:var(--accent);background:rgba(255,107,53,.08);}
+.toggle-btn svg{width:16px;height:16px;fill:none;stroke:var(--text2);stroke-width:2;stroke-linecap:round;}
+.tb-left{flex:1;}
+.tb-title{font-family:sans-serif;font-size:16px;font-weight:800;letter-spacing:-.3px;}
+.tb-crumb{font-size:10px;color:var(--text3);margin-top:1px;display:flex;align-items:center;gap:4px;}
+.tb-crumb span{color:var(--accent);}
+.tb-crumb svg{width:10px;height:10px;fill:none;stroke:var(--text3);stroke-width:2;}
+.tb-search{display:flex;align-items:center;gap:8px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:8px 13px;width:220px;transition:border-color .2s;}
+.tb-search:focus-within{border-color:rgba(255,107,53,.4);}
+.tb-search svg{width:13px;height:13px;fill:none;stroke:var(--text3);stroke-width:2;flex-shrink:0;}
+.tb-search input{background:none;border:none;outline:none;font-size:12px;color:var(--text);font-family:'DM Sans',sans-serif;width:100%;}
+.tb-search input::placeholder{color:var(--text3);}
+.tb-actions{display:flex;align-items:center;gap:8px;}
+.tb-btn{width:36px;height:36px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;transition:border-color .15s;}
+.tb-btn:hover{border-color:var(--accent);}
+.tb-btn svg{width:15px;height:15px;fill:none;stroke:var(--text2);stroke-width:2;}
+.tb-dot{width:7px;height:7px;background:var(--accent);border-radius:50%;position:absolute;top:6px;right:6px;border:2px solid var(--surface);}
+.tb-admin{display:flex;align-items:center;gap:8px;padding:5px 10px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;cursor:pointer;}
+.tb-av{width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,var(--purple),var(--blue));display:flex;align-items:center;justify-content:center;font-family:sans-serif;font-size:9px;font-weight:700;}
+.tb-aname{font-size:11px;font-weight:600;}
+
+/* ══ UPLOAD BTN ══ */
+.upload-btn{display:flex;align-items:center;gap:7px;padding:8px 16px;background:var(--accent);border-radius:10px;font-family:sans-serif;font-size:12px;font-weight:700;color:white;cursor:pointer;box-shadow:0 3px 14px rgba(255,107,53,.35);transition:transform .15s,box-shadow .15s,opacity .15s;}
+.upload-btn:hover{transform:translateY(-1px);box-shadow:0 5px 20px rgba(255,107,53,.5);}
+.upload-btn svg{width:14px;height:14px;fill:none;stroke:white;stroke-width:2.5;}
+
+/* ══ PAGE LAYOUT ══ */
+.page{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+
+/* ══ STATS STRIP ══ */
+.stats-strip{display:flex;gap:12px;padding:18px 24px 0;flex-shrink:0;}
+.ss-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:12px;flex:1;animation:fadeUp .4s ease forwards;opacity:0;}
+.ss-card:nth-child(1){animation-delay:.04s}
+.ss-card:nth-child(2){animation-delay:.08s}
+.ss-card:nth-child(3){animation-delay:.12s}
+.ss-card:nth-child(4){animation-delay:.16s}
+.ss-card:nth-child(5){animation-delay:.20s}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.ss-ico{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.ss-ico svg{width:16px;height:16px;fill:none;stroke-width:2;}
+.ss-v{font-family:sans-serif;font-size:18px;font-weight:800;line-height:1;margin-bottom:2px;}
+.ss-l{font-size:10px;color:var(--text3);}
+.ss-t{font-size:9px;font-family:sans-serif;font-weight:700;margin-top:2px;}
+
+/* ══ TOOLBAR ══ */
+.toolbar{display:flex;align-items:center;gap:10px;padding:16px 24px 12px;flex-shrink:0;flex-wrap:wrap;}
+.filter-grp{display:flex;align-items:center;gap:8px;flex:1;min-width:0;}
+.search-box{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:9px 14px;flex:1;max-width:320px;transition:border-color .2s;}
+.search-box:focus-within{border-color:rgba(255,107,53,.4);}
+.search-box svg{width:14px;height:14px;fill:none;stroke:var(--text3);stroke-width:2;flex-shrink:0;}
+.search-box input{background:none;border:none;outline:none;font-size:12px;color:var(--text);font-family:'DM Sans',sans-serif;width:100%;}
+.search-box input::placeholder{color:var(--text3);}
+.fsel{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:9px 12px;font-size:11px;color:var(--text2);font-family:'DM Sans',sans-serif;outline:none;cursor:pointer;transition:border-color .2s;}
+.fsel:focus{border-color:rgba(255,107,53,.4);}
+.action-grp{display:flex;align-items:center;gap:8px;margin-left:auto;}
+.abtn{display:flex;align-items:center;gap:6px;padding:9px 14px;border-radius:10px;font-size:11px;font-family:sans-serif;font-weight:700;cursor:pointer;transition:all .15s;white-space:nowrap;}
+.abtn svg{width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:2;}
+.abtn:hover{opacity:.85;}
+.btn-pri{background:var(--accent);color:white;box-shadow:0 3px 12px rgba(255,107,53,.3);}
+.btn-sec{background:var(--surface);border:1px solid var(--border);color:var(--text2);}
+.btn-sec:hover{border-color:var(--accent);color:var(--accent);}
+.btn-dng{background:rgba(255,68,68,.1);border:1px solid rgba(255,68,68,.25);color:var(--red);}
+.btn-warn{background:rgba(255,209,102,.1);border:1px solid rgba(255,209,102,.25);color:var(--yellow);}
+
+/* bulk action bar */
+.bulk-bar{display:flex;align-items:center;gap:10px;padding:10px 24px;background:rgba(255,107,53,.06);border-bottom:1px solid rgba(255,107,53,.15);flex-shrink:0;animation:slideDown .2s ease;}
+@keyframes slideDown{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+.bulk-count{font-family:sans-serif;font-size:12px;font-weight:700;color:var(--accent);}
+.bulk-actions{display:flex;gap:7px;margin-left:auto;}
+
+/* ══ VIEW TABS ══ */
+.view-tabs{display:flex;align-items:center;gap:4px;padding:0 24px 12px;flex-shrink:0;}
+.vtab{display:flex;align-items:center;gap:5px;padding:6px 14px;border-radius:8px;font-size:11px;font-weight:700;font-family:sans-serif;cursor:pointer;color:var(--text3);transition:all .15s;border:1px solid transparent;}
+.vtab:hover{color:var(--text2);background:var(--surface2);}
+.vtab.active{background:rgba(255,107,53,.1);color:var(--accent);border-color:rgba(255,107,53,.2);}
+.vtab svg{width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:2;}
+.vtab-count{font-size:9px;background:var(--surface3);border-radius:50px;padding:1px 6px;color:var(--text3);}
+.vtab.active .vtab-count{background:rgba(255,107,53,.15);color:var(--accent);}
+.view-spacer{flex:1;}
+.sort-row{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text3);}
+.sort-row svg{width:12px;height:12px;fill:none;stroke:var(--text3);stroke-width:2;}
+.sort-btn{font-size:11px;color:var(--accent);font-weight:700;font-family:sans-serif;cursor:pointer;display:flex;align-items:center;gap:4px;}
+
+/* ══ TABLE VIEW ══ */
+.table-wrap{flex:1;overflow-y:auto;overflow-x:auto;padding:0 24px 24px;}
+.song-table{width:100%;border-collapse:collapse;min-width:900px;}
+.song-table thead{position:sticky;top:0;z-index:5;}
+.song-table th{background:var(--surface);text-align:left;font-size:9px;font-family:sans-serif;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.6px;padding:0 12px 12px;border-bottom:1px solid var(--border);white-space:nowrap;cursor:pointer;user-select:none;}
+.song-table th:hover{color:var(--text2);}
+.song-table th.active-sort{color:var(--accent);}
+.song-table th svg{width:10px;height:10px;fill:currentColor;margin-left:3px;vertical-align:middle;}
+.song-table td{padding:10px 12px;border-bottom:1px solid var(--border);vertical-align:middle;}
+.song-table tr:last-child td{border-bottom:none;}
+.song-table tbody tr{transition:background .12s;}
+.song-table tbody tr:hover td{background:rgba(255,255,255,.025);}
+.song-table tbody tr.selected td{background:rgba(255,107,53,.04);}
+.song-table tbody tr.selected td:first-child{border-left:2px solid var(--accent);}
+
+/* checkbox */
+.cb{width:16px;height:16px;border:1.5px solid var(--border2);border-radius:5px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s;}
+.cb:hover{border-color:var(--accent);}
+.cb.checked{background:var(--accent);border-color:var(--accent);}
+.cb.checked svg{display:block;}
+.cb svg{width:9px;height:9px;fill:none;stroke:white;stroke-width:3;display:none;}
+
+/* lecture cell */
+.song-cell{display:flex;align-items:center;gap:10px;}
+.song-art{width:40px;height:40px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;position:relative;overflow:hidden;}
+.song-art-play{position:absolute;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .15s;cursor:pointer;}
+.song-art-play svg{width:14px;height:14px;fill:white;}
+.song-table tbody tr:hover .song-art-play{opacity:1;}
+.song-title{font-family:sans-serif;font-size:12px;font-weight:700;margin-bottom:2px;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.song-artist-name{font-size:10px;color:var(--text2);}
+.song-artist-name a{color:var(--blue);text-decoration:none;cursor:pointer;}
+.song-artist-name a:hover{text-decoration:underline;}
+
+/* badges */
+.cat-badge{font-size:8px;font-family:sans-serif;font-weight:700;padding:2px 8px;border-radius:50px;white-space:nowrap;}
+.status-badge{font-size:9px;font-family:sans-serif;font-weight:700;padding:3px 9px;border-radius:50px;display:inline-flex;align-items:center;gap:4px;white-space:nowrap;}
+.sb-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0;}
+.s-live{background:rgba(46,204,143,.12);color:var(--green);}
+.s-live .sb-dot{background:var(--green);}
+.s-review{background:rgba(255,209,102,.1);color:var(--yellow);}
+.s-review .sb-dot{background:var(--yellow);}
+.s-offline{background:var(--surface2);color:var(--text3);}
+.s-offline .sb-dot{background:var(--text3);}
+.s-featured{background:rgba(155,107,255,.12);color:var(--purple);}
+.s-featured .sb-dot{background:var(--purple);}
+.q-badge{font-size:8px;background:rgba(77,159,255,.12);color:var(--blue);border-radius:5px;padding:2px 6px;font-family:sans-serif;font-weight:700;}
+.pv{font-family:sans-serif;font-size:12px;font-weight:700;color:var(--accent);}
+.dv{font-family:sans-serif;font-size:12px;font-weight:700;color:var(--blue);}
+.dur-v{font-size:11px;color:var(--text2);font-family:sans-serif;font-weight:600;}
+.date-v{font-size:10px;color:var(--text3);}
+
+/* row actions */
+.row-actions{display:flex;align-items:center;gap:4px;opacity:0;transition:opacity .15s;}
+.song-table tbody tr:hover .row-actions{opacity:1;}
+.ra-btn{width:26px;height:26px;border-radius:7px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .15s;border:1px solid transparent;}
+.ra-btn:hover{background:var(--surface3);border-color:var(--border2);}
+.ra-btn svg{width:13px;height:13px;fill:none;stroke:var(--text2);stroke-width:2;}
+.ra-btn.edit:hover svg{stroke:var(--blue);}
+.ra-btn.del:hover svg{stroke:var(--red);}
+.ra-btn.feat:hover svg{stroke:var(--yellow);}
+.ra-btn.view:hover svg{stroke:var(--green);}
+
+/* ══ GRID VIEW ══ */
+.grid-view{display:none;padding:0 24px 24px;}
+.grid-view.active{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;}
+.grid-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;cursor:pointer;transition:border-color .2s,transform .15s;animation:fadeUp .35s ease forwards;opacity:0;position:relative;}
+.grid-card:hover{border-color:var(--border2);transform:translateY(-3px);}
+.grid-card.selected{border-color:var(--accent);}
+.grid-card-art{height:140px;display:flex;align-items:center;justify-content:center;font-size:44px;position:relative;overflow:hidden;}
+.gc-overlay{position:absolute;inset:0;background:rgba(0,0,0,0);display:flex;align-items:center;justify-content:center;gap:8px;transition:background .2s;}
+.grid-card:hover .gc-overlay{background:rgba(0,0,0,.55);}
+.gc-play{width:36px;height:36px;background:var(--accent);border-radius:50%;display:flex;align-items:center;justify-content:center;opacity:0;transform:scale(.8);transition:all .2s;}
+.grid-card:hover .gc-play{opacity:1;transform:scale(1);}
+.gc-play svg{width:14px;height:14px;fill:white;}
+.gc-edit{width:30px;height:30px;background:rgba(255,255,255,.15);backdrop-filter:blur(4px);border-radius:8px;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .2s;}
+.grid-card:hover .gc-edit{opacity:1;}
+.gc-edit svg{width:13px;height:13px;fill:none;stroke:white;stroke-width:2;}
+.gc-cb{position:absolute;top:10px;left:10px;z-index:5;}
+.gc-feat{position:absolute;top:10px;right:10px;background:rgba(155,107,255,.8);backdrop-filter:blur(4px);border-radius:6px;padding:2px 7px;font-size:8px;font-family:sans-serif;font-weight:700;color:white;}
+.gc-info{padding:12px 12px 10px;}
+.gc-title{font-family:sans-serif;font-size:11px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:2px;}
+.gc-artist{font-size:10px;color:var(--text2);margin-bottom:8px;}
+.gc-meta{display:flex;align-items:center;justify-content:space-between;}
+.gc-stats{display:flex;gap:8px;}
+.gc-stat{font-size:9px;color:var(--text3);display:flex;align-items:center;gap:2px;}
+.gc-stat svg{width:9px;height:9px;fill:none;stroke:currentColor;stroke-width:2;}
+
+/* ══ PAGINATION ══ */
+.pagination{display:flex;align-items:center;justify-content:space-between;padding:14px 24px;border-top:1px solid var(--border);flex-shrink:0;background:var(--surface);}
+.pg-info{font-size:11px;color:var(--text3);}
+.pg-info strong{color:var(--text);}
+.pg-controls{display:flex;align-items:center;gap:4px;}
+.pg-btn{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:11px;font-family:sans-serif;font-weight:700;cursor:pointer;border:1px solid var(--border);color:var(--text2);transition:all .15s;}
+.pg-btn:hover{border-color:var(--accent);color:var(--accent);}
+.pg-btn.active{background:var(--accent);border-color:var(--accent);color:white;}
+.pg-btn.arrow svg{width:12px;height:12px;fill:none;stroke:currentColor;stroke-width:2;}
+.pg-btn.disabled{opacity:.35;cursor:not-allowed;pointer-events:none;}
+.pg-perpage{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text3);}
+.pg-perpage select{background:var(--surface2);border:1px solid var(--border);border-radius:7px;padding:4px 8px;font-size:11px;color:var(--text);outline:none;cursor:pointer;}
+
+/* ══ UPLOAD PANEL (slide-in) ══ */
+.upload-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);z-index:500;opacity:0;pointer-events:none;transition:opacity .3s;}
+.upload-overlay.show{opacity:1;pointer-events:all;}
+.upload-panel{position:fixed;right:0;top:0;bottom:0;width:480px;background:var(--surface);border-left:1px solid var(--border);z-index:501;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .35s cubic-bezier(.4,0,.2,1);}
+.upload-panel.show{transform:translateX(0);}
+.up-header{padding:20px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+.up-title{font-family:sans-serif;font-size:16px;font-weight:800;}
+.up-close{width:32px;height:32px;background:var(--surface2);border:1px solid var(--border);border-radius:9px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:border-color .15s;}
+.up-close:hover{border-color:var(--red);}
+.up-close svg{width:14px;height:14px;fill:none;stroke:var(--text2);stroke-width:2;}
+.up-body{flex:1;overflow-y:auto;padding:22px 24px;scrollbar-width:thin;}
+
+/* dropzone */
+.dropzone{border:2px dashed var(--border2);border-radius:var(--r);padding:32px 20px;text-align:center;cursor:pointer;transition:all .2s;margin-bottom:20px;position:relative;}
+.dropzone:hover,.dropzone.dragging{border-color:var(--accent);background:rgba(255,107,53,.03);}
+.dz-icon{font-size:40px;margin-bottom:12px;}
+.dz-title{font-family:sans-serif;font-size:14px;font-weight:700;margin-bottom:4px;}
+.dz-sub{font-size:11px;color:var(--text3);line-height:1.6;}
+.dz-input{position:absolute;inset:0;opacity:0;cursor:pointer;}
+.dz-formats{display:flex;gap:6px;justify-content:center;margin-top:10px;}
+.dz-fmt{font-size:9px;font-family:sans-serif;font-weight:700;padding:2px 7px;border-radius:5px;background:var(--surface2);color:var(--text3);}
+
+/* upload progress */
+.upload-progress{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:14px;display:none;}
+.upload-progress.show{display:block;}
+.up-file{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.up-file-ico{width:36px;height:36px;border-radius:9px;background:rgba(77,159,255,.12);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.up-file-name{font-family:sans-serif;font-size:11px;font-weight:700;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.up-file-size{font-size:9px;color:var(--text3);}
+.up-bar-bg{height:5px;background:var(--surface3);border-radius:3px;overflow:hidden;}
+.up-bar-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--blue),var(--purple));animation:uploading 1.8s ease-in-out infinite;width:72%;}
+@keyframes uploading{0%{opacity:.7}50%{opacity:1}100%{opacity:.7}}
+.up-bar-pct{font-size:9px;color:var(--blue);font-family:sans-serif;font-weight:700;margin-top:4px;}
+
+/* form fields */
+.form-group{margin-bottom:16px;}
+.form-label{font-size:10px;font-family:sans-serif;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;display:flex;align-items:center;gap:5px;}
+.form-label .req{color:var(--accent);}
+.form-input{width:100%;background:var(--surface2);border:1.5px solid var(--border);border-radius:10px;padding:10px 13px;font-size:12px;color:var(--text);font-family:'DM Sans',sans-serif;outline:none;transition:border-color .2s;}
+.form-input:focus{border-color:rgba(255,107,53,.4);}
+.form-input::placeholder{color:var(--text3);}
+.form-select{width:100%;background:var(--surface2);border:1.5px solid var(--border);border-radius:10px;padding:10px 13px;font-size:12px;color:var(--text);font-family:'DM Sans',sans-serif;outline:none;cursor:pointer;transition:border-color .2s;}
+.form-select:focus{border-color:rgba(255,107,53,.4);}
+.form-textarea{width:100%;background:var(--surface2);border:1.5px solid var(--border);border-radius:10px;padding:10px 13px;font-size:12px;color:var(--text);font-family:'DM Sans',sans-serif;outline:none;resize:vertical;min-height:80px;transition:border-color .2s;}
+.form-textarea:focus{border-color:rgba(255,107,53,.4);}
+.form-textarea::placeholder{color:var(--text3);}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.form-hint{font-size:9px;color:var(--text3);margin-top:4px;}
+
+/* quality selector */
+.quality-opts{display:flex;gap:8px;}
+.q-opt{flex:1;border:1.5px solid var(--border);border-radius:10px;padding:10px 8px;text-align:center;cursor:pointer;transition:all .15s;}
+.q-opt:hover{border-color:rgba(77,159,255,.3);}
+.q-opt.selected{background:rgba(77,159,255,.1);border-color:var(--blue);}
+.q-opt-kbps{font-family:sans-serif;font-size:14px;font-weight:800;}
+.q-opt.selected .q-opt-kbps{color:var(--blue);}
+.q-opt-lbl{font-size:8px;color:var(--text3);margin-top:1px;}
+.q-opt.selected .q-opt-lbl{color:var(--blue);}
+
+/* ══ COVER ART ══ */
+.cover-art-row{display:flex;align-items:flex-start;gap:12px;}
+.ca-preview{width:46px;height:46px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;overflow:hidden;cursor:pointer;position:relative;}
+.ca-preview img{width:100%;height:100%;object-fit:cover;border-radius:8px;}
+.ca-preview-overlay{position:absolute;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .15s;border-radius:8px;}
+.ca-preview:hover .ca-preview-overlay{opacity:1;}
+.ca-preview-overlay svg{width:14px;height:14px;fill:none;stroke:white;stroke-width:2;}
+.ca-options{flex:1;min-width:0;}
+.ca-tabs{display:flex;gap:3px;background:var(--surface2);border-radius:8px;padding:3px;margin-bottom:8px;width:fit-content;}
+.ca-tab{padding:4px 10px;border-radius:6px;font-size:10px;font-family:sans-serif;font-weight:700;cursor:pointer;color:var(--text3);transition:all .15s;}
+.ca-tab.active{background:var(--surface);color:var(--text);box-shadow:0 1px 4px rgba(0,0,0,.3);}
+.ca-swatches{display:flex;gap:5px;flex-wrap:wrap;}
+.ca-swatch{width:22px;height:22px;border-radius:6px;cursor:pointer;transition:transform .12s,box-shadow .12s;border:2px solid transparent;}
+.ca-swatch:hover{transform:scale(1.18);}
+.ca-swatch.active{border-color:white;box-shadow:0 0 0 2px var(--accent);}
+.ca-upload-btn{display:inline-flex;align-items:center;gap:5px;padding:6px 12px;background:var(--surface2);border:1.5px dashed var(--border2);border-radius:8px;font-size:10px;font-family:sans-serif;font-weight:700;color:var(--text3);cursor:pointer;transition:border-color .15s,color .15s;}
+.ca-upload-btn:hover{border-color:var(--accent);color:var(--accent);}
+.ca-upload-btn svg{width:12px;height:12px;fill:none;stroke:currentColor;stroke-width:2;flex-shrink:0;}
+.ca-img-name{display:block;font-size:9px;color:var(--green);font-family:sans-serif;font-weight:700;margin-top:5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:180px;}
+
+/* toggle row */
+.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border);}
+.toggle-row:last-child{border-bottom:none;}
+.tr-info{}
+.tr-title{font-size:12px;font-weight:600;margin-bottom:2px;}
+.tr-desc{font-size:10px;color:var(--text3);}
+.toggler{width:38px;height:21px;border-radius:11px;position:relative;cursor:pointer;flex-shrink:0;transition:background .2s;}
+.toggler.on{background:var(--accent);}
+.toggler.off{background:var(--surface3);}
+.tog-thumb{position:absolute;top:2.5px;width:16px;height:16px;background:white;border-radius:50%;transition:left .2s;box-shadow:0 1px 4px rgba(0,0,0,.3);}
+.toggler.on .tog-thumb{left:19px;}
+.toggler.off .tog-thumb{left:3px;}
+
+.up-footer{padding:16px 24px;border-top:1px solid var(--border);display:flex;gap:10px;flex-shrink:0;}
+.up-submit{flex:1;display:flex;align-items:center;justify-content:center;gap:7px;padding:12px;background:var(--accent);border-radius:12px;font-family:sans-serif;font-size:13px;font-weight:800;color:white;cursor:pointer;box-shadow:0 4px 16px rgba(255,107,53,.35);transition:transform .15s,box-shadow .15s;}
+.up-submit:hover{transform:translateY(-1px);box-shadow:0 6px 22px rgba(255,107,53,.5);}
+.up-submit svg{width:15px;height:15px;fill:none;stroke:white;stroke-width:2.5;}
+.up-cancel{padding:12px 18px;background:var(--surface2);border:1px solid var(--border);border-radius:12px;font-family:sans-serif;font-size:12px;font-weight:700;color:var(--text2);cursor:pointer;transition:border-color .15s;}
+.up-cancel:hover{border-color:var(--border2);}
+
+/* ══ EDIT PANEL ══ */
+.edit-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);z-index:500;opacity:0;pointer-events:none;transition:opacity .3s;}
+.edit-overlay.show{opacity:1;pointer-events:all;}
+.edit-panel{position:fixed;right:0;top:0;bottom:0;width:480px;background:var(--surface);border-left:1px solid var(--border);z-index:501;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .35s cubic-bezier(.4,0,.2,1);}
+.edit-panel.show{transform:translateX(0);}
+
+/* ══ DELETE MODAL ══ */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(6px);z-index:600;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .25s;}
+.modal-overlay.show{opacity:1;pointer-events:all;}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:28px;max-width:380px;width:90%;text-align:center;transform:scale(.95);transition:transform .25s;}
+.modal-overlay.show .modal{transform:scale(1);}
+.modal-ico{font-size:48px;margin-bottom:14px;}
+.modal-title{font-family:sans-serif;font-size:18px;font-weight:800;margin-bottom:8px;}
+.modal-desc{font-size:12px;color:var(--text2);line-height:1.7;margin-bottom:22px;}
+.modal-actions{display:flex;gap:10px;}
+.modal-confirm{flex:1;padding:11px;background:var(--red);border-radius:11px;font-family:sans-serif;font-size:13px;font-weight:700;color:white;cursor:pointer;transition:opacity .15s;}
+.modal-confirm:hover{opacity:.85;}
+.modal-cancel{flex:1;padding:11px;background:var(--surface2);border:1px solid var(--border);border-radius:11px;font-family:sans-serif;font-size:13px;font-weight:700;color:var(--text2);cursor:pointer;transition:border-color .15s;}
+.modal-cancel:hover{border-color:var(--border2);}
+
+/* ══ TOAST ══ */
+.toast{position:fixed;bottom:26px;right:26px;padding:12px 18px;border-radius:12px;font-family:sans-serif;font-size:12px;font-weight:700;display:flex;align-items:center;gap:8px;z-index:9999;box-shadow:0 6px 24px rgba(0,0,0,.5);opacity:0;transform:translateY(8px);transition:all .3s;pointer-events:none;}
+.toast.show{opacity:1;transform:translateY(0);}
+.toast.success{background:var(--green);color:white;}
+.toast.error{background:var(--red);color:white;}
+.toast.info{background:var(--blue);color:white;}
+.toast svg{width:14px;height:14px;fill:none;stroke:white;stroke-width:2.5;}
+
+/* ══ EMPTY STATE ══ */
+.empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 20px;text-align:center;}
+.empty-ico{font-size:56px;margin-bottom:16px;opacity:.6;}
+.empty-title{font-family:sans-serif;font-size:16px;font-weight:700;margin-bottom:6px;color:var(--text2);}
+.empty-desc{font-size:12px;color:var(--text3);margin-bottom:20px;}
+
+/* ══ GRADIENTS ══ */
+.g1{background:linear-gradient(135deg,#9B6BFF,#4D9FFF);}
+.g2{background:linear-gradient(135deg,#FF6B35,#FFB347);}
+.g3{background:linear-gradient(135deg,#FF4D8F,#FF6B35);}
+.g4{background:linear-gradient(135deg,#2ECC8F,#4D9FFF);}
+.g5{background:linear-gradient(135deg,#FFB347,#FF4D8F);}
+.g6{background:linear-gradient(135deg,#4D9FFF,#9B6BFF);}
+.g7{background:linear-gradient(135deg,#FF6B35,#FF4D8F);}
+.g8{background:linear-gradient(135deg,#2ECC8F,#9B6BFF);}
+
+/* ══ SONG DETAIL MODAL ══ */
+.sm-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(8px);z-index:700;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .28s;}
+.sm-overlay.show{opacity:1;pointer-events:all;}
+.sm-dialog{background:var(--surface);border:1px solid var(--border2);border-radius:20px;width:100%;max-width:860px;max-height:90vh;display:flex;flex-direction:column;overflow:hidden;transform:scale(.95) translateY(16px);transition:transform .28s cubic-bezier(.4,0,.2,1);}
+.sm-overlay.show .sm-dialog{transform:scale(1) translateY(0);}
+
+/* header */
+.sm-hd{position:relative;display:flex;align-items:flex-end;gap:20px;padding:28px 28px 22px;overflow:hidden;flex-shrink:0;}
+.sm-hd-bg{position:absolute;inset:0;opacity:.18;filter:blur(40px);z-index:0;background-size:cover;}
+.sm-hd-art{width:88px;height:88px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:38px;flex-shrink:0;box-shadow:0 8px 32px rgba(0,0,0,.5);position:relative;z-index:1;}
+.sm-hd-info{flex:1;min-width:0;position:relative;z-index:1;}
+.sm-hd-title{font-family:sans-serif;font-size:22px;font-weight:800;letter-spacing:-.4px;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.sm-hd-artist{font-size:13px;color:var(--text2);margin-bottom:10px;}
+.sm-hd-badges{display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
+.sm-close{position:absolute;top:18px;right:18px;width:32px;height:32px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:9px;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:2;transition:background .15s;}
+.sm-close:hover{background:rgba(255,77,143,.2);border-color:rgba(255,77,143,.35);}
+.sm-close svg{width:14px;height:14px;fill:none;stroke:var(--text2);stroke-width:2;}
+
+/* metrics strip */
+.sm-metrics{display:grid;grid-template-columns:repeat(6,1fr);gap:1px;background:var(--border);border-top:1px solid var(--border);border-bottom:1px solid var(--border);flex-shrink:0;}
+.sm-metric{background:var(--surface);padding:14px 16px;text-align:center;}
+.sm-metric-v{font-family:sans-serif;font-size:17px;font-weight:800;margin-bottom:3px;}
+.sm-metric-l{font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;}
+
+/* body */
+.sm-body{display:grid;grid-template-columns:1fr 1fr;gap:0;flex:1;overflow:hidden;min-height:0;}
+.sm-col{padding:20px 24px;overflow-y:auto;scrollbar-width:thin;}
+.sm-col:first-child{border-right:1px solid var(--border);}
+
+/* player */
+.sm-player{background:var(--surface2);border:1px solid var(--border);border-radius:14px;padding:16px;margin-bottom:18px;}
+.sm-player-top{display:flex;align-items:center;gap:12px;margin-bottom:12px;}
+.sm-play-btn{width:42px;height:42px;background:var(--accent);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;box-shadow:0 4px 14px rgba(255,107,53,.4);transition:transform .15s,box-shadow .15s;}
+.sm-play-btn:hover{transform:scale(1.08);box-shadow:0 6px 20px rgba(255,107,53,.55);}
+.sm-play-btn svg{width:16px;height:16px;fill:white;margin-left:2px;}
+.sm-player-meta{flex:1;min-width:0;}
+.sm-player-title{font-family:sans-serif;font-size:12px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.sm-player-dur{font-size:10px;color:var(--text3);margin-top:2px;}
+.sm-waveform{height:36px;display:flex;align-items:center;gap:2px;}
+.sm-wf-bar{flex:1;background:rgba(255,107,53,.25);border-radius:2px;transition:background .2s;}
+.sm-wf-bar.active{background:var(--accent);}
+.sm-progress{height:3px;background:var(--surface3);border-radius:2px;margin-top:8px;position:relative;overflow:hidden;}
+.sm-progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:2px;width:0;transition:width .3s;}
+.sm-time-row{display:flex;justify-content:space-between;font-size:9px;color:var(--text3);margin-top:5px;}
+
+/* detail section */
+.sm-section-title{font-family:sans-serif;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:10px;display:flex;align-items:center;gap:7px;}
+.sm-section-title::after{content:'';flex:1;height:1px;background:var(--border);}
+.sm-meta-grid{display:flex;flex-direction:column;gap:8px;margin-bottom:18px;}
+.sm-meta-row{display:flex;align-items:center;justify-content:space-between;font-size:11px;}
+.sm-meta-key{color:var(--text3);flex-shrink:0;}
+.sm-meta-val{font-weight:600;text-align:right;}
+.sm-desc{font-size:11px;color:var(--text2);line-height:1.7;background:var(--surface2);border-radius:10px;padding:12px;margin-bottom:18px;}
+.sm-quality-chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:18px;}
+.sm-quality-chip{padding:4px 10px;border-radius:6px;font-size:10px;font-family:sans-serif;font-weight:700;background:rgba(77,159,255,.12);color:var(--blue);}
+.sm-activity{display:flex;flex-direction:column;gap:8px;}
+.sm-act-item{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--border);font-size:11px;}
+.sm-act-item:last-child{border-bottom:none;}
+.sm-act-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.sm-act-text{flex:1;color:var(--text2);}
+.sm-act-time{font-size:9px;color:var(--text3);flex-shrink:0;}
+
+/* footer */
+.sm-footer{display:flex;align-items:center;gap:8px;padding:16px 24px;border-top:1px solid var(--border);background:var(--surface);flex-shrink:0;}
+.sm-footer-spacer{flex:1;}
+.sm-action-btn{display:flex;align-items:center;gap:6px;padding:9px 16px;border-radius:10px;font-family:sans-serif;font-size:11px;font-weight:700;cursor:pointer;transition:all .15s;border:1px solid transparent;}
+.sm-action-btn svg{width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:2;}
+.sab-edit{background:rgba(77,159,255,.1);border-color:rgba(77,159,255,.25);color:var(--blue);}
+.sab-edit:hover{background:rgba(77,159,255,.18);}
+.sab-feat{background:rgba(155,107,255,.1);border-color:rgba(155,107,255,.25);color:var(--purple);}
+.sab-feat:hover{background:rgba(155,107,255,.18);}
+.sab-status{background:rgba(46,204,143,.1);border-color:rgba(46,204,143,.25);color:var(--green);}
+.sab-status:hover{background:rgba(46,204,143,.18);}
+.sab-del{background:rgba(255,68,68,.08);border-color:rgba(255,68,68,.2);color:var(--red);}
+.sab-del:hover{background:rgba(255,68,68,.15);}
+
+/* ════════════════════════════════
+   MOBILE RESPONSIVENESS
+════════════════════════════════ */
+@media (max-width:1200px) {
+  .stats-strip{gap:10px;}
+  .ss-card{flex:1;}
+  .grid-view.active{grid-template-columns:repeat(auto-fill,minmax(160px,1fr));}
+}
+
+@media (max-width:768px) {
+  .main{margin-left:var(--scw);}
+  .topbar{padding:0 16px;gap:10px;}
+  .tb-title{font-size:14px;}
+  .tb-crumb{font-size:9px;}
+  .tb-search{width:160px;padding:7px 10px;}
+  .tb-search svg{width:12px;height:12px;}
+  .tb-search input{font-size:11px;}
+  .tb-btn{width:32px;height:32px;}
+  .tb-btn svg{width:13px;height:13px;}
+  .tb-admin{padding:4px 8px;}
+  .tb-av{width:24px;height:24px;font-size:8px;}
+  .tb-aname{font-size:10px;}
+  
+  .upload-btn{padding:7px 12px;font-size:11px;}
+  .upload-btn svg{width:12px;height:12px;}
+  
+  .stats-strip{gap:8px;padding:14px 16px 0;}
+  .ss-card{padding:12px 14px;gap:10px;}
+  .ss-ico{width:32px;height:32px;}
+  .ss-ico svg{width:14px;height:14px;}
+  .ss-v{font-size:16px;}
+  .ss-l{font-size:9px;}
+  
+  .toolbar{gap:8px;padding:12px 16px;}
+  .filter-grp{gap:6px;}
+  .search-box{max-width:100%;padding:8px 12px;}
+  .search-box svg{width:12px;height:12px;}
+  .search-box input{font-size:11px;}
+  .fsel{padding:8px 10px;font-size:10px;}
+  .action-grp{gap:6px;}
+  .abtn{padding:7px 12px;font-size:10px;}
+  .abtn svg{width:12px;height:12px;}
+  
+  .bulk-bar{padding:8px 16px;}
+  .bulk-count{font-size:11px;}
+  
+  .view-tabs{gap:3px;padding:0 16px 10px;}
+  .vtab{padding:5px 12px;font-size:10px;}
+  .vtab svg{width:11px;height:11px;}
+  .vtab-count{font-size:8px;}
+  
+  .table-wrap{padding:0 16px 16px;overflow-x:auto;}
+  .song-table{min-width:800px;}
+  .song-table th{padding:0 10px 10px;font-size:8px;}
+  .song-table td{padding:8px 10px;font-size:10px;}
+  .song-cell{gap:8px;}
+  .song-art{width:36px;height:36px;font-size:14px;}
+  .song-title{font-size:11px;max-width:120px;}
+  .song-artist-name{font-size:9px;}
+  .cat-badge{font-size:7px;padding:1px 6px;}
+  .status-badge{font-size:8px;padding:2px 7px;}
+  .sb-dot{width:4px;height:4px;}
+  .q-badge{font-size:7px;padding:1px 5px;}
+  .pv,.dv{font-size:11px;}
+  .dur-v{font-size:10px;}
+  .date-v{font-size:9px;}
+  .row-actions{gap:3px;}
+  .ra-btn{width:24px;height:24px;}
+  .ra-btn svg{width:12px;height:12px;}
+  
+  .grid-view.active{grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;}
+  .grid-card{border-radius:12px;}
+  .grid-card-art{height:120px;font-size:36px;}
+  .gc-play{width:32px;height:32px;}
+  .gc-play svg{width:12px;height:12px;}
+  .gc-edit{width:28px;height:28px;}
+  .gc-edit svg{width:12px;height:12px;}
+  .gc-info{padding:10px;}
+  .gc-title{font-size:10px;}
+  .gc-artist{font-size:9px;}
+  .gc-stat{font-size:8px;}
+  
+  .pagination{padding:12px 16px;gap:6px;}
+  .pg-info{font-size:10px;}
+  .pg-btn{width:28px;height:28px;font-size:10px;}
+  .pg-btn svg{width:10px;height:10px;}
+  .pg-perpage{font-size:10px;}
+  .pg-perpage select{padding:3px 6px;font-size:10px;}
+  
+  .upload-panel{width:100%;max-width:100%;}
+  .up-header{padding:16px 18px;}
+  .up-title{font-size:14px;}
+  .up-close{width:28px;height:28px;}
+  .up-close svg{width:12px;height:12px;}
+  .up-body{padding:16px 18px;}
+  .dropzone{padding:24px 16px;}
+  .dz-icon{font-size:32px;}
+  .dz-title{font-size:12px;}
+  .dz-sub{font-size:10px;}
+  .form-group{margin-bottom:12px;}
+  .form-label{font-size:9px;}
+  .form-input,.form-select,.form-textarea{padding:9px 11px;font-size:11px;}
+  .form-row{gap:10px;}
+  .up-footer{padding:12px 18px;gap:8px;}
+  .up-submit{padding:10px;font-size:12px;}
+  .up-cancel{padding:10px 14px;font-size:11px;}
+  
+  .edit-panel{width:100%;max-width:100%;}
+  
+  .modal{padding:20px;max-width:320px;}
+  .modal-ico{font-size:40px;}
+  .modal-title{font-size:16px;}
+  .modal-desc{font-size:11px;}
+  .modal-confirm,.modal-cancel{font-size:12px;padding:9px;}
+  
+  .toast{bottom:16px;right:16px;padding:10px 14px;font-size:11px;}
+  
+  .sm-dialog{max-width:95vw;}
+  .sm-hd{padding:20px 18px 16px;gap:16px;}
+  .sm-hd-art{width:72px;height:72px;font-size:32px;}
+  .sm-hd-title{font-size:18px;}
+  .sm-hd-artist{font-size:11px;}
+  .sm-close{width:28px;height:28px;}
+  .sm-close svg{width:12px;height:12px;}
+  .sm-metrics{grid-template-columns:repeat(3,1fr);}
+  .sm-metric{padding:12px 14px;}
+  .sm-metric-v{font-size:15px;}
+  .sm-metric-l{font-size:8px;}
+  .sm-body{grid-template-columns:1fr;}
+  .sm-col{padding:16px 18px;}
+  .sm-col:first-child{border-right:none;border-bottom:1px solid var(--border);}
+  .sm-footer{padding:12px 18px;}
+  .sm-action-btn{padding:8px 12px;font-size:10px;}
+}
+
+@media (max-width:480px) {
+  .main{margin-left:var(--scw);}
+  .topbar{padding:0 12px;height:56px;}
+  .toggle-btn{width:28px;height:28px;}
+  .toggle-btn svg{width:14px;height:14px;}
+  .tb-title{font-size:12px;display:none;}
+  .tb-crumb{display:none;}
+  .tb-search{display:none;}
+  .tb-actions{gap:6px;}
+  .tb-btn{width:28px;height:28px;}
+  .tb-btn svg{width:12px;height:12px;}
+  .tb-admin{display:none;}
+  
+  .upload-btn{padding:6px 10px;font-size:10px;}
+  .upload-btn svg{width:11px;height:11px;}
+  
+  .stats-strip{grid-template-columns:repeat(2,1fr);gap:6px;padding:10px 12px 0;}
+  .ss-card{padding:10px 12px;gap:8px;}
+  .ss-ico{width:28px;height:28px;}
+  .ss-ico svg{width:12px;height:12px;}
+  .ss-v{font-size:14px;}
+  .ss-l{font-size:8px;}
+  
+  .toolbar{flex-direction:column;gap:6px;padding:10px 12px;}
+  .filter-grp{gap:4px;}
+  .search-box{width:100%;max-width:100%;padding:7px 10px;}
+  .search-box svg{width:11px;height:11px;}
+  .search-box input{font-size:10px;}
+  .fsel{width:100%;padding:7px 10px;font-size:9px;}
+  .action-grp{width:100%;gap:4px;}
+  .abtn{flex:1;padding:6px 10px;font-size:9px;}
+  .abtn svg{width:10px;height:10px;}
+  
+  .bulk-bar{padding:6px 12px;}
+  .bulk-count{font-size:10px;}
+  .bulk-actions{gap:4px;}
+  
+  .view-tabs{gap:2px;padding:0 12px 8px;overflow-x:auto;}
+  .vtab{padding:4px 10px;font-size:9px;}
+  .vtab svg{width:10px;height:10px;}
+  .vtab-count{font-size:7px;}
+  .sort-row{display:none;}
+  
+  .table-wrap{padding:0 12px 12px;overflow-x:auto;}
+  .song-table{min-width:600px;font-size:9px;}
+  .song-table th{padding:0 8px 8px;font-size:7px;}
+  .song-table td{padding:6px 8px;font-size:9px;}
+  .song-cell{gap:6px;}
+  .song-art{width:32px;height:32px;font-size:12px;}
+  .song-title{font-size:10px;max-width:100px;}
+  .song-artist-name{font-size:8px;}
+  .cat-badge{font-size:6px;padding:1px 4px;}
+  .status-badge{font-size:7px;padding:1px 5px;}
+  .sb-dot{width:3px;height:3px;}
+  .q-badge{font-size:6px;padding:1px 3px;}
+  .pv,.dv{font-size:10px;}
+  .dur-v{font-size:9px;}
+  .date-v{font-size:8px;}
+  .row-actions{gap:2px;}
+  .ra-btn{width:20px;height:20px;}
+  .ra-btn svg{width:10px;height:10px;}
+  .cb{width:14px;height:14px;}
+  .cb svg{width:8px;height:8px;}
+  
+  .grid-view.active{grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;}
+  .grid-card-art{height:100px;font-size:28px;}
+  .gc-play{width:28px;height:28px;}
+  .gc-play svg{width:10px;height:10px;}
+  .gc-edit{width:24px;height:24px;}
+  .gc-edit svg{width:10px;height:10px;}
+  .gc-info{padding:8px;}
+  .gc-title{font-size:9px;}
+  .gc-artist{font-size:8px;}
+  .gc-stat{font-size:7px;}
+  
+  .pagination{flex-direction:column;padding:10px 12px;gap:4px;align-items:flex-start;}
+  .pg-info{font-size:9px;}
+  .pg-controls{width:100%;overflow-x:auto;}
+  .pg-btn{width:24px;height:24px;font-size:9px;}
+  .pg-btn svg{width:9px;height:9px;}
+  .pg-perpage{width:100%;font-size:9px;}
+  .pg-perpage select{padding:2px 4px;font-size:9px;}
+  
+  .upload-panel{width:100%;height:100%;max-width:100%;border-radius:16px 16px 0 0;bottom:0;top:auto;}
+  .up-header{padding:14px 16px;}
+  .up-title{font-size:12px;}
+  .up-close{width:24px;height:24px;}
+  .up-close svg{width:10px;height:10px;}
+  .up-body{padding:12px 16px;}
+  .dropzone{padding:20px 12px;}
+  .dz-icon{font-size:28px;}
+  .dz-title{font-size:11px;}
+  .dz-sub{font-size:9px;}
+  .form-group{margin-bottom:10px;}
+  .form-label{font-size:8px;}
+  .form-input,.form-select,.form-textarea{padding:8px 10px;font-size:10px;}
+  .form-textarea{min-height:70px;}
+  .form-row{grid-template-columns:1fr;gap:8px;}
+  .up-footer{padding:10px 16px;gap:6px;}
+  .up-submit{padding:8px;font-size:11px;}
+  .up-cancel{padding:8px 12px;font-size:10px;}
+  
+  .edit-panel{width:100%;height:100%;border-radius:16px 16px 0 0;bottom:0;top:auto;}
+  
+  .modal-overlay{padding:12px;}
+  .modal{padding:16px;max-width:100%;border-radius:16px;}
+  .modal-ico{font-size:36px;}
+  .modal-title{font-size:14px;}
+  .modal-desc{font-size:10px;}
+  .modal-confirm,.modal-cancel{font-size:11px;padding:8px;}
+  
+  .toast{bottom:12px;right:12px;padding:8px 12px;font-size:10px;}
+  
+  .sm-overlay{padding:12px;}
+  .sm-dialog{max-width:100%;max-height:95vh;border-radius:16px;}
+  .sm-hd{padding:16px 14px 12px;gap:12px;}
+  .sm-hd-art{width:60px;height:60px;font-size:28px;}
+  .sm-hd-title{font-size:14px;}
+  .sm-hd-artist{font-size:10px;}
+  .sm-hd-badges{gap:4px;}
+  .sm-close{width:24px;height:24px;}
+  .sm-close svg{width:10px;height:10px;}
+  .sm-metrics{grid-template-columns:repeat(2,1fr);}
+  .sm-metric{padding:10px 12px;}
+  .sm-metric-v{font-size:13px;}
+  .sm-metric-l{font-size:7px;}
+  .sm-body{grid-template-columns:1fr;}
+  .sm-col{padding:12px 14px;}
+  .sm-col:first-child{border-right:none;border-bottom:1px solid var(--border);}
+  .sm-player{padding:12px;margin-bottom:12px;}
+  .sm-play-btn{width:36px;height:36px;}
+  .sm-play-btn svg{width:14px;height:14px;}
+  .sm-player-title{font-size:11px;}
+  .sm-player-dur{font-size:9px;}
+  .sm-section-title{font-size:9px;}
+  .sm-meta-grid{gap:6px;}
+  .sm-meta-row{font-size:10px;}
+  .sm-desc{font-size:10px;padding:10px;}
+  .sm-quality-chip{font-size:9px;padding:3px 8px;}
+  .sm-act-item{gap:6px;padding:6px 0;font-size:10px;}
+  .sm-act-time{font-size:8px;}
+  .sm-footer{padding:10px 14px;gap:6px;}
+  .sm-action-btn{padding:7px 10px;font-size:9px;}
+  .sm-action-btn svg{width:11px;height:11px;}
+}
+</style>
+</head>
+<body>
+<div id="waazi-scope-banner" style="position:fixed;top:8px;left:50%;transform:translateX(-50%);z-index:9999;background:linear-gradient(135deg,#C8860A,#E8A020);color:#1A0800;padding:5px 14px 5px 12px;border-radius:50px;font-family:sans-serif;font-size:11px;font-weight:700;box-shadow:0 6px 20px rgba(200,134,10,.35);display:flex;align-items:center;gap:8px;pointer-events:auto;"><span>🎙️ Wa'azi Admin</span><a href="shurafah_song_management.html" style="color:#1A0800;text-decoration:underline;font-weight:600;">Switch &rarr; Songs view: Song Management</a><span onclick="document.getElementById('waazi-scope-banner').remove()" style="cursor:pointer;padding-left:6px;opacity:.7;">✕</span></div>
+
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- DELETE MODAL -->
+<div class="modal-overlay" id="deleteModal">
+  <div class="modal">
+    <div class="modal-ico">🗑️</div>
+    <div class="modal-title">Delete Lecture?</div>
+    <div class="modal-desc">You're about to permanently delete <strong id="deleteTitle">"Kurmus"</strong>. This will remove the audio file, all play history, comments and downloads. This cannot be undone.</div>
+    <div class="modal-actions">
+      <div class="modal-cancel" onclick="closeModal()">Cancel</div>
+      <div class="modal-confirm" onclick="confirmDelete()">Yes, Delete</div>
+    </div>
+  </div>
+</div>
+
+<!-- UPLOAD OVERLAY + PANEL -->
+<div class="upload-overlay" id="uploadOverlay" onclick="closeUpload()"></div>
+<div class="upload-panel" id="uploadPanel">
+  <div class="up-header">
+    <div>
+      <div class="up-title">Add New Lecture</div>
+      <div style="font-size:10px;color:var(--text3);margin-top:2px;">Choose how you want to add this lecture</div>
+    </div>
+    <div class="up-close" onclick="closeUpload()"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>
+  </div>
+  <div class="up-body">
+
+    <!-- ══ SOURCE METHOD TABS ══ -->
+    <div style="display:flex;gap:0;background:var(--surface2);border-radius:12px;padding:4px;margin-bottom:20px;">
+      <div class="src-tab active" data-src="file" onclick="switchSrc('file')" style="flex:1;padding:8px 6px;border-radius:9px;text-align:center;cursor:pointer;font-family:sans-serif;font-size:10px;font-weight:700;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:5px;">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        File Upload
+      </div>
+      <div class="src-tab" data-src="url" onclick="switchSrc('url')" style="flex:1;padding:8px 6px;border-radius:9px;text-align:center;cursor:pointer;font-family:sans-serif;font-size:10px;font-weight:700;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:5px;color:var(--text3);">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+        Audio URL
+      </div>
+      <div class="src-tab" data-src="cloud" onclick="switchSrc('cloud')" style="flex:1;padding:8px 6px;border-radius:9px;text-align:center;cursor:pointer;font-family:sans-serif;font-size:10px;font-weight:700;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:5px;color:var(--text3);">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
+        Cloud Storage
+      </div>
+      <div class="src-tab" data-src="youtube" onclick="switchSrc('youtube')" style="flex:1;padding:8px 6px;border-radius:9px;text-align:center;cursor:pointer;font-family:sans-serif;font-size:10px;font-weight:700;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:5px;color:var(--text3);">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        Import
+      </div>
+    </div>
+
+    <!-- ══ SOURCE: FILE UPLOAD ══ -->
+    <div id="src-file" class="src-body">
+      <div class="dropzone" id="dropzone" ondragover="event.preventDefault();this.classList.add('dragging')" ondragleave="this.classList.remove('dragging')" ondrop="handleDrop(event)">
+        <input type="file" class="dz-input" accept=".mp3,.aac,.flac,.wav,.ogg,.m4a" onchange="handleFileSelect(event)">
+        <div class="dz-icon">🎵</div>
+        <div class="dz-title">Drop your audio file here</div>
+        <div class="dz-sub">or <span style="color:var(--accent);font-weight:600;cursor:pointer">browse your computer</span></div>
+        <div class="dz-formats" style="margin-top:12px;">
+          <div class="dz-fmt">MP3</div><div class="dz-fmt">AAC</div><div class="dz-fmt">FLAC</div>
+          <div class="dz-fmt">WAV</div><div class="dz-fmt">OGG</div><div class="dz-fmt">M4A</div>
+          <div style="font-size:9px;color:var(--text3);align-self:center;margin-left:4px;">Max 50 MB</div>
+        </div>
+      </div>
+      <div class="upload-progress" id="uploadProgress">
+        <div class="up-file">
+          <div class="up-file-ico">🎵</div>
+          <div style="flex:1;min-width:0;">
+            <div class="up-file-name" id="upFileName">kurmus_uzairu_badamasi.mp3</div>
+            <div class="up-file-size" id="upFileSize">8.4 MB · MP3</div>
+          </div>
+          <div style="font-size:10px;color:var(--green);font-family:sans-serif;font-weight:700;">✓ Ready</div>
+        </div>
+        <div class="up-bar-bg"><div class="up-bar-fill" id="upBarFill" style="width:100%;background:linear-gradient(90deg,var(--green),var(--teal));animation:none;"></div></div>
+        <div style="display:flex;justify-content:space-between;margin-top:5px;">
+          <div class="up-bar-pct" style="color:var(--green)">File loaded — ready to save</div>
+          <div style="font-size:9px;color:var(--text3);cursor:pointer" onclick="clearFile()">✕ Remove</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ SOURCE: AUDIO URL ══ -->
+    <div id="src-url" class="src-body" style="display:none;">
+      <div style="background:rgba(77,159,255,.05);border:1px solid rgba(77,159,255,.18);border-radius:var(--r);padding:16px;margin-bottom:16px;">
+        <div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:14px;">
+          <div style="width:36px;height:36px;background:rgba(77,159,255,.14);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+          </div>
+          <div>
+            <div style="font-family:sans-serif;font-size:13px;font-weight:700;margin-bottom:2px;">Direct Audio URL</div>
+            <div style="font-size:10px;color:var(--text3);line-height:1.6;">Paste any direct link to an MP3, AAC or streaming audio file. The file stays hosted at its original URL — no storage used.</div>
+          </div>
+        </div>
+        <div class="form-group" style="margin-bottom:10px;">
+          <div class="form-label">Audio File URL <span class="req">*</span></div>
+          <div style="display:flex;gap:8px;">
+            <input class="form-input" id="audioUrl" type="url" placeholder="https://example.com/audio/song.mp3" style="flex:1;">
+            <div onclick="verifyUrl()" style="padding:10px 14px;background:var(--blue);border-radius:10px;font-family:sans-serif;font-size:11px;font-weight:700;color:white;cursor:pointer;white-space:nowrap;flex-shrink:0;">Verify</div>
+          </div>
+          <div class="form-hint">Supports .mp3 · .aac · .wav · .flac · .ogg · .m4a — direct link required (not a webpage)</div>
+        </div>
+        <div id="urlVerified" style="display:none;padding:8px 12px;background:rgba(46,204,143,.08);border:1px solid rgba(46,204,143,.2);border-radius:9px;font-size:11px;color:var(--green);font-family:sans-serif;font-weight:600;display:flex;align-items:center;gap:6px;">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22,4 12,14.01 9,11.01"/></svg>
+          URL verified · MP3 · 8.2 MB · ~3m 42s duration detected
+        </div>
+      </div>
+      <div style="background:rgba(255,107,53,.04);border:1px solid rgba(255,107,53,.12);border-radius:var(--r);padding:14px;">
+        <div style="font-size:10px;color:var(--text3);line-height:1.8;">
+          <strong style="color:var(--text2);">Supported URL formats:</strong><br>
+          ✓ &nbsp;<code style="color:var(--accent);font-size:9px;">https://cdn.example.com/song.mp3</code><br>
+          ✓ &nbsp;<code style="color:var(--accent);font-size:9px;">https://r2.cloudflare.com/bucket/file.aac</code><br>
+          ✓ &nbsp;<code style="color:var(--accent);font-size:9px;">https://s3.amazonaws.com/bucket/track.wav</code><br>
+          ✗ &nbsp;<span style="color:var(--red);">YouTube, Spotify, SoundCloud links (not direct files)</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ SOURCE: CLOUD STORAGE ══ -->
+    <div id="src-cloud" class="src-body" style="display:none;">
+      <div style="margin-bottom:14px;">
+        <div class="form-label">Select Cloud Provider</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+          <div class="cloud-opt selected" data-cloud="r2" onclick="selectCloud(this)" style="background:rgba(255,107,53,.08);border:1.5px solid var(--accent);border-radius:11px;padding:12px 10px;cursor:pointer;text-align:center;transition:all .15s;">
+            <div style="font-size:22px;margin-bottom:5px;">☁️</div>
+            <div style="font-family:sans-serif;font-size:11px;font-weight:700;color:var(--accent);">Cloudflare R2</div>
+            <div style="font-size:9px;color:var(--text3);margin-top:2px;">Connected</div>
+          </div>
+          <div class="cloud-opt" data-cloud="s3" onclick="selectCloud(this)" style="background:var(--surface2);border:1.5px solid var(--border);border-radius:11px;padding:12px 10px;cursor:pointer;text-align:center;transition:all .15s;">
+            <div style="font-size:22px;margin-bottom:5px;">🪣</div>
+            <div style="font-family:sans-serif;font-size:11px;font-weight:700;">AWS S3</div>
+            <div style="font-size:9px;color:var(--text3);margin-top:2px;">Configure</div>
+          </div>
+          <div class="cloud-opt" data-cloud="gcs" onclick="selectCloud(this)" style="background:var(--surface2);border:1.5px solid var(--border);border-radius:11px;padding:12px 10px;cursor:pointer;text-align:center;transition:all .15s;">
+            <div style="font-size:22px;margin-bottom:5px;">🔵</div>
+            <div style="font-family:sans-serif;font-size:11px;font-weight:700;">Google Cloud</div>
+            <div style="font-size:9px;color:var(--text3);margin-top:2px;">Configure</div>
+          </div>
+          <div class="cloud-opt" data-cloud="custom" onclick="selectCloud(this)" style="background:var(--surface2);border:1.5px solid var(--border);border-radius:11px;padding:12px 10px;cursor:pointer;text-align:center;transition:all .15s;">
+            <div style="font-size:22px;margin-bottom:5px;">🔗</div>
+            <div style="font-family:sans-serif;font-size:11px;font-weight:700;">Custom CDN</div>
+            <div style="font-size:9px;color:var(--text3);margin-top:2px;">Enter base URL</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- R2 file browser -->
+      <div id="r2-browser" style="background:var(--surface2);border:1px solid var(--border);border-radius:12px;overflow:hidden;">
+        <div style="padding:10px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--text3)" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+          <span style="font-size:11px;color:var(--text3);">shurafah-audio</span>
+          <span style="font-size:11px;color:var(--text3);">/</span>
+          <span style="font-size:11px;font-weight:600;">lectures/</span>
+          <div style="margin-left:auto;display:flex;gap:6px;">
+            <div style="padding:4px 10px;background:var(--surface3);border-radius:7px;font-size:9px;font-family:sans-serif;font-weight:700;color:var(--text2);cursor:pointer;">↑ Upload to R2</div>
+            <div style="padding:4px 10px;background:var(--surface3);border-radius:7px;font-size:9px;font-family:sans-serif;font-weight:700;color:var(--text2);cursor:pointer;">⟳ Refresh</div>
+          </div>
+        </div>
+        <div style="max-height:240px;overflow-y:auto;">
+          <div class="r2-file selected-file" onclick="selectR2File(this,'Hanyar Gaskiya Vol 3 - Sh Ahmad Gumi.mp3','46.2 MB')" style="display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .12s;background:rgba(255,107,53,.06);">
+            <span style="font-size:14px;">🎵</span>
+            <div style="flex:1;min-width:0;"><div style="font-size:11px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">Hanyar Gaskiya Vol 3 - Sh Ahmad Gumi.mp3</div><div style="font-size:9px;color:var(--text3);margin-top:1px;">8.4 MB · MP3 · 320kbps</div></div>
+            <div style="font-size:9px;color:var(--accent);font-family:sans-serif;font-weight:700;">✓ Selected</div>
+          </div>
+          <div class="r2-file" onclick="selectR2File(this,'Tafsir Surah Baqarah - Sh Isah Ali.mp3','61.5 MB')" style="display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .12s;">
+            <span style="font-size:14px;">🎵</span>
+            <div style="flex:1;min-width:0;"><div style="font-size:11px;font-weight:600;">Tafsir Surah Baqarah - Sh Isah Ali.mp3</div><div style="font-size:9px;color:var(--text3);margin-top:1px;">6.1 MB · MP3 · 128kbps</div></div>
+            <div style="font-size:9px;color:var(--text3);">Mar 28</div>
+          </div>
+          <div class="r2-file" onclick="selectR2File(this,'Du\'as for Difficulty - Sh Ahmad Gumi.aac','22.4 MB')" style="display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .12s;">
+            <span style="font-size:14px;">🎶</span>
+            <div style="flex:1;min-width:0;"><div style="font-size:11px;font-weight:600;">Du'as for Difficulty - Sh Ahmad Gumi.aac</div><div style="font-size:9px;color:var(--text3);margin-top:1px;">22.4 MB · AAC · 128kbps</div></div>
+            <div style="font-size:9px;color:var(--text3);">Mar 27</div>
+          </div>
+          <div class="r2-file" onclick="selectR2File(this,'Fiqhul Ibadah Part 12 - Dr Aminu.wav','58.4 MB')" style="display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .12s;">
+            <span style="font-size:14px;">🎵</span>
+            <div style="flex:1;min-width:0;"><div style="font-size:11px;font-weight:600;">Fiqhul Ibadah Part 12 - Dr Aminu.wav</div><div style="font-size:9px;color:var(--text3);margin-top:1px;">18.7 MB · WAV · 320kbps</div></div>
+            <div style="font-size:9px;color:var(--text3);">Mar 25</div>
+          </div>
+          <div class="r2-file" onclick="selectR2File(this,'Akhlaq al-Mumin - Sh Yakubu.flac','68.1 MB')" style="display:flex;align-items:center;gap:10px;padding:10px 14px;cursor:pointer;transition:background .12s;">
+            <span style="font-size:14px;">🎵</span>
+            <div style="flex:1;min-width:0;"><div style="font-size:11px;font-weight:600;">Akhlaq al-Mumin - Sh Yakubu.flac</div><div style="font-size:9px;color:var(--text3);margin-top:1px;">22.3 MB · FLAC · Lossless</div></div>
+            <div style="font-size:9px;color:var(--text3);">Mar 22</div>
+          </div>
+        </div>
+        <div style="padding:8px 14px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;">
+          <div style="font-size:9px;color:var(--text3);">5 files shown · 18.4 GB used</div>
+          <div id="r2SelectedInfo" style="font-size:9px;color:var(--green);font-family:sans-serif;font-weight:700;">✓ Hanyar Gaskiya Vol 3 - Sh Ahmad Gumi.mp3 selected</div>
+        </div>
+      </div>
+
+      <!-- Cloud URL input (for custom CDN) -->
+      <div id="cloudUrlInput" style="display:none;margin-top:12px;">
+        <div class="form-label">Cloud Storage URL <span class="req">*</span></div>
+        <input class="form-input" type="url" placeholder="https://your-cdn.com/audio/song.mp3">
+        <div class="form-hint">Enter the full HTTPS URL to your audio file on the CDN</div>
+      </div>
+    </div>
+
+    <!-- ══ SOURCE: IMPORT (YouTube/SoundCloud/etc) ══ -->
+    <div id="src-youtube" class="src-body" style="display:none;">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px;">
+        <div class="import-opt selected-import" data-plat="youtube" onclick="selectImport(this)" style="background:rgba(255,68,68,.08);border:1.5px solid rgba(255,68,68,.3);border-radius:11px;padding:12px 10px;cursor:pointer;text-align:center;transition:all .15s;">
+          <div style="font-size:24px;margin-bottom:5px;">▶️</div>
+          <div style="font-family:sans-serif;font-size:11px;font-weight:700;color:#FF4444;">YouTube</div>
+          <div style="font-size:9px;color:var(--text3);margin-top:2px;">Extract audio</div>
+        </div>
+        <div class="import-opt" data-plat="soundcloud" onclick="selectImport(this)" style="background:var(--surface2);border:1.5px solid var(--border);border-radius:11px;padding:12px 10px;cursor:pointer;text-align:center;transition:all .15s;">
+          <div style="font-size:24px;margin-bottom:5px;">🔊</div>
+          <div style="font-family:sans-serif;font-size:11px;font-weight:700;">SoundCloud</div>
+          <div style="font-size:9px;color:var(--text3);margin-top:2px;">Import track</div>
+        </div>
+        <div class="import-opt" data-plat="archive" onclick="selectImport(this)" style="background:var(--surface2);border:1.5px solid var(--border);border-radius:11px;padding:12px 10px;cursor:pointer;text-align:center;transition:all .15s;">
+          <div style="font-size:24px;margin-bottom:5px;">🏛️</div>
+          <div style="font-family:sans-serif;font-size:11px;font-weight:700;">Archive.org</div>
+          <div style="font-size:9px;color:var(--text3);margin-top:2px;">Public domain</div>
+        </div>
+        <div class="import-opt" data-plat="other" onclick="selectImport(this)" style="background:var(--surface2);border:1.5px solid var(--border);border-radius:11px;padding:12px 10px;cursor:pointer;text-align:center;transition:all .15s;">
+          <div style="font-size:24px;margin-bottom:5px;">🌐</div>
+          <div style="font-family:sans-serif;font-size:11px;font-weight:700;">Web Page</div>
+          <div style="font-size:9px;color:var(--text3);margin-top:2px;">Auto-detect audio</div>
+        </div>
+      </div>
+      <div class="form-group" style="margin-bottom:10px;">
+        <div class="form-label">Paste Link <span class="req">*</span></div>
+        <div style="display:flex;gap:8px;">
+          <input class="form-input" id="importUrl" type="url" placeholder="https://youtube.com/watch?v=..." style="flex:1;">
+          <div onclick="fetchImport()" style="padding:10px 14px;background:linear-gradient(135deg,#FF4444,#FF6B35);border-radius:10px;font-family:sans-serif;font-size:11px;font-weight:700;color:white;cursor:pointer;white-space:nowrap;flex-shrink:0;">Fetch</div>
+        </div>
+      </div>
+      <div id="importPreview" style="display:none;background:var(--surface2);border:1px solid var(--border);border-radius:11px;padding:12px;margin-bottom:12px;">
+        <div style="display:flex;gap:10px;align-items:center;">
+          <div style="width:52px;height:52px;border-radius:9px;background:linear-gradient(135deg,#FF4444,#FF6B35);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;">🎵</div>
+          <div style="flex:1;min-width:0;">
+            <div style="font-family:sans-serif;font-size:12px;font-weight:700;margin-bottom:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" id="importTitle">Sheikh Ahmad Gumi — Hanyar Gaskiya Vol. 3 (Full Lecture)</div>
+            <div style="font-size:10px;color:var(--text2);margin-bottom:5px;">YouTube · <span id="importChannel">Sheikh Ahmad Gumi Official</span></div>
+            <div style="display:flex;gap:7px;">
+              <div style="font-size:9px;background:rgba(255,68,68,.1);color:#FF4444;border-radius:5px;padding:2px 7px;font-family:sans-serif;font-weight:700;">YouTube</div>
+              <div style="font-size:9px;color:var(--text3);">3:42 · Audio extracted</div>
+            </div>
+          </div>
+          <div style="font-size:10px;color:var(--green);font-family:sans-serif;font-weight:700;flex-shrink:0;">✓ Ready</div>
+        </div>
+      </div>
+      <div style="background:rgba(255,209,102,.05);border:1px solid rgba(255,209,102,.15);border-radius:10px;padding:11px 13px;">
+        <div style="font-size:10px;color:var(--yellow);font-family:sans-serif;font-weight:700;margin-bottom:4px;">⚠ Copyright Notice</div>
+        <div style="font-size:10px;color:var(--text3);line-height:1.7;">Ensure you have the rights to use this content. Only import lectures you own or have explicit permission to distribute. Shurafah reserves the right to remove content violating copyright.</div>
+      </div>
+    </div>
+
+    <!-- ══ DIVIDER ══ -->
+    <div style="display:flex;align-items:center;gap:10px;margin:20px 0 16px;">
+      <div style="flex:1;height:1px;background:var(--border);"></div>
+      <div style="font-size:9px;color:var(--text3);font-family:sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:.5px;">Lecture Details</div>
+      <div style="flex:1;height:1px;background:var(--border);"></div>
+    </div>
+
+    <!-- ══ COVER ART ══ -->
+    <div class="form-group">
+      <div class="form-label">Cover Art / Thumbnail</div>
+      <div class="cover-art-row">
+        <!-- Preview (same size as icon box) -->
+        <div class="ca-preview g1" id="caPreview" onclick="document.getElementById('caFileInput').click()">
+          <span id="caEmoji">🎵</span>
+          <div class="ca-preview-overlay"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg></div>
+        </div>
+        <!-- Options -->
+        <div class="ca-options">
+          <div class="ca-tabs">
+            <div class="ca-tab active" id="caTabGrad" onclick="switchCaTab('gradient')">Gradient</div>
+            <div class="ca-tab" id="caTabImg" onclick="switchCaTab('image')">Upload Image</div>
+          </div>
+          <!-- Gradient swatches -->
+          <div id="caGradPanel">
+            <div class="ca-swatches">
+              <div class="ca-swatch g1 active" onclick="selectCaGradient(this,'g1','🎵')" title="Purple–Blue"></div>
+              <div class="ca-swatch g2" onclick="selectCaGradient(this,'g2','🎶')" title="Orange–Gold"></div>
+              <div class="ca-swatch g3" onclick="selectCaGradient(this,'g3','🎸')" title="Pink–Orange"></div>
+              <div class="ca-swatch g4" onclick="selectCaGradient(this,'g4','🎼')" title="Green–Blue"></div>
+              <div class="ca-swatch g5" onclick="selectCaGradient(this,'g5','🎙️')" title="Gold–Pink"></div>
+              <div class="ca-swatch g6" onclick="selectCaGradient(this,'g6','🎹')" title="Blue–Purple"></div>
+              <div class="ca-swatch g7" onclick="selectCaGradient(this,'g7','🎺')" title="Orange–Pink"></div>
+              <div class="ca-swatch g8" onclick="selectCaGradient(this,'g8','🎻')" title="Green–Purple"></div>
+            </div>
+            <div class="form-hint" style="margin-top:6px;">Click a color to select gradient art</div>
+          </div>
+          <!-- Image upload -->
+          <div id="caImgPanel" style="display:none;">
+            <div class="ca-upload-btn" onclick="document.getElementById('caFileInput').click()">
+              <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              Choose Image
+            </div>
+            <span class="ca-img-name" id="caImgName" style="display:none;"></span>
+            <div class="form-hint" style="margin-top:5px;">JPG · PNG · WEBP · Square recommended</div>
+          </div>
+          <input type="file" id="caFileInput" accept="image/jpeg,image/png,image/webp,image/gif" style="display:none;" onchange="handleCaImage(event)">
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ SONG DETAILS FORM ══ -->
+    <div class="form-row">
+      <div class="form-group">
+        <div class="form-label">Lecture Title <span class="req">*</span></div>
+        <input class="form-input" type="text" placeholder="e.g. Kurmus" id="songTitle">
+      </div>
+      <div class="form-group">
+        <div class="form-label">Duration</div>
+        <input class="form-input" type="text" placeholder="e.g. 3:42" id="songDuration">
+        <div class="form-hint">Auto-detected from file when possible</div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <div class="form-label">Preacher <span class="req">*</span></div>
+        <select class="form-select" id="songArtist">
+          <option value="">Select preacher…</option>
+          <option>Sheikh Ahmad Gumi</option>
+          <option>Sheikh Isah Ali Ibrahim</option>
+          <option>Dr. Aminu Daurawa</option>
+          <option>Sheikh Abdallah Usman</option>
+          <option>Sheikh Aliyu Maikwaru</option>
+          <option>Sheikh Yakubu Musa</option>
+          <option>Sheikh Auwal Albani</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <div class="form-label">Language</div>
+        <select class="form-select">
+          <option>Hausa</option>
+          <option>Arabic</option>
+          <option>English</option>
+          <option>Fulfulde</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <div class="form-label">Category <span class="req">*</span></div>
+        <select class="form-select" id="songCat" onchange="updateSubcat()">
+          <option value="">Select category…</option>
+          <option>Tafsir</option>
+          <option selected>Aqeedah</option>
+          <option>Fiqh</option>
+          <option>Seerah</option>
+          <option>Hadith</option>
+          <option>Akhlaq</option>
+          <option>Du'a</option>
+          <option>Khutbah</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <div class="form-label">Sub-Category</div>
+        <select class="form-select" id="songSubcat">
+          <option>General</option>
+          <option>Tauhid Rububiyyah</option>
+          <option>Tauhid Uluhiyyah</option>
+          <option>Tauhid Asma was-Sifat</option>
+          <option>Iman in the Unseen</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group">
+      <div class="form-label">Description</div>
+      <textarea class="form-textarea" placeholder="Brief description of the lecture, topics covered, or key takeaways…"></textarea>
+    </div>
+
+    <!-- ══ AUDIO QUALITY ══ -->
+    <div class="form-group">
+      <div class="form-label">Available Quality Tiers <span class="req">*</span></div>
+      <div class="quality-opts">
+        <div class="q-opt" onclick="toggleQuality(this)">
+          <div class="q-opt-kbps">64</div>
+          <div class="q-opt-lbl">kbps · Low</div>
+          <div style="font-size:8px;color:var(--text3);margin-top:2px;">~2 MB</div>
+        </div>
+        <div class="q-opt selected" onclick="toggleQuality(this)">
+          <div class="q-opt-kbps">128</div>
+          <div class="q-opt-lbl">kbps · Standard</div>
+          <div style="font-size:8px;color:var(--text3);margin-top:2px;">~4 MB</div>
+        </div>
+        <div class="q-opt selected" onclick="toggleQuality(this)">
+          <div class="q-opt-kbps">320</div>
+          <div class="q-opt-lbl">kbps · Hi-Fi</div>
+          <div style="font-size:8px;color:var(--text3);margin-top:2px;">~8 MB</div>
+        </div>
+      </div>
+      <div class="form-hint">Select which quality tiers to generate. Original file will be transcoded.</div>
+    </div>
+
+    <!-- ══ PUBLISH OPTIONS ══ -->
+    <div style="background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:14px;">
+      <div class="toggle-row">
+        <div class="tr-info"><div class="tr-title">Set as Featured</div><div class="tr-desc">Appears on homepage featured banner</div></div>
+        <div class="toggler off" onclick="toggleSw(this)"><div class="tog-thumb"></div></div>
+      </div>
+      <div class="toggle-row">
+        <div class="tr-info"><div class="tr-title">Mark as Official Source</div><div class="tr-desc">Displays verified badge on lecture page</div></div>
+        <div class="toggler on" onclick="toggleSw(this)"><div class="tog-thumb"></div></div>
+      </div>
+      <div class="toggle-row">
+        <div class="tr-info"><div class="tr-title">Allow Downloads</div><div class="tr-desc">Users can download this lecture</div></div>
+        <div class="toggler on" onclick="toggleSw(this)"><div class="tog-thumb"></div></div>
+      </div>
+      <div class="toggle-row">
+        <div class="tr-info"><div class="tr-title">Auto-Publish Immediately</div><div class="tr-desc">Go live right after saving (skip review)</div></div>
+        <div class="toggler off" onclick="toggleSw(this)"><div class="tog-thumb"></div></div>
+      </div>
+    </div>
+
+    <div style="height:8px;"></div>
+  </div>
+
+  <div class="up-footer">
+    <div class="up-cancel" onclick="closeUpload()">Cancel</div>
+    <div class="up-submit" onclick="submitUpload()">
+      <svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22,4 12,14.01 9,11.01"/></svg>
+      Save & Add Lecture
+    </div>
+  </div>
+</div>
+
+<!-- EDIT PANEL -->
+<div class="edit-overlay" id="editOverlay" onclick="closeEdit()"></div>
+<div class="edit-panel" id="editPanel">
+  <div class="up-header">
+    <div>
+      <div class="up-title">Edit Lecture</div>
+      <div style="font-size:10px;color:var(--text3);margin-top:2px;font-family:sans-serif;" id="editSongName">Hanyar Gaskiya Vol. 3 · Sheikh Ahmad Gumi</div>
+    </div>
+    <div class="up-close" onclick="closeEdit()"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>
+  </div>
+  <div class="up-body">
+    <div style="background:var(--surface2);border:1px solid var(--border);border-radius:11px;padding:12px;margin-bottom:18px;display:flex;gap:10px;align-items:center;">
+      <div class="g1" style="width:46px;height:46px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">🎵</div>
+      <div style="flex:1;min-width:0;">
+        <div style="font-family:sans-serif;font-size:12px;font-weight:700;margin-bottom:2px;" id="editSongTitle">Kurmus</div>
+        <div style="font-size:10px;color:var(--text2);">Sheikh Ahmad Gumi · 46.2 MB · MP3 · 320kbps</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:4px;align-items:flex-end;flex-shrink:0;">
+        <div class="status-badge s-live"><div class="sb-dot"></div>Live</div>
+        <div style="font-size:9px;color:var(--text3);">48.2K plays</div>
+      </div>
+    </div>
+
+    <!-- Replace audio source -->
+    <div style="margin-bottom:18px;">
+      <div class="form-label">Replace Audio Source</div>
+      <div style="display:flex;gap:7px;">
+        <div onclick="showReplaceOptions()" style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:9px;background:var(--surface2);border:1px dashed var(--border2);border-radius:10px;cursor:pointer;font-size:11px;color:var(--text3);font-family:sans-serif;font-weight:600;transition:border-color .15s;">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          New File
+        </div>
+        <div style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:9px;background:var(--surface2);border:1px dashed var(--border2);border-radius:10px;cursor:pointer;font-size:11px;color:var(--text3);font-family:sans-serif;font-weight:600;">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+          New URL
+        </div>
+        <div style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:9px;background:var(--surface2);border:1px dashed var(--border2);border-radius:10px;cursor:pointer;font-size:11px;color:var(--text3);font-family:sans-serif;font-weight:600;">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
+          From Cloud
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ COVER ART (Edit) ══ -->
+    <div class="form-group">
+      <div class="form-label">Cover Art / Thumbnail</div>
+      <div class="cover-art-row">
+        <div class="ca-preview g1" id="editCaPreview" onclick="document.getElementById('editCaFileInput').click()">
+          <span id="editCaEmoji">🎵</span>
+          <div class="ca-preview-overlay"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg></div>
+        </div>
+        <div class="ca-options">
+          <div class="ca-tabs">
+            <div class="ca-tab active" id="editCaTabGrad" onclick="switchEditCaTab('gradient')">Gradient</div>
+            <div class="ca-tab" id="editCaTabImg" onclick="switchEditCaTab('image')">Upload Image</div>
+          </div>
+          <div id="editCaGradPanel">
+            <div class="ca-swatches">
+              <div class="ca-swatch g1 active" onclick="selectEditCaGradient(this,'g1','🎵')" title="Purple–Blue"></div>
+              <div class="ca-swatch g2" onclick="selectEditCaGradient(this,'g2','🎶')" title="Orange–Gold"></div>
+              <div class="ca-swatch g3" onclick="selectEditCaGradient(this,'g3','🎸')" title="Pink–Orange"></div>
+              <div class="ca-swatch g4" onclick="selectEditCaGradient(this,'g4','🎼')" title="Green–Blue"></div>
+              <div class="ca-swatch g5" onclick="selectEditCaGradient(this,'g5','🎙️')" title="Gold–Pink"></div>
+              <div class="ca-swatch g6" onclick="selectEditCaGradient(this,'g6','🎹')" title="Blue–Purple"></div>
+              <div class="ca-swatch g7" onclick="selectEditCaGradient(this,'g7','🎺')" title="Orange–Pink"></div>
+              <div class="ca-swatch g8" onclick="selectEditCaGradient(this,'g8','🎻')" title="Green–Purple"></div>
+            </div>
+            <div class="form-hint" style="margin-top:6px;">Click a color to select gradient art</div>
+          </div>
+          <div id="editCaImgPanel" style="display:none;">
+            <div class="ca-upload-btn" onclick="document.getElementById('editCaFileInput').click()">
+              <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              Choose Image
+            </div>
+            <span class="ca-img-name" id="editCaImgName" style="display:none;"></span>
+            <div class="form-hint" style="margin-top:5px;">JPG · PNG · WEBP · Square recommended</div>
+          </div>
+          <input type="file" id="editCaFileInput" accept="image/jpeg,image/png,image/webp,image/gif" style="display:none;" onchange="handleEditCaImage(event)">
+        </div>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group"><div class="form-label">Lecture Title <span class="req">*</span></div><input class="form-input" type="text" value="Hanyar Gaskiya Vol. 3"></div>
+      <div class="form-group"><div class="form-label">Duration</div><input class="form-input" type="text" value="3:42"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><div class="form-label">Preacher <span class="req">*</span></div>
+        <select class="form-select"><option>Sheikh Ahmad Gumi</option><option>Sheikh Isah Ali Ibrahim</option><option>Dr. Aminu Daurawa</option><option>Sheikh Abdallah Usman</option><option>Sheikh Auwal Albani</option></select>
+      </div>
+      <div class="form-group"><div class="form-label">Language</div>
+        <select class="form-select"><option>Hausa</option><option>Arabic</option><option>English</option></select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><div class="form-label">Category <span class="req">*</span></div>
+        <select class="form-select"><option>Aqeedah</option><option>Tafsir</option><option>Fiqh</option><option>Seerah</option><option>Hadith</option><option>Akhlaq</option><option>Du'a</option><option>Khutbah</option></select>
+      </div>
+      <div class="form-group"><div class="form-label">Sub-Category</div>
+        <select class="form-select"><option>General</option><option>Tauhid Rububiyyah</option><option>Tauhid Uluhiyyah</option><option>Iman in the Unseen</option></select>
+      </div>
+    </div>
+    <div class="form-group"><div class="form-label">Description</div><textarea class="form-textarea">"Hanyar Gaskiya Vol. 3" is a reflective lecture on the straight path, faith, and inner sincerity, delivered in Hausa with reference to Qur'an and Sunnah.</textarea></div>
+    <div style="background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:14px;">
+      <div class="toggle-row"><div class="tr-info"><div class="tr-title">Featured</div></div><div class="toggler off" onclick="toggleSw(this)"><div class="tog-thumb"></div></div></div>
+      <div class="toggle-row"><div class="tr-info"><div class="tr-title">Official Source</div></div><div class="toggler on" onclick="toggleSw(this)"><div class="tog-thumb"></div></div></div>
+      <div class="toggle-row"><div class="tr-info"><div class="tr-title">Allow Downloads</div></div><div class="toggler on" onclick="toggleSw(this)"><div class="tog-thumb"></div></div></div>
+      <div class="toggle-row"><div class="tr-info"><div class="tr-title">Status: Live</div><div class="tr-desc">Toggle off to take offline</div></div><div class="toggler on" onclick="toggleSw(this)"><div class="tog-thumb"></div></div></div>
+    </div>
+    <div style="height:8px;"></div>
+  </div>
+  <div class="up-footer">
+    <div class="up-cancel" onclick="closeEdit()">Cancel</div>
+    <div class="up-submit" onclick="saveEdit()">
+      <svg viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+      Save Changes
+    </div>
+  </div>
+</div>
+
+
+<!-- SONG DETAIL MODAL -->
+<div class="sm-overlay" id="songModal" onclick="smOverlayClick(event)">
+  <div class="sm-dialog">
+
+    <!-- Header -->
+    <div class="sm-hd" id="smHeader">
+      <div class="sm-hd-bg" id="smHdBg"></div>
+      <div class="sm-hd-art" id="smArt">🎵</div>
+      <div class="sm-hd-info">
+        <div class="sm-hd-title" id="smTitle">Lecture Title</div>
+        <div class="sm-hd-artist" id="smArtist">Artist Name</div>
+        <div class="sm-hd-badges" id="smBadges"></div>
+      </div>
+      <div class="sm-close" onclick="closeSongModal()">
+        <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </div>
+    </div>
+
+    <!-- Metrics Strip -->
+    <div class="sm-metrics">
+      <div class="sm-metric">
+        <div class="sm-metric-v" id="smPlays" style="color:var(--accent);">—</div>
+        <div class="sm-metric-l">Plays</div>
+      </div>
+      <div class="sm-metric">
+        <div class="sm-metric-v" id="smDownloads" style="color:var(--blue);">—</div>
+        <div class="sm-metric-l">Downloads</div>
+      </div>
+      <div class="sm-metric">
+        <div class="sm-metric-v" id="smDuration" style="color:var(--green);">—</div>
+        <div class="sm-metric-l">Duration</div>
+      </div>
+      <div class="sm-metric">
+        <div class="sm-metric-v" id="smQuality" style="color:var(--blue);font-size:13px;">—</div>
+        <div class="sm-metric-l">Quality</div>
+      </div>
+      <div class="sm-metric">
+        <div class="sm-metric-v" id="smRatio" style="color:var(--yellow);">—</div>
+        <div class="sm-metric-l">DL Rate</div>
+      </div>
+      <div class="sm-metric">
+        <div class="sm-metric-v" id="smAdded" style="color:var(--text2);font-size:11px;">—</div>
+        <div class="sm-metric-l">Added</div>
+      </div>
+    </div>
+
+    <!-- Body -->
+    <div class="sm-body">
+
+      <!-- Left column: Player + Metadata -->
+      <div class="sm-col">
+
+        <!-- Mini Player -->
+        <div class="sm-player">
+          <div class="sm-player-top">
+            <div class="sm-play-btn" id="smPlayBtn" onclick="smTogglePlay()">
+              <svg id="smPlayIcon" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            </div>
+            <div class="sm-player-meta">
+              <div class="sm-player-title" id="smPlayerTitle">Lecture Title</div>
+              <div class="sm-player-dur" id="smPlayerDur">0:00 / 0:00</div>
+            </div>
+          </div>
+          <!-- Waveform -->
+          <div class="sm-waveform" id="smWaveform"></div>
+          <!-- Progress bar -->
+          <div class="sm-progress" id="smProgressBar" onclick="smSeek(event)" style="cursor:pointer;">
+            <div class="sm-progress-fill" id="smProgressFill"></div>
+          </div>
+          <div class="sm-time-row">
+            <span id="smTimeCur">0:00</span>
+            <span id="smTimeTot">0:00</span>
+          </div>
+        </div>
+
+        <!-- Metadata -->
+        <div class="sm-section-title">Lecture Details</div>
+        <div class="sm-meta-grid">
+          <div class="sm-meta-row">
+            <span class="sm-meta-key">Artist</span>
+            <span class="sm-meta-val" id="smMetaArtist" style="color:var(--blue);">—</span>
+          </div>
+          <div class="sm-meta-row">
+            <span class="sm-meta-key">Category</span>
+            <span class="sm-meta-val" id="smMetaCat">—</span>
+          </div>
+          <div class="sm-meta-row">
+            <span class="sm-meta-key">Language</span>
+            <span class="sm-meta-val">Hausa</span>
+          </div>
+          <div class="sm-meta-row">
+            <span class="sm-meta-key">File Size</span>
+            <span class="sm-meta-val" id="smFileSize">—</span>
+          </div>
+          <div class="sm-meta-row">
+            <span class="sm-meta-key">Format</span>
+            <span class="sm-meta-val">MP3 / AAC</span>
+          </div>
+          <div class="sm-meta-row">
+            <span class="sm-meta-key">Featured</span>
+            <span class="sm-meta-val" id="smFeaturedVal">—</span>
+          </div>
+          <div class="sm-meta-row">
+            <span class="sm-meta-key">Status</span>
+            <span class="sm-meta-val" id="smStatusVal">—</span>
+          </div>
+        </div>
+
+        <!-- Available Quality Tiers -->
+        <div class="sm-section-title">Available Quality</div>
+        <div class="sm-quality-chips" id="smQualityChips"></div>
+
+      </div>
+
+      <!-- Right column: Description + Activity -->
+      <div class="sm-col">
+
+        <!-- Description -->
+        <div class="sm-section-title">Description</div>
+        <div class="sm-desc" id="smDesc">No description available for this lecture.</div>
+
+        <!-- Download Breakdown -->
+        <div class="sm-section-title">Download Breakdown</div>
+        <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:18px;" id="smDlBreakdown">
+          <div style="display:flex;align-items:center;gap:8px;font-size:11px;">
+            <span style="color:var(--text3);width:90px;flex-shrink:0;">Android</span>
+            <div style="flex:1;height:5px;background:var(--surface2);border-radius:3px;overflow:hidden;">
+              <div style="height:100%;width:68%;background:var(--green);border-radius:3px;"></div>
+            </div>
+            <span style="color:var(--text2);font-weight:600;min-width:28px;text-align:right;">68%</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;font-size:11px;">
+            <span style="color:var(--text3);width:90px;flex-shrink:0;">iOS</span>
+            <div style="flex:1;height:5px;background:var(--surface2);border-radius:3px;overflow:hidden;">
+              <div style="height:100%;width:22%;background:var(--blue);border-radius:3px;"></div>
+            </div>
+            <span style="color:var(--text2);font-weight:600;min-width:28px;text-align:right;">22%</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;font-size:11px;">
+            <span style="color:var(--text3);width:90px;flex-shrink:0;">Web</span>
+            <div style="flex:1;height:5px;background:var(--surface2);border-radius:3px;overflow:hidden;">
+              <div style="height:100%;width:10%;background:var(--purple);border-radius:3px;"></div>
+            </div>
+            <span style="color:var(--text2);font-weight:600;min-width:28px;text-align:right;">10%</span>
+          </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="sm-section-title">Recent Activity</div>
+        <div class="sm-activity" id="smActivity"></div>
+
+      </div>
+    </div>
+
+    <!-- Footer Actions -->
+    <div class="sm-footer">
+      <div class="sm-action-btn sab-edit" onclick="smEdit()">
+        <svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        Edit Lecture
+      </div>
+      <div class="sm-action-btn sab-feat" id="smFeatBtn" onclick="smToggleFeature()">
+        <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        Feature
+      </div>
+      <div class="sm-action-btn sab-status" id="smStatusBtn" onclick="smToggleStatus()">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        Set Offline
+      </div>
+      <div class="sm-footer-spacer"></div>
+      <div class="sm-action-btn sab-del" onclick="smDelete()">
+        <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+        Delete Lecture
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script src="admin-sidebar.js"></script>
+<script src="theme-manager.js"></script>
+
+<!-- MAIN -->
+<div class="main" id="main">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="toggle-btn" id="sidebarToggle"><svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></div>
+    <div class="tb-left">
+      <div class="tb-title">Wa'azi Management</div>
+      <div class="tb-crumb">Admin <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg> <span>Lectures</span></div>
+    </div>
+    <div class="tb-search">
+      <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" placeholder="Quick search lectures…" oninput="filterTable(this.value)">
+    </div>
+    <div class="tb-actions">
+      <div class="tb-btn"><svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><div class="tb-dot"></div></div>
+      <div class="tb-admin"><div class="tb-av">SA</div><span class="tb-aname">Super Admin</span></div>
+      <div class="upload-btn" onclick="openUpload()">
+        <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Add Lecture
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE -->
+  <div class="page">
+
+    <!-- STATS STRIP -->
+    <div class="stats-strip">
+      <div class="ss-card">
+        <div class="ss-ico" style="background:rgba(255,107,53,.14)"><svg viewBox="0 0 24 24" style="stroke:var(--accent)"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></div>
+        <div><div class="ss-v" style="color:var(--accent)">2,841</div><div class="ss-l">Total Lectures</div><div class="ss-t" style="color:var(--green)">↑ +14 this week</div></div>
+      </div>
+      <div class="ss-card">
+        <div class="ss-ico" style="background:rgba(46,204,143,.14)"><svg viewBox="0 0 24 24" style="stroke:var(--green)"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22,4 12,14.01 9,11.01"/></svg></div>
+        <div><div class="ss-v" style="color:var(--green)">2,614</div><div class="ss-l">Live</div><div class="ss-t" style="color:var(--text3)">92.0% of total</div></div>
+      </div>
+      <div class="ss-card">
+        <div class="ss-ico" style="background:rgba(255,209,102,.1)"><svg viewBox="0 0 24 24" style="stroke:var(--yellow)"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+        <div><div class="ss-v" style="color:var(--yellow)">47</div><div class="ss-l">In Review</div><div class="ss-t" style="color:var(--yellow)">⏳ Pending</div></div>
+      </div>
+      <div class="ss-card">
+        <div class="ss-ico" style="background:rgba(77,159,255,.14)"><svg viewBox="0 0 24 24" style="stroke:var(--blue)"><polygon points="5 3 19 12 5 21 5 3"/></svg></div>
+        <div><div class="ss-v" style="color:var(--blue)">14.2M</div><div class="ss-l">Total Plays</div><div class="ss-t" style="color:var(--green)">↑ +8.4% this month</div></div>
+      </div>
+      <div class="ss-card">
+        <div class="ss-ico" style="background:rgba(155,107,255,.14)"><svg viewBox="0 0 24 24" style="stroke:var(--purple)"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></div>
+        <div><div class="ss-v" style="color:var(--purple)">3.8M</div><div class="ss-l">Total Downloads</div><div class="ss-t" style="color:var(--green)">↑ +12.1% this month</div></div>
+      </div>
+    </div>
+
+    <!-- TOOLBAR -->
+    <div class="toolbar">
+      <div class="filter-grp">
+        <div class="search-box">
+          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" placeholder="Search lectures, artists, categories…" id="mainSearch" oninput="filterTable(this.value)">
+        </div>
+        <select class="fsel" id="filterCat" onchange="filterTable()">
+          <option value="">All Categories</option>
+          <option>Tafsir</option><option>Aqeedah</option><option>Fiqh</option>
+          <option>Seerah</option><option>Hadith</option><option>Akhlaq</option><option>Du'a</option><option>Khutbah</option>
+        </select>
+        <select class="fsel" id="filterStatus" onchange="filterTable()">
+          <option value="">All Status</option>
+          <option>Live</option><option>In Review</option><option>Offline</option><option>Featured</option>
+        </select>
+        <select class="fsel" id="filterQuality" onchange="filterTable()">
+          <option value="">All Quality</option>
+          <option>320 kbps</option><option>128 kbps</option><option>64 kbps</option>
+        </select>
+        <select class="fsel" id="filterArtist" onchange="filterTable()">
+          <option value="">All Preachers</option>
+          <option>Sheikh Ahmad Gumi</option><option>Sheikh Isah Ali Ibrahim</option>
+          <option>Dr. Aminu Daurawa</option><option>Sheikh Abdallah Usman</option><option>Sheikh Auwal Albani</option>
+          <option>Sheikh Yakubu Musa</option><option>Sheikh Aliyu Maikwaru</option>
+        </select>
+      </div>
+      <div class="action-grp">
+        <div class="abtn btn-sec" onclick="exportCSV()"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Export</div>
+        <div class="abtn btn-pri" onclick="openUpload()"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add Lecture</div>
+      </div>
+    </div>
+
+    <!-- BULK ACTION BAR (hidden until rows selected) -->
+    <div class="bulk-bar" id="bulkBar" style="display:none;">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22,4 12,14.01 9,11.01"/></svg>
+      <div class="bulk-count" id="bulkCount">3 lectures selected</div>
+      <div style="font-size:10px;color:var(--text3);">Bulk Actions:</div>
+      <div class="bulk-actions">
+        <div class="abtn btn-sec" style="padding:6px 12px;font-size:10px;" onclick="bulkAction('live')"><svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22,4 12,14.01 9,11.01"/></svg>Set Live</div>
+        <div class="abtn btn-warn" style="padding:6px 12px;font-size:10px;" onclick="bulkAction('offline')"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>Take Offline</div>
+        <div class="abtn btn-sec" style="padding:6px 12px;font-size:10px;" onclick="bulkAction('feature')"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>Feature</div>
+        <div class="abtn btn-dng" style="padding:6px 12px;font-size:10px;" onclick="bulkAction('delete')"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>Delete</div>
+        <div class="abtn btn-sec" style="padding:6px 12px;font-size:10px;" onclick="clearSelection()">✕ Deselect</div>
+      </div>
+    </div>
+
+    <!-- VIEW TABS -->
+    <div class="view-tabs">
+      <div class="vtab active" id="vt-table" onclick="switchView('table')">
+        <svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+        Table View <div class="vtab-count" id="vt-table-count">2,841</div>
+      </div>
+      <div class="vtab" id="vt-grid" onclick="switchView('grid')">
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+        Grid View <div class="vtab-count">2,841</div>
+      </div>
+      <div class="view-spacer"></div>
+      <div class="sort-row">
+        <svg viewBox="0 0 24 24"><line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="11" y1="18" x2="13" y2="18"/></svg>
+        Sort by:
+        <div class="sort-btn" onclick="cycleSortOrder()">
+          <span id="sortLabel">Most Plays</span>
+          <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- TABLE VIEW -->
+    <div class="table-wrap" id="tableView">
+      <table class="song-table" id="songTable">
+        <thead>
+          <tr>
+            <th style="width:36px;"><div class="cb" id="selectAll" onclick="toggleSelectAll(this)"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div></th>
+            <th class="active-sort" onclick="sortTable('title')">Lecture <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></th>
+            <th onclick="sortTable('category')">Category</th>
+            <th onclick="sortTable('duration')">Duration</th>
+            <th onclick="sortTable('quality')">Quality</th>
+            <th onclick="sortTable('plays')">Plays <svg viewBox="0 0 24 24"><path d="M3 4h13M3 8h9m-9 4h6m4 0l4-4 4 4m-4-4v12"/></svg></th>
+            <th onclick="sortTable('downloads')">Downloads</th>
+            <th onclick="sortTable('status')">Status</th>
+            <th onclick="sortTable('date')">Added</th>
+            <th style="width:110px;">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="songTableBody">
+        </tbody>
+      </table>
+    </div>
+
+    <!-- GRID VIEW -->
+    <div class="grid-view" id="gridView"></div>
+
+    <!-- PAGINATION -->
+    <div class="pagination">
+      <div class="pg-info">Showing <strong>1–25</strong> of <strong>2,841</strong> lectures</div>
+      <div class="pg-controls">
+        <div class="pg-btn arrow disabled"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></div>
+        <div class="pg-btn active">1</div>
+        <div class="pg-btn" onclick="changePage(this)">2</div>
+        <div class="pg-btn" onclick="changePage(this)">3</div>
+        <div class="pg-btn" onclick="changePage(this)">4</div>
+        <div style="font-size:11px;color:var(--text3);padding:0 4px;">…</div>
+        <div class="pg-btn" onclick="changePage(this)">114</div>
+        <div class="pg-btn arrow"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div>
+      </div>
+      <div class="pg-perpage">Rows per page: <select onchange="changePerPage(this)"><option>25</option><option>50</option><option>100</option></select></div>
+    </div>
+
+  </div>
+</div>
+<script>
+/* ══════════════════════════════════════
+   DATA
+══════════════════════════════════════ */
+const SONGS = [
+  {id:1,title:'Hanyar Gaskiya Vol. 3',artist:'Sheikh Ahmad Gumi',category:'Aqeedah',duration:'1:04:38',quality:'320 kbps',plays:1820000,downloads:540000,status:'Live',featured:true,date:'Mar 12, 2025',art:'g1',emoji:'🎙️',thumbnail:null},
+  {id:2,title:'Tafsir Suratul Baqarah',artist:'Sheikh Isah Ali Ibrahim',category:'Tafsir',duration:'1:32:14',quality:'320 kbps',plays:1500000,downloads:410000,status:'Live',featured:true,date:'Jan 5, 2025',art:'g2',emoji:'📖',thumbnail:null},
+  {id:3,title:'Fiqhul Ibadah — Part 12',artist:'Dr. Aminu Daurawa',category:'Fiqh',duration:'56:18',quality:'320 kbps',plays:1100000,downloads:320000,status:'Live',featured:false,date:'Nov 18, 2024',art:'g3',emoji:'⚖️',thumbnail:null},
+  {id:4,title:'Du\'as for Difficulty',artist:'Sheikh Ahmad Gumi',category:'Du\'a',duration:'32:08',quality:'320 kbps',plays:980000,downloads:280000,status:'Live',featured:false,date:'Oct 2, 2024',art:'g4',emoji:'🤲',thumbnail:null},
+  {id:5,title:'Seerah of the Prophet',artist:'Sheikh Abdallah Usman',category:'Seerah',duration:'1:18:00',quality:'320 kbps',plays:880000,downloads:260000,status:'Live',featured:true,date:'Sep 14, 2024',art:'g5',emoji:'🕊️',thumbnail:null},
+  {id:6,title:'Akhlaq al-Mu\'min',artist:'Sheikh Yakubu Musa',category:'Akhlaq',duration:'42:55',quality:'320 kbps',plays:910000,downloads:240000,status:'Live',featured:true,date:'Mar 1, 2025',art:'g7',emoji:'🌿',thumbnail:null},
+  {id:7,title:'Manners in Islam',artist:'Sheikh Aliyu Maikwaru',category:'Akhlaq',duration:'44:10',quality:'320 kbps',plays:820000,downloads:220000,status:'Live',featured:false,date:'Feb 20, 2025',art:'g1',emoji:'💫',thumbnail:null},
+  {id:8,title:'Hanyar Gaskiya Vol. 2',artist:'Sheikh Ahmad Gumi',category:'Aqeedah',duration:'58:14',quality:'320 kbps',plays:770000,downloads:200000,status:'Live',featured:false,date:'Feb 14, 2025',art:'g4',emoji:'📖',thumbnail:null},
+  {id:9,title:'Ramadan Reminders',artist:'Sheikh Auwal Albani',category:'Du\'a',duration:'38:42',quality:'128 kbps',plays:690000,downloads:180000,status:'In Review',featured:false,date:'Apr 1, 2025',art:'g5',emoji:'🌙',thumbnail:null},
+  {id:10,title:'The Path of Sincerity',artist:'Sheikh Ahmad Gumi',category:'Aqeedah',duration:'52:18',quality:'128 kbps',plays:650000,downloads:170000,status:'Live',featured:false,date:'Jan 28, 2025',art:'g2',emoji:'✨',thumbnail:null},
+  {id:11,title:'Tahajjud & Night Prayer',artist:'Sheikh Muhammad Bichi',category:'Du\'a',duration:'38:14',quality:'320 kbps',plays:380000,downloads:90000,status:'Live',featured:false,date:'Mar 5, 2025',art:'g6',emoji:'🌙',thumbnail:null},
+  {id:12,title:'Building Iman',artist:'Sheikh Ja\'afar Mahmud',category:'Aqeedah',duration:'52:42',quality:'320 kbps',plays:340000,downloads:80000,status:'Live',featured:true,date:'Dec 10, 2024',art:'g7',emoji:'🕌',thumbnail:null},
+  {id:13,title:'The Final Hour',artist:'Sheikh Sani Yahaya',category:'Aqeedah',duration:'44:55',quality:'128 kbps',plays:300000,downloads:70000,status:'In Review',featured:false,date:'Apr 1, 2025',art:'g8',emoji:'🌅',thumbnail:null},
+  {id:14,title:'Charity in Islam',artist:'Sheikh Ibrahim Khalil',category:'Fiqh',duration:'32:08',quality:'128 kbps',plays:270000,downloads:60000,status:'Offline',featured:false,date:'Nov 3, 2024',art:'g2',emoji:'💝',thumbnail:null},
+  {id:15,title:'Hadith Number 41',artist:'Sheikh Bashir Aliyu',category:'Hadith',duration:'28:18',quality:'320 kbps',plays:240000,downloads:55000,status:'Live',featured:false,date:'Feb 2, 2025',art:'g1',emoji:'📜',thumbnail:null},
+  {id:16,title:'Khutbatul Jumu\'ah Live',artist:'Sheikh Isah Ali Ibrahim',category:'Khutbah',duration:'38:22',quality:'320 kbps',plays:200000,downloads:48000,status:'Live',featured:false,date:'Mar 28, 2025',art:'g3',emoji:'🎤',thumbnail:null},
+  {id:17,title:'Children\'s Tarbiyya',artist:'Sheikh Aliyu Maikwaru',category:'Akhlaq',duration:'44:18',quality:'128 kbps',plays:170000,downloads:40000,status:'In Review',featured:false,date:'Mar 30, 2025',art:'g6',emoji:'👨‍👩‍👧',thumbnail:null},
+  {id:18,title:'Money Matters in Islam',artist:'Dr. Aminu Daurawa',category:'Fiqh',duration:'52:55',quality:'128 kbps',plays:150000,downloads:38000,status:'Live',featured:false,date:'Mar 25, 2025',art:'g4',emoji:'💰',thumbnail:null},
+  {id:19,title:'Women in Islam',artist:'Sheikh Auwal Albani',category:'Tarbiyya',duration:'48:30',quality:'320 kbps',plays:140000,downloads:34000,status:'Live',featured:false,date:'Oct 15, 2024',art:'g5',emoji:'🌸',thumbnail:null},
+  {id:20,title:'Death & The Hereafter',artist:'Sheikh Yakubu Musa',category:'Aqeedah',duration:'1:12:14',quality:'64 kbps',plays:120000,downloads:30000,status:'Offline',featured:false,date:'Aug 20, 2024',art:'g7',emoji:'🌅',thumbnail:null},
+  {id:21,title:'Faith in Modern Times',artist:'Sheikh Ahmad Gumi',category:'Aqeedah',duration:'49:12',quality:'128 kbps',plays:110000,downloads:28000,status:'Live',featured:false,date:'Sep 5, 2024',art:'g8',emoji:'✨',thumbnail:null},
+  {id:22,title:'Halal & Haram',artist:'Dr. Aminu Daurawa',category:'Fiqh',duration:'58:48',quality:'320 kbps',plays:100000,downloads:25000,status:'Live',featured:false,date:'Oct 28, 2024',art:'g1',emoji:'⚖️',thumbnail:null},
+  {id:23,title:'The Companions of Badr',artist:'Sheikh Abdallah Usman',category:'Seerah',duration:'1:08:00',quality:'320 kbps',plays:95000,downloads:22000,status:'Live',featured:false,date:'Dec 18, 2024',art:'g2',emoji:'🕊️',thumbnail:null},
+  {id:24,title:'Sahih al-Bukhari Hadith 1',artist:'Sheikh Bashir Aliyu',category:'Hadith',duration:'42:10',quality:'128 kbps',plays:85000,downloads:20000,status:'Live',featured:false,date:'Nov 22, 2024',art:'g3',emoji:'📜',thumbnail:null},
+  {id:25,title:'Tafsir Suratul Fatihah',artist:'Sheikh Isah Ali Ibrahim',category:'Tafsir',duration:'1:08:22',quality:'64 kbps',plays:80000,downloads:18000,status:'In Review',featured:false,date:'Mar 29, 2025',art:'g6',emoji:'📖',thumbnail:null},
+];
+
+let selected = new Set();
+let currentView = 'table';
+let sortKey = 'plays', sortAsc = false;
+const SORTS = ['Most Plays','Most Downloads','Newest First','Oldest First','A–Z Title','Z–A Title'];
+let sortIdx = 0;
+
+/* ══ RENDER TABLE ══ */
+function fmt(n){if(n>=1000000)return(n/1000000).toFixed(1)+'M';if(n>=1000)return(n/1000).toFixed(0)+'K';return n;}
+function statusBadge(s){const m={Live:'s-live',Featured:'s-featured','In Review':'s-review',Offline:'s-offline'};return`<div class="status-badge ${m[s]||'s-offline'}"><div class="sb-dot"></div>${s}</div>`;}
+function catColor(c){const m={Aqeedah:'rgba(200,134,10,.15);color:var(--accent)',Tafsir:'rgba(232,160,32,.15);color:var(--accent2)',Fiqh:'rgba(77,159,255,.15);color:var(--blue)',Seerah:'rgba(155,107,255,.15);color:var(--purple)',Hadith:'rgba(46,204,143,.15);color:var(--green)',Akhlaq:'rgba(255,209,102,.1);color:var(--yellow)','Du\'a':'rgba(255,77,143,.15);color:var(--pink)',Khutbah:'rgba(245,200,66,.15);color:var(--accent3)',Tarbiyya:'rgba(255,179,71,.1);color:var(--accent2)'};return m[c]||'rgba(255,255,255,.06);color:var(--text2)';}
+
+function renderTable(data){
+  const tbody=document.getElementById('songTableBody');
+  tbody.innerHTML=data.map(s=>`
+  <tr class="${selected.has(s.id)?'selected':''}" id="row-${s.id}">
+    <td><div class="cb ${selected.has(s.id)?'checked':''}" onclick="toggleRow(${s.id},this)"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div></td>
+    <td>
+      <div class="song-cell">
+        <div class="song-art ${s.art}" style="position:relative;${s.thumbnail?'background-image:url('+s.thumbnail+');background-size:cover;background-position:center;':''}">
+          ${s.thumbnail?'':'<span>'+s.emoji+'</span>'}
+          <div class="song-art-play" onclick="playSong(${s.id})"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg></div>
+        </div>
+        <div>
+          <div class="song-title">${s.title}${s.featured?'&nbsp;<span style="font-size:8px;background:rgba(155,107,255,.15);color:var(--purple);padding:1px 5px;border-radius:4px;font-family:Syne,sans-serif;font-weight:700;">⭐ Featured</span>':''}</div>
+          <div class="song-artist-name"><a onclick="filterByArtist('${s.artist}')">${s.artist}</a></div>
+        </div>
+      </div>
+    </td>
+    <td><div class="cat-badge" style="background:${catColor(s.category)}">${s.category}</div></td>
+    <td><div class="dur-v">${s.duration}</div></td>
+    <td><div class="q-badge">${s.quality}</div></td>
+    <td><div class="pv">${fmt(s.plays)}</div></td>
+    <td><div class="dv">${fmt(s.downloads)}</div></td>
+    <td>${statusBadge(s.status)}</td>
+    <td><div class="date-v">${s.date}</div></td>
+    <td>
+      <div class="row-actions">
+        <div class="ra-btn view" title="View" onclick="viewSong(${s.id})"><svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></div>
+        <div class="ra-btn edit" title="Edit" onclick="openEdit(${s.id})"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></div>
+        <div class="ra-btn feat" title="Feature" onclick="toggleFeature(${s.id})"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
+        <div class="ra-btn del" title="Delete" onclick="openDelete(${s.id})"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></div>
+      </div>
+    </td>
+  </tr>`).join('');
+}
+
+/* ══ RENDER GRID ══ */
+function renderGrid(data){
+  const gv=document.getElementById('gridView');
+  gv.innerHTML=data.map((s,i)=>`
+  <div class="grid-card ${selected.has(s.id)?'selected':''}" id="gc-${s.id}" style="animation-delay:${i*0.03}s">
+    <div class="grid-card-art ${s.art}">
+      <span>${s.emoji}</span>
+      <div class="gc-cb"><div class="cb ${selected.has(s.id)?'checked':''}" onclick="toggleRow(${s.id},this)"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div></div>
+      ${s.featured?`<div class="gc-feat">⭐ Featured</div>`:''}
+      <div class="gc-overlay">
+        <div class="gc-play" onclick="playSong(${s.id})"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg></div>
+        <div class="gc-edit" onclick="openEdit(${s.id})"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></div>
+      </div>
+    </div>
+    <div class="gc-info">
+      <div class="gc-title">${s.title}</div>
+      <div class="gc-artist">${s.artist}</div>
+      <div class="gc-meta">
+        <div class="gc-stats">
+          <div class="gc-stat"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>${fmt(s.plays)}</div>
+          <div class="gc-stat"><svg viewBox="0 0 24 24"><path d="M12 3v10M8 9l4 4 4-4"/><path d="M5 19h14"/></svg>${fmt(s.downloads)}</div>
+        </div>
+        ${statusBadge(s.status)}
+      </div>
+    </div>
+  </div>`).join('');
+}
+
+/* ══ VIEW SWITCH ══ */
+function switchView(v){
+  currentView=v;
+  document.getElementById('vt-table').classList.toggle('active',v==='table');
+  document.getElementById('vt-grid').classList.toggle('active',v==='grid');
+  document.getElementById('tableView').style.display=v==='table'?'block':'none';
+  document.getElementById('gridView').classList.toggle('active',v==='grid');
+  if(v==='grid')renderGrid(SONGS);
+}
+
+/* ══ SELECTION ══ */
+function toggleRow(id,cb){
+  if(selected.has(id)){selected.delete(id);cb.classList.remove('checked');document.getElementById('row-'+id)?.classList.remove('selected');document.getElementById('gc-'+id)?.classList.remove('selected');}
+  else{selected.add(id);cb.classList.add('checked');document.getElementById('row-'+id)?.classList.add('selected');document.getElementById('gc-'+id)?.classList.add('selected');}
+  updateBulkBar();
+}
+function toggleSelectAll(cb){
+  const checkAll=!cb.classList.contains('checked');
+  cb.classList.toggle('checked',checkAll);
+  cb.querySelector('svg').style.display=checkAll?'block':'none';
+  SONGS.forEach(s=>{
+    if(checkAll)selected.add(s.id);else selected.delete(s.id);
+    document.querySelectorAll(`#row-${s.id} .cb`).forEach(c=>{c.classList.toggle('checked',checkAll);});
+    document.getElementById('row-'+s.id)?.classList.toggle('selected',checkAll);
+    document.getElementById('gc-'+s.id)?.classList.toggle('selected',checkAll);
+  });
+  updateBulkBar();
+}
+function updateBulkBar(){
+  const bar=document.getElementById('bulkBar');
+  if(selected.size>0){bar.style.display='flex';document.getElementById('bulkCount').textContent=`${selected.size} song${selected.size>1?'s':''} selected`;}
+  else bar.style.display='none';
+}
+function clearSelection(){selected.clear();document.querySelectorAll('.cb.checked').forEach(c=>c.classList.remove('checked'));document.querySelectorAll('.selected').forEach(r=>r.classList.remove('selected'));document.getElementById('selectAll').classList.remove('checked');updateBulkBar();}
+
+/* ══ FILTER ══ */
+function filterTable(q){
+  const search=(q||document.getElementById('mainSearch').value||'').toLowerCase();
+  const cat=document.getElementById('filterCat').value;
+  const status=document.getElementById('filterStatus').value;
+  const quality=document.getElementById('filterQuality').value;
+  const artist=document.getElementById('filterArtist').value;
+  const filtered=SONGS.filter(s=>{
+    const matchSearch=!search||s.title.toLowerCase().includes(search)||s.artist.toLowerCase().includes(search)||s.category.toLowerCase().includes(search);
+    const matchCat=!cat||s.category===cat;
+    const matchStatus=!status||s.status===status;
+    const matchQ=!quality||s.quality===quality;
+    const matchA=!artist||s.artist===artist;
+    return matchSearch&&matchCat&&matchStatus&&matchQ&&matchA;
+  });
+  renderTable(filtered);
+  document.getElementById('vt-table-count').textContent=filtered.length;
+}
+function filterByArtist(a){document.getElementById('filterArtist').value=a;filterTable();}
+
+/* ══ SORT ══ */
+function cycleSortOrder(){
+  sortIdx=(sortIdx+1)%SORTS.length;
+  document.getElementById('sortLabel').textContent=SORTS[sortIdx];
+  const maps={0:'plays',1:'downloads',2:'date',3:'date',4:'title',5:'title'};
+  sortKey=maps[sortIdx];sortAsc=sortIdx===2||sortIdx===4;
+  const sorted=[...SONGS].sort((a,b)=>{
+    let va=a[sortKey],vb=b[sortKey];
+    if(typeof va==='string'){return sortAsc?va.localeCompare(vb):vb.localeCompare(va);}
+    return sortAsc?va-vb:vb-va;
+  });
+  renderTable(sorted);
+}
+function sortTable(key){
+  if(sortKey===key)sortAsc=!sortAsc;else{sortKey=key;sortAsc=false;}
+  const sorted=[...SONGS].sort((a,b)=>{
+    let va=a[key],vb=b[key];
+    if(typeof va==='string')return sortAsc?va.localeCompare(vb):vb.localeCompare(va);
+    return sortAsc?va-vb:vb-va;
+  });
+  document.querySelectorAll('.song-table th').forEach(th=>th.classList.remove('active-sort'));
+  renderTable(sorted);
+}
+
+/* ══ SIDEBAR ══ */
+const sidebar=document.getElementById('sidebar'),main=document.getElementById('main');
+let collapsed=false;
+document.getElementById('sidebarToggle').addEventListener('click',()=>{
+  collapsed=!collapsed;sidebar.classList.toggle('collapsed',collapsed);main.classList.toggle('expanded',collapsed);
+});
+
+/* ══ UPLOAD PANEL ══ */
+function openUpload(){document.getElementById('uploadOverlay').classList.add('show');document.getElementById('uploadPanel').classList.add('show');setTimeout(()=>document.getElementById('uploadProgress').classList.add('show'),300);}
+function closeUpload(){document.getElementById('uploadOverlay').classList.remove('show');document.getElementById('uploadPanel').classList.remove('show');}
+
+/* ══ SOURCE TABS ══ */
+function switchSrc(src){
+  document.querySelectorAll('.src-tab').forEach(t=>{
+    const active=t.dataset.src===src;
+    t.style.background=active?'rgba(255,107,53,.12)':'transparent';
+    t.style.color=active?'var(--accent)':'var(--text3)';
+    t.style.border=active?'1px solid rgba(255,107,53,.3)':'none';
+  });
+  document.querySelectorAll('.src-body').forEach(b=>b.style.display='none');
+  document.getElementById('src-'+src).style.display='block';
+}
+
+/* ══ FILE DROP ══ */
+function handleDrop(e){
+  e.preventDefault();document.getElementById('dropzone').classList.remove('dragging');
+  const file=e.dataTransfer.files[0];if(file)loadFile(file);
+}
+function handleFileSelect(e){const file=e.target.files[0];if(file)loadFile(file);}
+function loadFile(file){
+  const ext=file.name.split('.').pop().toUpperCase();
+  document.getElementById('upFileName').textContent=file.name;
+  document.getElementById('upFileSize').textContent=`${(file.size/1024/1024).toFixed(1)} MB · ${ext}`;
+  document.getElementById('songTitle').value=file.name.replace(/\.[^.]+$/,'').replace(/[-_]/g,' ');
+  document.getElementById('uploadProgress').classList.add('show');
+}
+function clearFile(){document.getElementById('uploadProgress').classList.remove('show');}
+
+/* ══ URL VERIFY ══ */
+function verifyUrl(){
+  const url=document.getElementById('audioUrl').value;
+  if(!url){showToast('Please enter a URL','error');return;}
+  showToast('Verifying URL…','info');
+  setTimeout(()=>{
+    document.getElementById('urlVerified').style.display='flex';
+    showToast('URL verified successfully!','success');
+  },1200);
+}
+
+/* ══ R2 FILE SELECT ══ */
+function selectR2File(el,name,size){
+  document.querySelectorAll('.r2-file').forEach(r=>{r.style.background='';r.querySelector('div:last-child').style.color='var(--text3)';r.querySelector('div:last-child').textContent=r.querySelector('div:last-child').textContent;});
+  el.style.background='rgba(255,107,53,.06)';
+  el.querySelector('div:last-child').textContent='✓ Selected';
+  el.querySelector('div:last-child').style.color='var(--accent)';
+  document.getElementById('r2SelectedInfo').textContent=`✓ ${name} selected`;
+  document.getElementById('songTitle').value=name.replace(/\.[^.]+$/,'').replace(/[-_]/g,' ');
+}
+
+/* ══ CLOUD SELECT ══ */
+function selectCloud(el){
+  document.querySelectorAll('.cloud-opt').forEach(o=>{o.style.background='var(--surface2)';o.style.border='1.5px solid var(--border)';o.querySelector('div:nth-child(2)').style.color='';});
+  el.style.background='rgba(255,107,53,.08)';el.style.border='1.5px solid var(--accent)';
+  el.querySelector('div:nth-child(2)').style.color='var(--accent)';
+  const cloud=el.dataset.cloud;
+  document.getElementById('r2-browser').style.display=cloud==='r2'?'block':'none';
+  document.getElementById('cloudUrlInput').style.display=cloud==='custom'?'block':'none';
+}
+
+/* ══ IMPORT SELECT ══ */
+function selectImport(el){
+  document.querySelectorAll('.import-opt').forEach(o=>{o.style.background='var(--surface2)';o.style.border='1.5px solid var(--border)';});
+  const colors={youtube:'rgba(255,68,68,.08);rgba(255,68,68,.3)',soundcloud:'rgba(255,107,53,.08);rgba(255,107,53,.3)',archive:'rgba(77,159,255,.08);rgba(77,159,255,.3)',other:'rgba(46,204,143,.08);rgba(46,204,143,.3)'};
+  const [bg,border]=(colors[el.dataset.plat]||'rgba(255,107,53,.08);rgba(255,107,53,.3)').split(';');
+  el.style.background=bg;el.style.border=`1.5px solid ${border}`;
+  const placeholders={youtube:'https://youtube.com/watch?v=...',soundcloud:'https://soundcloud.com/artist/track',archive:'https://archive.org/details/...',other:'https://example.com/page-with-audio'};
+  document.getElementById('importUrl').placeholder=placeholders[el.dataset.plat]||'Paste URL…';
+}
+function fetchImport(){
+  const url=document.getElementById('importUrl').value;
+  if(!url){showToast('Please enter a URL first','error');return;}
+  showToast('Fetching audio info…','info');
+  setTimeout(()=>{document.getElementById('importPreview').style.display='block';showToast('Audio found and ready!','success');},1400);
+}
+
+/* ══ COVER ART — UPLOAD PANEL ══ */
+function switchCaTab(mode) {
+  var isGrad = mode === 'gradient';
+  document.getElementById('caTabGrad').classList.toggle('active', isGrad);
+  document.getElementById('caTabImg').classList.toggle('active', !isGrad);
+  document.getElementById('caGradPanel').style.display = isGrad ? 'block' : 'none';
+  document.getElementById('caImgPanel').style.display = isGrad ? 'none' : 'block';
+}
+
+function selectCaGradient(el, gradClass, emoji) {
+  document.querySelectorAll('#caGradPanel .ca-swatch').forEach(function(s){ s.classList.remove('active'); });
+  el.classList.add('active');
+  var preview = document.getElementById('caPreview');
+  preview.className = 'ca-preview ' + gradClass;
+  var emojiEl = document.getElementById('caEmoji');
+  if (emojiEl) emojiEl.style.display = 'block';
+  // Remove any existing img
+  var existing = preview.querySelector('img');
+  if (existing) existing.remove();
+  // Re-add emoji and overlay (they may have been removed)
+  if (!document.getElementById('caEmoji')) {
+    var span = document.createElement('span');
+    span.id = 'caEmoji';
+    span.textContent = emoji;
+    preview.insertBefore(span, preview.firstChild);
+  } else {
+    document.getElementById('caEmoji').textContent = emoji;
+    document.getElementById('caEmoji').style.display = 'block';
+  }
+  preview.appendChild(preview.querySelector('.ca-preview-overlay'));
+  // Clear file input so image mode resets
+  document.getElementById('caFileInput').value = '';
+  document.getElementById('caImgName').style.display = 'none';
+}
+
+function handleCaImage(e) {
+  var file = e.target.files[0];
+  if (!file) return;
+  if (file.size > 2 * 1024 * 1024) { showToast('Image must be under 2 MB', 'error'); return; }
+  var reader = new FileReader();
+  reader.onload = function(ev) {
+    var preview = document.getElementById('caPreview');
+    // Clear gradient class, remove emoji
+    preview.className = 'ca-preview';
+    var emojiEl = document.getElementById('caEmoji');
+    if (emojiEl) emojiEl.style.display = 'none';
+    // Set image
+    var existing = preview.querySelector('img');
+    if (!existing) {
+      existing = document.createElement('img');
+      preview.insertBefore(existing, preview.querySelector('.ca-preview-overlay'));
+    }
+    existing.src = ev.target.result;
+    // Show file name
+    var nameEl = document.getElementById('caImgName');
+    nameEl.textContent = '✓ ' + file.name;
+    nameEl.style.display = 'block';
+    showToast('Cover image ready', 'success');
+  };
+  reader.readAsDataURL(file);
+}
+
+/* ══ COVER ART — EDIT PANEL ══ */
+function switchEditCaTab(mode) {
+  var isGrad = mode === 'gradient';
+  document.getElementById('editCaTabGrad').classList.toggle('active', isGrad);
+  document.getElementById('editCaTabImg').classList.toggle('active', !isGrad);
+  document.getElementById('editCaGradPanel').style.display = isGrad ? 'block' : 'none';
+  document.getElementById('editCaImgPanel').style.display = isGrad ? 'none' : 'block';
+}
+
+function selectEditCaGradient(el, gradClass, emoji) {
+  document.querySelectorAll('#editCaGradPanel .ca-swatch').forEach(function(s){ s.classList.remove('active'); });
+  el.classList.add('active');
+  var preview = document.getElementById('editCaPreview');
+  preview.className = 'ca-preview ' + gradClass;
+  var existing = preview.querySelector('img');
+  if (existing) existing.remove();
+  var emojiEl = document.getElementById('editCaEmoji');
+  if (emojiEl) { emojiEl.textContent = emoji; emojiEl.style.display = 'block'; }
+  document.getElementById('editCaFileInput').value = '';
+  document.getElementById('editCaImgName').style.display = 'none';
+}
+
+function handleEditCaImage(e) {
+  var file = e.target.files[0];
+  if (!file) return;
+  if (file.size > 2 * 1024 * 1024) { showToast('Image must be under 2 MB', 'error'); return; }
+  var reader = new FileReader();
+  reader.onload = function(ev) {
+    var preview = document.getElementById('editCaPreview');
+    preview.className = 'ca-preview';
+    var emojiEl = document.getElementById('editCaEmoji');
+    if (emojiEl) emojiEl.style.display = 'none';
+    var existing = preview.querySelector('img');
+    if (!existing) {
+      existing = document.createElement('img');
+      preview.insertBefore(existing, preview.querySelector('.ca-preview-overlay'));
+    }
+    existing.src = ev.target.result;
+    var nameEl = document.getElementById('editCaImgName');
+    nameEl.textContent = '✓ ' + file.name;
+    nameEl.style.display = 'block';
+    showToast('Cover image updated', 'success');
+  };
+  reader.readAsDataURL(file);
+}
+
+/* Sync edit panel art with the lecture being edited */
+function syncEditCaArt(song) {
+  var preview = document.getElementById('editCaPreview');
+  preview.className = 'ca-preview ' + (song.art || 'g1');
+  var existing = preview.querySelector('img');
+  if (existing) existing.remove();
+  var emojiEl = document.getElementById('editCaEmoji');
+  if (emojiEl) { emojiEl.textContent = lecture.emoji || '🎵'; emojiEl.style.display = 'block'; }
+  // Activate matching swatch
+  document.querySelectorAll('#editCaGradPanel .ca-swatch').forEach(function(s){
+    s.classList.toggle('active', s.classList.contains(song.art || 'g1'));
+  });
+  // Reset to gradient tab
+  switchEditCaTab('gradient');
+  document.getElementById('editCaImgName').style.display = 'none';
+  document.getElementById('editCaFileInput').value = '';
+}
+
+/* ══ TOGGLE ══ */
+function toggleSw(el){el.classList.toggle('on');el.classList.toggle('off');}
+function toggleQuality(el){el.classList.toggle('selected');}
+
+/* ══ SUBMIT UPLOAD ══ */
+function submitUpload(){
+  const title=document.getElementById('songTitle').value;
+  if(!title){showToast('Please enter a lecture title','error');return;}
+  const artist=document.getElementById('songArtist').value;
+  if(!artist){showToast('Please select an artist','error');return;}
+  showToast('Lecture added successfully!','success');
+  closeUpload();
+}
+
+/* ══ EDIT PANEL ══ */
+function openEdit(id){
+  const s=SONGS.find(x=>x.id===id);if(!s)return;
+  document.getElementById('editSongName').textContent=`${s.title} · ${s.artist}`;
+  document.getElementById('editSongTitle').textContent=s.title;
+  syncEditCaArt(s);
+  document.getElementById('editOverlay').classList.add('show');
+  document.getElementById('editPanel').classList.add('show');
+}
+function closeEdit(){document.getElementById('editOverlay').classList.remove('show');document.getElementById('editPanel').classList.remove('show');}
+function saveEdit(){showToast('Changes saved!','success');closeEdit();}
+
+/* ══ DELETE ══ */
+let deleteId=null;
+function openDelete(id){deleteId=id;const s=SONGS.find(x=>x.id===id);document.getElementById('deleteTitle').textContent=`"${s.title}"`;document.getElementById('deleteModal').classList.add('show');}
+function closeModal(){document.getElementById('deleteModal').classList.remove('show');deleteId=null;}
+function confirmDelete(){
+  if(deleteId){const idx=SONGS.findIndex(x=>x.id===deleteId);if(idx>-1)SONGS.splice(idx,1);}
+  closeModal();renderTable(SONGS);showToast('Lecture deleted','success');
+}
+
+/* ══ BULK ACTIONS ══ */
+function bulkAction(action){
+  const msgs={live:'Set '+selected.size+' lectures to Live',offline:'Took '+selected.size+' lectures offline',feature:'Featured '+selected.size+' lectures',delete:'Deleted '+selected.size+' lectures'};
+  showToast(msgs[action]||'Done','success');
+  clearSelection();
+}
+
+/* ══ SONG DETAIL MODAL ══ */
+var _smSongId = null;
+var _smPlaying = false;
+var _smPlayInterval = null;
+var _smProgress = 0;
+
+var DESCRIPTIONS = {
+  'Kurmus': '"Kurmus" is a reflective Hausa nasheed that explores themes of faith, perseverance and divine mercy. Known for its soul-stirring vocals and rich instrumentation.',
+  'Juyin Juya Hali': 'A powerful spiritual anthem about transformation and revolution of the heart, drawing on classical Islamic themes of self-renewal.',
+  'Seerah of the Prophet': 'A heartfelt lecture series celebrating the life and example of the Prophet ✊, rich with reflection and authentic narrations.',
+  'default': 'A beautiful Islamic nasheed by this artist, blending traditional Hausa poetry with modern production to create an inspiring spiritual experience for listeners.'
+};
+
+var ACTIVITY_TEMPLATES = [
+  {color:'var(--green)', text:'Lecture went live and became available for streaming.'},
+  {color:'var(--blue)', text:'1,200 new downloads in the last 24 hours.'},
+  {color:'var(--accent)', text:'Reached 1 million total plays milestone.'},
+  {color:'var(--yellow)', text:'Featured on homepage banner for 3 days.'},
+  {color:'var(--purple)', text:'Added to 4,200 user playlists this week.'},
+  {color:'var(--pink)', text:'2 new comments pending moderation.'},
+  {color:'var(--teal)', text:'Audio quality transcoding completed (320 kbps).'},
+];
+
+function generateWaveform() {
+  var wf = document.getElementById('smWaveform');
+  wf.innerHTML = '';
+  var heights = [30,55,70,45,80,60,90,40,75,55,85,50,65,95,35,70,88,42,60,78,50,66,82,38,72,56,90,44,62,80,55,70,36,88,60,45,75,50,92,40];
+  heights.forEach(function(h, i) {
+    var bar = document.createElement('div');
+    bar.className = 'sm-wf-bar';
+    bar.style.height = h + '%';
+    wf.appendChild(bar);
+  });
+}
+
+function smFormatNum(n) { return n >= 1000000 ? (n/1000000).toFixed(1)+'M' : n >= 1000 ? Math.round(n/1000)+'K' : n; }
+
+function viewSong(id) {
+  var s = SONGS.find(function(x){ return x.id === id; });
+  if (!s) return;
+  _smSongId = id;
+  _smPlaying = false;
+  _smProgress = 0;
+  clearInterval(_smPlayInterval);
+
+  // Header
+  var artEl = document.getElementById('smArt');
+  artEl.className = 'sm-hd-art ' + s.art;
+  artEl.textContent = s.emoji;
+
+  // Background glow from gradient
+  document.getElementById('smHdBg').className = 'sm-hd-bg ' + s.art;
+
+  document.getElementById('smTitle').textContent = s.title;
+  document.getElementById('smArtist').textContent = s.artist;
+  document.getElementById('smPlayerTitle').textContent = s.title;
+  document.getElementById('smPlayerDur').textContent = '0:00 / ' + s.duration;
+  document.getElementById('smTimeTot').textContent = s.duration;
+  document.getElementById('smTimeCur').textContent = '0:00';
+  document.getElementById('smProgressFill').style.width = '0';
+
+  // Badges
+  var statusColors = {Live:'s-live',Featured:'s-featured','In Review':'s-review',Offline:'s-offline'};
+  var catColors = catColor(s.category);
+  document.getElementById('smBadges').innerHTML =
+    '<div class="status-badge ' + (statusColors[s.status]||'s-offline') + '"><div class="sb-dot"></div>' + s.status + '</div>' +
+    '<div class="cat-badge" style="background:' + catColors + '">' + s.category + '</div>' +
+    (s.featured ? '<div class="cat-badge" style="background:rgba(155,107,255,.15);color:var(--purple);">⭐ Featured</div>' : '');
+
+  // Metrics
+  document.getElementById('smPlays').textContent = smFormatNum(s.plays);
+  document.getElementById('smDownloads').textContent = smFormatNum(s.downloads);
+  document.getElementById('smDuration').textContent = s.duration;
+  document.getElementById('smQuality').textContent = s.quality;
+  var ratio = s.plays > 0 ? Math.round(s.downloads / s.plays * 100) : 0;
+  document.getElementById('smRatio').textContent = ratio + '%';
+  document.getElementById('smAdded').textContent = s.date;
+
+  // Metadata
+  document.getElementById('smMetaArtist').textContent = s.artist;
+  document.getElementById('smMetaCat').textContent = s.category;
+  var mb = (s.plays * 0.0000083 * 320 / 8 / 1024).toFixed(1);
+  document.getElementById('smFileSize').textContent = mb > 0 ? mb + ' MB' : '~8.4 MB';
+  document.getElementById('smFeaturedVal').innerHTML = s.featured
+    ? '<span style="color:var(--purple);">⭐ Yes</span>'
+    : '<span style="color:var(--text3);">No</span>';
+  document.getElementById('smStatusVal').innerHTML = '<div class="status-badge ' + (statusColors[s.status]||'s-offline') + '" style="display:inline-flex;"><div class="sb-dot"></div>' + s.status + '</div>';
+
+  // Quality chips
+  var chips = '';
+  var q = s.quality;
+  if (q.indexOf('64') !== -1)  chips += '<div class="sm-quality-chip" style="background:rgba(255,107,53,.1);color:var(--accent);">64 kbps · Low</div>';
+  if (q.indexOf('128') !== -1) chips += '<div class="sm-quality-chip">128 kbps · Standard</div>';
+  if (q.indexOf('320') !== -1) chips += '<div class="sm-quality-chip" style="background:rgba(46,204,143,.1);color:var(--green);">320 kbps · Hi-Fi</div>';
+  document.getElementById('smQualityChips').innerHTML = chips;
+
+  // Description
+  document.getElementById('smDesc').textContent = DESCRIPTIONS[s.title] || DESCRIPTIONS['default'];
+
+  // Recent Activity
+  var acts = ACTIVITY_TEMPLATES.slice(0, 4 + Math.floor(Math.random() * 3));
+  var times = ['2 min ago','18 min ago','2 hrs ago','5 hrs ago','1 day ago','2 days ago','4 days ago'];
+  document.getElementById('smActivity').innerHTML = acts.map(function(a, i) {
+    return '<div class="sm-act-item">' +
+      '<div class="sm-act-dot" style="background:' + a.color + ';"></div>' +
+      '<div class="sm-act-text">' + a.text + '</div>' +
+      '<div class="sm-act-time">' + (times[i] || '1 wk ago') + '</div>' +
+      '</div>';
+  }).join('');
+
+  // Footer buttons
+  document.getElementById('smFeatBtn').innerHTML =
+    '<svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>' +
+    (s.featured ? 'Unfeature' : 'Feature');
+  var isLive = s.status === 'Live' || s.status === 'Featured';
+  document.getElementById('smStatusBtn').innerHTML =
+    '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>' +
+    (isLive ? 'Set Offline' : 'Set Live');
+
+  // Waveform
+  generateWaveform();
+
+  // Play icon reset
+  document.getElementById('smPlayIcon').innerHTML = '<polygon points="5 3 19 12 5 21 5 3"/>';
+
+  // Open modal
+  document.getElementById('songModal').classList.add('show');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeSongModal() {
+  document.getElementById('songModal').classList.remove('show');
+  document.body.style.overflow = '';
+  smStopPlay();
+}
+
+function smOverlayClick(e) {
+  if (e.target === document.getElementById('songModal')) closeSongModal();
+}
+
+/* Mini Player Simulation */
+function smTogglePlay() {
+  _smPlaying = !_smPlaying;
+  var icon = document.getElementById('smPlayIcon');
+  if (_smPlaying) {
+    icon.innerHTML = '<rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>';
+    smStartPlay();
+  } else {
+    icon.innerHTML = '<polygon points="5 3 19 12 5 21 5 3"/>';
+    smStopPlay();
+  }
+}
+
+function smStartPlay() {
+  clearInterval(_smPlayInterval);
+  _smPlayInterval = setInterval(function() {
+    _smProgress = Math.min(100, _smProgress + 0.3);
+    document.getElementById('smProgressFill').style.width = _smProgress + '%';
+    var s = SONGS.find(function(x){ return x.id === _smSongId; });
+    if (s) {
+      var parts = s.duration.split(':');
+      var totalSec = parseInt(parts[0]) * 60 + parseInt(parts[1]);
+      var curSec = Math.round(_smProgress / 100 * totalSec);
+      var cm = Math.floor(curSec / 60), cs = curSec % 60;
+      document.getElementById('smTimeCur').textContent = cm + ':' + (cs < 10 ? '0' : '') + cs;
+      document.getElementById('smPlayerDur').textContent = cm + ':' + (cs < 10 ? '0' : '') + cs + ' / ' + s.duration;
+    }
+    // Animate waveform bars
+    var bars = document.querySelectorAll('.sm-wf-bar');
+    var activeCount = Math.floor(_smProgress / 100 * bars.length);
+    bars.forEach(function(b, i) { b.classList.toggle('active', i < activeCount); });
+    if (_smProgress >= 100) {
+      smStopPlay();
+      document.getElementById('smPlayIcon').innerHTML = '<polygon points="5 3 19 12 5 21 5 3"/>';
+      _smPlaying = false;
+    }
+  }, 80);
+}
+
+function smStopPlay() {
+  clearInterval(_smPlayInterval);
+  _smPlaying = false;
+}
+
+function smSeek(e) {
+  var bar = document.getElementById('smProgressBar');
+  var rect = bar.getBoundingClientRect();
+  _smProgress = Math.max(0, Math.min(100, (e.clientX - rect.left) / rect.width * 100));
+  document.getElementById('smProgressFill').style.width = _smProgress + '%';
+}
+
+/* Footer Actions */
+function smEdit() {
+  closeSongModal();
+  setTimeout(function() { openEdit(_smSongId); }, 200);
+}
+
+function smToggleFeature() {
+  var s = SONGS.find(function(x){ return x.id === _smSongId; });
+  if (!s) return;
+  s.featured = !s.featured;
+  renderTable(SONGS);
+  document.getElementById('smFeatBtn').innerHTML =
+    '<svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>' +
+    (s.featured ? 'Unfeature' : 'Feature');
+  document.getElementById('smFeaturedVal').innerHTML = s.featured
+    ? '<span style="color:var(--purple);">⭐ Yes</span>'
+    : '<span style="color:var(--text3);">No</span>';
+  showToast(s.featured ? '⭐ Lecture featured!' : 'Removed from featured', 'success');
+}
+
+function smToggleStatus() {
+  var s = SONGS.find(function(x){ return x.id === _smSongId; });
+  if (!s) return;
+  var isLive = s.status === 'Live' || s.status === 'Featured';
+  s.status = isLive ? 'Offline' : 'Live';
+  renderTable(SONGS);
+  viewSong(_smSongId);
+  showToast(s.status === 'Live' ? 'Lecture is now Live' : 'Lecture taken offline', 'success');
+}
+
+function smDelete() {
+  closeSongModal();
+  setTimeout(function() { openDelete(_smSongId); }, 200);
+}
+
+/* ══ OTHER ACTIONS ══ */
+function toggleFeature(id){const s=SONGS.find(x=>x.id===id);if(s){s.featured=!s.featured;renderTable(SONGS);showToast(s.featured?'Lecture featured!':'Removed from featured','success');}}
+function playSong(id){const s=SONGS.find(x=>x.id===id);showToast(`▶ Playing: ${s.title}`,'info');}
+function exportCSV(){showToast('Exporting CSV…','info');}
+function changePage(el){document.querySelectorAll('.pg-btn:not(.arrow)').forEach(b=>b.classList.remove('active'));el.classList.add('active');showToast(`Page ${el.textContent}`,'info');}
+function changePerPage(sel){showToast(`Showing ${sel.value} per page`,'info');}
+
+/* ══ TOAST ══ */
+let toastT=null;
+function showToast(msg,type='success'){
+  const t=document.getElementById('toast');
+  const icons={success:'<svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22,4 12,14.01 9,11.01"/></svg>',error:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>',info:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>'};
+  t.innerHTML=`${icons[type]||icons.info}${msg}`;
+  t.className=`toast show ${type}`;
+  clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('show'),2800);
+}
+
+/* ══ INIT ══ */
+renderTable(SONGS);
+switchSrc('file');
+</script>
+</body>
+</html>

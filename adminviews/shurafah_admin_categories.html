@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shurafah Admin — Categories</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#070A11;--sidebar:#0B0F1A;--surface:#0F1520;--surface2:#141C2E;--surface3:#1A2340;--accent:#FF6B35;--accent2:#FFB347;--blue:#4D9FFF;--green:#2ECC8F;--purple:#9B6BFF;--pink:#FF4D8F;--yellow:#FFD166;--red:#FF4444;--teal:#00D4AA;--text:#F0F4FF;--text2:#8A94B0;--text3:#3D4B6A;--border:rgba(255,255,255,0.06);--sidebar-w:220px;--header-h:60px;--radius:14px;}
+*{margin:0;padding:0;box-sizing:border-box;}html,body{height:100%;overflow:hidden;}
+body{font-family:'DM Sans',sans-serif;color:var(--text);background:var(--bg);display:flex;height:100vh;}
+.sidebar{width:var(--sidebar-w);flex-shrink:0;background:var(--sidebar);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;position:relative;z-index:20;}
+.sidebar::before{content:'';position:absolute;top:0;left:0;right:0;height:200px;background:linear-gradient(180deg,rgba(255,107,53,0.06) 0%,transparent 100%);pointer-events:none;}
+.sb-logo{padding:20px 18px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;flex-shrink:0;}
+.sb-logo-icon{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:16px;box-shadow:0 4px 12px rgba(255,107,53,0.35);}
+.sb-logo-text{font-family:sans-serif;font-size:15px;font-weight:800;letter-spacing:-0.3px;}
+.sb-logo-text span{background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.sb-logo-badge{margin-left:auto;font-size:8px;font-family:sans-serif;font-weight:700;background:rgba(255,107,53,0.15);color:var(--accent);border:1px solid rgba(255,107,53,0.3);border-radius:4px;padding:2px 6px;}
+.sb-nav{flex:1;overflow-y:auto;overflow-x:hidden;padding:12px 10px;scrollbar-width:none;}
+.sb-nav::-webkit-scrollbar{display:none;}
+.sb-section{font-size:9px;font-family:sans-serif;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:1px;padding:8px 8px 4px;}
+.sb-item{display:flex;align-items:center;gap:9px;padding:9px 10px;border-radius:10px;cursor:pointer;font-size:13px;font-family:'DM Sans',sans-serif;font-weight:500;color:var(--text2);transition:background .15s,color .15s;margin-bottom:1px;text-decoration:none;}
+.sb-item:hover{background:rgba(255,255,255,0.04);color:var(--text);}
+.sb-item.active{background:rgba(255,107,53,0.12);color:var(--accent);font-weight:600;}
+.sb-item.active .sb-icon{stroke:var(--accent);}
+.sb-icon{width:16px;height:16px;fill:none;stroke:var(--text3);stroke-width:2;flex-shrink:0;transition:stroke .15s;}
+.sb-item:hover .sb-icon{stroke:var(--text2);}
+.sb-badge{margin-left:auto;background:var(--accent);color:white;font-size:9px;font-family:sans-serif;font-weight:800;border-radius:50px;padding:1px 7px;min-width:20px;text-align:center;}
+.sb-badge.blue{background:var(--blue);}.sb-badge.red{background:var(--red);}.sb-badge.green{background:var(--green);}
+.sb-footer{padding:12px 10px;border-top:1px solid var(--border);flex-shrink:0;}
+.sb-user{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:10px;cursor:pointer;}
+.sb-user:hover{background:rgba(255,255,255,0.04);}
+.sb-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--purple),var(--blue));display:flex;align-items:center;justify-content:center;font-size:12px;font-family:sans-serif;font-weight:700;flex-shrink:0;}
+.sb-user-name{font-family:sans-serif;font-size:12px;font-weight:700;}.sb-user-role{font-size:10px;color:var(--text3);}
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+.header{height:var(--header-h);background:var(--sidebar);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:16px;padding:0 24px;flex-shrink:0;}
+.header-title{font-family:sans-serif;font-size:17px;font-weight:800;letter-spacing:-0.3px;}
+.header-search{flex:1;max-width:380px;margin-left:auto;position:relative;}
+.header-search svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:14px;height:14px;fill:none;stroke:var(--text3);stroke-width:2;pointer-events:none;}
+.header-search input{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:9px 12px 9px 34px;font-size:13px;color:var(--text);font-family:'DM Sans',sans-serif;outline:none;}
+.header-search input::placeholder{color:var(--text3);}
+.header-actions{display:flex;align-items:center;gap:8px;}
+.hbtn{width:36px;height:36px;border-radius:10px;background:var(--surface2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;}
+.hbtn svg{width:16px;height:16px;fill:none;stroke:var(--text2);stroke-width:2;}
+.hbtn .dot{position:absolute;top:7px;right:7px;width:7px;height:7px;border-radius:50%;background:var(--red);border:2px solid var(--sidebar);}
+.content{flex:1;overflow-y:auto;padding:24px;scrollbar-width:thin;scrollbar-color:var(--surface3) transparent;}
+.content::-webkit-scrollbar{width:5px;}.content::-webkit-scrollbar-thumb{background:var(--surface3);border-radius:3px;}
+.page-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:24px;gap:16px;flex-wrap:wrap;}
+.page-title{font-family:sans-serif;font-size:22px;font-weight:800;letter-spacing:-0.4px;}
+.page-sub{font-size:13px;color:var(--text2);margin-top:3px;}
+.page-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+.btn{display:inline-flex;align-items:center;gap:7px;padding:9px 18px;border-radius:10px;font-size:13px;font-family:sans-serif;font-weight:700;cursor:pointer;transition:all .15s;border:none;text-decoration:none;white-space:nowrap;}
+.btn svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;flex-shrink:0;}
+.btn-primary{background:var(--accent);color:white;box-shadow:0 4px 14px rgba(255,107,53,0.35);}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(255,107,53,0.45);}
+.btn-secondary{background:var(--surface2);color:var(--text2);border:1px solid var(--border);}
+.btn-secondary:hover{background:var(--surface3);color:var(--text);}
+.btn-danger{background:rgba(255,68,68,0.12);color:var(--red);border:1px solid rgba(255,68,68,0.2);}
+.btn-danger:hover{background:rgba(255,68,68,0.2);}
+.btn-success{background:rgba(46,204,143,0.12);color:var(--green);border:1px solid rgba(46,204,143,0.2);}
+.btn-success:hover{background:rgba(46,204,143,0.22);}
+.btn-sm{padding:6px 13px;font-size:11px;}
+.btn-xs{padding:4px 9px;font-size:10px;}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px;}
+.stat-card{background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);padding:18px 20px;position:relative;overflow:hidden;transition:transform .15s,box-shadow .15s;}
+.stat-card:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(0,0,0,.3);}
+.sc-icon{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:12px;}
+.sc-icon svg{width:18px;height:18px;fill:none;stroke:white;stroke-width:2;}
+.sc-val{font-family:sans-serif;font-size:26px;font-weight:800;letter-spacing:-0.5px;margin-bottom:4px;}
+.sc-label{font-size:12px;color:var(--text2);}
+.sc-change{font-size:11px;font-family:sans-serif;font-weight:700;margin-top:8px;display:flex;align-items:center;gap:3px;}
+.sc-change.up{color:var(--green);}.sc-change.down{color:var(--red);}
+.sc-change svg{width:12px;height:12px;fill:none;stroke:currentColor;stroke-width:2.5;}
+.card{background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);padding:20px;margin-bottom:16px;}
+.card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+.card-title{font-family:sans-serif;font-size:14px;font-weight:700;}
+.filter-bar{display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap;}
+.filter-input{flex:1;min-width:180px;position:relative;}
+.filter-input svg{position:absolute;left:11px;top:50%;transform:translateY(-50%);width:14px;height:14px;fill:none;stroke:var(--text3);stroke-width:2;pointer-events:none;}
+.filter-input input{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:9px 12px 9px 32px;font-size:13px;color:var(--text);font-family:'DM Sans',sans-serif;outline:none;transition:border-color .2s;}
+.filter-input input:focus{border-color:rgba(255,107,53,0.4);}
+.filter-input input::placeholder{color:var(--text3);}
+.filter-select{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:9px 12px;font-size:12px;font-family:'DM Sans',sans-serif;color:var(--text2);outline:none;cursor:pointer;}
+table{width:100%;border-collapse:collapse;}
+thead th{font-family:sans-serif;font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;padding:10px 14px;text-align:left;border-bottom:1px solid var(--border);white-space:nowrap;}
+tbody tr{border-bottom:1px solid var(--border);transition:background .12s;}
+tbody tr:last-child{border-bottom:none;}
+tbody tr:hover{background:rgba(255,255,255,0.025);}
+tbody td{padding:12px 14px;font-size:13px;vertical-align:middle;}
+.td-name{font-family:sans-serif;font-size:13px;font-weight:700;}
+.td-sub{font-size:11px;color:var(--text2);margin-top:1px;}
+.td-num{font-family:sans-serif;font-size:13px;font-weight:700;}
+.td-actions{display:flex;align-items:center;gap:5px;}
+.act-btn{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .15s;border:none;background:transparent;}
+.act-btn svg{width:13px;height:13px;fill:none;stroke:var(--text3);stroke-width:2;}
+.act-btn:hover{background:var(--surface3);}
+.act-btn.edit:hover{background:rgba(77,159,255,0.12);}.act-btn.edit:hover svg{stroke:var(--blue);}
+.act-btn.del:hover{background:rgba(255,68,68,0.12);}.act-btn.del:hover svg{stroke:var(--red);}
+.act-btn.toggle:hover{background:rgba(46,204,143,0.12);}.act-btn.toggle:hover svg{stroke:var(--green);}
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:50px;font-size:10px;font-family:sans-serif;font-weight:700;}
+.badge-green{background:rgba(46,204,143,0.12);color:var(--green);border:1px solid rgba(46,204,143,0.2);}
+.badge-red{background:rgba(255,68,68,0.12);color:var(--red);border:1px solid rgba(255,68,68,0.2);}
+.badge-gray{background:rgba(255,255,255,0.06);color:var(--text2);border:1px solid var(--border);}
+.badge-dot{width:5px;height:5px;border-radius:50%;background:currentColor;flex-shrink:0;}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.75);backdrop-filter:blur(6px);z-index:100;display:none;align-items:center;justify-content:center;padding:16px;}
+.modal-overlay.show{display:flex;}
+.modal{background:var(--surface);border-radius:18px;border:1px solid var(--border);padding:26px;width:480px;max-width:100%;max-height:calc(100vh - 48px);overflow-y:auto;box-shadow:0 28px 80px rgba(0,0,0,.65);animation:modalIn .2s ease;}
+@keyframes modalIn{from{opacity:0;transform:scale(.93) translateY(8px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.modal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;}
+.modal-title{font-family:sans-serif;font-size:17px;font-weight:800;}
+.modal-close{width:32px;height:32px;border-radius:9px;background:var(--surface2);display:flex;align-items:center;justify-content:center;cursor:pointer;border:none;}
+.modal-close svg{width:14px;height:14px;fill:none;stroke:var(--text2);stroke-width:2;}
+.modal-footer{display:flex;gap:10px;justify-content:flex-end;margin-top:22px;padding-top:18px;border-top:1px solid var(--border);}
+.form-group{margin-bottom:16px;}
+.form-label{font-size:11px;font-family:sans-serif;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.4px;margin-bottom:6px;display:block;}
+.form-input,.form-select,.form-textarea{width:100%;background:var(--surface2);border:1.5px solid var(--border);border-radius:11px;padding:11px 13px;font-size:13px;color:var(--text);font-family:'DM Sans',sans-serif;outline:none;transition:border-color .2s,box-shadow .2s;}
+.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:rgba(255,107,53,0.5);box-shadow:0 0 0 3px rgba(255,107,53,0.09);}
+.form-input::placeholder,.form-textarea::placeholder{color:var(--text3);}
+.form-select{cursor:pointer;}
+.form-textarea{resize:vertical;min-height:80px;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+/* Category Cards */
+.cat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:24px;}
+.cat-card{background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);padding:18px;transition:transform .15s,box-shadow .15s,border-color .15s;cursor:pointer;position:relative;overflow:hidden;}
+.cat-card::before{content:'';position:absolute;top:0;right:0;width:70px;height:70px;border-radius:0 var(--radius) 0 70px;opacity:.08;}
+.cat-card:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(0,0,0,.3);}
+.cat-card.hidden-cat{opacity:0.5;}
+.cat-icon{font-size:28px;margin-bottom:10px;}
+.cat-name{font-family:sans-serif;font-size:15px;font-weight:800;margin-bottom:4px;}
+.cat-desc{font-size:11px;color:var(--text2);margin-bottom:12px;line-height:1.5;}
+.cat-meta{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;}
+.cat-meta-item{display:flex;align-items:center;gap:4px;font-size:11px;font-family:sans-serif;font-weight:700;}
+.cat-actions{display:flex;gap:6px;}
+.progress{height:5px;background:var(--surface3);border-radius:3px;overflow:hidden;margin-top:8px;}
+.progress-fill{height:100%;border-radius:3px;transition:width .4s;}
+/* Sub-cat list */
+.subcat-list{display:flex;flex-direction:column;gap:3px;}
+.subcat-row{display:flex;align-items:center;gap:12px;padding:10px 14px;border-radius:10px;background:var(--surface2);border:1px solid var(--border);transition:border-color .15s;}
+.subcat-row:hover{border-color:rgba(255,107,53,0.2);}
+.subcat-icon{font-size:16px;width:32px;height:32px;border-radius:8px;background:var(--surface3);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.subcat-name{font-family:sans-serif;font-size:13px;font-weight:700;flex:1;}
+.subcat-parent{font-size:10px;color:var(--text3);margin-top:1px;}
+/* Drag handle */
+.drag-handle{cursor:grab;color:var(--text3);padding:4px;opacity:0.5;}
+.drag-handle:hover{opacity:1;}
+/* Color picker */
+.color-swatches{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px;}
+.swatch{width:28px;height:28px;border-radius:7px;cursor:pointer;border:2px solid transparent;transition:border-color .15s,transform .15s;}
+.swatch:hover{transform:scale(1.1);}
+.swatch.selected{border-color:white;}
+/* Emoji picker */
+.emoji-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:6px;margin-top:6px;background:var(--surface2);border-radius:10px;padding:10px;}
+.emoji-opt{font-size:18px;text-align:center;cursor:pointer;padding:4px;border-radius:6px;transition:background .12s;}
+.emoji-opt:hover{background:var(--surface3);}
+.emoji-opt.selected{background:rgba(255,107,53,0.2);}
+.toast{position:fixed;bottom:24px;right:24px;background:var(--surface2);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:13px 18px;font-size:13px;font-family:sans-serif;font-weight:700;color:var(--text);box-shadow:0 8px 32px rgba(0,0,0,.55);z-index:300;opacity:0;transform:translateY(10px);transition:opacity .2s,transform .2s;display:flex;align-items:center;gap:10px;max-width:320px;pointer-events:none;}
+.toast.show{opacity:1;transform:translateY(0);}
+.toast svg{width:16px;height:16px;fill:none;stroke-width:2;flex-shrink:0;}
+.toast.ok svg{stroke:var(--green);}.toast.err svg{stroke:var(--red);}.toast.info svg{stroke:var(--blue);}
+.toggle-row{display:flex;align-items:center;gap:10px;}
+.toggle{width:40px;height:22px;border-radius:11px;position:relative;cursor:pointer;flex-shrink:0;transition:background .2s;}
+.toggle.on{background:var(--accent);}.toggle.off{background:var(--surface3);}
+.toggle-thumb{position:absolute;top:3px;width:16px;height:16px;background:white;border-radius:50%;transition:left .2s;box-shadow:0 1px 4px rgba(0,0,0,.3);}
+.toggle.on .toggle-thumb{left:21px;}.toggle.off .toggle-thumb{left:3px;}
+.g1{background:linear-gradient(135deg,#9B6BFF,#4D9FFF);}.g2{background:linear-gradient(135deg,#FF6B35,#FFB347);}.g3{background:linear-gradient(135deg,#FF4D8F,#FF6B35);}.g4{background:linear-gradient(135deg,#2ECC8F,#4D9FFF);}.g5{background:linear-gradient(135deg,#FFB347,#FF4D8F);}.g6{background:linear-gradient(135deg,#4D9FFF,#9B6BFF);}.g7{background:linear-gradient(135deg,#FF6B35,#FF4D8F);}.g8{background:linear-gradient(135deg,#2ECC8F,#9B6BFF);}
+@keyframes fup{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.content>*{animation:fup .3s ease forwards;}
+
+/* ════════════════════════════════
+   MOBILE RESPONSIVENESS
+════════════════════════════════ */
+@media (max-width:768px) {
+  .main{margin-left:var(--sidebar-collapsed);}
+  .header{padding:0 16px;gap:10px;height:56px;}
+  .header-title{font-size:14px;}
+  .header-search{width:auto;flex:0;}
+  .header-search svg{width:14px;height:14px;}
+  .header-search input{padding:6px 8px;font-size:10px;}
+  .header-actions{gap:6px;}
+  .hbtn{width:28px;height:28px;}
+  .hbtn svg{width:12px;height:12px;}
+  
+  .content{padding:14px;}
+  .page-header{margin-bottom:14px;gap:10px;}
+  .page-title{font-size:14px;}
+  .page-sub{font-size:10px;}
+  .page-actions{gap:8px;}
+  
+  .cat-grid{grid-template-columns:repeat(2,1fr);gap:10px;}
+  .cat-card{padding:12px;}
+  .cat-icon{width:40px;height:40px;font-size:18px;}
+  .cat-name{font-size:11px;}
+  .cat-count{font-size:9px;}
+  
+  .subcat-list{padding:12px;}
+  .subcat-row{padding:10px;gap:8px;}
+  .subcat-icon{width:32px;height:32px;font-size:14px;}
+  .subcat-name{font-size:11px;}
+  .subcat-parent{font-size:9px;}
+  .td-actions{gap:4px;}
+  .act-btn{width:24px;height:24px;}
+  .act-btn svg{width:11px;height:11px;}
+  .badge{font-size:8px;padding:2px 6px;}
+  
+  .modal{width:90%;max-width:480px;padding:16px;}
+  .modal-title{font-size:12px;}
+  .form-input,.form-select,.form-textarea{padding:8px 10px;font-size:10px;}
+  .form-label{font-size:8px;}
+  .form-row{grid-template-columns:1fr;}
+  
+  .emoji-grid{grid-template-columns:repeat(6,1fr);gap:4px;}
+  .emoji-opt{font-size:16px;padding:3px;}
+  
+  .color-swatches{gap:6px;}
+  .swatch{width:32px;height:32px;}
+  
+  .toast{bottom:16px;right:16px;padding:10px 14px;font-size:11px;}
+}
+
+@media (max-width:480px) {
+  .main{margin-left:var(--sidebar-collapsed);}
+  .header{padding:0 12px;height:52px;gap:8px;}
+  .header-title{font-size:12px;display:none;}
+  .header-search{width:auto;flex:0;}
+  .header-search svg{width:12px;height:12px;}
+  .header-search input{padding:5px 6px;font-size:9px;display:none;}
+  .header-actions{gap:4px;}
+  .hbtn{width:24px;height:24px;}
+  .hbtn svg{width:11px;height:11px;}
+  
+  .content{padding:10px;}
+  .page-header{margin-bottom:10px;gap:8px;flex-direction:column;}
+  .page-title{font-size:12px;}
+  .page-sub{font-size:9px;display:none;}
+  .page-actions{gap:6px;flex-direction:column;}
+  
+  .cat-grid{grid-template-columns:1fr;gap:8px;}
+  .cat-card{padding:10px;}
+  .cat-icon{width:36px;height:36px;font-size:16px;}
+  .cat-name{font-size:10px;}
+  .cat-count{font-size:8px;}
+  
+  .subcat-list{padding:10px;}
+  .subcat-row{padding:8px;gap:6px;}
+  .subcat-icon{width:28px;height:28px;font-size:12px;}
+  .subcat-name{font-size:10px;}
+  .subcat-parent{font-size:8px;}
+  .td-actions{gap:3px;}
+  .act-btn{width:20px;height:20px;}
+  .act-btn svg{width:10px;height:10px;}
+  .badge{font-size:7px;padding:1px 4px;}
+  
+  .modal{width:95%;max-width:100%;padding:12px;}
+  .modal-title{font-size:11px;}
+  .form-input,.form-select,.form-textarea{padding:7px 8px;font-size:9px;}
+  .form-label{font-size:7px;}
+  .form-row{grid-template-columns:1fr;}
+  
+  .emoji-grid{grid-template-columns:repeat(5,1fr);gap:3px;}
+  .emoji-opt{font-size:14px;padding:2px;}
+  
+  .color-swatches{gap:4px;}
+  .swatch{width:28px;height:28px;}
+  
+  .toast{bottom:12px;right:12px;padding:8px 12px;font-size:10px;}
+}
+</style>
+</head>
+<body>
+<div id="shurafah-scope-banner" style="position:fixed;top:8px;left:50%;transform:translateX(-50%);z-index:9999;background:rgba(15,20,32,.92);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.08);border-radius:50px;padding:5px 10px 5px 12px;font-family:sans-serif;font-size:11px;font-weight:700;color:#F0F4FF;box-shadow:0 8px 24px rgba(0,0,0,.45);display:flex;align-items:center;gap:8px;pointer-events:auto;"><span style="display:flex;align-items:center;gap:5px;color:#FFB347;"><span style="font-size:13px;">🎵</span>Songs Admin</span><a href="shurafah_admin_waazi_categories.html" style="display:flex;align-items:center;gap:5px;background:linear-gradient(135deg,#C8860A,#E8A020);color:#1A0800;text-decoration:none;padding:4px 10px;border-radius:50px;font-weight:700;">🎙️ Switch &rarr; Wa'azi Categories</a><span onclick="document.getElementById('shurafah-scope-banner').remove()" style="cursor:pointer;padding:0 4px;opacity:.55;font-size:13px;">✕</span></div>
+
+
+<div class="toast" id="toast"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg><span id="toastMsg"></span></div>
+
+<!-- ADD CATEGORY MODAL -->
+<div class="modal-overlay" id="addCatModal">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title">➕ Add New Category</div><button class="modal-close" onclick="closeModal('addCatModal')"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
+    <div class="form-group">
+      <label class="form-label">Category Name <span style="color:var(--accent);">*</span></label>
+      <input class="form-input" id="ac-name" type="text" placeholder="e.g. Gospel">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Thumbnail Image (Optional)</label>
+      <div class="avatar-upload-box" onclick="document.getElementById('acThumbnailInput').click()" style="background:var(--surface2);border:2px dashed var(--border);border-radius:11px;padding:20px;text-align:center;cursor:pointer;transition:all .2s;">
+        <div style="width:100%;height:100px;border-radius:8px;background:linear-gradient(135deg,var(--surface3),var(--surface2));display:flex;align-items:center;justify-content:center;color:var(--text3);font-size:32px;margin-bottom:8px;" id="acThumbnailPreview">🖼️</div>
+        <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:2px;">Click to upload thumbnail</div>
+        <div style="font-size:10px;color:var(--text3);">PNG, JPG up to 5MB · Recommended 400x400px</div>
+        <input type="file" id="acThumbnailInput" accept="image/*" style="display:none;" onchange="handleCategoryThumbnailUpload(event,'ac')">
+      </div>
+      <input type="hidden" id="ac-thumbnail" value="">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Choose Icon / Emoji</label>
+      <input class="form-input" id="ac-emoji" type="text" placeholder="e.g. 🙏" maxlength="4" style="font-size:20px;text-align:center;">
+      <div class="emoji-grid">
+        <span class="emoji-opt" onclick="pickEmoji(this,'ac-emoji')">🙏</span>
+        <span class="emoji-opt" onclick="pickEmoji(this,'ac-emoji')">🎵</span>
+        <span class="emoji-opt" onclick="pickEmoji(this,'ac-emoji')">🎶</span>
+        <span class="emoji-opt" onclick="pickEmoji(this,'ac-emoji')">🎤</span>
+        <span class="emoji-opt" onclick="pickEmoji(this,'ac-emoji')">🎸</span>
+        <span class="emoji-opt" onclick="pickEmoji(this,'ac-emoji')">🎹</span>
+        <span class="emoji-opt" onclick="pickEmoji(this,'ac-emoji')">🥁</span>
+        <span class="emoji-opt" onclick="pickEmoji(this,'ac-emoji')">🎷</span>
+        <span class="emoji-opt" onclick="pickEmoji(this,'ac-emoji')">🎺</span>
+        <span class="emoji-opt" onclick="pickEmoji(this,'ac-emoji')">🎼</span>
+        <span class="emoji-opt" onclick="pickEmoji(this,'ac-emoji')">🎧</span>
+        <span class="emoji-opt" onclick="pickEmoji(this,'ac-emoji')">🎙️</span>
+        <span class="emoji-opt" onclick="pickEmoji(this,'ac-emoji')">🎚️</span>
+        <span class="emoji-opt" onclick="pickEmoji(this,'ac-emoji')">🎛️</span>
+        <span class="emoji-opt" onclick="pickEmoji(this,'ac-emoji')">🔔</span>
+        <span class="emoji-opt" onclick="pickEmoji(this,'ac-emoji')">⭐</span>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Colour Theme</label>
+      <div class="color-swatches">
+        <div class="swatch selected" style="background:linear-gradient(135deg,#9B6BFF,#4D9FFF);" onclick="pickColor(this,'ac-color','g1')"></div>
+        <div class="swatch" style="background:linear-gradient(135deg,#FF6B35,#FFB347);" onclick="pickColor(this,'ac-color','g2')"></div>
+        <div class="swatch" style="background:linear-gradient(135deg,#FF4D8F,#FF6B35);" onclick="pickColor(this,'ac-color','g3')"></div>
+        <div class="swatch" style="background:linear-gradient(135deg,#2ECC8F,#4D9FFF);" onclick="pickColor(this,'ac-color','g4')"></div>
+        <div class="swatch" style="background:linear-gradient(135deg,#FFB347,#FF4D8F);" onclick="pickColor(this,'ac-color','g5')"></div>
+        <div class="swatch" style="background:linear-gradient(135deg,#4D9FFF,#9B6BFF);" onclick="pickColor(this,'ac-color','g6')"></div>
+        <div class="swatch" style="background:linear-gradient(135deg,#FF6B35,#FF4D8F);" onclick="pickColor(this,'ac-color','g7')"></div>
+        <div class="swatch" style="background:linear-gradient(135deg,#2ECC8F,#9B6BFF);" onclick="pickColor(this,'ac-color','g8')"></div>
+      </div>
+      <input type="hidden" id="ac-color" value="g1">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Description</label>
+      <textarea class="form-textarea" id="ac-desc" placeholder="Describe what type of music belongs in this category…"></textarea>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Display Order</label>
+        <input class="form-input" type="number" placeholder="e.g. 1" min="1">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Visibility</label>
+        <select class="form-select"><option>Visible (Active)</option><option>Hidden</option></select>
+      </div>
+    </div>
+    <div style="background:var(--surface2);border-radius:11px;padding:14px;margin-bottom:4px;">
+      <div class="form-label" style="margin-bottom:8px;">Options</div>
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <div class="toggle-row"><div class="toggle on" onclick="this.classList.toggle('on');this.classList.toggle('off');"><div class="toggle-thumb"></div></div><span style="font-size:12px;color:var(--text2);">Show on home page</span></div>
+        <div class="toggle-row"><div class="toggle on" onclick="this.classList.toggle('on');this.classList.toggle('off');"><div class="toggle-thumb"></div></div><span style="font-size:12px;color:var(--text2);">Allow user filtering</span></div>
+        <div class="toggle-row"><div class="toggle off" onclick="this.classList.toggle('on');this.classList.toggle('off');"><div class="toggle-thumb"></div></div><span style="font-size:12px;color:var(--text2);">Featured category</span></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('addCatModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="submitAddCat()"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Create Category</button>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT CATEGORY MODAL -->
+<div class="modal-overlay" id="editCatModal">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title">✏️ Edit Category</div><button class="modal-close" onclick="closeModal('editCatModal')"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
+    <div class="form-group"><label class="form-label">Category Name</label><input class="form-input" id="ec-name" value="Gospel"></div>
+    <div class="form-group">
+      <label class="form-label">Thumbnail Image (Optional)</label>
+      <div class="avatar-upload-box" onclick="document.getElementById('ecThumbnailInput').click()" style="background:var(--surface2);border:2px dashed var(--border);border-radius:11px;padding:20px;text-align:center;cursor:pointer;transition:all .2s;">
+        <div style="width:100%;height:100px;border-radius:8px;background:linear-gradient(135deg,var(--surface3),var(--surface2));display:flex;align-items:center;justify-content:center;color:var(--text3);font-size:32px;margin-bottom:8px;" id="ecThumbnailPreview">🖼️</div>
+        <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:2px;">Click to upload thumbnail</div>
+        <div style="font-size:10px;color:var(--text3);">PNG, JPG up to 5MB · Recommended 400x400px</div>
+        <input type="file" id="ecThumbnailInput" accept="image/*" style="display:none;" onchange="handleCategoryThumbnailUpload(event,'ec')">
+      </div>
+      <input type="hidden" id="ec-thumbnail" value="">
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Icon / Emoji</label><input class="form-input" id="ec-emoji" value="🙏" style="font-size:20px;text-align:center;"></div>
+      <div class="form-group"><label class="form-label">Display Order</label><input class="form-input" type="number" value="1"></div>
+    </div>
+    <div class="form-group"><label class="form-label">Colour Theme</label>
+      <div class="color-swatches">
+        <div class="swatch selected" style="background:linear-gradient(135deg,#9B6BFF,#4D9FFF);" onclick="pickColor(this,'ec-color','g1')"></div>
+        <div class="swatch" style="background:linear-gradient(135deg,#FF6B35,#FFB347);" onclick="pickColor(this,'ec-color','g2')"></div>
+        <div class="swatch" style="background:linear-gradient(135deg,#FF4D8F,#FF6B35);" onclick="pickColor(this,'ec-color','g3')"></div>
+        <div class="swatch" style="background:linear-gradient(135deg,#2ECC8F,#4D9FFF);" onclick="pickColor(this,'ec-color','g4')"></div>
+        <div class="swatch" style="background:linear-gradient(135deg,#FFB347,#FF4D8F);" onclick="pickColor(this,'ec-color','g5')"></div>
+        <div class="swatch" style="background:linear-gradient(135deg,#4D9FFF,#9B6BFF);" onclick="pickColor(this,'ec-color','g6')"></div>
+        <div class="swatch" style="background:linear-gradient(135deg,#FF6B35,#FF4D8F);" onclick="pickColor(this,'ec-color','g7')"></div>
+        <div class="swatch" style="background:linear-gradient(135deg,#2ECC8F,#9B6BFF);" onclick="pickColor(this,'ec-color','g8')"></div>
+      </div>
+      <input type="hidden" id="ec-color" value="g1">
+    </div>
+    <div class="form-group"><label class="form-label">Description</label><textarea class="form-textarea">Gospel music encompasses contemporary Christian music, praise and worship, and traditional church hymns.</textarea></div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Visibility</label><select class="form-select"><option selected>Visible (Active)</option><option>Hidden</option></select></div>
+      <div class="form-group"><label class="form-label">Status</label><select class="form-select"><option selected>Active</option><option>Archived</option></select></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-danger btn-sm" onclick="if(confirm('Delete Gospel category?')){showToast('Category deleted','ok');closeModal('editCatModal')}">Delete</button>
+      <button class="btn btn-secondary" onclick="closeModal('editCatModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="showToast('Category updated ✓','ok');closeModal('editCatModal')">Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADD SUB-CATEGORY MODAL -->
+<div class="modal-overlay" id="addSubModal">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title">➕ Add Sub-category</div><button class="modal-close" onclick="closeModal('addSubModal')"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
+    <div class="form-group"><label class="form-label">Sub-category Name <span style="color:var(--accent);">*</span></label><input class="form-input" id="as-name" type="text" placeholder="e.g. Praise"></div>
+    <div class="form-group"><label class="form-label">Parent Category <span style="color:var(--accent);">*</span></label>
+      <select class="form-select" id="as-parent">
+        <option value="">Select parent category…</option>
+        <option>Gospel</option><option>Worship</option><option>Afrobeat</option><option>Hip Hop</option><option>R&amp;B</option><option>Jazz</option><option>Classical</option><option>Highlife</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Thumbnail Image (Optional)</label>
+      <div class="avatar-upload-box" onclick="document.getElementById('asThumbnailInput').click()" style="background:var(--surface2);border:2px dashed var(--border);border-radius:11px;padding:20px;text-align:center;cursor:pointer;transition:all .2s;">
+        <div style="width:100%;height:100px;border-radius:8px;background:linear-gradient(135deg,var(--surface3),var(--surface2));display:flex;align-items:center;justify-content:center;color:var(--text3);font-size:32px;margin-bottom:8px;" id="asThumbnailPreview">🖼️</div>
+        <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:2px;">Click to upload thumbnail</div>
+        <div style="font-size:10px;color:var(--text3);">PNG, JPG up to 5MB · Recommended 400x400px</div>
+        <input type="file" id="asThumbnailInput" accept="image/*" style="display:none;" onchange="handleCategoryThumbnailUpload(event,'as')">
+      </div>
+      <input type="hidden" id="as-thumbnail" value="">
+    </div>
+    <div class="form-group"><label class="form-label">Icon / Emoji</label><input class="form-input" type="text" placeholder="e.g. 🎶" maxlength="4" style="font-size:18px;text-align:center;"></div>
+    <div class="form-group"><label class="form-label">Description</label><textarea class="form-textarea" placeholder="What type of songs belong in this sub-category?"></textarea></div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Display Order</label><input class="form-input" type="number" placeholder="1" min="1"></div>
+      <div class="form-group"><label class="form-label">Visibility</label><select class="form-select"><option>Visible</option><option>Hidden</option></select></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('addSubModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="submitAddSub()">Create Sub-category</button>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT SUB-CATEGORY MODAL -->
+<div class="modal-overlay" id="editSubModal">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title">✏️ Edit Sub-category</div><button class="modal-close" onclick="closeModal('editSubModal')"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
+    <div class="form-group"><label class="form-label">Sub-category Name</label><input class="form-input" id="es-name" value="Praise"></div>
+    <div class="form-group"><label class="form-label">Parent Category</label>
+      <select class="form-select"><option selected>Gospel</option><option>Worship</option><option>Afrobeat</option><option>Hip Hop</option></select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Thumbnail Image (Optional)</label>
+      <div class="avatar-upload-box" onclick="document.getElementById('esThumbnailInput').click()" style="background:var(--surface2);border:2px dashed var(--border);border-radius:11px;padding:20px;text-align:center;cursor:pointer;transition:all .2s;">
+        <div style="width:100%;height:100px;border-radius:8px;background:linear-gradient(135deg,var(--surface3),var(--surface2));display:flex;align-items:center;justify-content:center;color:var(--text3);font-size:32px;margin-bottom:8px;" id="esThumbnailPreview">🖼️</div>
+        <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:2px;">Click to upload thumbnail</div>
+        <div style="font-size:10px;color:var(--text3);">PNG, JPG up to 5MB · Recommended 400x400px</div>
+        <input type="file" id="esThumbnailInput" accept="image/*" style="display:none;" onchange="handleCategoryThumbnailUpload(event,'es')">
+      </div>
+      <input type="hidden" id="es-thumbnail" value="">
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Icon</label><input class="form-input" value="🙌" style="font-size:18px;text-align:center;"></div>
+      <div class="form-group"><label class="form-label">Display Order</label><input class="form-input" type="number" value="1"></div>
+    </div>
+    <div class="form-group"><label class="form-label">Description</label><textarea class="form-textarea">High energy praise songs and anthems for worship settings.</textarea></div>
+    <div class="form-group"><label class="form-label">Visibility</label><select class="form-select"><option selected>Visible</option><option>Hidden</option></select></div>
+    <div class="modal-footer">
+      <button class="btn btn-danger btn-sm" onclick="if(confirm('Delete this sub-category?')){showToast('Sub-category deleted','ok');closeModal('editSubModal')}">Delete</button>
+      <button class="btn btn-secondary" onclick="closeModal('editSubModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="showToast('Sub-category updated ✓','ok');closeModal('editSubModal')">Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<script src="admin-sidebar.js"></script>
+<script src="theme-manager.js"></script>
+
+<!-- MAIN -->
+<div class="main">
+  <header class="header">
+    <div><div class="header-title">Categories</div></div>
+    <div class="header-search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input type="text" placeholder="Search categories…" oninput="filterAll(this.value)"></div>
+    <div class="header-actions">
+      <div class="hbtn"><svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><div class="dot"></div></div>
+      <div class="hbtn"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+    </div>
+  </header>
+
+  <div class="content">
+
+    <!-- Page Header -->
+    <div class="page-header">
+      <div>
+        <div class="page-title">Categories & Sub-categories</div>
+        <div class="page-sub">Organise music into categories and sub-categories for easy discovery</div>
+      </div>
+      <div class="page-actions">
+        <button class="btn btn-secondary" onclick="openModal('addSubModal')"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add Sub-category</button>
+        <button class="btn btn-primary" onclick="openModal('addCatModal')"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add Category</button>
+      </div>
+    </div>
+
+    <!-- Stat Cards -->
+    <div class="stats-grid">
+      <div class="stat-card" style="border-color:rgba(155,107,255,0.15);">
+        <div class="sc-icon" style="background:linear-gradient(135deg,var(--purple),var(--blue));"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 10h16M4 14h10M4 18h6"/></svg></div>
+        <div class="sc-val" style="color:var(--purple);">8</div>
+        <div class="sc-label">Main Categories</div>
+        <div class="sc-change up"><svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg>All active</div>
+      </div>
+      <div class="stat-card" style="border-color:rgba(77,159,255,0.15);">
+        <div class="sc-icon" style="background:linear-gradient(135deg,var(--blue),var(--teal));"><svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg></div>
+        <div class="sc-val" style="color:var(--blue);">42</div>
+        <div class="sc-label">Sub-categories</div>
+        <div class="sc-change up"><svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg>+4 added this month</div>
+      </div>
+      <div class="stat-card" style="border-color:rgba(255,107,53,0.15);">
+        <div class="sc-icon" style="background:linear-gradient(135deg,var(--accent),var(--accent2));"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></div>
+        <div class="sc-val" style="color:var(--accent);">1,248</div>
+        <div class="sc-label">Total Songs Categorised</div>
+        <div class="sc-change up"><svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg>100% categorised</div>
+      </div>
+      <div class="stat-card" style="border-color:rgba(46,204,143,0.15);">
+        <div class="sc-icon" style="background:linear-gradient(135deg,var(--green),var(--teal));"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg></div>
+        <div class="sc-val" style="color:var(--green);">Gospel</div>
+        <div class="sc-label">Most Popular Category</div>
+        <div class="sc-change up"><svg viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"/></svg>524 songs · 42% of plays</div>
+      </div>
+    </div>
+
+    <!-- Category Cards Grid -->
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+      <div style="font-family:sans-serif;font-size:15px;font-weight:800;">Main Categories</div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-secondary btn-sm" onclick="showToast('Showing all categories','info')">All</button>
+        <button class="btn btn-secondary btn-sm" onclick="showToast('Showing active only','info')">Active</button>
+        <button class="btn btn-secondary btn-sm" onclick="showToast('Showing hidden','info')">Hidden</button>
+      </div>
+    </div>
+
+    <div class="cat-grid" id="catGrid">
+
+      <!-- Gospel -->
+      <div class="cat-card" data-name="gospel">
+        <div style="position:absolute;top:0;right:0;width:70px;height:70px;border-radius:0 14px 0 70px;background:linear-gradient(135deg,#9B6BFF,#4D9FFF);opacity:.08;"></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+          <div style="font-size:28px;">🙏</div>
+          <span class="badge badge-green"><span class="badge-dot"></span>Active</span>
+        </div>
+        <div class="cat-name">Gospel</div>
+        <div class="cat-desc">Contemporary Christian music, praise, worship and church hymns</div>
+        <div class="cat-meta">
+          <div class="cat-meta-item" style="color:var(--accent);"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l12-2v13"/></svg>524 songs</div>
+          <div class="cat-meta-item" style="color:var(--blue);"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/></svg>8 sub-cats</div>
+          <div class="cat-meta-item" style="color:var(--green);"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>1.8M plays</div>
+        </div>
+        <div class="progress"><div class="progress-fill" style="width:42%;background:linear-gradient(90deg,#9B6BFF,#4D9FFF);"></div></div>
+        <div style="font-size:9px;color:var(--text3);margin-top:4px;">42% of total plays</div>
+        <div class="cat-actions" style="margin-top:12px;">
+          <button class="btn btn-secondary btn-xs" onclick="openModal('editCatModal')"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>Edit</button>
+          <button class="btn btn-secondary btn-xs" onclick="showToast('Gospel hidden from app','info')"><svg viewBox="0 0 24 24"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></svg>Hide</button>
+          <button class="btn btn-secondary btn-xs" onclick="openModal('addSubModal')"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Sub</button>
+        </div>
+      </div>
+
+      <!-- Worship -->
+      <div class="cat-card" data-name="worship">
+        <div style="position:absolute;top:0;right:0;width:70px;height:70px;border-radius:0 14px 0 70px;background:linear-gradient(135deg,#4D9FFF,#9B6BFF);opacity:.08;"></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+          <div style="font-size:28px;">🎹</div>
+          <span class="badge badge-green"><span class="badge-dot"></span>Active</span>
+        </div>
+        <div class="cat-name">Worship</div>
+        <div class="cat-desc">Intimate worship, corporate praise, prophetic and spontaneous worship</div>
+        <div class="cat-meta">
+          <div class="cat-meta-item" style="color:var(--accent);">312 songs</div>
+          <div class="cat-meta-item" style="color:var(--blue);">6 sub-cats</div>
+          <div class="cat-meta-item" style="color:var(--green);">980K plays</div>
+        </div>
+        <div class="progress"><div class="progress-fill" style="width:28%;background:linear-gradient(90deg,#4D9FFF,#9B6BFF);"></div></div>
+        <div style="font-size:9px;color:var(--text3);margin-top:4px;">28% of total plays</div>
+        <div class="cat-actions" style="margin-top:12px;">
+          <button class="btn btn-secondary btn-xs" onclick="openModal('editCatModal')"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>Edit</button>
+          <button class="btn btn-secondary btn-xs" onclick="showToast('Worship hidden','info')"><svg viewBox="0 0 24 24"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></svg>Hide</button>
+          <button class="btn btn-secondary btn-xs" onclick="openModal('addSubModal')"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Sub</button>
+        </div>
+      </div>
+
+      <!-- Afrobeat -->
+      <div class="cat-card" data-name="afrobeat">
+        <div style="position:absolute;top:0;right:0;width:70px;height:70px;border-radius:0 14px 0 70px;background:linear-gradient(135deg,#FF6B35,#FFB347);opacity:.08;"></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+          <div style="font-size:28px;">🥁</div>
+          <span class="badge badge-green"><span class="badge-dot"></span>Active</span>
+        </div>
+        <div class="cat-name">Afrobeat</div>
+        <div class="cat-desc">Afropop, Highlife, Jùjú, Fuji and Afro-Soul rhythms from Nigeria and beyond</div>
+        <div class="cat-meta">
+          <div class="cat-meta-item" style="color:var(--accent);">186 songs</div>
+          <div class="cat-meta-item" style="color:var(--blue);">5 sub-cats</div>
+          <div class="cat-meta-item" style="color:var(--green);">540K plays</div>
+        </div>
+        <div class="progress"><div class="progress-fill" style="width:18%;background:linear-gradient(90deg,#FF6B35,#FFB347);"></div></div>
+        <div style="font-size:9px;color:var(--text3);margin-top:4px;">18% of total plays</div>
+        <div class="cat-actions" style="margin-top:12px;">
+          <button class="btn btn-secondary btn-xs" onclick="openModal('editCatModal')"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>Edit</button>
+          <button class="btn btn-secondary btn-xs" onclick="showToast('Afrobeat hidden','info')"><svg viewBox="0 0 24 24"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></svg>Hide</button>
+          <button class="btn btn-secondary btn-xs" onclick="openModal('addSubModal')"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Sub</button>
+        </div>
+      </div>
+
+      <!-- Hip Hop -->
+      <div class="cat-card" data-name="hip hop">
+        <div style="position:absolute;top:0;right:0;width:70px;height:70px;border-radius:0 14px 0 70px;background:linear-gradient(135deg,#FF4D8F,#FF6B35);opacity:.08;"></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+          <div style="font-size:28px;">🎤</div>
+          <span class="badge badge-green"><span class="badge-dot"></span>Active</span>
+        </div>
+        <div class="cat-name">Hip Hop</div>
+        <div class="cat-desc">Christian rap, trap gospel, inspirational hip hop and R&B gospel fusions</div>
+        <div class="cat-meta">
+          <div class="cat-meta-item" style="color:var(--accent);">98 songs</div>
+          <div class="cat-meta-item" style="color:var(--blue);">4 sub-cats</div>
+          <div class="cat-meta-item" style="color:var(--green);">240K plays</div>
+        </div>
+        <div class="progress"><div class="progress-fill" style="width:8%;background:linear-gradient(90deg,#FF4D8F,#FF6B35);"></div></div>
+        <div style="font-size:9px;color:var(--text3);margin-top:4px;">8% of total plays</div>
+        <div class="cat-actions" style="margin-top:12px;">
+          <button class="btn btn-secondary btn-xs" onclick="openModal('editCatModal')"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>Edit</button>
+          <button class="btn btn-secondary btn-xs" onclick="showToast('Hip Hop hidden','info')"><svg viewBox="0 0 24 24"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></svg>Hide</button>
+          <button class="btn btn-secondary btn-xs" onclick="openModal('addSubModal')"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Sub</button>
+        </div>
+      </div>
+
+      <!-- R&B -->
+      <div class="cat-card" data-name="r&b">
+        <div style="position:absolute;top:0;right:0;width:70px;height:70px;border-radius:0 14px 0 70px;background:linear-gradient(135deg,#2ECC8F,#4D9FFF);opacity:.08;"></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+          <div style="font-size:28px;">🎷</div>
+          <span class="badge badge-green"><span class="badge-dot"></span>Active</span>
+        </div>
+        <div class="cat-name">R&amp;B / Soul</div>
+        <div class="cat-desc">Neo soul, Gospel R&B, smooth contemporary and inspirational soul music</div>
+        <div class="cat-meta">
+          <div class="cat-meta-item" style="color:var(--accent);">64 songs</div>
+          <div class="cat-meta-item" style="color:var(--blue);">3 sub-cats</div>
+          <div class="cat-meta-item" style="color:var(--green);">148K plays</div>
+        </div>
+        <div class="progress"><div class="progress-fill" style="width:5%;background:linear-gradient(90deg,#2ECC8F,#4D9FFF);"></div></div>
+        <div style="font-size:9px;color:var(--text3);margin-top:4px;">5% of total plays</div>
+        <div class="cat-actions" style="margin-top:12px;">
+          <button class="btn btn-secondary btn-xs" onclick="openModal('editCatModal')"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>Edit</button>
+          <button class="btn btn-secondary btn-xs" onclick="showToast('R&B hidden','info')"><svg viewBox="0 0 24 24"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></svg>Hide</button>
+          <button class="btn btn-secondary btn-xs" onclick="openModal('addSubModal')"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Sub</button>
+        </div>
+      </div>
+
+      <!-- Jazz -->
+      <div class="cat-card hidden-cat" data-name="jazz">
+        <div style="position:absolute;top:0;right:0;width:70px;height:70px;border-radius:0 14px 0 70px;background:linear-gradient(135deg,#FFB347,#FF4D8F);opacity:.08;"></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+          <div style="font-size:28px;">🎺</div>
+          <span class="badge badge-gray">Hidden</span>
+        </div>
+        <div class="cat-name">Jazz</div>
+        <div class="cat-desc">Smooth jazz, gospel jazz and jazz soul — currently hidden from app</div>
+        <div class="cat-meta">
+          <div class="cat-meta-item" style="color:var(--text3);">54 songs</div>
+          <div class="cat-meta-item" style="color:var(--text3);">3 sub-cats</div>
+          <div class="cat-meta-item" style="color:var(--text3);">28K plays</div>
+        </div>
+        <div class="progress"><div class="progress-fill" style="width:2%;background:var(--text3);"></div></div>
+        <div style="font-size:9px;color:var(--text3);margin-top:4px;">2% of total plays · Hidden</div>
+        <div class="cat-actions" style="margin-top:12px;">
+          <button class="btn btn-secondary btn-xs" onclick="openModal('editCatModal')"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>Edit</button>
+          <button class="btn btn-success btn-xs" onclick="showToast('Jazz is now visible ✓','ok');this.closest('.cat-card').classList.remove('hidden-cat');this.closest('.cat-card').querySelector('.badge').className='badge badge-green';this.closest('.cat-card').querySelector('.badge').innerHTML='<span class=\'badge-dot\'></span>Active'"><svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>Show</button>
+          <button class="btn btn-danger btn-xs" onclick="if(confirm('Delete Jazz?')){showToast('Category deleted','ok')}"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>Del</button>
+        </div>
+      </div>
+
+      <!-- Highlife -->
+      <div class="cat-card" data-name="highlife">
+        <div style="position:absolute;top:0;right:0;width:70px;height:70px;border-radius:0 14px 0 70px;background:linear-gradient(135deg,#2ECC8F,#9B6BFF);opacity:.08;"></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+          <div style="font-size:28px;">🎸</div>
+          <span class="badge badge-green"><span class="badge-dot"></span>Active</span>
+        </div>
+        <div class="cat-name">Highlife</div>
+        <div class="cat-desc">Classic and contemporary Nigerian highlife music and Afro-Highlife fusions</div>
+        <div class="cat-meta">
+          <div class="cat-meta-item" style="color:var(--accent);">72 songs</div>
+          <div class="cat-meta-item" style="color:var(--blue);">3 sub-cats</div>
+          <div class="cat-meta-item" style="color:var(--green);">98K plays</div>
+        </div>
+        <div class="progress"><div class="progress-fill" style="width:4%;background:linear-gradient(90deg,#2ECC8F,#9B6BFF);"></div></div>
+        <div style="font-size:9px;color:var(--text3);margin-top:4px;">4% of total plays</div>
+        <div class="cat-actions" style="margin-top:12px;">
+          <button class="btn btn-secondary btn-xs" onclick="openModal('editCatModal')"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>Edit</button>
+          <button class="btn btn-secondary btn-xs" onclick="showToast('Highlife hidden','info')"><svg viewBox="0 0 24 24"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></svg>Hide</button>
+          <button class="btn btn-secondary btn-xs" onclick="openModal('addSubModal')"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Sub</button>
+        </div>
+      </div>
+
+      <!-- Classical -->
+      <div class="cat-card" data-name="classical">
+        <div style="position:absolute;top:0;right:0;width:70px;height:70px;border-radius:0 14px 0 70px;background:linear-gradient(135deg,#FF6B35,#FF4D8F);opacity:.08;"></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+          <div style="font-size:28px;">🎻</div>
+          <span class="badge badge-green"><span class="badge-dot"></span>Active</span>
+        </div>
+        <div class="cat-name">Classical</div>
+        <div class="cat-desc">Orchestral, chamber music, hymnal arrangements and sacred classical compositions</div>
+        <div class="cat-meta">
+          <div class="cat-meta-item" style="color:var(--accent);">38 songs</div>
+          <div class="cat-meta-item" style="color:var(--blue);">2 sub-cats</div>
+          <div class="cat-meta-item" style="color:var(--green);">22K plays</div>
+        </div>
+        <div class="progress"><div class="progress-fill" style="width:1%;background:linear-gradient(90deg,#FF6B35,#FF4D8F);"></div></div>
+        <div style="font-size:9px;color:var(--text3);margin-top:4px;">1% of total plays</div>
+        <div class="cat-actions" style="margin-top:12px;">
+          <button class="btn btn-secondary btn-xs" onclick="openModal('editCatModal')"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>Edit</button>
+          <button class="btn btn-secondary btn-xs" onclick="showToast('Classical hidden','info')"><svg viewBox="0 0 24 24"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></svg>Hide</button>
+          <button class="btn btn-danger btn-xs" onclick="if(confirm('Delete Classical?')){showToast('Category deleted','ok')}"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>Del</button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Sub-categories Table -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">📂 All Sub-categories (42)</div>
+        <div style="display:flex;gap:8px;">
+          <div class="filter-input" style="min-width:180px;"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input type="text" placeholder="Search sub-categories…" oninput="filterSubs(this.value)"></div>
+          <select class="filter-select" onchange="showToast('Filter: '+this.options[this.selectedIndex].text,'info')">
+            <option>All Categories</option><option>Gospel</option><option>Worship</option><option>Afrobeat</option><option>Hip Hop</option><option>R&amp;B</option><option>Jazz</option>
+          </select>
+        </div>
+      </div>
+      <div class="subcat-list" id="subList">
+
+        <div class="subcat-row" data-name="praise">
+          <span class="drag-handle" title="Drag to reorder">⠿</span>
+          <div class="subcat-icon">🙌</div>
+          <div style="flex:1;"><div class="subcat-name">Praise</div><div class="subcat-parent">Parent: Gospel</div></div>
+          <span style="font-size:12px;color:var(--text2);margin-right:8px;">142 songs</span>
+          <span class="badge badge-green" style="margin-right:8px;"><span class="badge-dot"></span>Visible</span>
+          <div class="td-actions"><button class="act-btn edit" onclick="openModal('editSubModal')"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button><button class="act-btn del" onclick="if(confirm('Delete Praise?')){showToast('Deleted','ok')}"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button></div>
+        </div>
+
+        <div class="subcat-row" data-name="contemporary gospel">
+          <span class="drag-handle">⠿</span>
+          <div class="subcat-icon">🎵</div>
+          <div style="flex:1;"><div class="subcat-name">Contemporary Gospel</div><div class="subcat-parent">Parent: Gospel</div></div>
+          <span style="font-size:12px;color:var(--text2);margin-right:8px;">98 songs</span>
+          <span class="badge badge-green" style="margin-right:8px;"><span class="badge-dot"></span>Visible</span>
+          <div class="td-actions"><button class="act-btn edit" onclick="openModal('editSubModal')"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button><button class="act-btn del" onclick="if(confirm('Delete?')){showToast('Deleted','ok')}"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button></div>
+        </div>
+
+        <div class="subcat-row" data-name="intimate worship">
+          <span class="drag-handle">⠿</span>
+          <div class="subcat-icon">🕯️</div>
+          <div style="flex:1;"><div class="subcat-name">Intimate Worship</div><div class="subcat-parent">Parent: Worship</div></div>
+          <span style="font-size:12px;color:var(--text2);margin-right:8px;">86 songs</span>
+          <span class="badge badge-green" style="margin-right:8px;"><span class="badge-dot"></span>Visible</span>
+          <div class="td-actions"><button class="act-btn edit" onclick="openModal('editSubModal')"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button><button class="act-btn del" onclick="if(confirm('Delete?')){showToast('Deleted','ok')}"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button></div>
+        </div>
+
+        <div class="subcat-row" data-name="afropop">
+          <span class="drag-handle">⠿</span>
+          <div class="subcat-icon">🥁</div>
+          <div style="flex:1;"><div class="subcat-name">Afropop</div><div class="subcat-parent">Parent: Afrobeat</div></div>
+          <span style="font-size:12px;color:var(--text2);margin-right:8px;">112 songs</span>
+          <span class="badge badge-green" style="margin-right:8px;"><span class="badge-dot"></span>Visible</span>
+          <div class="td-actions"><button class="act-btn edit" onclick="openModal('editSubModal')"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button><button class="act-btn del" onclick="if(confirm('Delete?')){showToast('Deleted','ok')}"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button></div>
+        </div>
+
+        <div class="subcat-row" data-name="trap gospel">
+          <span class="drag-handle">⠿</span>
+          <div class="subcat-icon">🎤</div>
+          <div style="flex:1;"><div class="subcat-name">Trap Gospel</div><div class="subcat-parent">Parent: Hip Hop</div></div>
+          <span style="font-size:12px;color:var(--text2);margin-right:8px;">44 songs</span>
+          <span class="badge badge-green" style="margin-right:8px;"><span class="badge-dot"></span>Visible</span>
+          <div class="td-actions"><button class="act-btn edit" onclick="openModal('editSubModal')"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button><button class="act-btn del" onclick="if(confirm('Delete?')){showToast('Deleted','ok')}"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button></div>
+        </div>
+
+        <div class="subcat-row" data-name="neo soul">
+          <span class="drag-handle">⠿</span>
+          <div class="subcat-icon">🎷</div>
+          <div style="flex:1;"><div class="subcat-name">Neo Soul</div><div class="subcat-parent">Parent: R&amp;B / Soul</div></div>
+          <span style="font-size:12px;color:var(--text2);margin-right:8px;">32 songs</span>
+          <span class="badge badge-green" style="margin-right:8px;"><span class="badge-dot"></span>Visible</span>
+          <div class="td-actions"><button class="act-btn edit" onclick="openModal('editSubModal')"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button><button class="act-btn del" onclick="if(confirm('Delete?')){showToast('Deleted','ok')}"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button></div>
+        </div>
+
+        <div class="subcat-row" data-name="smooth jazz">
+          <span class="drag-handle">⠿</span>
+          <div class="subcat-icon">🎺</div>
+          <div style="flex:1;"><div class="subcat-name">Smooth Jazz</div><div class="subcat-parent">Parent: Jazz</div></div>
+          <span style="font-size:12px;color:var(--text2);margin-right:8px;">28 songs</span>
+          <span class="badge badge-gray" style="margin-right:8px;">Hidden</span>
+          <div class="td-actions"><button class="act-btn edit" onclick="openModal('editSubModal')"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button><button class="act-btn del" onclick="if(confirm('Delete?')){showToast('Deleted','ok')}"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button></div>
+        </div>
+
+        <div class="subcat-row" data-name="prophetic worship">
+          <span class="drag-handle">⠿</span>
+          <div class="subcat-icon">🔥</div>
+          <div style="flex:1;"><div class="subcat-name">Prophetic Worship</div><div class="subcat-parent">Parent: Worship</div></div>
+          <span style="font-size:12px;color:var(--text2);margin-right:8px;">58 songs</span>
+          <span class="badge badge-green" style="margin-right:8px;"><span class="badge-dot"></span>Visible</span>
+          <div class="td-actions"><button class="act-btn edit" onclick="openModal('editSubModal')"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button><button class="act-btn del" onclick="if(confirm('Delete?')){showToast('Deleted','ok')}"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></button></div>
+        </div>
+
+      </div>
+      <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;">
+        <span style="font-size:12px;color:var(--text3);">Showing 8 of 42 sub-categories</span>
+        <button class="btn btn-secondary btn-sm" onclick="showToast('Loading more…','info')">Load More</button>
+      </div>
+    </div>
+
+    <div style="height:16px;"></div>
+  </div>
+</div>
+
+<script>
+const toastEl=document.getElementById('toast');let toastT=null;
+function showToast(msg,type='ok'){document.getElementById('toastMsg').textContent=msg;toastEl.className='toast show '+(type||'ok');clearTimeout(toastT);toastT=setTimeout(()=>toastEl.classList.remove('show'),2800);}
+function openModal(id){document.getElementById(id).classList.add('show');}
+function closeModal(id){document.getElementById(id).classList.remove('show');}
+document.querySelectorAll('.modal-overlay').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('show');}));
+document.querySelectorAll('.toggle').forEach(t=>t.addEventListener('click',()=>{t.classList.toggle('on');t.classList.toggle('off');}));
+
+/* Filter category cards */
+function filterAll(q){
+  q=q.toLowerCase().trim();
+  document.querySelectorAll('#catGrid .cat-card').forEach(c=>{c.style.display=(!q||c.dataset.name.includes(q))?'':'none';});
+  document.querySelectorAll('#subList .subcat-row').forEach(r=>{r.style.display=(!q||r.dataset.name.includes(q))?'':'none';});
+}
+
+/* Filter sub-categories */
+function filterSubs(q){
+  q=q.toLowerCase().trim();
+  document.querySelectorAll('#subList .subcat-row').forEach(r=>{r.style.display=(!q||r.dataset.name.includes(q))?'':'none';});
+}
+
+/* Emoji picker */
+function pickEmoji(el,targetId){
+  document.querySelectorAll('.emoji-opt').forEach(e=>e.classList.remove('selected'));
+  el.classList.add('selected');
+  document.getElementById(targetId).value=el.textContent;
+}
+
+/* Color picker */
+function pickColor(el,hiddenId,gradClass){
+  el.closest('.color-swatches').querySelectorAll('.swatch').forEach(s=>s.classList.remove('selected'));
+  el.classList.add('selected');
+  document.getElementById(hiddenId).value=gradClass;
+}
+
+/* Submit add category */
+function submitAddCat(){
+  const n=document.getElementById('ac-name').value.trim();
+  if(!n){showToast('Category name is required','err');return;}
+  showToast('Category "'+n+'" created ✓','ok');
+  closeModal('addCatModal');
+}
+
+/* Submit add sub-category */
+function submitAddSub(){
+  const n=document.getElementById('as-name').value.trim();
+  const p=document.getElementById('as-parent').value;
+  if(!n){showToast('Sub-category name is required','err');return;}
+  if(!p){showToast('Please select a parent category','err');return;}
+  showToast('Sub-category "'+n+'" created under '+p+' ✓','ok');
+  closeModal('addSubModal');
+}
+
+/* Handle category/subcategory thumbnail upload */
+function handleCategoryThumbnailUpload(event,prefix){
+  const file=event.target.files[0];
+  if(!file)return;
+  if(file.size>5*1024*1024){showToast('File size must be less than 5MB','err');return;}
+  if(!file.type.startsWith('image/')){showToast('Please select an image file','err');return;}
+  const reader=new FileReader();
+  reader.onload=function(e){
+    const dataUrl=e.target.result;
+    document.getElementById(prefix+'-thumbnail').value=dataUrl;
+    const previewEl=document.getElementById(prefix+'ThumbnailPreview');
+    previewEl.style.backgroundImage='url('+dataUrl+')';
+    previewEl.style.backgroundSize='cover';
+    previewEl.style.backgroundPosition='center';
+    previewEl.textContent='';
+    showToast('Thumbnail uploaded ✓','ok');
+  };
+  reader.readAsDataURL(file);
+}
+</script>
+</body>
+</html>

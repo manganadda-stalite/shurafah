@@ -1,0 +1,1259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shurafah Admin — Notifications</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#05070F;--surface:#0A0E1A;--surface2:#0F1525;--surface3:#141B2E;--surface4:#1A2238;
+  --accent:#FF6B35;--accent2:#FFB347;--blue:#4D9FFF;--green:#2ECC8F;
+  --purple:#9B6BFF;--pink:#FF4D8F;--yellow:#FFD166;--red:#FF4444;--teal:#00C9B8;
+  --text:#F0F4FF;--text2:#8A94B0;--text3:#4A5270;
+  --border:rgba(255,255,255,0.06);
+  --sidebar-w:240px;--sidebar-collapsed:62px;--topbar-h:60px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--text);min-height:100vh;display:flex;overflow-x:hidden;}
+
+/* ── SIDEBAR ── */
+.sidebar{width:var(--sidebar-w);min-height:100vh;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;top:0;left:0;z-index:100;transition:width .25s ease;overflow:hidden;}
+.sidebar.collapsed{width:var(--sidebar-collapsed);}
+.sb-logo{display:flex;align-items:center;gap:10px;padding:18px 16px 16px;border-bottom:1px solid var(--border);flex-shrink:0;min-height:var(--topbar-h);}
+.sb-logo-icon{width:32px;height:32px;border-radius:9px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.sb-logo-text{font-family:sans-serif;font-size:15px;font-weight:800;white-space:nowrap;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.sb-logo-sub{font-size:9px;color:var(--text3);}
+.sb-nav{flex:1;overflow-y:auto;overflow-x:hidden;padding:10px 0;scrollbar-width:none;}
+.sb-nav::-webkit-scrollbar{display:none;}
+.sb-group-label{font-size:9px;font-family:sans-serif;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.6px;padding:10px 16px 5px;white-space:nowrap;transition:opacity .2s;}
+.sidebar.collapsed .sb-group-label{opacity:0;}
+.sb-item{display:flex;align-items:center;gap:10px;padding:9px 16px;cursor:pointer;transition:background .15s;position:relative;white-space:nowrap;text-decoration:none;color:var(--text2);}
+.sb-item:hover{background:var(--surface2);color:var(--text);}
+.sb-item.active{background:rgba(77,159,255,.08);color:var(--blue);border-right:2px solid var(--blue);}
+.sb-item.active .sb-icon svg{stroke:var(--blue);}
+.sb-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.sb-item.active .sb-icon{background:rgba(77,159,255,.1);}
+.sb-icon svg{width:15px;height:15px;fill:none;stroke:var(--text3);stroke-width:2;transition:stroke .15s;}
+.sb-item:hover .sb-icon svg{stroke:var(--text);}
+.sb-label{font-size:12px;font-weight:500;white-space:nowrap;overflow:hidden;transition:opacity .2s;}
+.sidebar.collapsed .sb-label{opacity:0;pointer-events:none;}
+.sb-badge{margin-left:auto;background:var(--accent);border-radius:50px;padding:1px 7px;font-size:9px;font-weight:700;color:white;font-family:sans-serif;white-space:nowrap;flex-shrink:0;transition:opacity .2s;}
+.sidebar.collapsed .sb-badge{opacity:0;}
+.sb-item::after{content:attr(data-tip);position:absolute;left:calc(var(--sidebar-collapsed) + 8px);top:50%;transform:translateY(-50%);background:var(--surface3);border:1px solid var(--border);border-radius:8px;padding:5px 10px;font-size:11px;color:var(--text);white-space:nowrap;pointer-events:none;opacity:0;transition:opacity .15s;z-index:200;box-shadow:0 4px 16px rgba(0,0,0,.4);}
+.sidebar.collapsed .sb-item:hover::after{opacity:1;}
+.sb-footer{padding:12px 16px;border-top:1px solid var(--border);display:flex;align-items:center;gap:10px;flex-shrink:0;}
+.sb-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--purple),var(--blue));display:flex;align-items:center;justify-content:center;font-size:12px;font-family:sans-serif;font-weight:700;flex-shrink:0;}
+.sb-user-name{font-size:12px;font-weight:600;white-space:nowrap;transition:opacity .2s;}
+.sb-user-role{font-size:10px;color:var(--text3);transition:opacity .2s;}
+.sidebar.collapsed .sb-user-name,.sidebar.collapsed .sb-user-role{opacity:0;}
+
+/* ── MAIN ── */
+.main{margin-left:var(--sidebar-w);flex:1;display:flex;flex-direction:column;min-height:100vh;transition:margin-left .25s ease;}
+.main.sidebar-collapsed{margin-left:var(--sidebar-collapsed);}
+
+/* ── TOPBAR ── */
+.topbar{height:var(--topbar-h);background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:14px;padding:0 24px;position:sticky;top:0;z-index:50;flex-shrink:0;}
+.topbar-toggle{width:32px;height:32px;border-radius:8px;background:var(--surface2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;}
+.topbar-toggle svg{width:14px;height:14px;fill:none;stroke:var(--text2);stroke-width:2;}
+.topbar-breadcrumb{font-size:12px;color:var(--text3);display:flex;align-items:center;gap:6px;}
+.topbar-right{display:flex;align-items:center;gap:10px;margin-left:auto;}
+.tb-icon-btn{width:34px;height:34px;border-radius:9px;background:var(--surface2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;transition:border-color .15s;}
+.tb-icon-btn:hover{border-color:rgba(255,107,53,.3);}
+.tb-icon-btn svg{width:15px;height:15px;fill:none;stroke:var(--text2);stroke-width:2;}
+.tb-notif-dot{position:absolute;top:6px;right:6px;width:6px;height:6px;background:var(--accent);border-radius:50%;border:1.5px solid var(--surface);}
+.tb-avatar{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-family:sans-serif;font-size:12px;font-weight:700;cursor:pointer;}
+
+/* ── CONTENT ── */
+.content{flex:1;padding:24px;overflow-y:auto;}
+.page-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:22px;flex-wrap:wrap;gap:12px;}
+.page-title{font-family:sans-serif;font-size:22px;font-weight:800;letter-spacing:-.4px;margin-bottom:3px;}
+.page-subtitle{font-size:12px;color:var(--text2);}
+
+/* ── BUTTONS ── */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:9px;cursor:pointer;font-family:sans-serif;font-size:11px;font-weight:700;transition:all .15s;border:1px solid transparent;}
+.btn-primary{background:var(--accent);color:white;box-shadow:0 3px 12px rgba(255,107,53,.3);}
+.btn-primary:hover{box-shadow:0 5px 18px rgba(255,107,53,.45);}
+.btn-outline{background:transparent;border-color:var(--border);color:var(--text2);}
+.btn-outline:hover{border-color:rgba(255,107,53,.3);color:var(--text);}
+.btn-blue{background:rgba(77,159,255,.12);border-color:rgba(77,159,255,.28);color:var(--blue);}
+.btn-blue:hover{background:rgba(77,159,255,.2);}
+.btn-green{background:rgba(46,204,143,.12);border-color:rgba(46,204,143,.28);color:var(--green);}
+.btn-purple{background:rgba(155,107,255,.12);border-color:rgba(155,107,255,.28);color:var(--purple);}
+.btn-danger{background:rgba(255,68,68,.12);border-color:rgba(255,68,68,.28);color:var(--red);}
+.btn-sm{padding:5px 12px;font-size:10px;}
+.btn svg{width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:2;}
+
+/* ── STAT STRIP ── */
+.stat-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:22px;}
+.ss-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:10px;animation:fadeUp .4s ease both;}
+.ss-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.ss-icon svg{width:16px;height:16px;fill:none;stroke:white;stroke-width:2;}
+.ss-val{font-family:sans-serif;font-size:18px;font-weight:800;line-height:1;}
+.ss-label{font-size:10px;color:var(--text3);margin-top:2px;}
+.ss-delta{font-size:9px;margin-top:3px;font-family:sans-serif;font-weight:700;}
+.ss-delta.up{color:var(--green);}
+
+/* ── TWO-COL LAYOUT ── */
+.two-col{display:grid;grid-template-columns:1.1fr 0.9fr;gap:20px;margin-bottom:22px;}
+.one-col{margin-bottom:22px;}
+
+/* ── SECTION CARD ── */
+.section-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;overflow:hidden;animation:fadeUp .4s ease both;}
+.sc-header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--border);}
+.sc-title{font-family:sans-serif;font-size:13px;font-weight:700;display:flex;align-items:center;gap:8px;}
+.sc-title-icon{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;}
+.sc-title-icon svg{width:13px;height:13px;fill:none;stroke:white;stroke-width:2;}
+
+/* ── COMPOSE PANEL ── */
+.compose-panel{padding:20px;}
+.form-group{margin-bottom:16px;}
+.form-label{font-size:10px;font-family:sans-serif;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.4px;margin-bottom:7px;display:flex;align-items:center;justify-content:space-between;}
+.form-input{width:100%;background:var(--surface2);border:1.5px solid var(--border);border-radius:10px;padding:10px 14px;font-size:12px;color:var(--text);font-family:'DM Sans',sans-serif;outline:none;transition:border-color .2s;}
+.form-input:focus{border-color:rgba(77,159,255,.4);}
+.form-input::placeholder{color:var(--text3);}
+.form-textarea{width:100%;background:var(--surface2);border:1.5px solid var(--border);border-radius:10px;padding:10px 14px;font-size:12px;color:var(--text);font-family:'DM Sans',sans-serif;outline:none;resize:vertical;min-height:88px;transition:border-color .2s;}
+.form-textarea:focus{border-color:rgba(77,159,255,.4);}
+.form-textarea::placeholder{color:var(--text3);}
+.form-select{width:100%;background:var(--surface2);border:1.5px solid var(--border);border-radius:10px;padding:10px 14px;font-size:12px;color:var(--text);font-family:'DM Sans',sans-serif;outline:none;cursor:pointer;}
+.form-select option{background:var(--surface2);}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.char-count{font-size:10px;color:var(--text3);font-family:sans-serif;}
+
+/* Channel chips */
+.channel-chips{display:flex;gap:7px;flex-wrap:wrap;margin-top:6px;}
+.ch-chip{display:flex;align-items:center;gap:5px;padding:6px 12px;border-radius:50px;font-size:10px;font-family:sans-serif;font-weight:700;cursor:pointer;border:1.5px solid var(--border);color:var(--text3);background:var(--surface2);transition:all .15s;user-select:none;}
+.ch-chip.on{border-color:var(--blue);color:var(--blue);background:rgba(77,159,255,.08);}
+.ch-chip svg{width:11px;height:11px;fill:none;stroke:currentColor;stroke-width:2;}
+
+/* Audience chips */
+.audience-chips{display:flex;gap:7px;flex-wrap:wrap;margin-top:6px;}
+.aud-chip{padding:5px 12px;border-radius:50px;font-size:10px;font-family:sans-serif;font-weight:700;cursor:pointer;border:1.5px solid var(--border);color:var(--text3);background:var(--surface2);transition:all .15s;user-select:none;}
+.aud-chip.on{border-color:var(--accent);color:var(--accent);background:rgba(255,107,53,.06);}
+
+/* Preview card */
+.notif-preview{background:var(--surface3);border:1px solid var(--border);border-radius:12px;padding:13px 14px;margin-bottom:16px;}
+.np-header{font-size:9px;color:var(--text3);font-family:sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:.4px;margin-bottom:8px;}
+.np-card{background:var(--surface);border-radius:10px;padding:11px 13px;display:flex;align-items:flex-start;gap:10px;border:1px solid var(--border);}
+.np-icon{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.np-info{flex:1;min-width:0;}
+.np-app{font-size:9px;color:var(--text3);font-family:sans-serif;font-weight:700;text-transform:uppercase;margin-bottom:2px;}
+.np-title{font-family:sans-serif;font-size:12px;font-weight:700;margin-bottom:2px;}
+.np-body{font-size:11px;color:var(--text2);line-height:1.5;}
+.np-time{font-size:9px;color:var(--text3);margin-top:4px;}
+
+/* ── SEND OPTIONS ── */
+.send-options{display:flex;gap:8px;flex-wrap:wrap;}
+
+/* ── SENT HISTORY ── */
+.notif-list{padding:6px 0;}
+.notif-row{display:flex;align-items:flex-start;gap:12px;padding:12px 20px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s;}
+.notif-row:last-child{border-bottom:none;}
+.notif-row:hover{background:var(--surface2);}
+.nr-icon{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.nr-info{flex:1;min-width:0;}
+.nr-title{font-family:sans-serif;font-size:12px;font-weight:700;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.nr-body{font-size:11px;color:var(--text2);margin-bottom:5px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+.nr-meta{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+.nr-time{font-size:9px;color:var(--text3);}
+.nr-audience{font-size:9px;font-family:sans-serif;font-weight:700;padding:2px 7px;border-radius:50px;}
+.nr-right{display:flex;flex-direction:column;align-items:flex-end;gap:5px;flex-shrink:0;}
+.nr-stat-row{display:flex;gap:8px;}
+.nr-stat{display:flex;flex-direction:column;align-items:center;gap:1px;}
+.nr-stat-val{font-family:sans-serif;font-size:11px;font-weight:700;}
+.nr-stat-lbl{font-size:8px;color:var(--text3);}
+.nr-channel-chips{display:flex;gap:4px;}
+.nr-ch{font-size:8px;font-family:sans-serif;font-weight:700;padding:2px 6px;border-radius:4px;}
+
+/* Type badges */
+.type-badge{font-size:8px;font-family:sans-serif;font-weight:700;padding:2px 7px;border-radius:50px;}
+.tb-broadcast{background:rgba(77,159,255,.12);color:var(--blue);border:1px solid rgba(77,159,255,.25);}
+.tb-targeted{background:rgba(155,107,255,.12);color:var(--purple);border:1px solid rgba(155,107,255,.25);}
+.tb-automated{background:rgba(0,201,184,.1);color:var(--teal);border:1px solid rgba(0,201,184,.22);}
+.tb-scheduled{background:rgba(255,209,102,.1);color:var(--yellow);border:1px solid rgba(255,209,102,.25);}
+
+/* Channel tag styles */
+.ch-push{background:rgba(255,107,53,.1);color:var(--accent);}
+.ch-sms{background:rgba(46,204,143,.1);color:var(--green);}
+.ch-inapp{background:rgba(77,159,255,.1);color:var(--blue);}
+
+/* Audience tags */
+.aud-all{background:rgba(255,107,53,.08);color:var(--accent);}
+.aud-premium{background:rgba(255,209,102,.08);color:var(--yellow);}
+.aud-free{background:rgba(77,159,255,.08);color:var(--blue);}
+.aud-inactive{background:rgba(255,68,68,.08);color:var(--red);}
+.aud-new{background:rgba(46,204,143,.08);color:var(--green);}
+
+/* ── AUTOMATED RULES ── */
+.rules-list{padding:6px 0;}
+.rule-row{display:flex;align-items:center;gap:12px;padding:12px 20px;border-bottom:1px solid var(--border);transition:background .15s;}
+.rule-row:last-child{border-bottom:none;}
+.rule-row:hover{background:var(--surface2);}
+.rule-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.rule-info{flex:1;min-width:0;}
+.rule-name{font-family:sans-serif;font-size:12px;font-weight:700;margin-bottom:2px;}
+.rule-desc{font-size:10px;color:var(--text2);}
+.rule-right{display:flex;align-items:center;gap:8px;flex-shrink:0;}
+.rule-sent{font-size:10px;color:var(--text3);}
+.toggle-switch{width:36px;height:20px;border-radius:10px;position:relative;cursor:pointer;flex-shrink:0;transition:background .2s;}
+.toggle-switch.on{background:var(--green);}
+.toggle-switch.off{background:var(--surface3);}
+.toggle-thumb{position:absolute;top:2px;width:16px;height:16px;background:white;border-radius:50%;transition:left .2s;box-shadow:0 1px 4px rgba(0,0,0,.3);}
+.toggle-switch.on .toggle-thumb{left:18px;}
+.toggle-switch.off .toggle-thumb{left:2px;}
+
+/* ── TABS ── */
+.tab-bar{display:flex;gap:4px;background:var(--surface);border:1px solid var(--border);border-radius:11px;padding:4px;margin-bottom:18px;width:fit-content;}
+.tab-btn{padding:7px 18px;border-radius:8px;font-family:sans-serif;font-size:11px;font-weight:700;cursor:pointer;color:var(--text3);transition:all .15s;white-space:nowrap;}
+.tab-btn.active{background:var(--blue);color:white;box-shadow:0 2px 8px rgba(77,159,255,.3);}
+
+/* ── DELIVERY RATE BARS ── */
+.delivery-row{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
+.del-label{font-size:11px;color:var(--text2);width:80px;flex-shrink:0;}
+.del-bar-bg{flex:1;height:6px;background:var(--surface3);border-radius:3px;overflow:hidden;}
+.del-fill{height:100%;border-radius:3px;}
+.del-pct{font-family:sans-serif;font-size:10px;font-weight:700;min-width:36px;text-align:right;}
+
+/* ── SCHEDULED LIST ── */
+.sched-list{padding:6px 0;}
+.sched-row{display:flex;align-items:center;gap:12px;padding:11px 20px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s;}
+.sched-row:last-child{border-bottom:none;}
+.sched-row:hover{background:var(--surface2);}
+.sched-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;}
+.sched-info{flex:1;min-width:0;}
+.sched-title{font-family:sans-serif;font-size:12px;font-weight:700;margin-bottom:2px;}
+.sched-meta{font-size:10px;color:var(--text2);}
+.sched-time{font-family:sans-serif;font-size:11px;font-weight:700;color:var(--yellow);flex-shrink:0;}
+.sched-actions{display:flex;gap:4px;flex-shrink:0;}
+.sched-btn{width:26px;height:26px;border-radius:7px;display:flex;align-items:center;justify-content:center;cursor:pointer;border:1px solid var(--border);background:transparent;transition:all .15s;}
+.sched-btn:hover{background:var(--surface3);}
+.sched-btn svg{width:11px;height:11px;fill:none;stroke:var(--text2);stroke-width:2;}
+.sched-btn.edit:hover{border-color:rgba(77,159,255,.3);}
+.sched-btn.edit:hover svg{stroke:var(--blue);}
+.sched-btn.del:hover{border-color:rgba(255,68,68,.3);}
+.sched-btn.del:hover svg{stroke:var(--red);}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:24px;right:24px;background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:12px 18px;font-size:12px;font-family:sans-serif;font-weight:700;color:var(--text);box-shadow:0 8px 24px rgba(0,0,0,.5);z-index:300;opacity:0;transform:translateY(10px);transition:opacity .2s,transform .2s;pointer-events:none;max-width:320px;}
+.toast.show{opacity:1;transform:translateY(0);}
+.toast.success{border-color:rgba(46,204,143,.35);}
+.toast.danger{border-color:rgba(255,68,68,.35);}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.g1{background:linear-gradient(135deg,#9B6BFF,#4D9FFF);}
+.g2{background:linear-gradient(135deg,#FF6B35,#FFB347);}
+.g3{background:linear-gradient(135deg,#FF4D8F,#FF6B35);}
+.g4{background:linear-gradient(135deg,#2ECC8F,#4D9FFF);}
+.g5{background:linear-gradient(135deg,#FFB347,#FF4D8F);}
+.g6{background:linear-gradient(135deg,#4D9FFF,#9B6BFF);}
+.g7{background:linear-gradient(135deg,#FF6B35,#FF4D8F);}
+.g8{background:linear-gradient(135deg,#2ECC8F,#9B6BFF);}
+::-webkit-scrollbar{width:4px;height:4px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--surface4);border-radius:2px;}
+
+/* ════════════════════════════════
+   MOBILE RESPONSIVENESS
+════════════════════════════════ */
+@media (max-width:768px) {
+  .main{margin-left:var(--sidebar-collapsed);}
+  .topbar{padding:0 16px;gap:10px;}
+  .topbar-toggle{width:28px;height:28px;}
+  .topbar-toggle svg{width:14px;height:14px;}
+  .topbar-breadcrumb{font-size:10px;}
+  .topbar-right{gap:8px;}
+  .tb-icon-btn{width:28px;height:28px;}
+  .tb-icon-btn svg{width:12px;height:12px;}
+  .tb-avatar{width:28px;height:28px;font-size:10px;}
+  
+  .content{padding:14px;}
+  .page-header{margin-bottom:16px;gap:10px;}
+  .page-title{font-size:14px;}
+  .page-subtitle{font-size:10px;}
+  
+  .stat-strip{gap:8px;}
+  .ss-card{padding:12px;}
+  .ss-icon{width:32px;height:32px;}
+  .ss-icon svg{width:14px;height:14px;}
+  .ss-val{font-size:16px;}
+  .ss-label{font-size:9px;}
+  .ss-delta{font-size:8px;}
+  
+  .tab-bar{gap:4px;}
+  .tab-btn{padding:6px 12px;font-size:10px;}
+  
+  .two-col{grid-template-columns:1fr;}
+  .section-card{padding:12px;}
+  .sc-header{padding:10px 0;}
+  .sc-title{font-size:12px;}
+  
+  .form-group{margin-bottom:12px;}
+  .form-input,.form-select,.form-textarea{padding:8px 10px;font-size:10px;}
+  .form-label{font-size:8px;}
+  
+  .notif-row{padding:10px 12px;gap:10px;}
+  .nr-icon{width:32px;height:32px;font-size:14px;}
+  .nr-title{font-size:11px;}
+  .nr-body{font-size:10px;}
+  .nr-meta{gap:6px;}
+  .nr-time{font-size:8px;}
+  
+  .rule-row{padding:10px 12px;gap:10px;}
+  .rule-icon{width:32px;height:32px;font-size:14px;}
+  .rule-name{font-size:11px;}
+  .rule-desc{font-size:9px;}
+  .toggle-switch{width:32px;height:18px;}
+  .toggle-thumb{width:14px;height:14px;}
+  .toggle-switch.on .toggle-thumb{left:16px;}
+  
+  .sched-row{padding:10px 12px;gap:10px;}
+  .sched-icon{width:32px;height:32px;font-size:14px;}
+  .sched-title{font-size:11px;}
+  .sched-meta{font-size:9px;}
+  .sched-time{font-size:10px;}
+  
+  .toast{bottom:16px;right:16px;padding:10px 14px;font-size:11px;}
+}
+
+@media (max-width:480px) {
+  .main{margin-left:var(--sidebar-collapsed);}
+  .topbar{padding:0 12px;height:56px;}
+  .topbar-toggle{width:24px;height:24px;}
+  .topbar-toggle svg{width:12px;height:12px;}
+  .topbar-breadcrumb{font-size:9px;display:none;}
+  .topbar-right{gap:6px;}
+  .tb-icon-btn{width:24px;height:24px;}
+  .tb-icon-btn svg{width:11px;height:11px;}
+  .tb-avatar{width:24px;height:24px;font-size:9px;}
+  
+  .content{padding:10px;}
+  .page-header{margin-bottom:12px;gap:8px;flex-direction:column;}
+  .page-title{font-size:12px;}
+  .page-subtitle{font-size:9px;display:none;}
+  
+  .stat-strip{grid-template-columns:repeat(2,1fr);gap:6px;}
+  .ss-card{padding:10px;}
+  .ss-icon{width:28px;height:28px;}
+  .ss-icon svg{width:12px;height:12px;}
+  .ss-val{font-size:14px;}
+  .ss-label{font-size:8px;}
+  .ss-delta{font-size:7px;}
+  
+  .tab-bar{gap:3px;overflow-x:auto;}
+  .tab-btn{padding:5px 10px;font-size:9px;}
+  
+  .two-col{grid-template-columns:1fr;}
+  .section-card{padding:10px;}
+  .sc-header{padding:8px 0;}
+  .sc-title{font-size:11px;}
+  
+  .form-group{margin-bottom:10px;}
+  .form-input,.form-select,.form-textarea{padding:7px 8px;font-size:9px;}
+  .form-label{font-size:7px;}
+  
+  .notif-row{padding:8px 10px;gap:8px;}
+  .nr-icon{width:28px;height:28px;font-size:12px;}
+  .nr-title{font-size:10px;}
+  .nr-body{font-size:9px;}
+  .nr-meta{gap:4px;}
+  .nr-time{font-size:7px;}
+  
+  .rule-row{padding:8px 10px;gap:8px;}
+  .rule-icon{width:28px;height:28px;font-size:12px;}
+  .rule-name{font-size:10px;}
+  .rule-desc{font-size:8px;}
+  .toggle-switch{width:28px;height:16px;}
+  .toggle-thumb{width:12px;height:12px;}
+  .toggle-switch.on .toggle-thumb{left:14px;}
+  
+  .sched-row{padding:8px 10px;gap:8px;}
+  .sched-icon{width:28px;height:28px;font-size:12px;}
+  .sched-title{font-size:10px;}
+  .sched-meta{font-size:8px;}
+  .sched-time{font-size:9px;}
+  
+  .toast{bottom:12px;right:12px;padding:8px 12px;font-size:10px;}
+}
+</style>
+</head>
+<body>
+
+<script src="admin-sidebar.js"></script>
+<script src="theme-manager.js"></script>
+
+<!-- ════ MAIN ════ -->
+<div class="main" id="mainArea">
+  <header class="topbar">
+    <div class="topbar-toggle" id="sidebarToggle">
+      <svg viewBox="0 0 24 24"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </div>
+    <div class="topbar-breadcrumb">
+      <span>Admin</span><span style="color:var(--text3);margin:0 6px;">/</span>
+      <span style="color:var(--blue);">Notifications</span>
+    </div>
+    <div class="topbar-right">
+      <div class="tb-icon-btn"><svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><div class="tb-notif-dot"></div></div>
+      <div class="tb-icon-btn"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></div>
+      <div class="tb-avatar">SA</div>
+    </div>
+  </header>
+
+  <main class="content">
+
+    <div class="page-header">
+      <div>
+        <div class="page-title">Notifications Management</div>
+        <div class="page-subtitle">Compose &amp; broadcast via Push · SMS (Termii) · In-App · Schedule automated triggers</div>
+      </div>
+      <div style="display:flex;gap:8px;">
+        <div class="btn btn-outline" onclick="switchTab('history')">
+          <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          View History
+        </div>
+        <div class="btn btn-primary" onclick="switchTab('compose')">
+          <svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          New Notification
+        </div>
+      </div>
+    </div>
+
+    <!-- Stat strip -->
+    <div class="stat-strip">
+      <div class="ss-card" style="animation-delay:0s;">
+        <div class="ss-icon" style="background:rgba(77,159,255,.15);"><svg viewBox="0 0 24 24" style="stroke:var(--blue);"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></div>
+        <div><div class="ss-val" style="color:var(--blue);">284</div><div class="ss-label">Sent This Month</div><div class="ss-delta up">▲ +38%</div></div>
+      </div>
+      <div class="ss-card" style="animation-delay:.04s;">
+        <div class="ss-icon" style="background:rgba(46,204,143,.12);"><svg viewBox="0 0 24 24" style="stroke:var(--green);"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22,4 12,14.01 9,11.01"/></svg></div>
+        <div><div class="ss-val" style="color:var(--green);">78.4%</div><div class="ss-label">Avg Open Rate</div><div class="ss-delta up">▲ +4.2%</div></div>
+      </div>
+      <div class="ss-card" style="animation-delay:.08s;">
+        <div class="ss-icon" style="background:rgba(155,107,255,.12);"><svg viewBox="0 0 24 24" style="stroke:var(--purple);"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+        <div><div class="ss-val" style="color:var(--purple);">12,840</div><div class="ss-label">Total Recipients</div><div class="ss-delta up">▲ All users</div></div>
+      </div>
+      <div class="ss-card" style="animation-delay:.12s;">
+        <div class="ss-icon" style="background:rgba(255,209,102,.1);"><svg viewBox="0 0 24 24" style="stroke:var(--yellow);"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+        <div><div class="ss-val" style="color:var(--yellow);">6</div><div class="ss-label">Scheduled</div><div class="ss-delta up">▲ Upcoming</div></div>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tab-bar" id="mainTabs">
+      <div class="tab-btn active" data-tab="compose">✏️ Compose</div>
+      <div class="tab-btn" data-tab="history">📨 Sent History</div>
+      <div class="tab-btn" data-tab="scheduled">🗓️ Scheduled</div>
+      <div class="tab-btn" data-tab="automated">⚡ Auto Rules</div>
+    </div>
+
+    <!-- ════ COMPOSE TAB ════ -->
+    <div id="tab-compose">
+      <div class="two-col">
+
+        <!-- LEFT: Compose form -->
+        <div class="section-card" style="animation-delay:.05s;">
+          <div class="sc-header">
+            <div class="sc-title">
+              <div class="sc-title-icon" style="background:rgba(77,159,255,.15);"><svg viewBox="0 0 24 24" style="stroke:var(--blue);"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></div>
+              Compose Notification
+            </div>
+          </div>
+          <div class="compose-panel">
+
+            <!-- Title -->
+            <div class="form-group">
+              <div class="form-label">
+                <span>Notification Title *</span>
+                <span class="char-count" id="titleCount">0 / 65</span>
+              </div>
+              <input class="form-input" id="notifTitle" type="text" placeholder="e.g. New song released!" maxlength="65">
+            </div>
+
+            <!-- Body -->
+            <div class="form-group">
+              <div class="form-label">
+                <span>Message Body *</span>
+                <span class="char-count" id="bodyCount">0 / 160</span>
+              </div>
+              <textarea class="form-textarea" id="notifBody" placeholder="Type your notification message here…" maxlength="160"></textarea>
+            </div>
+
+            <!-- Channels -->
+            <div class="form-group">
+              <div class="form-label">Delivery Channels</div>
+              <div class="channel-chips" id="channelChips">
+                <div class="ch-chip on" data-ch="push">
+                  <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                  Push Notification
+                </div>
+                <div class="ch-chip" data-ch="sms">
+                  <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                  SMS (Termii)
+                </div>
+                <div class="ch-chip on" data-ch="inapp">
+                  <svg viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+                  In-App
+                </div>
+              </div>
+            </div>
+
+            <!-- Audience -->
+            <div class="form-group">
+              <div class="form-label">Target Audience</div>
+              <div class="audience-chips" id="audienceChips">
+                <div class="aud-chip on" data-aud="all">All Users (12,840)</div>
+                <div class="aud-chip" data-aud="premium">Premium Only</div>
+                <div class="aud-chip" data-aud="free">Free Users</div>
+                <div class="aud-chip" data-aud="inactive">Inactive (7d+)</div>
+                <div class="aud-chip" data-aud="new">New Users (7d)</div>
+              </div>
+            </div>
+
+            <!-- Row: type + schedule -->
+            <div class="form-row">
+              <div class="form-group" style="margin-bottom:0;">
+                <div class="form-label">Type</div>
+                <select class="form-select" id="notifType">
+                  <option value="broadcast">📢 Broadcast</option>
+                  <option value="targeted">🎯 Targeted</option>
+                  <option value="promotional">🎁 Promotional</option>
+                  <option value="announcement">📣 Announcement</option>
+                </select>
+              </div>
+              <div class="form-group" style="margin-bottom:0;">
+                <div class="form-label">Link To (optional)</div>
+                <select class="form-select" id="notifLink">
+                  <option value="">No deep link</option>
+                  <option value="song">Specific Song</option>
+                  <option value="artist">Artist Page</option>
+                  <option value="playlist">Playlist</option>
+                  <option value="premium">Premium Page</option>
+                  <option value="explore">Explore Page</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Schedule -->
+            <div class="form-group" style="margin-top:16px;">
+              <div class="form-label">Schedule (leave blank to send now)</div>
+              <input class="form-input" id="notifSchedule" type="datetime-local">
+            </div>
+
+            <!-- Send buttons -->
+            <div class="send-options">
+              <div class="btn btn-primary" onclick="sendNotification('now')">
+                <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                Send Now
+              </div>
+              <div class="btn btn-outline" onclick="sendNotification('schedule')">
+                <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                Schedule
+              </div>
+              <div class="btn btn-outline" onclick="sendNotification('test')">
+                <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                Test Send (Admin)
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT: Preview + delivery stats -->
+        <div style="display:flex;flex-direction:column;gap:14px;">
+
+          <!-- Live preview -->
+          <div class="section-card" style="animation-delay:.1s;">
+            <div class="sc-header">
+              <div class="sc-title">
+                <div class="sc-title-icon" style="background:rgba(155,107,255,.15);"><svg viewBox="0 0 24 24" style="stroke:var(--purple);"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg></div>
+                Live Preview
+              </div>
+            </div>
+            <div style="padding:16px;">
+              <div class="notif-preview">
+                <div class="np-header">📱 Push Notification Preview</div>
+                <div class="np-card">
+                  <div class="np-icon">🎵</div>
+                  <div class="np-info">
+                    <div class="np-app">SHURAFAH</div>
+                    <div class="np-title" id="previewTitle">Your notification title</div>
+                    <div class="np-body" id="previewBody">Your notification message will appear here…</div>
+                    <div class="np-time">now</div>
+                  </div>
+                </div>
+              </div>
+              <div class="notif-preview">
+                <div class="np-header">💬 SMS Preview (Termii)</div>
+                <div style="background:var(--surface);border-radius:10px;padding:11px 13px;border:1px solid var(--border);">
+                  <div style="font-size:10px;color:var(--text3);margin-bottom:5px;font-family:sans-serif;font-weight:700;">From: SHURAFAH</div>
+                  <div style="font-size:12px;color:var(--text2);line-height:1.6;" id="previewSms">Your notification message will appear here. Reply STOP to unsubscribe.</div>
+                  <div style="font-size:9px;color:var(--text3);margin-top:5px;" id="smsLength">0 / 160 chars · 1 SMS unit</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Delivery breakdown -->
+          <div class="section-card" style="animation-delay:.15s;">
+            <div class="sc-header">
+              <div class="sc-title">
+                <div class="sc-title-icon" style="background:rgba(46,204,143,.12);"><svg viewBox="0 0 24 24" style="stroke:var(--green);"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+                Channel Delivery Rates
+              </div>
+            </div>
+            <div style="padding:16px;">
+              <div class="delivery-row">
+                <div class="del-label">Push Notif</div>
+                <div class="del-bar-bg"><div class="del-fill" style="width:84%;background:linear-gradient(90deg,var(--blue),var(--purple));"></div></div>
+                <div class="del-pct" style="color:var(--blue);">84%</div>
+              </div>
+              <div class="delivery-row">
+                <div class="del-label">SMS (Termii)</div>
+                <div class="del-bar-bg"><div class="del-fill" style="width:97%;background:linear-gradient(90deg,var(--green),var(--teal));"></div></div>
+                <div class="del-pct" style="color:var(--green);">97%</div>
+              </div>
+              <div class="delivery-row">
+                <div class="del-label">In-App</div>
+                <div class="del-bar-bg"><div class="del-fill" style="width:62%;background:linear-gradient(90deg,var(--accent),var(--accent2));"></div></div>
+                <div class="del-pct" style="color:var(--accent);">62%</div>
+              </div>
+              <div style="font-size:10px;color:var(--text3);margin-top:8px;padding-top:8px;border-top:1px solid var(--border);">
+                SMS powered by <strong style="color:var(--teal);">Termii API</strong> · Push via Firebase FCM · In-app via WebSocket
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- ════ SENT HISTORY TAB ════ -->
+    <div id="tab-history" style="display:none;">
+      <div class="section-card" style="animation-delay:.05s;">
+        <div class="sc-header">
+          <div class="sc-title">
+            <div class="sc-title-icon" style="background:rgba(77,159,255,.15);"><svg viewBox="0 0 24 24" style="stroke:var(--blue);"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/></svg></div>
+            Sent Notifications
+          </div>
+          <div style="display:flex;gap:6px;">
+            <select class="filter-select" id="historyFilter" style="font-size:10px;padding:5px 10px;">
+              <option value="all">All Types</option>
+              <option value="broadcast">Broadcast</option>
+              <option value="targeted">Targeted</option>
+              <option value="automated">Automated</option>
+            </select>
+          </div>
+        </div>
+        <div class="notif-list" id="historyList"></div>
+      </div>
+    </div>
+
+    <!-- ════ SCHEDULED TAB ════ -->
+    <div id="tab-scheduled" style="display:none;">
+      <div class="section-card" style="animation-delay:.05s;">
+        <div class="sc-header">
+          <div class="sc-title">
+            <div class="sc-title-icon" style="background:rgba(255,209,102,.1);"><svg viewBox="0 0 24 24" style="stroke:var(--yellow);"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+            Scheduled Notifications
+            <span style="font-size:10px;background:var(--surface3);border-radius:50px;padding:1px 8px;color:var(--yellow);font-family:sans-serif;font-weight:700;">6 upcoming</span>
+          </div>
+        </div>
+        <div class="sched-list" id="scheduledList"></div>
+      </div>
+    </div>
+
+    <!-- ════ AUTO RULES TAB ════ -->
+    <div id="tab-automated" style="display:none;">
+      <div class="section-card" style="animation-delay:.05s;">
+        <div class="sc-header">
+          <div class="sc-title">
+            <div class="sc-title-icon" style="background:rgba(0,201,184,.1);"><svg viewBox="0 0 24 24" style="stroke:var(--teal);"><polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>
+            Automated Notification Rules
+          </div>
+          <div class="btn btn-sm btn-teal" onclick="showToast('New rule builder opening…','')">
+            <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            New Rule
+          </div>
+        </div>
+        <div class="rules-list" id="rulesList"></div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+/* ── Sidebar ── */
+var sidebar = document.getElementById('sidebar');
+var mainArea = document.getElementById('mainArea');
+var sidebarCollapsed = false;
+document.getElementById('sidebarToggle').addEventListener('click', function() {
+  sidebarCollapsed = !sidebarCollapsed;
+  sidebar.classList.toggle('collapsed', sidebarCollapsed);
+  mainArea.classList.toggle('sidebar-collapsed', sidebarCollapsed);
+});
+
+/* ── Toast ── */
+var toastEl = document.getElementById('toast');
+var toastTimer = null;
+function showToast(msg, type) {
+  toastEl.textContent = msg;
+  toastEl.className = 'toast show' + (type ? ' ' + type : '');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function(){ toastEl.classList.remove('show'); }, 2800);
+}
+
+/* ── Tabs ── */
+function switchTab(tab) {
+  document.querySelectorAll('.tab-btn').forEach(function(b){ b.classList.remove('active'); });
+  var btn = document.querySelector('.tab-btn[data-tab="' + tab + '"]');
+  if (btn) btn.classList.add('active');
+  var tabs = ['compose','history','scheduled','automated'];
+  for (var i = 0; i < tabs.length; i++) {
+    var el = document.getElementById('tab-' + tabs[i]);
+    if (el) el.style.display = tabs[i] === tab ? 'block' : 'none';
+  }
+}
+document.getElementById('mainTabs').addEventListener('click', function(e) {
+  var btn = e.target.closest('.tab-btn');
+  if (!btn) return;
+  switchTab(btn.getAttribute('data-tab'));
+});
+
+/* ── Channel chips ── */
+document.getElementById('channelChips').addEventListener('click', function(e) {
+  var chip = e.target.closest('.ch-chip');
+  if (!chip) return;
+  chip.classList.toggle('on');
+});
+
+/* ── Audience chips ── */
+document.getElementById('audienceChips').addEventListener('click', function(e) {
+  var chip = e.target.closest('.aud-chip');
+  if (!chip) return;
+  document.querySelectorAll('.aud-chip').forEach(function(c){ c.classList.remove('on'); });
+  chip.classList.add('on');
+});
+
+/* ── Live preview + char counts ── */
+document.getElementById('notifTitle').addEventListener('input', function() {
+  document.getElementById('titleCount').textContent = this.value.length + ' / 65';
+  document.getElementById('previewTitle').textContent = this.value || 'Your notification title';
+});
+document.getElementById('notifBody').addEventListener('input', function() {
+  var len = this.value.length;
+  document.getElementById('bodyCount').textContent = len + ' / 160';
+  document.getElementById('previewBody').textContent = this.value || 'Your notification message will appear here…';
+  document.getElementById('previewSms').textContent = (this.value || 'Your notification message will appear here') + '. Reply STOP to unsubscribe.';
+  var units = Math.ceil((len + 30) / 160) || 1;
+  document.getElementById('smsLength').textContent = len + ' / 160 chars · ' + units + ' SMS unit' + (units > 1 ? 's' : '');
+});
+
+/* ── Send notification ── */
+function sendNotification(mode) {
+  var title = document.getElementById('notifTitle').value.trim();
+  var body  = document.getElementById('notifBody').value.trim();
+  if (!title || !body) { showToast('Please fill in title and message.', 'danger'); return; }
+
+  var audEl = document.querySelector('.aud-chip.on');
+  var aud = audEl ? audEl.getAttribute('data-aud') : 'all';
+  var chCount = document.querySelectorAll('.ch-chip.on').length;
+
+  if (mode === 'test') {
+    showToast('Test notification sent to your device!', 'success');
+  } else if (mode === 'schedule') {
+    var sched = document.getElementById('notifSchedule').value;
+    if (!sched) { showToast('Pick a schedule date/time first.', 'danger'); return; }
+    showToast('Notification scheduled successfully!', 'success');
+    SCHEDULED.unshift({ id: Date.now(), title: title, body: body, audience: aud, time: sched, channels: chCount });
+    renderScheduled();
+  } else {
+    showToast('Notification sent to ' + (aud === 'all' ? '12,840' : aud) + ' users via ' + chCount + ' channel(s)!', 'success');
+    HISTORY.unshift({ id: Date.now(), title: title, body: body, type: 'broadcast', audience: aud, sent: 12840, opened: 9847, clicked: 4210, time: 'Just now', channels: ['push','inapp'] });
+    renderHistory();
+    document.getElementById('notifTitle').value = '';
+    document.getElementById('notifBody').value = '';
+    document.getElementById('titleCount').textContent = '0 / 65';
+    document.getElementById('bodyCount').textContent = '0 / 160';
+    document.getElementById('previewTitle').textContent = 'Your notification title';
+    document.getElementById('previewBody').textContent = 'Your notification message will appear here…';
+  }
+}
+
+/* ─────────────────────────────────────────
+   DATA
+   Laravel:
+     var HISTORY   = {!! json_encode($notificationHistory) !!};
+     var SCHEDULED = {!! json_encode($scheduledNotifications) !!};
+     var RULES     = {!! json_encode($automationRules) !!};
+
+   SMS channel uses Termii API:
+     POST https://api.ng.termii.com/api/sms/send
+     { to, from:"Shurafah", sms: body, type:"plain", channel:"generic", api_key }
+───────────────────────────────────────── */
+var HISTORY = [
+  { id:1, title:'🎵 New Song Alert!',            body:'Uzairu Badamasi just dropped "Kurmus" — listen now!', type:'broadcast', audience:'all',      sent:12840, opened:10234, clicked:5812, time:'2 hrs ago',   channels:['push','inapp']        },
+  { id:2, title:'Your Premium expires soon',     body:'Your Shurafah Premium subscription expires in 3 days. Renew now to keep enjoying ad-free music.', type:'targeted', audience:'premium', sent:1204, opened:980, clicked:612, time:'Yesterday', channels:['push','sms','inapp'] },
+  { id:3, title:'Top 10 Songs This Week 🔥',     body:'Check out the hottest Hausa Nasheeds trending right now on Shurafah!', type:'broadcast', audience:'all', sent:12840, opened:9140, clicked:4280, time:'2 days ago', channels:['push','inapp'] },
+  { id:4, title:'💳 Low Wallet Balance',          body:'Your Shurafah wallet balance is ₦200. Top up now to avoid subscription interruption.', type:'automated', audience:'free', sent:3420, opened:3050, clicked:2180, time:'3 days ago', channels:['push','sms'] },
+  { id:5, title:'Welcome to Shurafah! 🙏',        body:'Assalamu Alaikum! Your account is ready. Start exploring thousands of Hausa Nasheeds.', type:'targeted', audience:'new', sent:284, opened:278, clicked:241, time:'4 days ago', channels:['push','inapp'] },
+  { id:6, title:'Ramadan Special Playlist 🌙',    body:'We\'ve curated a special collection of spiritual Nasheeds for the blessed month of Ramadan.', type:'broadcast', audience:'all', sent:12840, opened:11420, clicked:7840, time:'1 week ago', channels:['push','sms','inapp'] },
+  { id:7, title:'New Artist: Ahmad Isah 🎤',      body:'Grammy-nominated nasheed artist Ahmad Isah Katsina has joined Shurafah!', type:'broadcast', audience:'all', sent:12840, opened:8920, clicked:3140, time:'1 week ago', channels:['push','inapp'] }
+];
+
+var SCHEDULED = [
+  { id:1, title:'Eid Mubarak Wishes 🎉',         body:'Wishing all our users Eid Mubarak!', audience:'all',     time:'Apr 29, 2026 06:00', channels:3 },
+  { id:2, title:'Friday Jumu\'ah Reminder 🕌',   body:'Don\'t forget to listen to special Friday Nasheeds.', audience:'all', time:'Apr 25, 2026 12:00', channels:2 },
+  { id:3, title:'Weekend New Releases 🎵',        body:'10 new songs dropped this weekend!', audience:'all',    time:'Apr 26, 2026 09:00', channels:2 },
+  { id:4, title:'Premium Renewal Reminder',       body:'Your Premium expires in 7 days.', audience:'premium',   time:'May 1, 2026 10:00',  channels:3 },
+  { id:5, title:'Inactive User Win-Back',         body:'We miss you! Come back and enjoy new Nasheeds.', audience:'inactive', time:'Apr 27, 2026 14:00', channels:2 },
+  { id:6, title:'Muharram Collection 🌙',         body:'Explore our curated Muharram playlist.', audience:'all', time:'May 5, 2026 08:00',  channels:2 }
+];
+
+var RULES = [
+  { id:1,  icon:'🎉', name:'Welcome Message',       desc:'Sent to new users immediately after registration · Push + In-App', active:true,  sent:'12,284 sent',  channels:['push','inapp'] },
+  { id:2,  icon:'💳', name:'Low Wallet Alert',       desc:'Triggered when wallet balance drops below ₦500 · Push + SMS (Termii)', active:true,  sent:'2,840 sent',   channels:['push','sms']  },
+  { id:3,  icon:'⏰', name:'Subscription Expiry (3d)',desc:'Sent 3 days before Premium expires · Push + SMS + In-App',  active:true,  sent:'1,140 sent',   channels:['push','sms','inapp'] },
+  { id:4,  icon:'⏰', name:'Subscription Expiry (1d)',desc:'Final reminder 1 day before Premium expires · SMS only',     active:true,  sent:'980 sent',     channels:['sms'] },
+  { id:5,  icon:'😴', name:'Inactive User (7d)',      desc:'Re-engagement nudge after 7 days of no activity · Push',      active:true,  sent:'3,410 sent',   channels:['push'] },
+  { id:6,  icon:'😴', name:'Inactive User (30d)',     desc:'Win-back campaign after 30 days · Push + SMS',                active:false, sent:'1,280 sent',   channels:['push','sms'] },
+  { id:7,  icon:'🎵', name:'New Song Alert',          desc:'Notifies followers when a followed artist uploads · Push',    active:true,  sent:'28,400 sent',  channels:['push'] },
+  { id:8,  icon:'🌙', name:'Islamic Calendar Events', desc:'Auto-sends on Maulud, Ashura, Eid dates · All channels',      active:true,  sent:'4 per year',   channels:['push','sms','inapp'] }
+];
+
+/* ── Render history ── */
+function renderHistory() {
+  var list = document.getElementById('historyList');
+  list.innerHTML = '';
+  for (var i = 0; i < HISTORY.length; i++) {
+    var h = HISTORY[i];
+    var openRate = Math.round(h.opened / h.sent * 100);
+    var clickRate = Math.round(h.clicked / h.sent * 100);
+
+    var typeBadge;
+    if (h.type === 'broadcast') typeBadge = '<span class="type-badge tb-broadcast">📢 Broadcast</span>';
+    else if (h.type === 'targeted') typeBadge = '<span class="type-badge tb-targeted">🎯 Targeted</span>';
+    else typeBadge = '<span class="type-badge tb-automated">⚡ Automated</span>';
+
+    var audCls = 'aud-' + h.audience;
+    var audLabel = h.audience === 'all' ? 'All Users' : h.audience === 'premium' ? 'Premium' : h.audience === 'free' ? 'Free Users' : h.audience === 'new' ? 'New Users' : 'Inactive';
+
+    var chHtml = '';
+    for (var c = 0; c < h.channels.length; c++) {
+      var chCls = h.channels[c] === 'push' ? 'ch-push' : h.channels[c] === 'sms' ? 'ch-sms' : 'ch-inapp';
+      var chLbl = h.channels[c] === 'push' ? 'Push' : h.channels[c] === 'sms' ? 'SMS' : 'In-App';
+      chHtml += '<span class="nr-ch ' + chCls + '">' + chLbl + '</span>';
+    }
+
+    var row = document.createElement('div');
+    row.className = 'notif-row';
+    row.innerHTML =
+      '<div class="nr-icon g' + ((i % 8) + 1) + '">🔔</div>' +
+      '<div class="nr-info">' +
+        '<div class="nr-title">' + h.title + '</div>' +
+        '<div class="nr-body">' + h.body + '</div>' +
+        '<div class="nr-meta">' +
+          '<span class="nr-time">' + h.time + '</span>' +
+          typeBadge +
+          '<span class="nr-audience ' + audCls + '">' + audLabel + '</span>' +
+          '<div class="nr-channel-chips">' + chHtml + '</div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="nr-right">' +
+        '<div class="nr-stat-row">' +
+          '<div class="nr-stat"><div class="nr-stat-val" style="color:var(--blue);">' + h.sent.toLocaleString() + '</div><div class="nr-stat-lbl">Sent</div></div>' +
+          '<div class="nr-stat"><div class="nr-stat-val" style="color:var(--green);">' + openRate + '%</div><div class="nr-stat-lbl">Opened</div></div>' +
+          '<div class="nr-stat"><div class="nr-stat-val" style="color:var(--accent);">' + clickRate + '%</div><div class="nr-stat-lbl">Clicked</div></div>' +
+        '</div>' +
+      '</div>';
+
+    list.appendChild(row);
+  }
+}
+
+/* ── Render scheduled ── */
+function renderScheduled() {
+  var list = document.getElementById('scheduledList');
+  list.innerHTML = '';
+  for (var i = 0; i < SCHEDULED.length; i++) {
+    var s = SCHEDULED[i];
+    var audLabel = s.audience === 'all' ? 'All Users' : s.audience === 'premium' ? 'Premium' : s.audience === 'inactive' ? 'Inactive' : s.audience;
+    var row = document.createElement('div');
+    row.className = 'sched-row';
+    row.dataset.schedId = s.id;
+    row.innerHTML =
+      '<div class="sched-icon g' + ((i % 8) + 1) + '">🗓️</div>' +
+      '<div class="sched-info">' +
+        '<div class="sched-title">' + s.title + '</div>' +
+        '<div class="sched-meta">' + s.body + ' · ' + audLabel + ' · ' + s.channels + ' channel(s)</div>' +
+      '</div>' +
+      '<div class="sched-time">' + s.time + '</div>' +
+      '<div class="sched-actions">' +
+        '<div class="sched-btn edit" title="Edit" data-sched-id="' + s.id + '"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></div>' +
+        '<div class="sched-btn del" title="Delete" data-sched-id="' + s.id + '"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg></div>' +
+      '</div>';
+    list.appendChild(row);
+  }
+}
+
+function deleteScheduled(id) {
+  SCHEDULED = SCHEDULED.filter(function(s){ return s.id !== id; });
+  renderScheduled();
+  showToast('Scheduled notification deleted.', 'danger');
+}
+
+function editScheduled(id) {
+  var sched = SCHEDULED.find(function(s){ return s.id === id; });
+  if (!sched) return;
+  
+  var modal = document.createElement('div');
+  modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.75);display:flex;align-items:center;justify-content:center;z-index:9999;';
+  modal.innerHTML = `
+    <div style="background:var(--surface);border-radius:16px;padding:24px;max-width:520px;width:90%;max-height:85vh;overflow-y:auto;border:1px solid var(--border);">
+      <div style="font-family:sans-serif;font-size:16px;font-weight:800;margin-bottom:16px;">Edit Scheduled Notification</div>
+      <div style="margin-bottom:12px;">
+        <label style="display:block;font-size:11px;color:var(--text3);margin-bottom:4px;font-weight:700;">Title *</label>
+        <input type="text" id="editSchedTitle" value="${sched.title}" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--surface2);color:var(--text);font-size:12px;">
+      </div>
+      <div style="margin-bottom:12px;">
+        <label style="display:block;font-size:11px;color:var(--text3);margin-bottom:4px;font-weight:700;">Message *</label>
+        <textarea id="editSchedBody" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--surface2);color:var(--text);font-size:12px;min-height:80px;">${sched.body}</textarea>
+      </div>
+      <div style="margin-bottom:12px;">
+        <label style="display:block;font-size:11px;color:var(--text3);margin-bottom:4px;font-weight:700;">Schedule Date & Time *</label>
+        <input type="datetime-local" id="editSchedTime" value="${sched.time}" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--surface2);color:var(--text);font-size:12px;">
+      </div>
+      <div style="margin-bottom:12px;">
+        <label style="display:block;font-size:11px;color:var(--text3);margin-bottom:4px;font-weight:700;">Audience</label>
+        <select id="editSchedAudience" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--surface2);color:var(--text);font-size:12px;">
+          <option value="all" ${sched.audience==='all'?'selected':''}>All Users</option>
+          <option value="premium" ${sched.audience==='premium'?'selected':''}>Premium Only</option>
+          <option value="inactive" ${sched.audience==='inactive'?'selected':''}>Inactive Users</option>
+        </select>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:20px;">
+        <button onclick="saveScheduledEdit(${id});this.closest('div').parentElement.parentElement.remove()" style="flex:1;padding:10px;background:var(--accent);color:#000;border:none;border-radius:8px;font-weight:700;cursor:pointer;font-family:sans-serif;">Save Changes</button>
+        <button onclick="this.closest('div').parentElement.parentElement.remove()" style="flex:1;padding:10px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:8px;font-weight:700;cursor:pointer;font-family:sans-serif;">Cancel</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(modal);
+  modal.addEventListener('click',e=>{if(e.target===modal)modal.remove();});
+}
+
+function saveScheduledEdit(id) {
+  var sched = SCHEDULED.find(function(s){ return s.id === id; });
+  if (!sched) return;
+  
+  var title = document.getElementById('editSchedTitle').value.trim();
+  var body = document.getElementById('editSchedBody').value.trim();
+  var time = document.getElementById('editSchedTime').value;
+  var audience = document.getElementById('editSchedAudience').value;
+  
+  if (!title || !body || !time) {
+    showToast('Please fill all required fields', 'danger');
+    return;
+  }
+  
+  sched.title = title;
+  sched.body = body;
+  sched.time = time;
+  sched.audience = audience;
+  
+  renderScheduled();
+  showToast(`Scheduled notification "${title}" updated successfully!`, 'success');
+}
+
+/* ── Render rules ── */
+function renderRules() {
+  var list = document.getElementById('rulesList');
+  list.innerHTML = '';
+  for (var i = 0; i < RULES.length; i++) {
+    var r = RULES[i];
+    var chHtml = '';
+    for (var c = 0; c < r.channels.length; c++) {
+      var chCls = r.channels[c] === 'push' ? 'ch-push' : r.channels[c] === 'sms' ? 'ch-sms' : 'ch-inapp';
+      var chLbl = r.channels[c] === 'push' ? 'Push' : r.channels[c] === 'sms' ? 'SMS' : 'In-App';
+      chHtml += '<span class="nr-ch ' + chCls + '" style="margin-right:3px;">' + chLbl + '</span>';
+    }
+    var row = document.createElement('div');
+    row.className = 'rule-row';
+    var rIdx = i;
+    row.innerHTML =
+      '<div class="rule-icon g' + ((i % 8) + 1) + '">' + r.icon + '</div>' +
+      '<div class="rule-info">' +
+        '<div class="rule-name">' + r.name + '</div>' +
+        '<div class="rule-desc">' + r.desc + '</div>' +
+        '<div style="margin-top:4px;">' + chHtml + '</div>' +
+      '</div>' +
+      '<div class="rule-right">' +
+        '<div class="rule-sent">' + r.sent + '</div>' +
+        '<div class="toggle-switch ' + (r.active ? 'on' : 'off') + '" id="rule-toggle-' + r.id + '"></div>' +
+      '</div>';
+    (function(ruleIdx, ruleId) {
+      var toggleEl = row.querySelector('.toggle-switch');
+      toggleEl.innerHTML = '<div class="toggle-thumb"></div>';
+      toggleEl.addEventListener('click', function() {
+        RULES[ruleIdx].active = !RULES[ruleIdx].active;
+        this.classList.toggle('on', RULES[ruleIdx].active);
+        this.classList.toggle('off', !RULES[ruleIdx].active);
+        showToast('Rule "' + RULES[ruleIdx].name + '" ' + (RULES[ruleIdx].active ? 'enabled' : 'disabled') + '.', RULES[ruleIdx].active ? 'success' : '');
+      });
+    }(i, r.id));
+    list.appendChild(row);
+  }
+}
+
+/* ── History filter ── */
+document.getElementById('historyFilter').addEventListener('change', function() {
+  var val = this.value;
+  var rows = document.querySelectorAll('#historyList .notif-row');
+  rows.forEach(function(row, idx) {
+    if (val === 'all') { row.style.display = ''; return; }
+    var h = HISTORY[idx];
+    row.style.display = (h && h.type === val) ? '' : 'none';
+  });
+});
+
+/* ── Init ── */
+renderHistory();
+renderScheduled();
+renderRules();
+
+/* ═══ TOPBAR BUTTONS ═══ */
+document.addEventListener('click',e=>{
+  const notifBtn=e.target.closest('.tb-icon-btn');
+  if(!notifBtn)return;
+  const svg=notifBtn.querySelector('svg');
+  if(svg&&svg.innerHTML.includes('path d="M18 8A6')){
+    showToast('You have 3 new notifications','');
+  }
+  if(svg&&svg.innerHTML.includes('circle cx="12" cy="12" r="3"')){
+    showToast('Settings menu opened','');
+  }
+});
+
+document.addEventListener('click',e=>{
+  if(e.target.closest('.tb-avatar')){
+    showToast('Profile menu opened','');
+  }
+});
+
+/* ═══ STAT CARDS CLICK ═══ */
+document.addEventListener('click',e=>{
+  const card=e.target.closest('.ss-card');
+  if(!card)return;
+  const val=card.querySelector('.ss-val').textContent;
+  const label=card.querySelector('.ss-label').textContent;
+  showToast(`Viewing ${label}: ${val}`,'');
+});
+
+/* ═══ FORM INPUT FOCUS ═══ */
+document.addEventListener('focus',e=>{
+  if(e.target.classList.contains('form-input')||e.target.classList.contains('form-textarea')){
+    e.target.style.borderColor='rgba(77,159,255,.4)';
+  }
+},true);
+
+document.addEventListener('blur',e=>{
+  if(e.target.classList.contains('form-input')||e.target.classList.contains('form-textarea')){
+    e.target.style.borderColor='var(--border)';
+  }
+},true);
+
+/* ═══ HISTORY ROW CLICK ═══ */
+document.addEventListener('click',e=>{
+  const row=e.target.closest('.notif-row');
+  if(!row)return;
+  const title=row.querySelector('.nr-title').textContent;
+  const sent=row.querySelector('.nr-stat-val').textContent;
+  showToast(`Viewing: ${title} (${sent} sent)`,'');
+});
+
+/* ═══ SCHEDULED ROW CLICK ═══ */
+document.addEventListener('click',e=>{
+  const row=e.target.closest('.sched-row');
+  if(!row||e.target.closest('.sched-btn'))return;
+  const title=row.querySelector('.sched-title').textContent;
+  const time=row.querySelector('.sched-time').textContent;
+  showToast(`Scheduled: ${title} at ${time}`,'');
+});
+
+/* ═══ SCHEDULED EDIT ═══ */
+document.addEventListener('click',e=>{
+  const editBtn=e.target.closest('.sched-btn.edit');
+  if(!editBtn)return;
+  e.stopPropagation();
+  const schedId=parseInt(editBtn.getAttribute('data-sched-id'));
+  editScheduled(schedId);
+});
+
+/* ═══ SCHEDULED DELETE ═══ */
+document.addEventListener('click',e=>{
+  const delBtn=e.target.closest('.sched-btn.del');
+  if(!delBtn)return;
+  e.stopPropagation();
+  const schedId=parseInt(delBtn.getAttribute('data-sched-id'));
+  if(confirm('Delete this scheduled notification?')){
+    deleteScheduled(schedId);
+  }
+});
+
+/* ═══ RULES ROW CLICK ═══ */
+document.addEventListener('click',e=>{
+  const row=e.target.closest('.rule-row');
+  if(!row||e.target.closest('.toggle-switch'))return;
+  const name=row.querySelector('.rule-name').textContent;
+  showToast(`Viewing rule: ${name}`,'');
+});
+
+/* ═══ NEW RULE BUTTON ═══ */
+document.addEventListener('click',e=>{
+  if(e.target.textContent.includes('New Rule')){
+    const modal=document.createElement('div');
+    modal.style.cssText=`position:fixed;inset:0;background:rgba(0,0,0,.75);display:flex;align-items:center;justify-content:center;z-index:9999;`;
+    modal.innerHTML=`
+      <div style="background:var(--surface);border-radius:16px;padding:24px;max-width:520px;width:90%;max-height:85vh;overflow-y:auto;border:1px solid var(--border);">
+        <div style="font-family:sans-serif;font-size:16px;font-weight:800;margin-bottom:16px;">Create New Automation Rule</div>
+        <div style="margin-bottom:12px;">
+          <label style="display:block;font-size:11px;color:var(--text3);margin-bottom:4px;font-weight:700;">Rule Name *</label>
+          <input type="text" id="ruleName" placeholder="e.g., Welcome New Users" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--surface2);color:var(--text);font-size:12px;">
+        </div>
+        <div style="margin-bottom:12px;">
+          <label style="display:block;font-size:11px;color:var(--text3);margin-bottom:4px;font-weight:700;">Trigger Event *</label>
+          <select id="ruleTrigger" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--surface2);color:var(--text);font-size:12px;">
+            <option>User Registration</option>
+            <option>Subscription Expiry (3d)</option>
+            <option>Subscription Expiry (1d)</option>
+            <option>Inactive User (7d)</option>
+            <option>Inactive User (30d)</option>
+            <option>Low Wallet Balance</option>
+            <option>New Song Upload</option>
+            <option>Custom Date</option>
+          </select>
+        </div>
+        <div style="margin-bottom:12px;">
+          <label style="display:block;font-size:11px;color:var(--text3);margin-bottom:4px;font-weight:700;">Notification Title *</label>
+          <input type="text" id="ruleTitle" placeholder="Notification title" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--surface2);color:var(--text);font-size:12px;">
+        </div>
+        <div style="margin-bottom:12px;">
+          <label style="display:block;font-size:11px;color:var(--text3);margin-bottom:4px;font-weight:700;">Message Body *</label>
+          <textarea id="ruleBody" placeholder="Notification message" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--surface2);color:var(--text);font-size:12px;min-height:80px;"></textarea>
+        </div>
+        <div style="margin-bottom:12px;">
+          <label style="display:block;font-size:11px;color:var(--text3);margin-bottom:4px;font-weight:700;">Channels</label>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <label style="display:flex;align-items:center;gap:6px;"><input type="checkbox" checked> Push</label>
+            <label style="display:flex;align-items:center;gap:6px;"><input type="checkbox"> SMS</label>
+            <label style="display:flex;align-items:center;gap:6px;"><input type="checkbox" checked> In-App</label>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:20px;">
+          <button onclick="createNewRule();this.closest('div').parentElement.parentElement.remove()" style="flex:1;padding:10px;background:var(--accent);color:#000;border:none;border-radius:8px;font-weight:700;cursor:pointer;font-family:sans-serif;">Create Rule</button>
+          <button onclick="this.closest('div').parentElement.parentElement.remove()" style="flex:1;padding:10px;background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:8px;font-weight:700;cursor:pointer;font-family:sans-serif;">Cancel</button>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(modal);
+    modal.addEventListener('click',e=>{if(e.target===modal)modal.remove();});
+  }
+});
+
+function createNewRule(){
+  const name=document.getElementById('ruleName').value.trim();
+  const trigger=document.getElementById('ruleTrigger').value;
+  const title=document.getElementById('ruleTitle').value.trim();
+  const body=document.getElementById('ruleBody').value.trim();
+  
+  if(!name||!title||!body){
+    showToast('Please fill all required fields','danger');
+    return;
+  }
+  
+  RULES.push({
+    id:RULES.length+1,
+    icon:'⚡',
+    name:name,
+    desc:`Triggered on ${trigger}`,
+    active:true,
+    sent:'0 sent',
+    channels:['push','inapp']
+  });
+  renderRules();
+  showToast(`Rule "${name}" created successfully!`,'success');
+}
+
+/* ═══ HISTORY FILTER ═══ */
+document.addEventListener('change',e=>{
+  if(e.target.id==='historyFilter'){
+    const val=e.target.value;
+    showToast(`Filtering by: ${val==='all'?'All Types':val}`,'');
+  }
+});
+
+/* ═══ VIEW HISTORY BUTTON ═══ */
+document.addEventListener('click',e=>{
+  if(e.target.textContent.includes('View History')){
+    switchTab('history');
+    showToast('Viewing notification history','');
+  }
+});
+
+/* ═══ NEW NOTIFICATION BUTTON ═══ */
+document.addEventListener('click',e=>{
+  if(e.target.textContent.includes('New Notification')){
+    switchTab('compose');
+    document.getElementById('notifTitle').focus();
+    showToast('Ready to compose new notification','');
+  }
+});
+
+/* ═══ KEYBOARD SHORTCUTS ═══ */
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){
+    document.querySelectorAll('[style*="position:fixed"]').forEach(m=>{
+      if(m.style.background&&m.style.background.includes('rgba(0,0,0')){
+        m.remove();
+      }
+    });
+  }
+  if(e.ctrlKey&&e.key==='Enter'){
+    const title=document.getElementById('notifTitle').value.trim();
+    const body=document.getElementById('notifBody').value.trim();
+    if(title&&body){
+      sendNotification('now');
+    }
+  }
+});
+
+/* ═══ CHANNEL CHIP FEEDBACK ═══ */
+document.addEventListener('click',e=>{
+  const chip=e.target.closest('.ch-chip');
+  if(!chip)return;
+  const ch=chip.getAttribute('data-ch');
+  const isOn=chip.classList.contains('on');
+  const chName=ch==='push'?'Push':ch==='sms'?'SMS':'In-App';
+  showToast(`${chName} ${isOn?'disabled':'enabled'}`,'');
+});
+
+/* ═══ AUDIENCE CHIP FEEDBACK ═══ */
+document.addEventListener('click',e=>{
+  const chip=e.target.closest('.aud-chip');
+  if(!chip)return;
+  const aud=chip.getAttribute('data-aud');
+  const audName=aud==='all'?'All Users':aud==='premium'?'Premium Only':aud==='free'?'Free Users':aud==='inactive'?'Inactive Users':'New Users';
+  showToast(`Target audience: ${audName}`,'');
+});
+
+/* ═══ FORM SELECT CHANGE ═══ */
+document.addEventListener('change',e=>{
+  if(e.target.classList.contains('form-select')&&!e.target.id.includes('Filter')){
+    const val=e.target.value;
+    const label=e.target.previousElementSibling?.textContent||'Setting';
+    showToast(`${label}: ${val}`,'');
+  }
+});
+</script>
+</body>
+</html>
