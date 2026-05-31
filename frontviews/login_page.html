@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Shurafah — Login</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#080B12;--surface:#0F1420;--surface2:#161C2E;--surface3:#1E2740;
+  --accent:#FF6B35;--accent2:#FFB347;--blue:#4D9FFF;--green:#2ECC8F;
+  --purple:#9B6BFF;--pink:#FF4D8F;
+  --text:#F0F4FF;--text2:#8A94B0;--text3:#4A5270;
+  --border:rgba(255,255,255,0.08);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{
+  background:#03050A;font-family:'DM Sans',sans-serif;color:var(--text);
+  display:flex;justify-content:center;align-items:flex-start;
+  min-height:100vh;padding:28px 16px;
+}
+
+/* PHONE */
+.phone{
+  width:100%;background:var(--bg);
+  display:flex;flex-direction:column;overflow:hidden;position:relative;
+}
+.notch{display:none;}
+
+/* SCROLL */
+.scroll{flex:1;overflow-y:auto;overflow-x:hidden;scrollbar-width:none;}
+.scroll::-webkit-scrollbar{display:none;}
+
+/* STATUS */
+.status{display:flex;justify-content:space-between;align-items:center;padding:36px 22px 0;font-size:11px;font-weight:700;font-family:sans-serif;}
+.si{display:flex;gap:5px;align-items:center;}
+.si svg{width:12px;height:12px;fill:var(--text);}
+
+/* ── HERO ── */
+.login-hero{
+  padding:32px 24px 0;text-align:center;
+  position:relative;
+}
+/* animated background glows */
+.login-hero::before{
+  content:'';position:absolute;top:20px;left:50%;transform:translateX(-50%);
+  width:280px;height:280px;border-radius:50%;
+  background:radial-gradient(circle,rgba(255,107,53,0.1) 0%,transparent 70%);
+  pointer-events:none;
+}
+
+.app-logo{
+  width:72px;height:72px;border-radius:22px;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  display:flex;align-items:center;justify-content:center;
+  font-size:32px;margin:0 auto 18px;position:relative;z-index:1;
+  box-shadow:0 10px 30px rgba(255,107,53,0.4);
+  animation:logoPulse 3s ease-in-out infinite;
+}
+@keyframes logoPulse{0%,100%{box-shadow:0 10px 30px rgba(255,107,53,0.4);}50%{box-shadow:0 10px 42px rgba(255,107,53,0.65);}}
+.login-title{
+  font-family:sans-serif;font-size:26px;font-weight:800;
+  letter-spacing:-0.5px;margin-bottom:6px;position:relative;z-index:1;
+}
+.login-title .brand{
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.login-sub{font-size:13px;color:var(--text2);line-height:1.6;position:relative;z-index:1;}
+
+/* ── FORM CARD ── */
+.form-card{
+  margin:24px 16px 0;
+  background:var(--surface);border-radius:20px;
+  padding:22px;border:1px solid var(--border);
+}
+.form-card-title{
+  font-family:sans-serif;font-size:13px;font-weight:700;
+  color:var(--text2);margin-bottom:18px;display:flex;align-items:center;gap:6px;
+  text-transform:uppercase;letter-spacing:0.5px;
+}
+.form-card-title svg{width:13px;height:13px;fill:none;stroke:var(--accent);stroke-width:2;}
+
+/* FIELD */
+.field{margin-bottom:16px;}
+.field-label{
+  font-size:11px;font-family:sans-serif;font-weight:700;
+  color:var(--text3);margin-bottom:7px;text-transform:uppercase;letter-spacing:0.4px;
+  display:flex;align-items:center;gap:4px;
+}
+.field-label .req{color:var(--accent);font-size:13px;line-height:1;}
+.field-input-wrap{position:relative;}
+.field-icon{
+  position:absolute;left:13px;top:50%;transform:translateY(-50%);
+  width:16px;height:16px;fill:none;stroke:var(--text3);stroke-width:2;pointer-events:none;
+  transition:stroke .2s;
+}
+.field-input{
+  width:100%;background:var(--surface2);border:1.5px solid var(--border);
+  border-radius:13px;padding:14px 14px 14px 40px;
+  font-size:14px;font-family:'DM Sans',sans-serif;color:var(--text);
+  outline:none;transition:border-color .2s,box-shadow .2s;
+}
+.field-input::placeholder{color:var(--text3);}
+.field-input:focus{
+  border-color:var(--accent);
+  box-shadow:0 0 0 3px rgba(255,107,53,0.12);
+}
+.field-input:focus ~ .field-icon{stroke:var(--accent);}
+.field-input.valid{border-color:var(--green);}
+.field-input.invalid{border-color:var(--pink);}
+.field-error{font-size:10px;color:var(--pink);margin-top:5px;padding-left:2px;display:none;}
+.field-error.show{display:block;}
+.valid-check{
+  position:absolute;right:13px;top:50%;transform:translateY(-50%);
+  font-size:14px;color:var(--green);display:none;
+}
+.field-input.valid ~ .valid-check{display:block;}
+
+/* Phone flag */
+.phone-wrap{display:flex;gap:8px;}
+.country-flag{
+  flex-shrink:0;background:var(--surface2);border:1.5px solid var(--border);
+  border-radius:13px;padding:14px 14px;
+  display:flex;align-items:center;gap:6px;cursor:pointer;
+  font-size:13px;transition:border-color .2s;
+}
+.country-flag:hover{border-color:rgba(255,107,53,0.3);}
+.flag-code{font-family:sans-serif;font-size:11px;font-weight:700;color:var(--text2);}
+.phone-input-wrap{flex:1;position:relative;}
+
+/* Show/hide password toggle */
+.pwd-toggle{
+  position:absolute;right:13px;top:50%;transform:translateY(-50%);
+  cursor:pointer;font-size:14px;opacity:0.7;user-select:none;
+  transition:opacity .15s;
+}
+.pwd-toggle:hover{opacity:1;}
+.field-input.has-toggle{padding-right:38px;}
+
+/* Forgot password link */
+.forgot-row{display:flex;justify-content:flex-end;margin:-4px 0 8px;}
+.forgot-link{font-size:11px;font-family:sans-serif;font-weight:700;color:var(--accent);cursor:pointer;text-decoration:none;}
+.forgot-link:hover{text-decoration:underline;}
+
+/* Reset password view */
+.reset-view{
+  margin:24px 16px 0;background:var(--surface);
+  border-radius:20px;padding:22px;border:1px solid var(--border);
+  display:none;
+}
+.reset-view.show{display:block;animation:fadeUp .25s ease;}
+.reset-head{text-align:center;margin-bottom:18px;}
+.reset-icon{font-size:42px;margin-bottom:10px;}
+.reset-title{font-family:sans-serif;font-size:16px;font-weight:800;margin-bottom:4px;}
+.reset-sub{font-size:12px;color:var(--text2);line-height:1.6;}
+.reset-sub strong{color:var(--accent);}
+.reset-step{display:none;}
+.reset-step.active{display:block;}
+
+/* LOGIN BUTTON */
+.login-btn{
+  width:100%;background:linear-gradient(135deg,var(--accent),var(--accent2));
+  border-radius:14px;padding:16px;margin-top:8px;
+  font-family:sans-serif;font-size:15px;font-weight:800;
+  color:white;text-align:center;cursor:pointer;
+  box-shadow:0 6px 22px rgba(255,107,53,0.42);
+  transition:transform .15s,box-shadow .15s;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+}
+.login-btn:hover{transform:translateY(-1px);box-shadow:0 9px 30px rgba(255,107,53,0.55);}
+.login-btn:active{transform:translateY(0);}
+.login-btn svg{width:17px;height:17px;fill:none;stroke:white;stroke-width:2.5;}
+.login-btn.loading{pointer-events:none;opacity:0.8;}
+
+/* Divider */
+.divider{display:flex;align-items:center;gap:12px;margin:18px 0 0;}
+.div-line{flex:1;height:1px;background:var(--border);}
+.div-txt{font-size:11px;color:var(--text3);font-family:sans-serif;font-weight:600;}
+
+/* Register link */
+.reg-link{text-align:center;margin-top:14px;font-size:12px;color:var(--text2);}
+.reg-link a{color:var(--accent);font-weight:700;text-decoration:none;}
+
+/* ── HOW IT WORKS card ── */
+.how-card{
+  margin:16px 16px 0;background:var(--surface);
+  border-radius:16px;padding:16px;border:1px solid var(--border);
+}
+.how-title{font-family:sans-serif;font-size:12px;font-weight:700;color:var(--text2);margin-bottom:12px;text-transform:uppercase;letter-spacing:0.4px;}
+.how-step{display:flex;align-items:center;gap:12px;margin-bottom:10px;}
+.how-step:last-child{margin-bottom:0;}
+.how-num{
+  width:28px;height:28px;border-radius:50%;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-family:sans-serif;font-size:11px;font-weight:800;
+}
+.hn1{background:rgba(255,107,53,0.15);color:var(--accent);}
+.hn2{background:rgba(77,159,255,0.15);color:var(--blue);}
+.hn3{background:rgba(46,204,143,0.15);color:var(--green);}
+.how-text{font-size:11px;color:var(--text2);line-height:1.5;}
+.how-text strong{color:var(--text);font-weight:600;}
+
+/* ── OTP VIEW (hidden initially) ── */
+.otp-view{
+  margin:24px 16px 0;background:var(--surface);
+  border-radius:20px;padding:22px;border:1px solid var(--border);
+  display:none;text-align:center;
+}
+.otp-view.show{display:block;animation:fadeUp .25s ease;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.otp-icon{font-size:48px;margin-bottom:14px;}
+.otp-title{font-family:sans-serif;font-size:16px;font-weight:800;margin-bottom:6px;}
+.otp-sub{font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:20px;}
+.otp-sub strong{color:var(--accent);}
+
+/* OTP boxes */
+.otp-boxes{display:flex;gap:10px;justify-content:center;margin-bottom:18px;}
+.otp-box{
+  width:48px;height:56px;background:var(--surface2);border:2px solid var(--border);
+  border-radius:13px;font-family:sans-serif;font-size:20px;font-weight:800;
+  text-align:center;color:var(--text);outline:none;
+  transition:border-color .2s;caret-color:var(--accent);
+}
+.otp-box:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(255,107,53,0.12);}
+.otp-box.filled{border-color:var(--green);}
+
+.otp-verify-btn{
+  width:100%;background:var(--green);border-radius:14px;padding:14px;
+  font-family:sans-serif;font-size:14px;font-weight:800;color:white;
+  cursor:pointer;box-shadow:0 4px 16px rgba(46,204,143,0.35);
+  display:flex;align-items:center;justify-content:center;gap:7px;
+  margin-bottom:12px;transition:transform .15s;
+}
+.otp-verify-btn:hover{transform:translateY(-1px);}
+.otp-verify-btn svg{width:15px;height:15px;fill:none;stroke:white;stroke-width:2.5;}
+.resend-txt{font-size:11px;color:var(--text3);}
+.resend-txt a{color:var(--accent);font-weight:600;cursor:pointer;text-decoration:none;}
+.back-to-login{margin-top:10px;font-size:11px;color:var(--text3);cursor:pointer;}
+.back-to-login a{color:var(--text2);}
+
+/* ── SUCCESS ── */
+.success-overlay{
+  position:absolute;inset:0;background:var(--bg);z-index:50;
+  display:none;flex-direction:column;align-items:center;justify-content:center;
+  padding:32px;text-align:center;animation:fadeIn .3s ease;
+}
+.success-overlay.show{display:flex;}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.success-icon{font-size:64px;margin-bottom:20px;animation:bounceIn .5s ease;}
+@keyframes bounceIn{0%{transform:scale(0)}60%{transform:scale(1.15)}100%{transform:scale(1)}}
+.success-title{font-family:sans-serif;font-size:22px;font-weight:800;margin-bottom:8px;}
+.success-sub{font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:28px;}
+.success-btn{
+  background:var(--accent);border-radius:14px;padding:14px 36px;
+  font-family:sans-serif;font-size:14px;font-weight:800;color:white;
+  cursor:pointer;box-shadow:0 6px 20px rgba(255,107,53,0.4);
+}
+
+/* TOAST */
+.toast{
+  position:fixed;bottom:32px;left:50%;transform:translateX(-50%) translateY(20px);
+  background:var(--surface2);border:1px solid var(--border);
+  border-radius:50px;padding:9px 18px;font-size:12px;
+  font-family:sans-serif;font-weight:700;color:var(--text);
+  box-shadow:0 8px 24px rgba(0,0,0,.5);z-index:80;
+  opacity:0;transition:opacity .2s,transform .2s;white-space:nowrap;pointer-events:none;
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+.toast.err{border-color:rgba(255,77,143,.4);color:var(--pink);}
+.toast.ok{border-color:rgba(46,204,143,.4);color:var(--green);}
+
+@keyframes fup{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.phone>*{animation:fup .4s ease forwards;}
+
+/* RESPONSIVE DESIGN */
+@media (min-width:768px) {
+  .login-hero { padding:40px 32px 0; }
+  .form-card { margin:28px 24px 0; padding:24px; }
+  .how-card { margin:18px 24px 0; padding:18px; }
+  .otp-view { margin:28px 24px 0; padding:24px; }
+  .reg-link { margin-top:16px; }
+}
+
+@media (min-width:1024px) {
+  .phone { max-width:600px; margin:0 auto; }
+  .login-hero { padding:48px 40px 0; }
+  .form-card { margin:32px 32px 0; padding:28px; }
+  .how-card { margin:20px 32px 0; padding:20px; }
+  .otp-view { margin:32px 32px 0; padding:28px; }
+  .reg-link { margin-top:18px; }
+}
+
+@media (max-width:480px) {
+  .login-hero { padding:28px 20px 0; }
+  .form-card { margin:20px 14px 0; padding:20px; }
+  .how-card { margin:14px 14px 0; padding:14px; }
+  .otp-view { margin:20px 14px 0; padding:20px; }
+  .reg-link { margin-top:12px; }
+}
+</style>
+</head>
+<body>
+
+<div class="toast" id="toast"></div>
+
+<div class="phone">
+  <div class="notch"></div>
+  <div class="scroll">
+
+
+    <!-- Hero -->
+    <div class="login-hero">
+      <div class="app-logo">🎵</div>
+      <div class="login-title">Welcome back to<br><span class="brand">Shurafah</span></div>
+      <div class="login-sub">Enter your name, phone &amp; password<br>to continue listening.</div>
+    </div>
+
+    <!-- LOGIN FORM -->
+    <div class="form-card" id="loginForm">
+      <div class="form-card-title">
+        <svg viewBox="0 0 24 24"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+        Sign In to Your Account
+      </div>
+
+      <!-- Full Name -->
+      <div class="field">
+        <div class="field-label">Full Name <span class="req">*</span></div>
+        <div class="field-input-wrap">
+          <svg class="field-icon" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          <input class="field-input" id="loginName" type="text" placeholder="e.g. Daniel Nwosu" autocomplete="name">
+          <span class="valid-check">✓</span>
+        </div>
+        <div class="field-error" id="nameErr">Please enter your registered full name</div>
+      </div>
+
+      <!-- Phone Number -->
+      <div class="field" style="margin-bottom:14px;">
+        <div class="field-label">Phone Number <span class="req">*</span></div>
+        <div class="phone-wrap">
+          <div class="country-flag">
+            <span style="font-size:18px;">🇳🇬</span>
+            <span class="flag-code">+234</span>
+          </div>
+          <div class="phone-input-wrap">
+            <input class="field-input" id="loginPhone" type="tel" placeholder="0812 345 6789" autocomplete="tel" style="padding-left:14px;">
+            <span class="valid-check">✓</span>
+          </div>
+        </div>
+        <div class="field-error" id="phoneErr">Enter your registered phone number</div>
+      </div>
+
+      <!-- Password -->
+      <div class="field" style="margin-bottom:6px;">
+        <div class="field-label">Password <span class="req">*</span></div>
+        <div class="field-input-wrap">
+          <svg class="field-icon" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          <input class="field-input has-toggle" id="loginPassword" type="password" placeholder="Your password" autocomplete="current-password">
+          <span class="pwd-toggle" id="loginPwdToggle" onclick="togglePwd('loginPassword','loginPwdToggle')">👁️</span>
+        </div>
+        <div class="field-error" id="pwdErr">Enter your password (at least 6 characters)</div>
+      </div>
+
+      <div class="forgot-row">
+        <a class="forgot-link" onclick="openReset()">Forgot password?</a>
+      </div>
+
+      <!-- Login Button -->
+      <div class="login-btn" id="loginBtn" onclick="doLogin()">
+        <svg viewBox="0 0 24 24"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+        Sign In
+      </div>
+
+      <div class="divider"><div class="div-line"></div><div class="div-txt">New to Shurafah?</div><div class="div-line"></div></div>
+      <div class="reg-link"><a href="register_page.html">Create a free account →</a></div>
+    </div>
+
+    <!-- OTP VERIFICATION (shown after login attempt) -->
+    <div class="otp-view" id="otpView">
+      <div class="otp-icon">📱</div>
+      <div class="otp-title">Verify Your Number</div>
+      <div class="otp-sub">We sent a 4-digit code to<br><strong id="otpPhone">+234 812 345 6789</strong></div>
+
+      <div class="otp-boxes">
+        <input class="otp-box" id="otp1" type="text" maxlength="1" inputmode="numeric">
+        <input class="otp-box" id="otp2" type="text" maxlength="1" inputmode="numeric">
+        <input class="otp-box" id="otp3" type="text" maxlength="1" inputmode="numeric">
+        <input class="otp-box" id="otp4" type="text" maxlength="1" inputmode="numeric">
+      </div>
+
+      <div class="otp-verify-btn" onclick="verifyOTP()">
+        <svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22,4 12,14.01 9,11.01"/></svg>
+        Verify &amp; Sign In
+      </div>
+
+      <div class="resend-txt">Didn't get a code? <a onclick="resendOTP()">Resend in <span id="countdown">30</span>s</a></div>
+      <div class="back-to-login"><a onclick="backToLogin()">← Back to Login</a></div>
+    </div>
+
+    <!-- RESET PASSWORD VIEW -->
+    <div class="reset-view" id="resetView">
+      <div class="reset-head">
+        <div class="reset-icon">🔑</div>
+        <div class="reset-title">Reset Your Password</div>
+        <div class="reset-sub" id="resetSub">We'll send a 4-digit code to your phone to verify it's you.</div>
+      </div>
+
+      <!-- Step 1: phone -->
+      <div class="reset-step active" id="resetStep1">
+        <div class="field">
+          <div class="field-label">Phone Number <span class="req">*</span></div>
+          <div class="phone-wrap">
+            <div class="country-flag">
+              <span style="font-size:18px;">🇳🇬</span>
+              <span class="flag-code">+234</span>
+            </div>
+            <div class="phone-input-wrap">
+              <input class="field-input" id="resetPhone" type="tel" placeholder="0812 345 6789" autocomplete="tel" style="padding-left:14px;">
+            </div>
+          </div>
+          <div class="field-error" id="resetPhoneErr">Enter a valid phone number</div>
+        </div>
+        <div class="login-btn" onclick="sendResetOtp()">
+          <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          Send OTP
+        </div>
+      </div>
+
+      <!-- Step 2: OTP -->
+      <div class="reset-step" id="resetStep2">
+        <div class="otp-boxes">
+          <input class="otp-box" id="rotp1" type="text" maxlength="1" inputmode="numeric">
+          <input class="otp-box" id="rotp2" type="text" maxlength="1" inputmode="numeric">
+          <input class="otp-box" id="rotp3" type="text" maxlength="1" inputmode="numeric">
+          <input class="otp-box" id="rotp4" type="text" maxlength="1" inputmode="numeric">
+        </div>
+        <div class="login-btn" onclick="verifyResetOtp()">
+          <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+          Verify Code
+        </div>
+        <div class="resend-txt" style="text-align:center;margin-top:12px;">Didn't get a code? <a onclick="resendResetOtp()">Resend in <span id="resetCountdown">30</span>s</a></div>
+      </div>
+
+      <!-- Step 3: new password -->
+      <div class="reset-step" id="resetStep3">
+        <div class="field">
+          <div class="field-label">New Password <span class="req">*</span></div>
+          <div class="field-input-wrap">
+            <svg class="field-icon" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            <input class="field-input has-toggle" id="newPwd" type="password" placeholder="At least 6 characters" autocomplete="new-password">
+            <span class="pwd-toggle" id="newPwdToggle" onclick="togglePwd('newPwd','newPwdToggle')">👁️</span>
+          </div>
+          <div class="field-error" id="newPwdErr">Password must be at least 6 characters</div>
+        </div>
+        <div class="field">
+          <div class="field-label">Confirm New Password <span class="req">*</span></div>
+          <div class="field-input-wrap">
+            <svg class="field-icon" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            <input class="field-input has-toggle" id="newPwd2" type="password" placeholder="Re-enter password" autocomplete="new-password">
+            <span class="pwd-toggle" id="newPwd2Toggle" onclick="togglePwd('newPwd2','newPwd2Toggle')">👁️</span>
+          </div>
+          <div class="field-error" id="newPwd2Err">Passwords do not match</div>
+        </div>
+        <div class="login-btn" onclick="saveNewPassword()">
+          <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+          Save New Password
+        </div>
+      </div>
+
+      <div class="back-to-login" style="text-align:center;margin-top:14px;"><a onclick="closeReset()">← Back to Login</a></div>
+    </div>
+
+    <!-- How it works -->
+    <div class="how-card" id="howCard">
+      <div class="how-title">🔐 How Login Works</div>
+      <div class="how-step">
+        <div class="how-num hn1">1</div>
+        <div class="how-text">Enter your <strong>registered name, phone &amp; password</strong></div>
+      </div>
+      <div class="how-step">
+        <div class="how-num hn2">2</div>
+        <div class="how-text">We verify your <strong>4-digit OTP</strong> sent to your phone</div>
+      </div>
+      <div class="how-step">
+        <div class="how-num hn3">3</div>
+        <div class="how-text">Forgot your password? <strong>Reset via phone OTP</strong> any time.</div>
+      </div>
+    </div>
+
+    <div style="height:24px;"></div>
+  </div>
+
+  <!-- SUCCESS OVERLAY -->
+  <div class="success-overlay" id="successOverlay">
+    <div class="success-icon">🎶</div>
+    <div class="success-title">Welcome back!</div>
+    <div class="success-sub">You've successfully logged in.<br>Your gospel playlist is ready and waiting!</div>
+    <div class="success-btn" onclick="document.getElementById('successOverlay').classList.remove('show')">Continue to Home 🏠</div>
+  </div>
+
+</div>
+
+<script>
+/* Clock (no-op if there's no #clk element on this page) */
+function tick(){const el=document.getElementById('clk');if(!el)return;const n=new Date();el.textContent=String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0');}
+tick();setInterval(tick,30000);
+
+/* Validation */
+function validateName(){
+  const v=document.getElementById('loginName').value.trim();
+  const inp=document.getElementById('loginName');
+  const err=document.getElementById('nameErr');
+  if(v.length<3){inp.className='field-input invalid';err.classList.add('show');return false;}
+  inp.className='field-input valid';err.classList.remove('show');return true;
+}
+function validatePhone(){
+  const v=document.getElementById('loginPhone').value.replace(/\s/g,'');
+  const inp=document.getElementById('loginPhone');
+  const err=document.getElementById('phoneErr');
+  if(!/^(0\d{10}|[789]\d{9})$/.test(v)){inp.className='field-input invalid';err.classList.add('show');return false;}
+  inp.className='field-input valid';err.classList.remove('show');return true;
+}
+function validateLoginPassword(){
+  const v=document.getElementById('loginPassword').value;
+  const inp=document.getElementById('loginPassword');
+  const err=document.getElementById('pwdErr');
+  if(v.length<6){inp.className='field-input invalid';err.classList.add('show');return false;}
+  inp.className='field-input valid';err.classList.remove('show');return true;
+}
+function togglePwd(inputId, toggleId){
+  const inp=document.getElementById(inputId);
+  const tog=document.getElementById(toggleId);
+  if(inp.type==='password'){inp.type='text';tog.textContent='🙈';}
+  else{inp.type='password';tog.textContent='👁️';}
+}
+
+document.getElementById('loginName').addEventListener('blur',validateName);
+document.getElementById('loginPhone').addEventListener('blur',validatePhone);
+document.getElementById('loginPassword').addEventListener('blur',validateLoginPassword);
+
+/* LOGIN */
+function doLogin(){
+  const okName=validateName();
+  const okPhone=validatePhone();
+  const okPwd=validateLoginPassword();
+  if(!(okName && okPhone && okPwd))return;
+
+  const btn=document.getElementById('loginBtn');
+  btn.classList.add('loading');
+  btn.innerHTML='<span>Signing in…</span>';
+
+  const raw=document.getElementById('loginPhone').value.replace(/\s/g,'');
+  const fmt='+234 '+raw.replace(/^0/,'').replace(/(\d{3})(\d{4})(\d{4})/,'$1 $2 $3');
+
+  setTimeout(()=>{
+    btn.classList.remove('loading');
+    btn.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>Sign In';
+
+    // Show OTP confirmation step (kept as an extra security check)
+    document.getElementById('loginForm').style.display='none';
+    document.getElementById('howCard').style.display='none';
+    document.getElementById('otpPhone').textContent=fmt;
+    document.getElementById('otpView').classList.add('show');
+    document.getElementById('otp1').focus();
+    startCountdown();
+    showToast('OTP sent to '+fmt,'ok');
+  },1200);
+}
+
+/* ===== Forgot / Reset password flow ===== */
+let resetCountTimer=null;
+function openReset(){
+  document.getElementById('loginForm').style.display='none';
+  document.getElementById('howCard').style.display='none';
+  document.getElementById('resetView').classList.add('show');
+  showResetStep(1);
+  // Prefill phone if user already typed it
+  const p=document.getElementById('loginPhone').value;
+  if(p) document.getElementById('resetPhone').value=p;
+}
+function closeReset(){
+  document.getElementById('resetView').classList.remove('show');
+  document.getElementById('loginForm').style.display='block';
+  document.getElementById('howCard').style.display='block';
+  clearInterval(resetCountTimer);
+}
+function showResetStep(n){
+  [1,2,3].forEach(i=>{
+    document.getElementById('resetStep'+i).classList.toggle('active', i===n);
+  });
+  const sub=document.getElementById('resetSub');
+  if(n===1) sub.textContent="We'll send a 4-digit code to your phone to verify it's you.";
+  if(n===2) sub.innerHTML='Enter the 4-digit code we sent to <strong id="resetPhoneFmt">your phone</strong>.';
+  if(n===3) sub.textContent='Choose a new password. Use at least 6 characters.';
+}
+function sendResetOtp(){
+  const v=document.getElementById('resetPhone').value.replace(/\s/g,'');
+  const inp=document.getElementById('resetPhone');
+  const err=document.getElementById('resetPhoneErr');
+  if(!/^(0\d{10}|[789]\d{9})$/.test(v)){inp.className='field-input invalid';err.classList.add('show');return;}
+  inp.className='field-input valid';err.classList.remove('show');
+  const fmt='+234 '+v.replace(/^0/,'').replace(/(\d{3})(\d{4})(\d{4})/,'$1 $2 $3');
+  showResetStep(2);
+  setTimeout(()=>{const el=document.getElementById('resetPhoneFmt'); if(el) el.textContent=fmt;},10);
+  document.getElementById('rotp1').focus();
+  startResetCountdown();
+  showToast('Reset OTP sent to '+fmt,'ok');
+}
+function verifyResetOtp(){
+  const code=['rotp1','rotp2','rotp3','rotp4'].map(id=>document.getElementById(id).value).join('');
+  if(code.length<4){showToast('Enter all 4 digits','err');return;}
+  showResetStep(3);
+}
+function saveNewPassword(){
+  const a=document.getElementById('newPwd').value;
+  const b=document.getElementById('newPwd2').value;
+  const errA=document.getElementById('newPwdErr');
+  const errB=document.getElementById('newPwd2Err');
+  let ok=true;
+  if(a.length<6){document.getElementById('newPwd').className='field-input invalid';errA.classList.add('show');ok=false;}
+  else{document.getElementById('newPwd').className='field-input valid';errA.classList.remove('show');}
+  if(a!==b||b.length<1){document.getElementById('newPwd2').className='field-input invalid';errB.classList.add('show');ok=false;}
+  else{document.getElementById('newPwd2').className='field-input valid';errB.classList.remove('show');}
+  if(!ok)return;
+  showToast('Password updated! Please sign in.','ok');
+  closeReset();
+  // Clear reset form for next time
+  document.getElementById('newPwd').value='';
+  document.getElementById('newPwd2').value='';
+  ['rotp1','rotp2','rotp3','rotp4'].forEach(id=>{const el=document.getElementById(id);el.value='';el.classList.remove('filled');});
+}
+function startResetCountdown(){
+  let secs=30;
+  const cd=document.getElementById('resetCountdown');
+  cd.textContent=secs;
+  clearInterval(resetCountTimer);
+  resetCountTimer=setInterval(()=>{
+    secs--;
+    cd.textContent=secs;
+    if(secs<=0){clearInterval(resetCountTimer);cd.textContent='now';}
+  },1000);
+}
+function resendResetOtp(){
+  clearInterval(resetCountTimer);
+  startResetCountdown();
+  showToast('New reset OTP sent!','ok');
+  ['rotp1','rotp2','rotp3','rotp4'].forEach(id=>{const el=document.getElementById(id);el.value='';el.classList.remove('filled');});
+  document.getElementById('rotp1').focus();
+}
+
+/* Reset OTP boxes auto-advance */
+const rOtpBoxes=['rotp1','rotp2','rotp3','rotp4'];
+rOtpBoxes.forEach((id,i)=>{
+  const el=document.getElementById(id);
+  el.addEventListener('input',e=>{
+    const v=e.target.value.replace(/\D/g,'');
+    e.target.value=v;
+    if(v.length===1){
+      e.target.classList.add('filled');
+      if(i<3)document.getElementById(rOtpBoxes[i+1]).focus();
+    }else{e.target.classList.remove('filled');}
+  });
+  el.addEventListener('keydown',e=>{
+    if(e.key==='Backspace'&&!e.target.value&&i>0)document.getElementById(rOtpBoxes[i-1]).focus();
+  });
+});
+
+/* OTP boxes auto-advance */
+const otpBoxes=['otp1','otp2','otp3','otp4'];
+otpBoxes.forEach((id,i)=>{
+  const el=document.getElementById(id);
+  el.addEventListener('input',e=>{
+    const v=e.target.value.replace(/\D/g,'');
+    e.target.value=v;
+    if(v.length===1){
+      e.target.classList.add('filled');
+      if(i<3)document.getElementById(otpBoxes[i+1]).focus();
+    } else {
+      e.target.classList.remove('filled');
+    }
+  });
+  el.addEventListener('keydown',e=>{
+    if(e.key==='Backspace'&&!e.target.value&&i>0)document.getElementById(otpBoxes[i-1]).focus();
+  });
+});
+
+/* OTP VERIFY */
+function verifyOTP(){
+  const code=otpBoxes.map(id=>document.getElementById(id).value).join('');
+  if(code.length<4){showToast('Enter all 4 digits','err');return;}
+
+  // Simulate — accept any 4-digit code
+  showToast('Verifying…');
+  setTimeout(()=>{
+    document.getElementById('successOverlay').classList.add('show');
+  },1200);
+}
+
+/* Countdown */
+let countTimer=null;
+function startCountdown(){
+  let secs=30;
+  document.getElementById('countdown').textContent=secs;
+  clearInterval(countTimer);
+  countTimer=setInterval(()=>{
+    secs--;
+    document.getElementById('countdown').textContent=secs;
+    if(secs<=0){clearInterval(countTimer);document.getElementById('countdown').textContent='now';}
+  },1000);
+}
+
+function resendOTP(){
+  clearInterval(countTimer);
+  showToast('New OTP sent!','ok');
+  startCountdown();
+  otpBoxes.forEach(id=>{
+    document.getElementById(id).value='';
+    document.getElementById(id).classList.remove('filled');
+  });
+  document.getElementById('otp1').focus();
+}
+
+function backToLogin(){
+  document.getElementById('otpView').classList.remove('show');
+  document.getElementById('loginForm').style.display='block';
+  document.getElementById('howCard').style.display='block';
+}
+
+/* Toast */
+const toastEl=document.getElementById('toast');let toastT=null;
+function showToast(msg,type=''){
+  toastEl.textContent=msg;toastEl.className='toast show'+(type?' '+type:'');
+  clearTimeout(toastT);toastT=setTimeout(()=>toastEl.classList.remove('show'),2600);
+}
+</script>
+</body>
+</html>

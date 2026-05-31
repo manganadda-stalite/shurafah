@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Shurafah — Recently Added</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#080B12;--surface:#0F1420;--surface2:#161C2E;--surface3:#1E2740;
+  --accent:#FF6B35;--accent2:#FFB347;--blue:#4D9FFF;--green:#2ECC8F;
+  --purple:#9B6BFF;--pink:#FF4D8F;--teal:#00C9B8;
+  --text:#F0F4FF;--text2:#8A94B0;--text3:#4A5270;
+  --border:rgba(255,255,255,0.06);
+}
+body.light{
+  --bg:#F4F6FC;--surface:#FFFFFF;--surface2:#E8ECF7;--surface3:#D8DEEF;
+  --text:#12172E;--text2:#5A6380;--text3:#9AA0BA;
+  --border:rgba(0,0,0,0.07);
+}
+body.light .hero-strip{background:linear-gradient(135deg,#E8F8F6,#E8F6EC)!important;border-color:rgba(0,201,184,.18)!important;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--text);min-height:100vh;display:flex;flex-direction:column;transition:background .3s,color .3s;}
+.phone{width:100%;background:var(--bg);display:flex;flex-direction:column;min-height:100vh;position:relative;}
+.scroll{flex:1;overflow-y:auto;overflow-x:hidden;scrollbar-width:none;padding-bottom:148px;}
+.scroll::-webkit-scrollbar{display:none;}
+
+/* ── TOPBAR ── */
+.tbar{display:flex;align-items:center;justify-content:space-between;padding:14px 16px 4px;gap:10px;}
+.tb-back{width:36px;height:36px;background:var(--surface);border-radius:50%;display:flex;align-items:center;justify-content:center;border:1px solid var(--border);cursor:pointer;flex-shrink:0;transition:background .2s;text-decoration:none;color:inherit;}
+.tb-back:hover{background:var(--surface2);}
+.tb-back svg{width:14px;height:14px;fill:none;stroke:var(--text);stroke-width:2;}
+.tb-title{flex:1;font-family:sans-serif;font-size:17px;font-weight:800;letter-spacing:-.3px;text-align:center;background:linear-gradient(135deg,var(--teal),var(--green));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.theme-toggle{display:inline-flex;align-items:center;gap:6px;background:var(--surface2);border-radius:50px;padding:5px 10px 5px 8px;border:1.5px solid var(--teal);cursor:pointer;flex-shrink:0;user-select:none;}
+.tt-icon{font-size:13px;}
+.tt-label{font-family:sans-serif;font-size:10px;font-weight:700;color:var(--teal);letter-spacing:.3px;}
+
+/* ── HERO STRIP ── */
+.hero-strip{margin:12px 16px 0;background:linear-gradient(135deg,#040F10,#051810);border-radius:16px;padding:14px 16px;border:1px solid rgba(0,201,184,.2);position:relative;overflow:hidden;}
+.hero-strip::before{content:'';position:absolute;top:-30px;right:-30px;width:120px;height:120px;background:radial-gradient(circle,rgba(0,201,184,.15) 0%,transparent 70%);}
+.hs-row{display:flex;align-items:center;gap:14px;margin-bottom:12px;}
+.hs-icon{font-size:30px;flex-shrink:0;}
+.hs-label{font-size:10px;color:rgba(0,201,184,.7);margin-bottom:3px;text-transform:uppercase;letter-spacing:.5px;font-family:sans-serif;font-weight:700;}
+.hs-val{font-family:sans-serif;font-size:18px;font-weight:800;color:var(--teal);}
+.hs-sub{font-size:10px;color:var(--text3);margin-top:1px;}
+.hs-chips{display:flex;gap:8px;flex-wrap:wrap;}
+.hs-chip{background:rgba(0,201,184,.08);border:1px solid rgba(0,201,184,.18);border-radius:10px;padding:6px 12px;text-align:center;}
+.hs-chip-n{font-family:sans-serif;font-size:14px;font-weight:800;}
+.hs-chip-l{font-size:9px;color:var(--text3);margin-top:1px;}
+.hs-chip.c1 .hs-chip-n{color:var(--teal);}
+.hs-chip.c2 .hs-chip-n{color:var(--green);}
+.hs-chip.c3 .hs-chip-n{color:var(--blue);}
+.hs-chip.c4 .hs-chip-n{color:var(--purple);}
+
+/* ── SEARCH ── */
+.sw{padding:10px 16px 0;}
+.sb{background:var(--surface);border:1px solid var(--border);border-radius:14px;display:flex;align-items:center;gap:10px;padding:10px 14px;transition:border-color .2s;}
+.sb:focus-within{border-color:var(--teal);}
+.sb svg{width:14px;height:14px;fill:none;stroke:var(--text3);stroke-width:2;flex-shrink:0;}
+.sb input{background:transparent;border:none;outline:none;color:var(--text);font-size:13px;flex:1;font-family:'DM Sans',sans-serif;}
+.sb input::placeholder{color:var(--text3);}
+
+/* ── FILTER PILLS ── */
+.fp{display:flex;gap:7px;padding:10px 16px 0;overflow-x:auto;scrollbar-width:none;}
+.fp::-webkit-scrollbar{display:none;}
+.pill{flex-shrink:0;padding:6px 14px;border-radius:50px;font-family:sans-serif;font-size:10px;font-weight:700;cursor:pointer;white-space:nowrap;background:var(--surface);color:var(--text2);border:1px solid var(--border);transition:all .15s;}
+.pill.on{background:var(--teal);color:white;border-color:var(--teal);box-shadow:0 3px 10px rgba(0,201,184,.28);}
+
+/* ── TOOLBAR ── */
+.toolbar{display:flex;align-items:center;gap:8px;padding:10px 16px 8px;flex-wrap:wrap;}
+.shead-c{font-size:10px;color:var(--text3);margin-right:auto;font-family:sans-serif;font-weight:600;}
+.sort-sel{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:5px 10px;font-size:11px;color:var(--text);font-family:'DM Sans',sans-serif;outline:none;cursor:pointer;}
+.vt-wrap{display:flex;gap:4px;}
+.vt-btn{width:30px;height:30px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;}
+.vt-btn.on{background:var(--teal);border-color:transparent;}
+.vt-btn svg{width:14px;height:14px;fill:none;stroke:var(--text2);stroke-width:2;}
+.vt-btn.on svg{stroke:white;}
+
+/* ── DAY LABEL ── */
+.day-label-wrap{margin:10px 16px 4px;display:flex;align-items:center;gap:8px;}
+.day-label{font-family:sans-serif;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;background:var(--surface);border-radius:6px;padding:3px 9px;border:1px solid var(--border);white-space:nowrap;}
+.day-line{flex:1;height:1px;background:var(--border);}
+.day-count{font-size:9px;color:var(--text3);white-space:nowrap;}
+
+/* ── LIST VIEW ── */
+.songs-list{padding:0 16px;display:flex;flex-direction:column;gap:3px;}
+.srow{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:13px;cursor:pointer;transition:background .15s;position:relative;}
+.srow:hover{background:var(--surface);}
+@keyframes fadeUp{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
+.songs-list .srow{animation:fadeUp 0.28s ease forwards;opacity:0;}
+.songs-grid .scard{animation:fadeUp 0.28s ease forwards;opacity:0;}
+.new-badge{display:inline-flex;align-items:center;font-size:7px;background:rgba(0,201,184,.15);border:1px solid rgba(0,201,184,.3);border-radius:4px;padding:1px 5px;color:var(--teal);font-family:sans-serif;font-weight:700;text-transform:uppercase;margin-bottom:3px;}
+.s-thumb{width:48px;height:48px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;position:relative;}
+.src-dot{position:absolute;bottom:-2px;right:-2px;width:14px;height:14px;border-radius:50%;border:2px solid var(--bg);display:flex;align-items:center;justify-content:center;font-size:7px;font-weight:700;color:white;}
+.src-official{background:var(--green);}
+.src-upload{background:var(--blue);}
+.src-import{background:var(--purple);}
+.s-info{flex:1;min-width:0;}
+.s-title{font-family:sans-serif;font-size:12px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:2px;}
+.s-artist{font-size:10px;color:var(--text2);margin-bottom:3px;}
+.s-meta{display:flex;gap:6px;align-items:center;flex-wrap:wrap;}
+.s-time{font-size:9px;color:var(--teal);font-family:sans-serif;font-weight:600;}
+.s-stat{display:flex;align-items:center;gap:2px;font-size:9px;color:var(--text3);}
+.s-stat svg{width:8px;height:8px;fill:none;stroke:currentColor;stroke-width:2;}
+.s-cat{font-size:8px;font-family:sans-serif;font-weight:700;padding:1px 6px;border-radius:4px;background:rgba(0,201,184,.1);color:var(--teal);border:1px solid rgba(0,201,184,.2);}
+.s-right{display:flex;flex-direction:column;align-items:flex-end;gap:5px;flex-shrink:0;}
+.s-dur{font-size:10px;color:var(--text3);font-family:sans-serif;font-weight:600;}
+.s-actions{display:flex;align-items:center;gap:4px;}
+.heart{width:24px;height:24px;display:flex;align-items:center;justify-content:center;cursor:pointer;border-radius:50%;}
+.heart svg{width:13px;height:13px;fill:none;stroke:var(--text3);stroke-width:2;}
+.heart.liked svg{fill:var(--pink);stroke:var(--pink);}
+.heart:hover{background:rgba(255,77,143,.1);}
+.dl-btn{width:24px;height:24px;display:flex;align-items:center;justify-content:center;cursor:pointer;border-radius:50%;}
+.dl-btn svg{width:12px;height:12px;fill:none;stroke:var(--blue);stroke-width:2;}
+.dl-btn:hover{background:rgba(77,159,255,.1);}
+
+/* ── CARD VIEW ── */
+.songs-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 16px;}
+.scard{background:var(--surface);border:1px solid var(--border);border-radius:16px;overflow:hidden;cursor:pointer;transition:transform .15s,box-shadow .15s;}
+.scard:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.35);}
+.scard-cover{height:88px;display:flex;align-items:center;justify-content:center;font-size:34px;position:relative;overflow:hidden;}
+.scard-new{position:absolute;top:7px;left:8px;font-size:7px;background:rgba(0,201,184,.18);border:1px solid rgba(0,201,184,.35);border-radius:4px;padding:1px 5px;color:var(--teal);font-family:sans-serif;font-weight:700;text-transform:uppercase;}
+.scard-src{position:absolute;top:7px;right:8px;width:16px;height:16px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:7px;font-weight:700;color:white;}
+.scard-play-ov{position:absolute;inset:0;background:rgba(0,0,0,.25);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .15s;}
+.scard:hover .scard-play-ov{opacity:1;}
+.scard-play-ov svg{width:26px;height:26px;fill:white;}
+.scard-body{padding:9px 11px 12px;}
+.scard-title{font-family:sans-serif;font-size:11px;font-weight:700;line-height:1.3;margin-bottom:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.scard-artist{font-size:10px;color:var(--text2);margin-bottom:5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.scard-meta{display:flex;align-items:center;justify-content:space-between;}
+.scard-time{font-size:9px;color:var(--teal);font-family:sans-serif;font-weight:600;}
+.scard-dur{font-size:9px;color:var(--text3);font-family:sans-serif;font-weight:600;}
+
+/* ── EMPTY ── */
+.empty{padding:56px 24px;text-align:center;}
+.empty-icon{font-size:48px;margin-bottom:12px;}
+.empty-msg{font-family:sans-serif;font-size:13px;font-weight:700;color:var(--text3);}
+
+/* ── PAGINATION ── */
+.pagination{display:flex;align-items:center;justify-content:center;gap:6px;padding:16px 16px 6px;}
+.pg-btn{min-width:32px;height:32px;padding:0 8px;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text2);font-family:sans-serif;font-size:11px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;transition:all .15s;}
+.pg-btn:hover:not(:disabled){background:var(--surface2);color:var(--text);}
+.pg-btn.on{background:var(--teal);color:white;border-color:transparent;}
+.pg-btn:disabled{opacity:.35;cursor:not-allowed;}
+
+/* ── MINI PLAYER ── */
+.mini-player{position:fixed;bottom:64px;left:0;right:0;width:100%;background:linear-gradient(135deg,#040E10,#051812);border-top:1px solid rgba(0,201,184,.18);border-bottom:1px solid rgba(0,201,184,.1);padding:9px 14px;z-index:40;display:none;}
+.mp-inner{display:flex;align-items:center;gap:10px;}
+.mp-art{width:40px;height:40px;border-radius:9px;background:linear-gradient(135deg,var(--teal),var(--green));display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;box-shadow:0 3px 10px rgba(0,201,184,.25);}
+.mp-inf{flex:1;min-width:0;}
+.mp-title{font-family:sans-serif;font-size:12px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:1px;}
+.mp-artist{font-size:10px;color:var(--text2);}
+.mp-ctrl{display:flex;align-items:center;gap:7px;flex-shrink:0;}
+.mp-ctrl>svg{width:17px;height:17px;fill:none;stroke:var(--text2);stroke-width:2;cursor:pointer;}
+.mp-play{width:34px;height:34px;background:var(--teal);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 2px 10px rgba(0,201,184,.35);}
+.mp-play svg{width:13px;height:13px;fill:white;}
+.mp-heart{cursor:pointer;}
+.mp-heart svg{width:17px;height:17px;fill:none;stroke:var(--text3);stroke-width:2;}
+.mp-heart.liked svg{fill:var(--pink);stroke:var(--pink);}
+.mp-prog{display:flex;align-items:center;gap:7px;margin-top:6px;}
+.mp-bar{flex:1;height:3px;background:var(--surface3);border-radius:2px;overflow:hidden;cursor:pointer;}
+.mp-fill{width:25%;height:100%;background:linear-gradient(90deg,var(--teal),var(--green));border-radius:2px;}
+.mp-t{font-size:9px;color:var(--text3);font-family:sans-serif;}
+
+/* ── BOTTOM NAV ── */
+.bnav{position:fixed;bottom:0;left:0;right:0;width:100%;height:64px;background:var(--surface);border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-around;z-index:50;transition:background .3s;}
+.ni{display:flex;flex-direction:column;align-items:center;gap:3px;padding:4px 10px;cursor:pointer;text-decoration:none;color:var(--text3);transition:color .15s;}
+.ni svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;}
+.ni .nl{font-size:9px;font-family:sans-serif;font-weight:700;}
+.ni.on{color:var(--accent);}
+
+/* ── GRADIENT CLASSES ── */
+.g1{background:linear-gradient(135deg,#9B6BFF,#4D9FFF);}
+.g2{background:linear-gradient(135deg,#FF6B35,#FFB347);}
+.g3{background:linear-gradient(135deg,#FF4D8F,#FF6B35);}
+.g4{background:linear-gradient(135deg,#2ECC8F,#4D9FFF);}
+.g5{background:linear-gradient(135deg,#FFB347,#FF4D8F);}
+.g6{background:linear-gradient(135deg,#4D9FFF,#9B6BFF);}
+.g7{background:linear-gradient(135deg,#FF6B35,#FF4D8F);}
+.g8{background:linear-gradient(135deg,#2ECC8F,#9B6BFF);}
+
+/* ── RESPONSIVE ── */
+@media (min-width:640px){
+  .tbar,.sw,.fp,.toolbar{padding-left:24px;padding-right:24px;}
+  .hero-strip{margin-left:24px;margin-right:24px;}
+  .day-label-wrap{margin-left:24px;margin-right:24px;}
+  .songs-list,.songs-grid,.pagination{padding-left:24px;padding-right:24px;}
+  .songs-grid{grid-template-columns:repeat(3,1fr);}
+}
+@media (min-width:1024px){
+  .phone{max-width:1200px;margin:0 auto;}
+  .tbar,.sw,.fp,.toolbar{padding-left:40px;padding-right:40px;}
+  .hero-strip{margin-left:40px;margin-right:40px;}
+  .day-label-wrap{margin-left:40px;margin-right:40px;}
+  .songs-list,.songs-grid,.pagination{padding-left:40px;padding-right:40px;}
+  .songs-grid{grid-template-columns:repeat(4,1fr);gap:14px;}
+  .bnav,.mini-player{max-width:1200px;left:50%;right:auto;transform:translateX(-50%);}
+}
+@media (max-width:480px){
+  .tbar,.sw,.fp,.toolbar{padding-left:14px;padding-right:14px;}
+  .hero-strip{margin-left:14px;margin-right:14px;}
+  .day-label-wrap{margin-left:14px;margin-right:14px;}
+  .songs-list,.songs-grid,.pagination{padding-left:14px;padding-right:14px;}
+  .ni .nl{font-size:8px;}
+  .ni svg{width:18px;height:18px;}
+}
+</style>
+</head>
+<body>
+<div class="phone">
+  <div class="scroll">
+
+    <!-- TOPBAR -->
+    <div class="tbar">
+      <a class="tb-back" href="song_portal_web.html"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></a>
+      <div class="tb-title">🆕 Recently Added</div>
+      <div class="theme-toggle" id="themeToggle"><span class="tt-icon" id="ttIcon">🌙</span><span class="tt-label" id="ttLabel">Dark</span></div>
+    </div>
+
+    <!-- AD CONTAINER: Header Banner -->
+    <div id="ad-header-banner"></div>
+
+    <!-- HERO STRIP -->
+    <div class="hero-strip">
+      <div class="hs-row">
+        <div class="hs-icon">🆕</div>
+        <div>
+          <div class="hs-label">Latest Uploads</div>
+          <div class="hs-val">30 New Songs</div>
+          <div class="hs-sub">Added in the last 30 days</div>
+        </div>
+      </div>
+      <div class="hs-chips">
+        <div class="hs-chip c1"><div class="hs-chip-n">7</div><div class="hs-chip-l">Today</div></div>
+        <div class="hs-chip c2"><div class="hs-chip-n">13</div><div class="hs-chip-l">This Week</div></div>
+        <div class="hs-chip c3"><div class="hs-chip-n">20</div><div class="hs-chip-l">This Month</div></div>
+        <div class="hs-chip c4"><div class="hs-chip-n">30</div><div class="hs-chip-l">Total</div></div>
+      </div>
+    </div>
+
+    <!-- SEARCH -->
+    <div class="sw">
+      <div class="sb">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" id="searchInput" placeholder="Search songs, artists…">
+      </div>
+    </div>
+
+    <!-- FILTER PILLS -->
+    <div class="fp" id="filterRow">
+      <div class="pill on"  data-filter="all">All</div>
+      <div class="pill" data-filter="today">Today</div>
+      <div class="pill" data-filter="week">This Week</div>
+      <div class="pill" data-filter="official">✅ Official</div>
+      <div class="pill" data-filter="upload">⬆ Uploaded</div>
+      <div class="pill" data-filter="import">🔗 Imported</div>
+    </div>
+
+    <!-- TOOLBAR -->
+    <div class="toolbar">
+      <span class="shead-c" id="countLabel">30 songs</span>
+      <select class="sort-sel" id="sortSelect">
+        <option value="newest">Newest First</option>
+        <option value="oldest">Oldest First</option>
+        <option value="plays">Most Played</option>
+        <option value="az">A – Z</option>
+      </select>
+      <div class="vt-wrap">
+        <div class="vt-btn on" id="vtList" title="List view"><svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg></div>
+        <div class="vt-btn" id="vtCard" title="Card view"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg></div>
+      </div>
+    </div>
+
+    <div id="songsContainer"></div>
+    <div class="pagination" id="pagination"></div>
+    <div style="height:16px;"></div>
+  </div>
+
+  <!-- MINI PLAYER -->
+  <div class="mini-player" id="miniPlayer">
+    <div class="mp-inner">
+      <div class="mp-art" id="mpArt">🎵</div>
+      <div class="mp-inf">
+        <div class="mp-title" id="mpTitle">Zaman Lafiya</div>
+        <div class="mp-artist" id="mpArtist">Yusuf Badamasi</div>
+      </div>
+      <div class="mp-ctrl">
+        <svg viewBox="0 0 24 24"><polygon points="19 20 9 12 19 4 19 20"/><line x1="5" y1="19" x2="5" y2="5"/></svg>
+        <div class="mp-play" id="mpPlay"><svg viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg></div>
+        <svg viewBox="0 0 24 24"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19"/></svg>
+        <div class="mp-heart" id="mpHeart"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div>
+      </div>
+    </div>
+    <div class="mp-prog">
+      <span class="mp-t">0:22</span>
+      <div class="mp-bar"><div class="mp-fill" id="mpFill"></div></div>
+      <span class="mp-t" id="mpDur">4:33</span>
+    </div>
+  </div>
+
+  <!-- BOTTOM NAV -->
+  <div class="bnav">
+    <a class="ni on" href="song_portal_web.html"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><div class="nl">Home</div></a>
+    <a class="ni" href="shurafah_waazi.html"><svg viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg><div class="nl">Wa'azi</div></a>
+    <a class="ni" href="shurafah_explore.html"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><div class="nl">Explore</div></a>
+    <a class="ni" href="favourites_page.html"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg><div class="nl">Favourites</div></a>
+    <a class="ni" href="user_profile_page.html"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><div class="nl">Profile</div></a>
+  </div>
+</div>
+
+<script>
+/* ── DATA (Laravel: replace with {!! json_encode($songs) !!}) ── */
+var ALL_SONGS = [
+  { id:0,  title:'Zaman Lafiya',     artist:'Yusuf Badamasi',     cat:'Shurafah', grad:'g1', emoji:'🎵', dur:'4:33', plays:'12.4K', time:'2 min ago',    day:'Today',      src:'official', isNew:true,  liked:true  },
+  { id:1,  title:'Kubra Shahida ce', artist:'Uzairu Badamasi',    cat:'Shuhada',  grad:'g2', emoji:'🎶', dur:'6:20', plays:'8.1K',  time:'15 min ago',   day:'Today',      src:'official', isNew:true,  liked:false },
+  { id:2,  title:'Salatin Awliya',   artist:'Ahmad Isah Katsina', cat:'Ashura',   grad:'g3', emoji:'🎸', dur:'5:14', plays:'5.7K',  time:'1 hr ago',     day:'Today',      src:'upload',   isNew:true,  liked:false },
+  { id:3,  title:'Ya Nabi Salamu',   artist:'Maishurafah',        cat:'Maulud',   grad:'g4', emoji:'🎼', dur:'4:48', plays:'4.2K',  time:'3 hrs ago',    day:'Today',      src:'import',   isNew:true,  liked:true  },
+  { id:4,  title:'Muhibbul Husayn',  artist:'Ibrahim Khali',      cat:'Ashura',   grad:'g5', emoji:'🎤', dur:'5:02', plays:'3.8K',  time:'6 hrs ago',    day:'Today',      src:'official', isNew:true,  liked:false },
+  { id:5,  title:'Nasrun min Allah', artist:'Hafiz Abdullahi',    cat:'Shairai',  grad:'g6', emoji:'🎹', dur:'3:55', plays:'2.9K',  time:'9 hrs ago',    day:'Today',      src:'upload',   isNew:false, liked:false },
+  { id:6,  title:'Qasida Burda',     artist:'Malam Kasim',        cat:'Maulud',   grad:'g7', emoji:'🎙️', dur:'7:10', plays:'2.1K',  time:'11 hrs ago',   day:'Today',      src:'official', isNew:false, liked:true  },
+  { id:7,  title:'Manaqib e Ali',    artist:'Saidu Arzika',       cat:'Shuhada',  grad:'g8', emoji:'🥁', dur:'4:22', plays:'1.8K',  time:'Yesterday 9pm',day:'Yesterday',  src:'upload',   isNew:false, liked:false },
+  { id:8,  title:'Laila Tul Qadr',   artist:'Uzairu Badamasi',    cat:'Shurafah', grad:'g1', emoji:'🎵', dur:'5:38', plays:'9.3K',  time:'Yesterday 5pm',day:'Yesterday',  src:'official', isNew:false, liked:true  },
+  { id:9,  title:'Karbala Remix',    artist:'Ahmad Isah Katsina', cat:'Ashura',   grad:'g2', emoji:'🎶', dur:'4:55', plays:'6.6K',  time:'Yesterday 2pm',day:'Yesterday',  src:'import',   isNew:false, liked:false },
+  { id:10, title:'Wakar Sallah',     artist:'Yusuf Badamasi',     cat:'Shairai',  grad:'g3', emoji:'🎸', dur:'3:42', plays:'4.4K',  time:'Apr 14',       day:'2 Days Ago', src:'official', isNew:false, liked:false },
+  { id:11, title:'Wasiyya',          artist:'Maishurafah',        cat:'Shuhada',  grad:'g4', emoji:'🎼', dur:'6:05', plays:'3.1K',  time:'Apr 14',       day:'2 Days Ago', src:'upload',   isNew:false, liked:true  },
+  { id:12, title:'Asma ul Husna',    artist:'Hafiz Abdullahi',    cat:'Maulud',   grad:'g5', emoji:'🎤', dur:'8:12', plays:'2.7K',  time:'Apr 14',       day:'2 Days Ago', src:'official', isNew:false, liked:false },
+  { id:13, title:'Bismillah',        artist:'Ibrahim Khali',      cat:'Shurafah', grad:'g6', emoji:'🎹', dur:'4:18', plays:'5.8K',  time:'Apr 13',       day:'This Week',  src:'import',   isNew:false, liked:false },
+  { id:14, title:'Al Fatihah',       artist:'Uzairu Badamasi',    cat:'Shairai',  grad:'g7', emoji:'🎙️', dur:'3:30', plays:'7.2K',  time:'Apr 13',       day:'This Week',  src:'official', isNew:false, liked:true  },
+  { id:15, title:'Dua Kumayl',       artist:'Ahmad Isah Katsina', cat:'Ashura',   grad:'g8', emoji:'🥁', dur:'9:44', plays:'4.9K',  time:'Apr 12',       day:'This Week',  src:'upload',   isNew:false, liked:false },
+  { id:16, title:'Ziyarat Ashura',   artist:'Malam Kasim',        cat:'Shuhada',  grad:'g1', emoji:'🎵', dur:'6:58', plays:'3.3K',  time:'Apr 12',       day:'This Week',  src:'official', isNew:false, liked:false },
+  { id:17, title:'Ya Hussain',       artist:'Saidu Arzika',       cat:'Ashura',   grad:'g2', emoji:'🎶', dur:'5:25', plays:'8.8K',  time:'Apr 11',       day:'This Week',  src:'import',   isNew:false, liked:true  },
+  { id:18, title:'Durar al Aqiqah',  artist:'Maishurafah',        cat:'Maulud',   grad:'g3', emoji:'🎸', dur:'4:40', plays:'2.4K',  time:'Apr 11',       day:'This Week',  src:'official', isNew:false, liked:false },
+  { id:19, title:'Wakar Annabi',     artist:'Hafiz Abdullahi',    cat:'Shurafah', grad:'g4', emoji:'🎼', dur:'5:55', plays:'6.1K',  time:'Apr 10',       day:'This Week',  src:'upload',   isNew:false, liked:false },
+  { id:20, title:'Tattaki',          artist:'Uzairu Badamasi',    cat:'Shuhada',  grad:'g5', emoji:'🎤', dur:'4:10', plays:'11.2K', time:'Apr 9',        day:'Last Week',  src:'official', isNew:false, liked:true  },
+  { id:21, title:'Zunar Jini',       artist:'Ahmad Isah Katsina', cat:'Ashura',   grad:'g6', emoji:'🎹', dur:'3:55', plays:'7.5K',  time:'Apr 9',        day:'Last Week',  src:'upload',   isNew:false, liked:false },
+  { id:22, title:'Taba ku lashe',    artist:'Yusuf Badamasi',     cat:'Shairai',  grad:'g7', emoji:'🎙️', dur:'5:18', plays:'5.3K',  time:'Apr 8',        day:'Last Week',  src:'official', isNew:false, liked:false },
+  { id:23, title:'Motar Sayyid',     artist:'Malam Kasim',        cat:'Maulud',   grad:'g8', emoji:'🥁', dur:'6:14', plays:'4.0K',  time:'Apr 8',        day:'Last Week',  src:'import',   isNew:false, liked:false },
+  { id:24, title:'Qudus Remix',      artist:'Uzairu Badamasi',    cat:'Shurafah', grad:'g1', emoji:'🎵', dur:'4:48', plays:'19.4K', time:'Apr 7',        day:'Last Week',  src:'official', isNew:false, liked:true  },
+  { id:25, title:'A Kasar nan',      artist:'Ibrahim Khali',      cat:'Shuhada',  grad:'g2', emoji:'🎶', dur:'5:01', plays:'14.1K', time:'Apr 6',        day:'Last Week',  src:'upload',   isNew:false, liked:false },
+  { id:26, title:'Juyin Juya Hali',  artist:'Uzairu Badamasi',    cat:'Shairai',  grad:'g3', emoji:'🎸', dur:'5:33', plays:'24.0K', time:'Apr 5',        day:'Last Week',  src:'official', isNew:false, liked:true  },
+  { id:27, title:'Fallen Stars',     artist:'Amara Soul',         cat:'Shurafah', grad:'g4', emoji:'🎼', dur:'3:42', plays:'48.2K', time:'Apr 4',        day:'Older',      src:'official', isNew:false, liked:true  },
+  { id:28, title:'Grace Rain',       artist:'Amara Soul',         cat:'Maulud',   grad:'g5', emoji:'🎤', dur:'4:10', plays:'31.4K', time:'Apr 3',        day:'Older',      src:'official', isNew:false, liked:false },
+  { id:29, title:'Overflow',         artist:'Amara Soul',         cat:'Shurafah', grad:'g6', emoji:'🎹', dur:'5:02', plays:'22.8K', time:'Apr 2',        day:'Older',      src:'upload',   isNew:false, liked:false }
+];
+
+/* ── STATE ── */
+var PER_PAGE      = 8;
+var currentPage   = 1;
+var currentFilter = 'all';
+var currentSort   = 'newest';
+var currentView   = 'list';
+var filtered      = [];
+var nowPlaying    = null;
+var isPlaying     = false;
+
+/* ── FILTER + SORT ── */
+function getFiltered() {
+  var q = (document.getElementById('searchInput').value || '').trim().toLowerCase();
+  var songs = ALL_SONGS.filter(function(s) {
+    var fm = currentFilter === 'all'      ? true :
+             currentFilter === 'today'    ? s.day === 'Today' :
+             currentFilter === 'week'     ? (s.day === 'Today' || s.day === 'Yesterday' || s.day === '2 Days Ago' || s.day === 'This Week') :
+             currentFilter === 'official' ? s.src === 'official' :
+             currentFilter === 'upload'   ? s.src === 'upload' :
+             currentFilter === 'import'   ? s.src === 'import' : true;
+    var qm = !q || s.title.toLowerCase().indexOf(q) !== -1 || s.artist.toLowerCase().indexOf(q) !== -1;
+    return fm && qm;
+  });
+  if (currentSort === 'oldest') songs = songs.slice().reverse();
+  if (currentSort === 'plays')  songs = songs.slice().sort(function(a,b){ return parseFloat(b.plays) - parseFloat(a.plays); });
+  if (currentSort === 'az')     songs = songs.slice().sort(function(a,b){ return a.title.localeCompare(b.title); });
+  return songs;
+}
+
+/* ── APPLY ── */
+function apply() {
+  filtered = getFiltered();
+  currentPage = 1;
+  document.getElementById('countLabel').textContent = filtered.length + ' song' + (filtered.length !== 1 ? 's' : '');
+  renderPage();
+}
+
+/* ── RENDER ── */
+function renderPage() {
+  var tp    = Math.max(1, Math.ceil(filtered.length / PER_PAGE));
+  if (currentPage > tp) currentPage = 1;
+  var start = (currentPage - 1) * PER_PAGE;
+  var page  = filtered.slice(start, start + PER_PAGE);
+
+  var container = document.getElementById('songsContainer');
+  container.innerHTML = '';
+
+  if (!page.length) {
+    container.innerHTML = '<div class="empty"><div class="empty-icon">🔍</div><div class="empty-msg">No songs found</div></div>';
+    document.getElementById('pagination').innerHTML = '';
+    return;
+  }
+
+  if (currentView === 'card') {
+    renderCardView(container, page, start);
+  } else {
+    renderListView(container, page, start);
+  }
+  renderPagination(tp);
+  document.querySelector('.scroll').scrollTop = 0;
+}
+
+/* ── LIST VIEW (day-grouped) ── */
+function renderListView(container, page, start) {
+  var groups = {}, groupOrder = [];
+  for (var i = 0; i < page.length; i++) {
+    var s = page[i];
+    if (!groups[s.day]) { groups[s.day] = []; groupOrder.push(s.day); }
+    groups[s.day].push({ song: s, gIdx: start + i });
+  }
+  var delay = 0;
+  for (var gi = 0; gi < groupOrder.length; gi++) {
+    var dayName  = groupOrder[gi];
+    var daySongs = groups[dayName];
+    var dayWrap  = document.createElement('div');
+    dayWrap.className = 'day-label-wrap';
+    dayWrap.innerHTML = '<div class="day-label">' + dayName + '</div><div class="day-line"></div><div class="day-count">' + daySongs.length + ' song' + (daySongs.length !== 1 ? 's' : '') + '</div>';
+    container.appendChild(dayWrap);
+    var list = document.createElement('div');
+    list.className = 'songs-list';
+    for (var si = 0; si < daySongs.length; si++) {
+      var entry = daySongs[si];
+      var song  = entry.song;
+      var srcDot = song.src === 'official' ? '✓' : (song.src === 'upload' ? '↑' : '↗');
+      var row = document.createElement('div');
+      row.className = 'srow';
+      row.style.animationDelay = (delay * 0.04) + 's';
+      delay++;
+      row.innerHTML =
+        '<div class="s-thumb ' + song.grad + '">' + song.emoji +
+          '<div class="src-dot src-' + song.src + '">' + srcDot + '</div>' +
+        '</div>' +
+        '<div class="s-info">' +
+          (song.isNew ? '<div class="new-badge">NEW</div>' : '') +
+          '<div class="s-title">' + song.title + '</div>' +
+          '<div class="s-artist">' + song.artist + '</div>' +
+          '<div class="s-meta">' +
+            '<span class="s-time">🕐 ' + song.time + '</span>' +
+            '<span class="s-stat"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>' + song.plays + '</span>' +
+            '<span class="s-cat">' + song.cat + '</span>' +
+          '</div>' +
+        '</div>' +
+        '<div class="s-right">' +
+          '<div class="s-dur">' + song.dur + '</div>' +
+          '<div class="s-actions">' +
+            '<div class="heart' + (song.liked ? ' liked' : '') + '" data-id="' + song.id + '">' +
+              '<svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>' +
+            '</div>' +
+          '</div>' +
+        '</div>';
+      (function(s) {
+        row.querySelector('.heart').addEventListener('click', function(e) { e.stopPropagation(); toggleHeart(s.id, this); });
+        row.addEventListener('click', function() { window.location.href = 'song_detail_page.html'; });
+      })(song);
+      list.appendChild(row);
+    }
+    container.appendChild(list);
+  }
+}
+
+/* ── CARD VIEW ── */
+function renderCardView(container, page, start) {
+  var grid = document.createElement('div');
+  grid.className = 'songs-grid';
+  var delay = 0;
+  page.forEach(function(song) {
+    var srcDot = song.src === 'official' ? '✓' : (song.src === 'upload' ? '↑' : '↗');
+    var card = document.createElement('div');
+    card.className = 'scard';
+    card.style.animationDelay = (delay * 0.04) + 's';
+    delay++;
+    card.innerHTML =
+      '<div class="scard-cover ' + song.grad + '">' +
+        (song.isNew ? '<span class="scard-new">NEW</span>' : '') +
+        '<span class="scard-src src-' + song.src + '">' + srcDot + '</span>' +
+        '<span>' + song.emoji + '</span>' +
+        '<div class="scard-play-ov"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg></div>' +
+      '</div>' +
+      '<div class="scard-body">' +
+        '<div class="scard-title">' + song.title + '</div>' +
+        '<div class="scard-artist">' + song.artist + '</div>' +
+        '<div class="scard-meta"><span class="scard-time">🕐 ' + song.time + '</span><span class="scard-dur">' + song.dur + '</span></div>' +
+      '</div>';
+    card.addEventListener('click', function() { window.location.href = 'song_detail_page.html'; });
+    grid.appendChild(card);
+  });
+  container.appendChild(grid);
+}
+
+/* ── HEART TOGGLE ── */
+function toggleHeart(id, el) {
+  el.classList.toggle('liked');
+  ALL_SONGS[id].liked = !ALL_SONGS[id].liked;
+}
+
+/* ── PAGINATION ── */
+function renderPagination(tp) {
+  var pg = document.getElementById('pagination');
+  pg.innerHTML = '';
+  if (tp <= 1) return;
+  var prev = document.createElement('button');
+  prev.className = 'pg-btn'; prev.innerHTML = '&#8249;'; prev.disabled = currentPage === 1;
+  prev.addEventListener('click', function() { currentPage--; renderPage(); });
+  pg.appendChild(prev);
+  var maxB = 5, startP = Math.max(1, currentPage - 2), endP = Math.min(tp, startP + maxB - 1);
+  if (endP - startP < maxB - 1) startP = Math.max(1, endP - maxB + 1);
+  for (var n = startP; n <= endP; n++) {
+    (function(num) {
+      var btn = document.createElement('button');
+      btn.className = 'pg-btn' + (num === currentPage ? ' on' : '');
+      btn.textContent = num;
+      btn.addEventListener('click', function() { currentPage = num; renderPage(); });
+      pg.appendChild(btn);
+    })(n);
+  }
+  var next = document.createElement('button');
+  next.className = 'pg-btn'; next.innerHTML = '&#8250;'; next.disabled = currentPage === tp;
+  next.addEventListener('click', function() { currentPage++; renderPage(); });
+  pg.appendChild(next);
+}
+
+/* ── MINI PLAYER ── */
+function playSong(s) {
+  nowPlaying = s; isPlaying = true;
+  var mp = document.getElementById('miniPlayer');
+  mp.style.display = 'block';
+  document.getElementById('mpArt').textContent    = s.emoji;
+  document.getElementById('mpTitle').textContent  = s.title;
+  document.getElementById('mpArtist').textContent = s.artist;
+  document.getElementById('mpDur').textContent    = s.dur;
+  document.getElementById('mpPlay').innerHTML = '<svg viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>';
+  document.getElementById('mpFill').style.width = '25%';
+}
+document.getElementById('mpPlay').addEventListener('click', function() {
+  isPlaying = !isPlaying;
+  this.innerHTML = isPlaying
+    ? '<svg viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>'
+    : '<svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>';
+});
+document.getElementById('mpHeart').addEventListener('click', function() { this.classList.toggle('liked'); });
+
+/* ── THEME ── */
+function applyTheme(isLight) {
+  document.body.classList.toggle('light', isLight);
+  document.getElementById('ttIcon').textContent  = isLight ? '☀️' : '🌙';
+  document.getElementById('ttLabel').textContent = isLight ? 'Light' : 'Dark';
+}
+applyTheme(localStorage.getItem('shurafah-theme') === 'light');
+document.getElementById('themeToggle').addEventListener('click', function() {
+  var n = !document.body.classList.contains('light');
+  applyTheme(n); localStorage.setItem('shurafah-theme', n ? 'light' : 'dark');
+});
+
+/* ── FILTER PILLS ── */
+document.getElementById('filterRow').addEventListener('click', function(e) {
+  var pill = e.target.closest('.pill');
+  if (!pill) return;
+  document.querySelectorAll('.pill').forEach(function(p) { p.classList.remove('on'); });
+  pill.classList.add('on');
+  currentFilter = pill.getAttribute('data-filter');
+  apply();
+});
+
+/* ── SORT ── */
+document.getElementById('sortSelect').addEventListener('change', function() { currentSort = this.value; apply(); });
+
+/* ── VIEW TOGGLE ── */
+document.getElementById('vtList').addEventListener('click', function() {
+  currentView = 'list';
+  document.getElementById('vtList').classList.add('on');
+  document.getElementById('vtCard').classList.remove('on');
+  apply();
+});
+document.getElementById('vtCard').addEventListener('click', function() {
+  currentView = 'card';
+  document.getElementById('vtCard').classList.add('on');
+  document.getElementById('vtList').classList.remove('on');
+  apply();
+});
+
+/* ── SEARCH ── */
+var st = null;
+document.getElementById('searchInput').addEventListener('input', function() { clearTimeout(st); st = setTimeout(apply, 260); });
+
+/* ── ADS ── */
+if (typeof ADS !== 'undefined') {
+  ADS.setUserType('guest');
+  ADS.init({ enabled:true, placements:{ headerBanner:{enabled:true}, inFeed:{enabled:true,frequency:5}, downloadModal:{enabled:true,timer:5} } });
+}
+
+/* ── INIT ── */
+apply();
+</script>
+<script src="ads.js"></script>
+</body>
+</html>

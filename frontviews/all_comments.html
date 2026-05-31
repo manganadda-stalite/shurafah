@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Shurafah — All Comments</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#080B12;--surface:#0F1420;--surface2:#161C2E;--surface3:#1E2740;
+  --accent:#FF6B35;--accent2:#FFB347;
+  --blue:#4D9FFF;--green:#2ECC8F;--purple:#9B6BFF;--pink:#FF4D8F;--yellow:#FFD166;
+  --text:#F0F4FF;--text2:#8A94B0;--text3:#4A5270;
+  --border:rgba(255,255,255,0.06);
+}
+body.light{
+  --bg:#F4F6FC;--surface:#FFFFFF;--surface2:#E8ECF7;--surface3:#D8DEEF;
+  --text:#12172E;--text2:#5A6380;--text3:#9AA0BA;--border:rgba(0,0,0,0.07);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--text);min-height:100vh;display:flex;flex-direction:column;transition:background .3s,color .3s;}
+.phone{width:100%;background:var(--bg);display:flex;flex-direction:column;min-height:100vh;}
+.scroll{flex:1;overflow-y:auto;overflow-x:hidden;scrollbar-width:none;padding-bottom:80px;}
+.scroll::-webkit-scrollbar{display:none;}
+
+.tbar{display:flex;align-items:center;justify-content:space-between;padding:14px 16px 4px;gap:10px;}
+.tb-back{width:36px;height:36px;background:var(--surface);border-radius:50%;display:flex;align-items:center;justify-content:center;border:1px solid var(--border);cursor:pointer;flex-shrink:0;transition:background .2s;}
+.tb-back:hover{background:var(--surface2);}
+.tb-back svg{width:14px;height:14px;fill:none;stroke:var(--text);stroke-width:2;}
+.tb-title{flex:1;font-family:sans-serif;font-size:15px;font-weight:800;letter-spacing:-.3px;text-align:center;}
+.theme-toggle{display:inline-flex;align-items:center;gap:6px;background:var(--surface2);border-radius:50px;padding:5px 10px 5px 8px;border:1.5px solid var(--accent);cursor:pointer;flex-shrink:0;}
+.tt-icon{font-size:13px;}.tt-label{font-family:sans-serif;font-size:10px;font-weight:700;color:var(--accent);letter-spacing:.3px;}
+
+/* SONG MINI HEADER */
+.song-mini{margin:10px 16px 0;background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:10px 12px;display:flex;align-items:center;gap:10px;}
+.sm-art{width:42px;height:42px;border-radius:10px;background:linear-gradient(135deg,#9B6BFF,#4D9FFF);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+.sm-info{flex:1;min-width:0;}
+.sm-label{font-size:9px;color:var(--text3);font-family:sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:.4px;margin-bottom:2px;}
+.sm-title{font-family:sans-serif;font-size:12px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.sm-sub{font-size:10px;color:var(--text2);}
+.sm-count{flex-shrink:0;background:var(--accent);color:white;border-radius:50px;padding:3px 10px;font-family:sans-serif;font-size:11px;font-weight:800;}
+
+/* STATS */
+.stats-bar{display:flex;gap:0;padding:10px 16px 0;}
+.stat-chip{flex:1;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:8px 10px;text-align:center;margin:0 3px;}
+.stat-chip:first-child{margin-left:0;}.stat-chip:last-child{margin-right:0;}
+.stat-v{font-family:sans-serif;font-size:14px;font-weight:800;color:var(--pink);}
+.stat-l{font-size:9px;color:var(--text3);}
+
+/* SEARCH */
+.sw{padding:10px 16px 0;}
+.sb{background:var(--surface);border:1px solid var(--border);border-radius:14px;display:flex;align-items:center;gap:10px;padding:10px 14px;transition:border-color .2s;}
+.sb:focus-within{border-color:var(--accent);}
+.sb svg{width:14px;height:14px;fill:none;stroke:var(--text3);stroke-width:2;flex-shrink:0;}
+.sb input{background:transparent;border:none;outline:none;color:var(--text);font-size:13px;flex:1;font-family:'DM Sans',sans-serif;}
+.sb input::placeholder{color:var(--text3);}
+
+/* FILTER PILLS */
+.fp{display:flex;gap:7px;padding:10px 16px 0;overflow-x:auto;scrollbar-width:none;}
+.fp::-webkit-scrollbar{display:none;}
+.pill{flex-shrink:0;padding:6px 14px;border-radius:50px;font-family:sans-serif;font-size:10px;font-weight:700;cursor:pointer;white-space:nowrap;background:var(--surface);color:var(--text2);border:1px solid var(--border);transition:all .15s;}
+.pill.on{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#1A0800;border-color:transparent;box-shadow:0 3px 10px rgba(255,107,53,.3);}
+
+/* SORT TOOLBAR */
+.toolbar{display:flex;align-items:center;gap:8px;padding:10px 16px 4px;}
+.shead-c{font-size:10px;color:var(--text3);margin-right:auto;}
+.sort-sel{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:5px 10px;font-size:11px;color:var(--text);font-family:'DM Sans',sans-serif;outline:none;cursor:pointer;}
+
+/* COMMENT INPUT */
+.input-section{padding:8px 16px 12px;}
+.input-row{display:flex;gap:9px;align-items:flex-start;}
+.user-av{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--purple),var(--blue));display:flex;align-items:center;justify-content:center;font-size:11px;font-family:sans-serif;font-weight:700;flex-shrink:0;margin-top:2px;}
+.input-wrap{flex:1;position:relative;}
+.input-field{width:100%;background:var(--surface);border:1.5px solid var(--border);border-radius:14px;padding:10px 44px 10px 14px;font-size:12px;color:var(--text3);font-family:'DM Sans',sans-serif;outline:none;min-height:42px;cursor:text;transition:border-color .2s;}
+.input-field:focus-within,.input-field.active{border-color:var(--accent);color:var(--text);}
+.send-btn{position:absolute;right:8px;top:50%;transform:translateY(-50%);width:26px;height:26px;background:var(--accent);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 2px 8px rgba(255,107,53,.4);}
+.send-btn svg{width:11px;height:11px;fill:white;}
+
+/* COMMENTS LIST */
+.comments-list{padding:0 16px;display:flex;flex-direction:column;gap:12px;}
+.citem{display:flex;gap:10px;animation:fadeup .3s ease both;}
+@keyframes fadeup{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.cav{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-family:sans-serif;font-weight:700;flex-shrink:0;margin-top:2px;}
+.cbody{flex:1;background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:10px 12px;transition:background .2s;}
+.c-header{display:flex;align-items:center;gap:6px;margin-bottom:4px;flex-wrap:wrap;}
+.c-name{font-family:sans-serif;font-size:12px;font-weight:700;}
+.c-verified{display:inline-flex;align-items:center;gap:2px;background:rgba(77,159,255,.12);border:1px solid rgba(77,159,255,.25);border-radius:4px;padding:1px 5px;font-size:8px;font-weight:700;color:var(--blue);font-family:sans-serif;}
+.c-badge-new{background:rgba(46,204,143,.12);border:1px solid rgba(46,204,143,.25);border-radius:4px;padding:1px 5px;font-size:8px;font-weight:700;color:var(--green);font-family:sans-serif;}
+.c-time{font-size:10px;color:var(--text3);margin-left:auto;}
+.c-text{font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:8px;}
+.c-actions{display:flex;align-items:center;gap:12px;}
+.c-like{display:flex;align-items:center;gap:4px;font-size:11px;color:var(--text3);cursor:pointer;font-family:sans-serif;font-weight:600;transition:color .15s;user-select:none;}
+.c-like svg{width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:2;}
+.c-like.on{color:var(--pink);}
+.c-like.on svg{fill:var(--pink);stroke:var(--pink);}
+.c-reply-btn{font-size:11px;color:var(--accent);cursor:pointer;font-weight:600;font-family:sans-serif;}
+.c-report{font-size:11px;color:#FF4444;cursor:pointer;font-weight:600;font-family:sans-serif;margin-left:auto;}
+.c-replies-count{font-size:10px;color:var(--text3);cursor:pointer;}
+.c-replies-count:hover{color:var(--text2);}
+
+/* REPLY THREAD */
+.reply-thread{margin-top:10px;padding-left:12px;border-left:2px solid var(--surface3);display:flex;flex-direction:column;gap:9px;}
+.reply-item{display:flex;gap:8px;}
+.reply-av{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:8px;font-family:sans-serif;font-weight:700;flex-shrink:0;}
+.reply-name{font-family:sans-serif;font-size:11px;font-weight:700;margin-bottom:1px;}
+.reply-time{font-size:9px;color:var(--text3);margin-left:5px;}
+.reply-text{font-size:11px;color:var(--text2);line-height:1.5;}
+.reply-input-wrap{display:flex;gap:6px;align-items:center;margin-top:4px;}
+.reply-av-sm{width:22px;height:22px;border-radius:50%;background:linear-gradient(135deg,var(--purple),var(--blue));display:flex;align-items:center;justify-content:center;font-size:8px;font-family:sans-serif;font-weight:700;flex-shrink:0;}
+.reply-input{flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:7px 11px;font-size:11px;color:var(--text3);font-family:'DM Sans',sans-serif;outline:none;cursor:text;}
+.reply-send{width:24px;height:24px;background:var(--accent);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;}
+.reply-send svg{width:10px;height:10px;fill:white;}
+
+/* PAGINATION */
+.pagination{display:flex;align-items:center;justify-content:center;gap:6px;padding:16px 16px 6px;}
+.pg-btn{min-width:32px;height:32px;padding:0 8px;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text2);font-family:sans-serif;font-size:11px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;transition:all .15s;}
+.pg-btn:hover:not(:disabled){background:var(--surface2);color:var(--text);}
+.pg-btn.on{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#1A0800;border-color:transparent;}
+.pg-btn:disabled{opacity:.35;cursor:not-allowed;}
+
+.empty{padding:48px 24px;text-align:center;}
+.empty-icon{font-size:40px;margin-bottom:12px;}
+.empty-msg{font-family:sans-serif;font-size:13px;font-weight:700;color:var(--text3);}
+
+.g1{background:linear-gradient(135deg,#9B6BFF,#4D9FFF);}
+.g2{background:linear-gradient(135deg,#FF6B35,#FFB347);}
+.g3{background:linear-gradient(135deg,#FF4D8F,#FF6B35);}
+.g4{background:linear-gradient(135deg,#2ECC8F,#4D9FFF);}
+.g5{background:linear-gradient(135deg,#FFB347,#FF4D8F);}
+.g6{background:linear-gradient(135deg,#4D9FFF,#9B6BFF);}
+.g7{background:linear-gradient(135deg,#FF6B35,#FF4D8F);}
+.g8{background:linear-gradient(135deg,#2ECC8F,#9B6BFF);}
+
+.bnav{position:fixed;bottom:0;left:0;right:0;height:62px;background:var(--surface);border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-around;z-index:50;transition:background .3s;}
+.ni{display:flex;flex-direction:column;align-items:center;gap:3px;padding:4px 10px;cursor:pointer;text-decoration:none;color:var(--text3);transition:color .15s;}
+.ni svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;}
+.ni .nl{font-size:9px;font-family:sans-serif;font-weight:700;}
+
+@media (min-width:640px){.tbar{padding:16px 24px 4px;}.stats-bar,.sw,.fp,.toolbar,.input-section,.comments-list,.pagination{padding-left:24px;padding-right:24px;}.song-mini{margin-left:24px;margin-right:24px;}}
+@media (min-width:1024px){.phone{max-width:1200px;margin:0 auto;}.tbar{padding:20px 40px 6px;}.stats-bar,.sw,.fp,.toolbar,.input-section,.comments-list,.pagination{padding-left:40px;padding-right:40px;}.song-mini{margin-left:40px;margin-right:40px;}.bnav{max-width:1200px;left:50%;transform:translateX(-50%);}}
+@media (max-width:480px){.tbar{padding:12px 14px 4px;}.stats-bar,.sw,.fp,.toolbar,.input-section,.comments-list,.pagination{padding-left:14px;padding-right:14px;}.song-mini{margin-left:14px;margin-right:14px;}.ni .nl{font-size:8px;}.ni svg{width:18px;height:18px;}}
+</style>
+</head>
+<body>
+<div class="phone">
+  <div class="scroll">
+
+    <div class="tbar">
+      <div class="tb-back" onclick="history.back()"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></div>
+      <div class="tb-title">💬 All Comments</div>
+      <div class="theme-toggle" id="themeToggle"><span class="tt-icon" id="ttIcon">🌙</span><span class="tt-label" id="ttLabel">Dark</span></div>
+    </div>
+
+    <div class="song-mini">
+      <div class="sm-art">🎵</div>
+      <div class="sm-info">
+        <div class="sm-label">Comments on</div>
+        <div class="sm-title">Kurmus</div>
+        <div class="sm-sub">Uzairu Badamasi</div>
+      </div>
+      <div class="sm-count" id="totalCount">24</div>
+    </div>
+
+    <div class="stats-bar">
+      <div class="stat-chip"><div class="stat-v" id="statTotal">24</div><div class="stat-l">Comments</div></div>
+      <div class="stat-chip"><div class="stat-v" id="statLikes">283</div><div class="stat-l">Total Likes</div></div>
+      <div class="stat-chip"><div class="stat-v" id="statReplies">15</div><div class="stat-l">Replies</div></div>
+    </div>
+
+    <div class="sw">
+      <div class="sb">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" id="searchInput" placeholder="Search comments…">
+      </div>
+    </div>
+
+    <div class="fp" id="filterPills">
+      <div class="pill on" data-filter="all">All</div>
+      <div class="pill" data-filter="verified">Verified</div>
+      <div class="pill" data-filter="replied">With Replies</div>
+      <div class="pill" data-filter="liked">Most Liked</div>
+    </div>
+
+    <div class="toolbar">
+      <span class="shead-c" id="countLabel">24 comments</span>
+      <select class="sort-sel" id="sortSelect">
+        <option value="recent">Most Recent</option>
+        <option value="likes">Most Liked</option>
+        <option value="replies">Most Replies</option>
+      </select>
+    </div>
+
+    <div class="input-section">
+      <div class="input-row">
+        <div class="user-av">DN</div>
+        <div class="input-wrap">
+          <div class="input-field" id="commentInput" contenteditable="true" style="outline:none;">Add a comment…</div>
+          <div class="send-btn" id="sendBtn"><svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="comments-list" id="commentsContainer"></div>
+    <div class="pagination" id="pagination"></div>
+    <div style="height:16px;"></div>
+
+  </div>
+
+  <div class="bnav">
+    <a class="ni" href="song_portal_web.html"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><div class="nl">Home</div></a>
+    <a class="ni" href="shurafah_waazi.html"><svg viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg><div class="nl">Wa'azi</div></a>
+    <a class="ni" href="shurafah_explore.html"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><div class="nl">Explore</div></a>
+    <a class="ni" href="favourites_page.html"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg><div class="nl">Favourites</div></a>
+    <a class="ni" href="user_profile_page.html"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><div class="nl">Profile</div></a>
+  </div>
+</div>
+
+<script>
+var COMMENTS = [
+  {id:1,  init:'JB', grad:'g1', name:'James Bright',   time:'2 hrs ago',  text:'This song touched my soul deeply. Been on repeat all morning 🙏🔥', likes:42, replies:[{init:'SC',grad:'g3',name:'Sarah C.',time:'1 hr ago',text:'Same! It\'s been on loop since yesterday 😭❤️'},{init:'MO',grad:'g4',name:'Michael O.',time:'45 min ago',text:'@James Bright God bless you brother!'}], liked:true,  verified:false},
+  {id:2,  init:'MB', grad:'g4', name:'Maryam B.',      time:'3 hrs ago',  text:'SubhanAllah what a beautiful song. May Allah reward the artist and the whole team. 🌙', likes:56, replies:[{init:'FI',grad:'g7',name:'Fatima I.',time:'2 hrs ago',text:'Ameen! Shared to my family group.'}], liked:false, verified:true },
+  {id:3,  init:'AK', grad:'g5', name:'Ada K.',          time:'5 hrs ago',  text:'Never misses! The production is incredible 🎶 downloaded immediately.', likes:18, replies:[], liked:false, verified:false},
+  {id:4,  init:'FI', grad:'g7', name:'Fatima I.',       time:'6 hrs ago',  text:'Uzairu is a legend in Hausa music industry. This song proves it once again 🎤', likes:38, replies:[{init:'OA',grad:'g6',name:'Ope A.',time:'5 hrs ago',text:'100%! Every song is a masterpiece.'},{init:'KO',grad:'g2',name:'Kemi O.',time:'4 hrs ago',text:'Following him since 2020, never disappointed!'}], liked:false, verified:true},
+  {id:5,  init:'TE', grad:'g2', name:'Tunde E.',        time:'Yesterday',  text:'The chorus gives me chills every single time 😭 Shared with my whole church group!', likes:31, replies:[{init:'NC',grad:'g1',name:'Ngozi C.',time:'22 hrs ago',text:'Same here! Everyone loved it.'}], liked:true,  verified:false},
+  {id:6,  init:'OA', grad:'g6', name:'Ope A.',          time:'Yesterday',  text:'Best Shuhada song I\'ve heard in 2025. Pure gold 🌟', likes:24, replies:[], liked:false, verified:false},
+  {id:7,  init:'HD', grad:'g3', name:'Hassan D.',       time:'2 days ago', text:'This is on every playlist in my household now lol 😂❤️', likes:15, replies:[{init:'SK',grad:'g8',name:'Saleem K.',time:'2 days ago',text:'Haha same here bro!'}], liked:true,  verified:false},
+  {id:8,  init:'IA', grad:'g5', name:'Ibrahim A.',      time:'2 days ago', text:'The message is so deep mashAllah. May Allah guide us all on the right path. Jazakallahu khairan 🤲', likes:45, replies:[{init:'BM',grad:'g6',name:'Bello M.',time:'2 days ago',text:'Ameen wa iyyakum! 🤲'},{init:'MB',grad:'g4',name:'Maryam B.',time:'1 day ago',text:'Thank you for sharing this. Beautiful reminder.'}], liked:false, verified:true},
+  {id:9,  init:'SK', grad:'g8', name:'Saleem K.',       time:'3 days ago', text:'Downloaded it straight away. Audio quality is so crisp too 👌 320kbps hits different!', likes:12, replies:[], liked:false, verified:false},
+  {id:10, init:'NC', grad:'g1', name:'Ngozi C.',        time:'3 days ago', text:'A colleague sent this to me and I\'ve been hooked since. Incredible vocals and production.', likes:20, replies:[{init:'AK',grad:'g5',name:'Ada K.',time:'3 days ago',text:'Welcome to the Uzairu fan club 😂🎵'}], liked:true,  verified:false},
+  {id:11, init:'KO', grad:'g2', name:'Kemi O.',         time:'5 days ago', text:'I\'ve shared this to 3 WhatsApp groups already 😂 Everyone loves it! This is art.', likes:9,  replies:[], liked:false, verified:false},
+  {id:12, init:'BM', grad:'g6', name:'Bello M.',        time:'1 week ago', text:'Pure artistry. The way the melody flows with the lyrics is just perfection. A classic.', likes:27, replies:[{init:'FI',grad:'g7',name:'Fatima I.',time:'1 week ago',text:'Couldn\'t agree more. A future classic for sure.'}], liked:true,  verified:false},
+];
+
+var _allComments = COMMENTS.map(function(c) { return Object.assign({}, c, {_liked: c.liked, _likes: c.likes}); });
+var currentFilter = 'all', currentSort = 'recent', currentPage = 1, PG = 8;
+var _filtered = _allComments.slice();
+
+/* ── Toast ── */
+var _toast = null;
+function showToast(msg) {
+  if (!_toast) { _toast = document.createElement('div'); _toast.style.cssText = 'position:fixed;bottom:72px;left:50%;transform:translateX(-50%) translateY(8px);background:var(--surface3);color:var(--text);font-family:sans-serif;font-size:12px;font-weight:600;padding:8px 18px;border-radius:50px;z-index:999;border:1px solid var(--border);white-space:nowrap;opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;box-shadow:0 6px 20px rgba(0,0,0,.5);'; document.body.appendChild(_toast); }
+  _toast.textContent = msg; _toast.style.opacity = 1; _toast.style.transform = 'translateX(-50%) translateY(0)';
+  clearTimeout(_toast._t); _toast._t = setTimeout(function() { _toast.style.opacity = 0; _toast.style.transform = 'translateX(-50%) translateY(8px)'; }, 2400);
+}
+
+function getSorted(list) {
+  var s = list.slice();
+  var ord = ['2 hrs ago','3 hrs ago','5 hrs ago','6 hrs ago','Yesterday','2 days ago','3 days ago','5 days ago','1 week ago'];
+  if (currentSort === 'recent')  s.sort(function(a,b){ return ord.indexOf(a.time) - ord.indexOf(b.time); });
+  if (currentSort === 'likes')   s.sort(function(a,b){ return b._likes - a._likes; });
+  if (currentSort === 'replies') s.sort(function(a,b){ return b.replies.length - a.replies.length; });
+  return s;
+}
+
+function buildCommentEl(c) {
+  var item = document.createElement('div');
+  item.className = 'citem';
+  item.setAttribute('data-id', c.id);
+  var vBadge = c.verified ? '<span class="c-verified">✔ Verified</span>' : '';
+  var rCount = c.replies.length ? '<span class="c-replies-count" style="cursor:pointer;">💬 ' + c.replies.length + ' repl' + (c.replies.length===1?'y':'ies') + '</span>' : '';
+  item.innerHTML =
+    '<div class="cav ' + c.grad + '">' + c.init + '</div>' +
+    '<div class="cbody">' +
+      '<div class="c-header"><span class="c-name">' + c.name + '</span>' + vBadge + '<span class="c-time">' + c.time + '</span></div>' +
+      '<div class="c-text">' + c.text + '</div>' +
+      '<div class="c-actions">' +
+        '<div class="c-like' + (c._liked ? ' on' : '') + '" data-action="like">' +
+          '<svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>' + c._likes +
+        '</div>' +
+        '<div class="c-reply-btn" data-action="reply">Reply</div>' +
+        rCount +
+        '<div class="c-report" data-action="report">Report</div>' +
+      '</div>';
+
+  if (c.replies.length) {
+    var thread = document.createElement('div');
+    thread.className = 'reply-thread';
+    thread.style.display = 'none';
+    c.replies.forEach(function(r) {
+      thread.innerHTML += '<div class="reply-item"><div class="reply-av ' + r.grad + '">' + r.init + '</div><div class="reply-body"><div><span class="reply-name">' + r.name + '</span><span class="reply-time">' + r.time + '</span></div><div class="reply-text">' + r.text + '</div></div></div>';
+    });
+    thread.innerHTML += '<div class="reply-input-wrap"><div class="reply-av-sm">DN</div><div class="reply-input" contenteditable="true" style="outline:none;">Write a reply…</div><div class="reply-send"><svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></div></div>';
+    item.querySelector('.cbody').appendChild(thread);
+    var ri = thread.querySelector('.reply-input');
+    ri.addEventListener('focus', function() { if (this.textContent === 'Write a reply…') { this.textContent = ''; this.style.color = 'var(--text)'; } });
+    ri.addEventListener('blur',  function() { if (!this.textContent.trim()) { this.textContent = 'Write a reply…'; this.style.color = 'var(--text3)'; } });
+    thread.querySelector('.reply-send').addEventListener('click', function() {
+      var t = ri.textContent.trim(); if (!t || t === 'Write a reply…') return;
+      var rEl = document.createElement('div'); rEl.className = 'reply-item';
+      rEl.innerHTML = '<div class="reply-av g6">DN</div><div class="reply-body"><div><span class="reply-name">You</span><span class="reply-time">Just now</span></div><div class="reply-text">' + t + '</div></div>';
+      thread.insertBefore(rEl, thread.querySelector('.reply-input-wrap'));
+      ri.textContent = 'Write a reply…'; ri.style.color = 'var(--text3)';
+      showToast('✓ Reply posted');
+    });
+    var rcSpan = item.querySelector('.c-replies-count');
+    if (rcSpan) { rcSpan.addEventListener('click', function() { thread.style.display = thread.style.display === 'none' ? 'flex' : 'none'; }); }
+  } else {
+    var thread2 = document.createElement('div');
+    thread2.className = 'reply-thread'; thread2.style.display = 'none';
+    thread2.innerHTML = '<div class="reply-input-wrap"><div class="reply-av-sm">DN</div><div class="reply-input" contenteditable="true" style="outline:none;">Write a reply…</div><div class="reply-send"><svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></div></div>';
+    item.querySelector('.cbody').appendChild(thread2);
+    var ri2 = thread2.querySelector('.reply-input');
+    ri2.addEventListener('focus', function() { if (this.textContent === 'Write a reply…') { this.textContent = ''; this.style.color = 'var(--text)'; } });
+    ri2.addEventListener('blur',  function() { if (!this.textContent.trim()) { this.textContent = 'Write a reply…'; this.style.color = 'var(--text3)'; } });
+    thread2.querySelector('.reply-send').addEventListener('click', function() {
+      var t = ri2.textContent.trim(); if (!t || t === 'Write a reply…') return;
+      var rEl = document.createElement('div'); rEl.className = 'reply-item';
+      rEl.innerHTML = '<div class="reply-av g6">DN</div><div class="reply-body"><div><span class="reply-name">You</span><span class="reply-time">Just now</span></div><div class="reply-text">' + t + '</div></div>';
+      thread2.insertBefore(rEl, thread2.querySelector('.reply-input-wrap'));
+      ri2.textContent = 'Write a reply…'; ri2.style.color = 'var(--text3)';
+      showToast('✓ Reply posted');
+    });
+  }
+  item.querySelector('.cbody').addEventListener('click', function(e) {
+    var action = e.target.closest('[data-action]');
+    if (!action) return;
+    var act = action.getAttribute('data-action');
+    if (act === 'like') {
+      c._liked = !c._liked;
+      c._likes += c._liked ? 1 : -1;
+      action.classList.toggle('on', c._liked);
+      action.innerHTML = '<svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>' + c._likes;
+      updateStats();
+    }
+    if (act === 'reply') {
+      var thread = item.querySelector('.reply-thread');
+      if (thread) { thread.style.display = thread.style.display === 'none' ? 'flex' : 'none'; var ri = thread.querySelector('.reply-input'); if (ri && thread.style.display !== 'none') { setTimeout(function() { ri.focus(); }, 80); } }
+    }
+    if (act === 'report') { showToast('⚑ Comment reported'); }
+  });
+  item.querySelector('.cbody').classList.add('c-body-end');
+  return item;
+}
+
+function updateStats() {
+  var totalLikes = _allComments.reduce(function(sum, c) { return sum + c._likes; }, 0);
+  document.getElementById('statLikes').textContent = totalLikes;
+}
+
+function renderPage() {
+  var cont = document.getElementById('commentsContainer');
+  cont.innerHTML = '';
+  if (!_filtered.length) {
+    cont.innerHTML = '<div class="empty"><div class="empty-icon">💬</div><div class="empty-msg">No comments found</div></div>';
+    document.getElementById('pagination').innerHTML = ''; return;
+  }
+  var tp = Math.ceil(_filtered.length / PG);
+  if (currentPage > tp) currentPage = 1;
+  var start = (currentPage - 1) * PG;
+  var items = _filtered.slice(start, start + PG);
+  items.forEach(function(c) { cont.appendChild(buildCommentEl(c)); });
+  renderPagination(tp);
+}
+
+function renderPagination(tp) {
+  var pg = document.getElementById('pagination'); pg.innerHTML = ''; if (tp <= 1) return;
+  var prev = document.createElement('button'); prev.className = 'pg-btn'; prev.innerHTML = '&#8249;'; prev.disabled = currentPage === 1;
+  prev.addEventListener('click', function() { currentPage--; renderPage(); document.querySelector('.scroll').scrollTop = 0; }); pg.appendChild(prev);
+  var s = Math.max(1, currentPage-2), e = Math.min(tp, s+4); if (e-s<4) s = Math.max(1, e-4);
+  for (var p = s; p <= e; p++) { (function(n) { var b = document.createElement('button'); b.className = 'pg-btn'+(n===currentPage?' on':''); b.textContent=n; b.addEventListener('click', function() { currentPage=n; renderPage(); document.querySelector('.scroll').scrollTop=0; }); pg.appendChild(b); })(p); }
+  var next = document.createElement('button'); next.className = 'pg-btn'; next.innerHTML = '&#8250;'; next.disabled = currentPage === tp;
+  next.addEventListener('click', function() { currentPage++; renderPage(); document.querySelector('.scroll').scrollTop = 0; }); pg.appendChild(next);
+}
+
+function apply() {
+  var q = (document.getElementById('searchInput').value || '').trim().toLowerCase();
+  _filtered = getSorted(_allComments.filter(function(c) {
+    if (currentFilter === 'verified' && !c.verified) return false;
+    if (currentFilter === 'replied'  && !c.replies.length) return false;
+    if (currentFilter === 'liked'    && c._likes < 20) return false;
+    if (q && !c.text.toLowerCase().includes(q) && !c.name.toLowerCase().includes(q)) return false;
+    return true;
+  }));
+  currentPage = 1;
+  var n = _filtered.length;
+  document.getElementById('countLabel').textContent = n + ' comment' + (n !== 1 ? 's' : '');
+  document.getElementById('statTotal').textContent = n;
+  document.getElementById('totalCount').textContent = _allComments.length;
+  renderPage();
+}
+
+/* ── Comment input ── */
+var ci = document.getElementById('commentInput');
+ci.style.color = 'var(--text3)';
+ci.addEventListener('focus', function() { if (this.textContent === 'Add a comment…') { this.textContent = ''; this.style.color = 'var(--text)'; } });
+ci.addEventListener('blur',  function() { if (!this.textContent.trim()) { this.textContent = 'Add a comment…'; this.style.color = 'var(--text3)'; } });
+document.getElementById('sendBtn').addEventListener('click', function() {
+  var txt = ci.textContent.trim(); if (!txt || txt === 'Add a comment…') { showToast('Type a comment first'); return; }
+  var newC = {id: Date.now(), init:'DN', grad:'g6', name:'You', time:'Just now', text:txt, likes:0, replies:[], _liked:false, _likes:0, verified:false};
+  _allComments.unshift(newC);
+  ci.textContent = 'Add a comment…'; ci.style.color = 'var(--text3)';
+  apply(); showToast('✓ Comment posted');
+});
+
+/* ── Theme ── */
+function applyTheme(l) { document.body.classList.toggle('light', l); document.getElementById('ttIcon').textContent = l?'☀️':'🌙'; document.getElementById('ttLabel').textContent = l?'Light':'Dark'; }
+applyTheme(localStorage.getItem('shurafah-theme') === 'light');
+document.getElementById('themeToggle').addEventListener('click', function() { var n = !document.body.classList.contains('light'); applyTheme(n); localStorage.setItem('shurafah-theme', n?'light':'dark'); });
+document.getElementById('filterPills').addEventListener('click', function(e) { var p = e.target.closest('.pill'); if (!p) return; document.querySelectorAll('.pill').forEach(function(x){x.classList.remove('on');}); p.classList.add('on'); currentFilter = p.getAttribute('data-filter'); apply(); });
+document.getElementById('sortSelect').addEventListener('change', function() { currentSort = this.value; apply(); });
+var _st; document.getElementById('searchInput').addEventListener('input', function() { clearTimeout(_st); _st = setTimeout(apply, 280); });
+apply();
+updateStats();
+</script>
+</body>
+</html>

@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Shurafah — Wa'azi Detail</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&family=Amiri:ital,wght@0,400;0,700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#05070F;--surface:#0A0E1A;--surface2:#0F1525;--surface3:#141B2E;--surface4:#1A2238;
+  --accent:#C8860A;--accent2:#E8A020;--accent3:#F5C842;
+  --blue:#4D9FFF;--green:#2ECC8F;--purple:#9B6BFF;--pink:#FF4D8F;
+  --text:#F0F4FF;--text2:#8A94B0;--text3:#4A5270;
+  --border:rgba(255,255,255,0.06);
+}
+body.light{
+  --bg:#F4F6FC;--surface:#FFFFFF;--surface2:#E8ECF7;--surface3:#D8DEEF;
+  --text:#12172E;--text2:#5A6380;--text3:#9AA0BA;
+  --border:rgba(0,0,0,0.07);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--text);min-height:100vh;display:flex;flex-direction:column;}
+.phone{width:100%;background:var(--bg);display:flex;flex-direction:column;min-height:100vh;position:relative;}
+.scroll{flex:1;overflow-y:auto;overflow-x:hidden;scrollbar-width:none;padding-bottom:90px;}
+.scroll::-webkit-scrollbar{display:none;}
+
+/* TOP BAR */
+.topbar{display:flex;justify-content:space-between;align-items:center;padding:14px 16px;}
+.tb-icon{width:36px;height:36px;background:var(--surface);border-radius:50%;display:flex;align-items:center;justify-content:center;border:1px solid var(--border);cursor:pointer;text-decoration:none;color:inherit;}
+.tb-icon svg{width:14px;height:14px;fill:none;stroke:var(--text);stroke-width:2;}
+.theme-toggle{display:inline-flex;align-items:center;gap:6px;background:var(--surface2);border-radius:50px;padding:5px 11px 5px 9px;border:1.5px solid var(--accent2);cursor:pointer;}
+.theme-toggle .tt-icon{font-size:13px;}
+.theme-toggle .tt-label{font-family:sans-serif;font-size:10px;font-weight:700;color:var(--accent2);letter-spacing:.3px;}
+
+/* COVER ART */
+.cover-wrap{padding:6px 24px 18px;text-align:center;}
+.cover{width:240px;height:240px;border-radius:24px;margin:0 auto 16px;background:linear-gradient(135deg,#1A0E04,#2A1806,#1A0E04);display:flex;align-items:center;justify-content:center;font-size:88px;box-shadow:0 16px 48px rgba(200,134,10,.35),inset 0 1px 0 rgba(255,255,255,.08);position:relative;overflow:hidden;}
+.cover::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 30% 20%,rgba(245,200,66,.25) 0%,transparent 55%);}
+.cover::after{content:'﷽';position:absolute;bottom:14px;right:18px;font-family:'Amiri',serif;font-size:34px;color:var(--accent3);opacity:.18;}
+.cover-emoji{position:relative;z-index:1;}
+
+.l-title{font-family:sans-serif;font-size:22px;font-weight:800;letter-spacing:-.3px;margin-bottom:5px;}
+.l-arabic{font-family:'Amiri',serif;font-size:16px;color:var(--accent3);margin-bottom:6px;}
+.l-preacher{font-size:13px;color:var(--text2);font-family:sans-serif;font-weight:600;}
+.l-preacher a{color:var(--accent2);text-decoration:none;}
+
+/* METAS */
+.metas{display:flex;justify-content:center;gap:14px;margin-top:10px;flex-wrap:wrap;}
+.meta-item{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--text3);font-family:sans-serif;font-weight:700;}
+.meta-item svg{width:11px;height:11px;fill:none;stroke:currentColor;stroke-width:2;}
+
+/* PROGRESS */
+.player{padding:8px 24px 0;}
+.pbar{width:100%;height:4px;background:var(--surface2);border-radius:50px;overflow:hidden;}
+.pfill{width:30%;height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:50px;}
+.ptimes{display:flex;justify-content:space-between;font-size:10px;color:var(--text3);margin-top:6px;font-family:sans-serif;font-weight:600;}
+
+/* CONTROLS */
+.controls{display:flex;justify-content:center;align-items:center;gap:18px;margin-top:14px;}
+.ctrl{width:44px;height:44px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text2);}
+.ctrl svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;}
+.ctrl-play{width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 10px 30px rgba(200,134,10,.45);}
+.ctrl-play svg{width:22px;height:22px;fill:#1A0800;}
+
+/* ACTIONS */
+.lact{display:flex;justify-content:space-around;align-items:center;margin:18px 24px 0;}
+.lact-btn{display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;color:var(--text2);}
+.lact-btn svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:2;}
+.lact-btn .lab{font-size:9px;font-family:sans-serif;font-weight:700;}
+
+/* DETAILS CARD */
+.dcard{margin:18px 18px 0;background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:14px;}
+.dcard-title{font-family:sans-serif;font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.4px;margin-bottom:8px;}
+.dcard-text{font-size:12px;color:var(--text2);line-height:1.55;}
+.dcard-meta{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px;}
+.dcard-mi{background:var(--surface2);border-radius:9px;padding:8px 10px;}
+.dcard-mi-l{font-size:9px;color:var(--text3);font-family:sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:.3px;margin-bottom:2px;}
+.dcard-mi-v{font-family:sans-serif;font-size:12px;font-weight:700;color:var(--accent2);}
+
+/* RELATED */
+.sh{display:flex;justify-content:space-between;align-items:center;padding:18px 18px 8px;}
+.sh-t{font-family:sans-serif;font-size:13px;font-weight:700;}
+.sh-a{font-size:10px;color:var(--accent2);font-weight:600;cursor:pointer;font-family:sans-serif;}
+.rlist{padding:0 18px;display:flex;flex-direction:column;gap:3px;}
+.rrow{display:flex;align-items:center;gap:11px;padding:8px 9px;border-radius:12px;cursor:pointer;text-decoration:none;color:inherit;}
+.rrow:hover{background:var(--surface);}
+.rart{width:46px;height:46px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0;}
+.rinfo{flex:1;min-width:0;}
+.rtitle{font-family:sans-serif;font-size:12px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:2px;}
+.rsub{font-size:10px;color:var(--text2);}
+.rmeta{font-size:10px;color:var(--text3);font-family:sans-serif;font-weight:600;flex-shrink:0;}
+.g2{background:linear-gradient(135deg,#C8860A,#E8A020);}
+.g5{background:linear-gradient(135deg,#E8A020,#F5C842);}
+.g6{background:linear-gradient(135deg,#4D9FFF,#9B6BFF);}
+.g7{background:linear-gradient(135deg,#2ECC8F,#4D9FFF);}
+
+/* BOTTOM NAV */
+.bnav{display:flex;justify-content:space-around;align-items:center;padding:10px 8px 14px;background:var(--surface);border-top:1px solid var(--border);flex-shrink:0;position:sticky;bottom:0;z-index:10;}
+.ni{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:5px 10px;border-radius:10px;}
+.ni svg{width:19px;height:19px;fill:none;stroke:var(--text3);stroke-width:2;}
+.nl{font-size:9px;font-family:sans-serif;font-weight:700;color:var(--text3);}
+
+@keyframes fup{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.phone>*{animation:fup 0.4s ease forwards;}
+</style>
+</head>
+<body>
+<div class="phone">
+  <div class="scroll">
+
+    <!-- TOPBAR -->
+    <div class="topbar">
+      <a class="tb-icon" href="shurafah_waazi.html"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></a>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <div class="theme-toggle" id="themeToggle">
+          <span class="tt-icon" id="ttIcon">🌙</span>
+          <span class="tt-label" id="ttLabel">Dark</span>
+        </div>
+        <div class="tb-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg></div>
+      </div>
+    </div>
+
+    <!-- COVER -->
+    <div class="cover-wrap">
+      <div class="cover"><span class="cover-emoji">🎙️</span></div>
+      <div class="l-title">Hanyar Gaskiya Vol. 3</div>
+      <div class="l-arabic">طريق الحقيقة — الجزء الثالث</div>
+      <div class="l-preacher"><a href="shurafah_preacher_profile.html">Sheikh Ahmad Abubakar Gumi</a></div>
+      <div class="metas">
+        <div class="meta-item"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>1:04:38</div>
+        <div class="meta-item"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>4.8 · 12K</div>
+        <div class="meta-item"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>1.8M plays</div>
+      </div>
+    </div>
+
+    <!-- PROGRESS -->
+    <div class="player">
+      <div class="pbar"><div class="pfill"></div></div>
+      <div class="ptimes"><span>19:25</span><span>1:04:38</span></div>
+
+      <div class="controls">
+        <div class="ctrl"><svg viewBox="0 0 24 24"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg></div>
+        <div class="ctrl"><svg viewBox="0 0 24 24"><polygon points="19 20 9 12 19 4 19 20"/><line x1="5" y1="19" x2="5" y2="5"/></svg></div>
+        <div class="ctrl-play"><svg viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg></div>
+        <div class="ctrl"><svg viewBox="0 0 24 24"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19"/></svg></div>
+        <div class="ctrl"><svg viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><polyline points="23 20 23 14 17 14"/><path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"/></svg></div>
+      </div>
+
+      <div class="lact">
+        <div class="lact-btn"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg><span class="lab">Favourite</span></div>
+        <div class="lact-btn"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg><span class="lab">Download</span></div>
+        <div class="lact-btn"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span class="lab">Comments</span></div>
+        <div class="lact-btn"><svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg><span class="lab">Share</span></div>
+      </div>
+    </div>
+
+    <!-- DETAILS -->
+    <div class="dcard">
+      <div class="dcard-title">About this lecture</div>
+      <div class="dcard-text">In this third instalment of the Hanyar Gaskiya series, Sheikh Ahmad Gumi addresses the path of truthfulness in everyday Muslim life — covering sincerity in worship, honesty in dealings, and the rewards promised in the Qur'an and Sunnah for the truthful.</div>
+      <div class="dcard-meta">
+        <div class="dcard-mi"><div class="dcard-mi-l">Category</div><div class="dcard-mi-v">Aqeedah</div></div>
+        <div class="dcard-mi"><div class="dcard-mi-l">Series</div><div class="dcard-mi-v">Hanyar Gaskiya</div></div>
+        <div class="dcard-mi"><div class="dcard-mi-l">Language</div><div class="dcard-mi-v">Hausa</div></div>
+        <div class="dcard-mi"><div class="dcard-mi-l">Uploaded</div><div class="dcard-mi-v">3 days ago</div></div>
+      </div>
+    </div>
+
+    <!-- RELATED LECTURES -->
+    <div class="sh"><div class="sh-t">🎙️ More from this preacher</div><a class="sh-a" href="shurafah_preacher_profile.html" style="text-decoration:none;">View all</a></div>
+    <div class="rlist">
+      <a class="rrow" href="shurafah_waazi_detail.html"><div class="rart g2">📖</div><div class="rinfo"><div class="rtitle">Hanyar Gaskiya Vol. 2</div><div class="rsub">Aqeedah · 58:14</div></div><div class="rmeta">1.2M</div></a>
+      <a class="rrow" href="shurafah_waazi_detail.html"><div class="rart g5">🕌</div><div class="rinfo"><div class="rtitle">Tauhid wa-l-Iman</div><div class="rsub">Aqeedah · 48:22</div></div><div class="rmeta">920K</div></a>
+      <a class="rrow" href="shurafah_waazi_detail.html"><div class="rart g6">🤲</div><div class="rinfo"><div class="rtitle">Du'as for Difficulty</div><div class="rsub">Du'a · 32:08</div></div><div class="rmeta">740K</div></a>
+      <a class="rrow" href="shurafah_waazi_detail.html"><div class="rart g7">🌿</div><div class="rinfo"><div class="rtitle">Akhlaq al-Mu'min</div><div class="rsub">Akhlaq · 42:55</div></div><div class="rmeta">610K</div></a>
+    </div>
+
+    <div style="height:12px;"></div>
+  </div><!-- /scroll -->
+
+  <!-- BOTTOM NAV (Home · Wa'azi · Explore · Favourites · Profile) -->
+  <div class="bnav">
+    <a class="ni" href="song_portal_web.html" style="text-decoration:none;color:inherit;"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><div class="nl">Home</div></a>
+    <a class="ni" href="shurafah_waazi.html" style="text-decoration:none;color:inherit;"><svg viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg><div class="nl">Wa'azi</div></a>
+    <a class="ni" href="shurafah_explore.html" style="text-decoration:none;color:inherit;"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><div class="nl">Explore</div></a>
+    <a class="ni" href="favourites_page.html" style="text-decoration:none;color:inherit;"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg><div class="nl">Favourites</div></a>
+    <a class="ni" href="user_profile_page.html" style="text-decoration:none;color:inherit;"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><div class="nl">Profile</div></a>
+  </div>
+</div>
+
+<script>
+  var toggle = document.getElementById('themeToggle');
+  var ttIcon = document.getElementById('ttIcon');
+  var ttLabel = document.getElementById('ttLabel');
+  var body = document.body;
+  function applyTheme(isLight){
+    if(isLight){ body.classList.add('light'); ttIcon.textContent='☀️'; ttLabel.textContent='Light'; }
+    else { body.classList.remove('light'); ttIcon.textContent='🌙'; ttLabel.textContent='Dark'; }
+  }
+  applyTheme(localStorage.getItem('shurafah-theme') === 'light');
+  toggle.addEventListener('click', function(){
+    var isLight = !body.classList.contains('light');
+    applyTheme(isLight);
+    localStorage.setItem('shurafah-theme', isLight ? 'light' : 'dark');
+  });
+</script>
+</body>
+</html>

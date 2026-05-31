@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Shurafah — Top Preachers</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&family=Amiri:ital,wght@0,400;0,700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#05070F;--surface:#0A0E1A;--surface2:#0F1525;--surface3:#141B2E;--surface4:#1A2238;
+  --accent:#C8860A;--accent2:#E8A020;--accent3:#F5C842;
+  --blue:#4D9FFF;--green:#2ECC8F;--purple:#9B6BFF;--pink:#FF4D8F;
+  --text:#F0F4FF;--text2:#8A94B0;--text3:#4A5270;
+  --border:rgba(255,255,255,0.06);
+}
+body.light{
+  --bg:#F4F6FC;--surface:#FFFFFF;--surface2:#E8ECF7;--surface3:#D8DEEF;
+  --text:#12172E;--text2:#5A6380;--text3:#9AA0BA;
+  --border:rgba(0,0,0,0.07);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--text);min-height:100vh;display:flex;flex-direction:column;}
+.phone{width:100%;background:var(--bg);display:flex;flex-direction:column;min-height:100vh;position:relative;}
+.scroll{flex:1;overflow-y:auto;overflow-x:hidden;scrollbar-width:none;padding-bottom:80px;}
+.scroll::-webkit-scrollbar{display:none;}
+
+/* HEADER */
+.tbar{display:flex;align-items:center;justify-content:space-between;padding:14px 18px 4px;gap:10px;}
+.tb-back{width:36px;height:36px;background:var(--surface);border-radius:50%;display:flex;align-items:center;justify-content:center;border:1px solid var(--border);cursor:pointer;flex-shrink:0;text-decoration:none;color:inherit;}
+.tb-back svg{width:14px;height:14px;fill:none;stroke:var(--text);stroke-width:2;}
+.tb-title{flex:1;font-family:sans-serif;font-size:18px;font-weight:800;letter-spacing:-.3px;text-align:center;background:linear-gradient(135deg,var(--accent),var(--accent2),var(--accent3));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.theme-toggle{display:inline-flex;align-items:center;gap:6px;background:var(--surface2);border-radius:50px;padding:5px 10px 5px 8px;border:1.5px solid var(--accent2);cursor:pointer;}
+.tt-icon{font-size:13px;}
+.tt-label{font-family:sans-serif;font-size:10px;font-weight:700;color:var(--accent2);letter-spacing:.3px;}
+
+/* SEARCH */
+.sw{padding:10px 18px 0;}
+.sb{background:var(--surface);border:1px solid var(--border);border-radius:14px;display:flex;align-items:center;gap:10px;padding:10px 14px;}
+.sb svg{width:14px;height:14px;fill:none;stroke:var(--text3);stroke-width:2;flex-shrink:0;}
+.sb input{background:transparent;border:none;outline:none;color:var(--text);font-size:13px;flex:1;}
+.sb input::placeholder{color:var(--text3);}
+
+/* FILTER PILLS */
+.fp{display:flex;gap:7px;padding:12px 18px 0;overflow-x:auto;scrollbar-width:none;}
+.fp::-webkit-scrollbar{display:none;}
+.pill{flex-shrink:0;padding:6px 12px;border-radius:50px;font-family:sans-serif;font-size:10px;font-weight:700;cursor:pointer;white-space:nowrap;background:var(--surface);color:var(--text2);border:1px solid var(--border);}
+.pill.on{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#1A0800;border-color:transparent;box-shadow:0 3px 10px rgba(200,134,10,.3);}
+
+/* CONTENT */
+.shead{display:flex;justify-content:space-between;align-items:center;padding:16px 18px 8px;}
+.shead-t{font-family:sans-serif;font-size:13px;font-weight:700;}
+.shead-c{font-size:10px;color:var(--text3);font-family:sans-serif;font-weight:600;}
+
+/* LIST */
+.list{padding:0 18px;display:flex;flex-direction:column;gap:3px;}
+.row{display:flex;align-items:center;gap:11px;padding:9px;border-radius:12px;cursor:pointer;text-decoration:none;color:inherit;}
+.row:hover{background:var(--surface);}
+.rank{width:24px;text-align:center;font-family:sans-serif;font-size:13px;font-weight:800;color:var(--text3);flex-shrink:0;}
+.rank.r1{color:var(--accent3);}.rank.r2{color:var(--text2);}.rank.r3{color:#CD7F32;}
+.art{width:48px;height:48px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+.info{flex:1;min-width:0;}
+.t{font-family:sans-serif;font-size:12px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:2px;}
+.s{font-size:10px;color:var(--text2);}
+.m{font-size:10px;color:var(--text3);font-family:sans-serif;font-weight:700;flex-shrink:0;}
+
+/* GRID (categories) */
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 18px;}
+.tile{border-radius:14px;padding:16px 14px;position:relative;overflow:hidden;cursor:pointer;border:1px solid rgba(255,255,255,.06);min-height:110px;display:flex;flex-direction:column;justify-content:flex-end;text-decoration:none;color:inherit;}
+.tile-i{font-size:30px;position:absolute;top:11px;right:13px;opacity:.7;}
+.tile-n{font-family:sans-serif;font-size:13px;font-weight:800;position:relative;margin-bottom:3px;}
+.tile-c{font-size:10px;color:var(--text2);position:relative;}
+
+/* CIRCLE GRID (preachers) */
+.pg{display:grid;grid-template-columns:repeat(3,1fr);gap:14px 10px;padding:0 18px;}
+.pcard{text-align:center;cursor:pointer;text-decoration:none;color:inherit;}
+.pavatar{width:80px;height:80px;border-radius:50%;margin:0 auto 7px;padding:2px;background:linear-gradient(135deg,var(--accent),var(--accent2),var(--accent3));}
+.pavatar-inner{width:100%;height:100%;border-radius:50%;background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:30px;}
+.pname{font-family:sans-serif;font-size:11px;font-weight:700;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.psub{font-size:9px;color:var(--text3);font-family:sans-serif;font-weight:600;}
+
+/* Pagination */
+.pgn{display:flex;justify-content:center;align-items:center;gap:8px;padding:16px;}
+.pgn-btn{padding:7px 13px;background:var(--surface);border:1px solid var(--border);border-radius:9px;font-family:sans-serif;font-size:10px;font-weight:700;color:var(--text2);cursor:pointer;}
+.pgn-btn.on{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#1A0800;border-color:transparent;}
+.pgn-info{font-size:10px;color:var(--text3);font-family:sans-serif;font-weight:600;}
+
+/* gradients */
+.g1{background:linear-gradient(135deg,#9B6BFF,#4D9FFF);}
+.g2{background:linear-gradient(135deg,#C8860A,#E8A020);}
+.g3{background:linear-gradient(135deg,#FF4D8F,#C8860A);}
+.g4{background:linear-gradient(135deg,#2ECC8F,#4D9FFF);}
+.g5{background:linear-gradient(135deg,#E8A020,#F5C842);}
+.g6{background:linear-gradient(135deg,#4D9FFF,#9B6BFF);}
+.g7{background:linear-gradient(135deg,#2ECC8F,#9B6BFF);}
+.g8{background:linear-gradient(135deg,#F5C842,#FF4D8F);}
+
+.c1{background:linear-gradient(135deg,#1A0E04,#3A1A06);}
+.c2{background:linear-gradient(135deg,#04141A,#062A1A);}
+.c3{background:linear-gradient(135deg,#100414,#2A0628);}
+.c4{background:linear-gradient(135deg,#041A14,#062A28);}
+.c5{background:linear-gradient(135deg,#1A0A14,#2A0E18);}
+.c6{background:linear-gradient(135deg,#0A1424,#0E1E3A);}
+
+/* BOTTOM NAV */
+.bnav{display:flex;justify-content:space-around;align-items:center;padding:10px 8px 14px;background:var(--surface);border-top:1px solid var(--border);flex-shrink:0;position:sticky;bottom:0;z-index:10;}
+.ni{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:5px 10px;border-radius:10px;}
+.ni.on{background:rgba(200,134,10,.12);}
+.ni svg{width:19px;height:19px;fill:none;stroke:var(--text3);stroke-width:2;}
+.ni.on svg{stroke:var(--accent2);}
+.nl{font-size:9px;font-family:sans-serif;font-weight:700;color:var(--text3);}
+.ni.on .nl{color:var(--accent2);}
+</style>
+</head>
+<body>
+<div class="phone">
+  <div class="scroll">
+    <div class="tbar">
+      <a class="tb-back" href="shurafah_waazi.html"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></a>
+      <div class="tb-title">🏆 Top Preachers</div>
+      <div class="theme-toggle" id="themeToggle">
+        <span class="tt-icon" id="ttIcon">🌙</span>
+        <span class="tt-label" id="ttLabel">Dark</span>
+      </div>
+    </div>
+
+    <div class="sw">
+      <div class="sb">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" placeholder="Search...">
+      </div>
+    </div>
+
+    <div class="fp">
+      <div class="pill on" data-filter="all">All</div>
+      <div class="pill" data-filter="week">This Week</div>
+      <div class="pill" data-filter="month">This Month</div>
+      <div class="pill" data-filter="year">This Year</div>
+      <div class="pill" data-filter="alltime">All Time</div>
+    </div>
+
+    <div class="shead"><div class="shead-t">All Preachers</div><div class="shead-c">Showing 1–12 of 248</div></div>
+    <div class="pg">
+      <a class="pcard" href="shurafah_preacher_profile.html">
+        <div class="pavatar"><div class="pavatar-inner">🎙️</div></div>
+        <div class="pname">Sheikh Ahmad Gumi</div>
+        <div class="psub">2.4M followers</div>
+      </a>
+      <a class="pcard" href="shurafah_preacher_profile.html">
+        <div class="pavatar"><div class="pavatar-inner">📖</div></div>
+        <div class="pname">Sheikh Isah Ali Ibrahim</div>
+        <div class="psub">1.8M followers</div>
+      </a>
+      <a class="pcard" href="shurafah_preacher_profile.html">
+        <div class="pavatar"><div class="pavatar-inner">⚖️</div></div>
+        <div class="pname">Dr. Aminu Daurawa</div>
+        <div class="psub">1.2M followers</div>
+      </a>
+      <a class="pcard" href="shurafah_preacher_profile.html">
+        <div class="pavatar"><div class="pavatar-inner">🕌</div></div>
+        <div class="pname">Sheikh Abdallah Usman</div>
+        <div class="psub">980K followers</div>
+      </a>
+      <a class="pcard" href="shurafah_preacher_profile.html">
+        <div class="pavatar"><div class="pavatar-inner">🤲</div></div>
+        <div class="pname">Dr. Auwal Albani</div>
+        <div class="psub">910K followers</div>
+      </a>
+      <a class="pcard" href="shurafah_preacher_profile.html">
+        <div class="pavatar"><div class="pavatar-inner">🌿</div></div>
+        <div class="pname">Sheikh Aliyu Maikwaru</div>
+        <div class="psub">760K followers</div>
+      </a>
+      <a class="pcard" href="shurafah_preacher_profile.html">
+        <div class="pavatar"><div class="pavatar-inner">📿</div></div>
+        <div class="pname">Sheikh Yakubu Musa</div>
+        <div class="psub">640K followers</div>
+      </a>
+      <a class="pcard" href="shurafah_preacher_profile.html">
+        <div class="pavatar"><div class="pavatar-inner">✨</div></div>
+        <div class="pname">Sheikh Muhammad Bichi</div>
+        <div class="psub">580K followers</div>
+      </a>
+      <a class="pcard" href="shurafah_preacher_profile.html">
+        <div class="pavatar"><div class="pavatar-inner">🕋</div></div>
+        <div class="pname">Sheikh Ibrahim Khalil</div>
+        <div class="psub">490K followers</div>
+      </a>
+      <a class="pcard" href="shurafah_preacher_profile.html">
+        <div class="pavatar"><div class="pavatar-inner">🌙</div></div>
+        <div class="pname">Sheikh Sani Yahaya</div>
+        <div class="psub">420K followers</div>
+      </a>
+      <a class="pcard" href="shurafah_preacher_profile.html">
+        <div class="pavatar"><div class="pavatar-inner">📚</div></div>
+        <div class="pname">Sheikh Bashir Aliyu</div>
+        <div class="psub">380K followers</div>
+      </a>
+      <a class="pcard" href="shurafah_preacher_profile.html">
+        <div class="pavatar"><div class="pavatar-inner">💫</div></div>
+        <div class="pname">Sheikh Ja'afar Mahmud</div>
+        <div class="psub">340K followers</div>
+      </a>
+    </div>
+    <div class="pgn">
+      <div class="pgn-btn">‹</div>
+      <div class="pgn-btn on">1</div>
+      <div class="pgn-btn">2</div>
+      <div class="pgn-btn">3</div>
+      <div class="pgn-info">…</div>
+      <div class="pgn-btn">21</div>
+      <div class="pgn-btn">›</div>
+    </div>
+    <div style="height:14px;"></div>
+  </div>
+  <!-- BOTTOM NAV (Home · Wa'azi · Explore · Favourites · Profile) -->
+  <div class="bnav">
+    <a class="ni" href="song_portal_web.html" style="text-decoration:none;color:inherit;"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><div class="nl">Home</div></a>
+    <a class="ni on" href="shurafah_waazi.html" style="text-decoration:none;color:inherit;"><svg viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg><div class="nl">Wa'azi</div></a>
+    <a class="ni" href="shurafah_explore.html" style="text-decoration:none;color:inherit;"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><div class="nl">Explore</div></a>
+    <a class="ni" href="favourites_page.html" style="text-decoration:none;color:inherit;"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg><div class="nl">Favourites</div></a>
+    <a class="ni" href="user_profile_page.html" style="text-decoration:none;color:inherit;"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><div class="nl">Profile</div></a>
+  </div>
+</div>
+<script>
+  var toggle = document.getElementById('themeToggle');
+  var ttIcon = document.getElementById('ttIcon');
+  var ttLabel = document.getElementById('ttLabel');
+  var body = document.body;
+  function applyTheme(isLight){
+    if(isLight){ body.classList.add('light'); ttIcon.textContent='☀️'; ttLabel.textContent='Light'; }
+    else { body.classList.remove('light'); ttIcon.textContent='🌙'; ttLabel.textContent='Dark'; }
+  }
+  applyTheme(localStorage.getItem('shurafah-theme') === 'light');
+  toggle.addEventListener('click', function(){
+    var isLight = !body.classList.contains('light');
+    applyTheme(isLight);
+    localStorage.setItem('shurafah-theme', isLight ? 'light' : 'dark');
+  });
+  document.querySelectorAll('.pill').forEach(function(p){
+    p.addEventListener('click', function(){
+      var grp = p.parentElement;
+      grp.querySelectorAll('.pill').forEach(function(x){ x.classList.remove('on'); });
+      p.classList.add('on');
+    });
+  });
+</script>
+</body>
+</html>

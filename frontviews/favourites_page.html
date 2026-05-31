@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shurafah — My Favourites</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#080B12;--surface:#0F1420;--surface2:#161C2E;--surface3:#1E2740;
+  --accent:#FF6B35;--accent2:#FFB347;--blue:#4D9FFF;--green:#2ECC8F;
+  --purple:#9B6BFF;--pink:#FF4D8F;--yellow:#FFD166;
+  --text:#F0F4FF;--text2:#8A94B0;--text3:#4A5270;
+  --border:rgba(255,255,255,0.06);
+}
+body.light{
+  --bg:#F4F6FC;--surface:#FFFFFF;--surface2:#E8ECF7;--surface3:#D8DEEF;
+  --text:#12172E;--text2:#5A6380;--text3:#9AA0BA;
+  --border:rgba(0,0,0,0.07);
+}
+body.light .fav-banner{background:linear-gradient(135deg,#F5E8F0,#EDE8F8)!important;}
+body.light .fav-player{background:linear-gradient(135deg,#F5E8F0,#EDE8F8)!important;border-color:rgba(255,77,143,0.15)!important;}
+body.light .pc1{background:linear-gradient(135deg,#E8F0FA,#E8F4EE)!important;}
+body.light .pc2{background:linear-gradient(135deg,#FAF0E8,#FAF0DC)!important;}
+body.light .pc3{background:linear-gradient(135deg,#EFE8FA,#E8E8FA)!important;}
+body.light .pc4{background:linear-gradient(135deg,#E8FAF0,#E8F0FA)!important;}
+body.light .pc5{background:linear-gradient(135deg,#FAE8F0,#F0E8FA)!important;}
+body.light .pc6{background:linear-gradient(135deg,#FAFAE8,#FAF0E8)!important;}
+body.light .alb-card{background:var(--surface)!important;}
+
+*{margin:0;padding:0;box-sizing:border-box;transition:background-color 0.3s,border-color 0.3s,color 0.25s;}
+body{background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--text);min-height:100vh;display:flex;flex-direction:column;}
+
+.phone{width:100%;background:var(--bg);display:flex;flex-direction:column;min-height:100vh;position:relative;}
+.notch{display:none;}
+.scroll{flex:1;overflow-y:auto;overflow-x:hidden;scrollbar-width:none;}
+.scroll::-webkit-scrollbar{display:none;}
+
+/* STATUS */
+.status{display:flex;justify-content:space-between;align-items:center;padding:14px 22px 0;font-size:11px;font-weight:700;font-family:sans-serif;}
+.si{display:flex;gap:5px;align-items:center;}
+.si svg{width:12px;height:12px;fill:var(--text);}
+
+/* HEADER */
+.fav-header{padding:10px 18px 0;}
+.fav-title-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
+.fav-title{font-family:sans-serif;font-size:24px;font-weight:800;letter-spacing:-0.5px;background:linear-gradient(135deg,var(--pink),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.fav-title-right{display:flex;align-items:center;gap:8px;}
+.fav-count{font-size:11px;color:var(--text3);font-family:sans-serif;font-weight:600;}
+
+/* THEME TOGGLE */
+.theme-toggle{display:inline-flex;align-items:center;gap:6px;cursor:pointer;background:var(--surface2);border-radius:50px;padding:5px 11px 5px 9px;border:1.5px solid var(--accent);flex-shrink:0;user-select:none;}
+.theme-toggle .tt-icon{font-size:14px;line-height:1;}
+.theme-toggle .tt-label{font-family:sans-serif;font-size:10px;font-weight:700;color:var(--accent);letter-spacing:0.3px;white-space:nowrap;}
+
+/* BANNER */
+.fav-banner{margin:0 18px;border-radius:16px;padding:14px 16px;background:linear-gradient(135deg,#2A0A1A,#1A0A2E);border:1px solid rgba(255,77,143,0.15);position:relative;overflow:hidden;display:flex;align-items:center;gap:14px;}
+.fav-banner::before{content:'';position:absolute;top:-20px;right:-20px;width:110px;height:110px;background:radial-gradient(circle,rgba(255,77,143,0.2) 0%,transparent 70%);}
+.fb-icon{font-size:32px;flex-shrink:0;}
+.fb-info{flex:1;}
+.fb-label{font-size:10px;color:var(--text2);margin-bottom:3px;}
+.fb-val{font-family:sans-serif;font-size:16px;font-weight:800;margin-bottom:2px;}
+.fb-sub{font-size:10px;color:var(--text3);}
+.fb-play-all{width:36px;height:36px;background:var(--pink);border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 3px 12px rgba(255,77,143,0.4);cursor:pointer;flex-shrink:0;}
+.fb-play-all svg{width:14px;height:14px;fill:white;margin-left:2px;}
+
+/* FILTER TABS */
+.filter-tabs{display:flex;gap:7px;padding:14px 18px 0;overflow-x:auto;scrollbar-width:none;}
+.filter-tabs::-webkit-scrollbar{display:none;}
+.ftab{flex-shrink:0;padding:6px 13px;border-radius:50px;font-size:11px;font-weight:700;font-family:sans-serif;cursor:pointer;border:1px solid transparent;white-space:nowrap;}
+.ftab.on{background:var(--pink);color:white;box-shadow:0 3px 12px rgba(255,77,143,0.3);}
+.ftab.off{background:var(--surface);color:var(--text2);border-color:var(--border);}
+
+/* SORT ROW */
+.sort-row{display:flex;justify-content:space-between;align-items:center;padding:12px 18px 8px;}
+.sort-lbl{font-size:11px;color:var(--text3);}
+.sort-btn{display:flex;align-items:center;gap:4px;font-size:11px;font-family:sans-serif;font-weight:700;color:var(--accent);cursor:pointer;}
+.sort-btn svg{width:12px;height:12px;fill:none;stroke:var(--accent);stroke-width:2;}
+
+/* SECTION HEADER */
+.sec-row{display:flex;justify-content:space-between;align-items:center;padding:8px 18px 8px;}
+.sec-t{font-family:sans-serif;font-size:13px;font-weight:700;}
+.sec-a{font-size:10px;color:var(--pink);font-weight:600;cursor:pointer;}
+
+/* TAB PANELS */
+.tab-panel{display:none;}
+.tab-panel.active{display:block;animation:fadeUp 0.25s ease;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* SONG ROWS */
+.fav-list{padding:0 14px;display:flex;flex-direction:column;gap:3px;}
+.frow{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:13px;cursor:pointer;}
+.frow:hover{background:var(--surface);}
+.frow.playing{background:rgba(255,77,143,0.06);}
+.frow-num{width:18px;text-align:center;font-family:sans-serif;font-size:12px;font-weight:700;color:var(--text3);flex-shrink:0;}
+.frow-thumb{width:46px;height:46px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;position:relative;overflow:hidden;}
+.frow-eq{position:absolute;inset:0;background:rgba(0,0,0,0.44);display:flex;align-items:center;justify-content:center;}
+.frow-info{flex:1;min-width:0;}
+.frow-title{font-family:sans-serif;font-size:12px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:2px;}
+.frow-title.on{color:var(--pink);}
+.frow-artist{font-size:10px;color:var(--text2);margin-bottom:2px;}
+.frow-stats{display:flex;gap:7px;}
+.frow-stat{font-size:9px;color:var(--text3);display:flex;align-items:center;gap:2px;}
+.frow-stat svg{width:8px;height:8px;fill:none;stroke:currentColor;stroke-width:2;}
+.frow-right{display:flex;flex-direction:column;align-items:flex-end;gap:5px;flex-shrink:0;}
+.frow-dur{font-size:10px;color:var(--text3);font-family:sans-serif;font-weight:600;}
+.frow-heart{width:22px;height:22px;display:flex;align-items:center;justify-content:center;cursor:pointer;border-radius:50%;}
+.frow-heart:hover{background:rgba(255,77,143,0.12);}
+.frow-heart svg{width:13px;height:13px;fill:none;stroke:var(--text3);stroke-width:2;}
+.frow-heart.liked svg{fill:var(--pink);stroke:var(--pink);}
+
+/* EQUALIZER */
+.eq{display:flex;gap:2px;align-items:flex-end;height:13px;}
+.eq-b{width:3px;background:var(--pink);border-radius:2px;animation:eqa 0.75s ease-in-out infinite alternate;}
+.eq-b:nth-child(1){height:5px;animation-delay:0s;}
+.eq-b:nth-child(2){height:11px;animation-delay:0.18s;}
+.eq-b:nth-child(3){height:8px;animation-delay:0.09s;}
+.eq-b:nth-child(4){height:13px;animation-delay:0.27s;}
+@keyframes eqa{from{transform:scaleY(0.35)}to{transform:scaleY(1)}}
+
+/* ARTIST ROWS */
+.art-list{padding:0 14px;display:flex;flex-direction:column;gap:5px;}
+.arow{display:flex;align-items:center;gap:10px;padding:9px 11px;background:var(--surface);border-radius:13px;border:1px solid var(--border);cursor:pointer;}
+.arow:hover{border-color:rgba(255,77,143,0.25);}
+.a-img{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;position:relative;}
+.a-live{width:10px;height:10px;background:var(--green);border:2px solid var(--bg);border-radius:50%;position:absolute;bottom:-1px;right:-1px;}
+.a-inf{flex:1;min-width:0;}
+.a-n{font-family:sans-serif;font-size:12px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:2px;}
+.a-m{font-size:10px;color:var(--text2);}
+.a-r{display:flex;flex-direction:column;align-items:flex-end;gap:4px;}
+.unfollow-btn{background:rgba(255,77,143,0.1);border:1px solid rgba(255,77,143,0.3);border-radius:50px;padding:3px 10px;font-size:9px;font-weight:700;color:var(--pink);font-family:sans-serif;cursor:pointer;}
+.a-plays{font-size:9px;color:var(--text3);}
+
+/* PLAYLISTS GRID */
+.playlist-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;padding:0 14px;}
+.pl-card{border-radius:14px;padding:12px;cursor:pointer;position:relative;overflow:hidden;border:1px solid var(--border);}
+.pl-card::before{content:'';position:absolute;top:0;right:0;width:80px;height:80px;border-radius:0 14px 0 80px;opacity:0.15;}
+.pl-card:hover{transform:translateY(-2px);}
+.pl-art{font-size:26px;margin-bottom:8px;}
+.pl-name{font-family:sans-serif;font-size:12px;font-weight:700;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.pl-count{font-size:9px;color:var(--text3);}
+.pl-dur{font-size:9px;color:var(--text3);margin-top:1px;}
+.pl-play{position:absolute;bottom:10px;right:10px;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.3);}
+.pl-play svg{width:10px;height:10px;fill:white;margin-left:1px;}
+.pl-tag{position:absolute;top:10px;right:10px;font-size:8px;font-family:sans-serif;font-weight:700;background:rgba(0,0,0,0.35);border-radius:50px;padding:2px 7px;color:rgba(255,255,255,0.85);}
+.pc1{background:linear-gradient(135deg,#0E1A30,#0E2A1A);}.pc1::before{background:var(--blue);}
+.pc2{background:linear-gradient(135deg,#2A0E0E,#2A1A0E);}.pc2::before{background:var(--accent);}
+.pc3{background:linear-gradient(135deg,#1A0E2A,#0E0E2A);}.pc3::before{background:var(--purple);}
+.pc4{background:linear-gradient(135deg,#0E2A0E,#0E1A2A);}.pc4::before{background:var(--green);}
+.pc5{background:linear-gradient(135deg,#2A0A1A,#1A0A2A);}.pc5::before{background:var(--pink);}
+.pc6{background:linear-gradient(135deg,#1A1A0E,#2A1A0E);}.pc6::before{background:var(--yellow);}
+
+/* ALBUMS GRID */
+.album-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 14px;}
+.alb-card{background:var(--surface);border-radius:13px;padding:10px;border:1px solid var(--border);cursor:pointer;position:relative;overflow:hidden;}
+.alb-card:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,0.3);}
+.alb-art{width:100%;aspect-ratio:1;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:38px;margin-bottom:8px;position:relative;overflow:hidden;}
+.alb-play-ov{position:absolute;inset:0;background:rgba(0,0,0,0);display:flex;align-items:center;justify-content:center;border-radius:10px;}
+.alb-card:hover .alb-play-ov{background:rgba(0,0,0,0.38);}
+.alb-play-ov svg{width:28px;height:28px;fill:white;opacity:0;}
+.alb-card:hover .alb-play-ov svg{opacity:1;}
+.alb-name{font-family:sans-serif;font-size:12px;font-weight:700;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.alb-artist{font-size:10px;color:var(--text2);margin-bottom:3px;}
+.alb-meta{display:flex;justify-content:space-between;}
+.alb-count{font-size:9px;color:var(--text3);}
+.alb-year{font-size:9px;color:var(--text3);font-family:sans-serif;font-weight:600;}
+.alb-saved{position:absolute;top:18px;right:18px;width:20px;height:20px;background:var(--pink);border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(255,77,143,0.45);}
+.alb-saved svg{width:10px;height:10px;fill:white;}
+
+/* MINI PLAYER */
+.fav-player{margin:6px 12px 6px;background:linear-gradient(135deg,#2A0A1A,#1A0A2E);border-radius:15px;padding:10px 12px;border:1px solid rgba(255,77,143,0.18);box-shadow:0 6px 22px rgba(0,0,0,0.4);flex-shrink:0;}
+.fp-top{display:flex;align-items:center;gap:10px;}
+.fp-art{width:38px;height:38px;border-radius:9px;background:linear-gradient(135deg,var(--pink),var(--accent));display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;box-shadow:0 3px 10px rgba(255,77,143,0.35);}
+.fp-inf{flex:1;min-width:0;}
+.fp-title{font-family:sans-serif;font-size:12px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:1px;}
+.fp-artist{font-size:10px;color:var(--text2);}
+.fp-ctrl{display:flex;align-items:center;gap:6px;}
+.fp-ctrl>svg{width:17px;height:17px;fill:none;stroke:var(--text2);stroke-width:2;cursor:pointer;}
+.fp-play{width:32px;height:32px;background:var(--pink);border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 10px rgba(255,77,143,0.4);cursor:pointer;}
+.fp-play svg{width:13px;height:13px;fill:white;}
+.fp-heart{cursor:pointer;}
+.fp-heart svg{width:17px;height:17px;fill:var(--pink);stroke:var(--pink);}
+.fp-prog{display:flex;align-items:center;gap:7px;margin-top:7px;}
+.fp-bar{flex:1;height:3px;background:var(--surface3);border-radius:2px;overflow:hidden;}
+.fp-fill{width:42%;height:100%;background:linear-gradient(90deg,var(--pink),var(--accent));border-radius:2px;}
+.fp-t{font-size:9px;color:var(--text3);font-family:sans-serif;}
+
+/* BOTTOM NAV */
+.bnav{display:flex;justify-content:space-around;align-items:center;padding:10px 8px 14px;background:var(--surface);border-top:1px solid var(--border);flex-shrink:0;position:sticky;bottom:0;z-index:10;}
+.ni{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:5px 10px;border-radius:10px;}
+.ni.fav-on{background:rgba(255,77,143,0.1);}
+.ni.fav-on svg{stroke:var(--pink)!important;}
+.ni.fav-on .nl{color:var(--pink)!important;}
+.ni svg{width:18px;height:18px;fill:none;stroke:var(--text3);stroke-width:2;}
+.nl{font-size:9px;font-family:sans-serif;font-weight:700;color:var(--text3);}
+
+/* AD */
+.ad{margin:10px 14px 0;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:8px 12px;display:flex;align-items:center;gap:8px;}
+.ad-tag{font-size:8px;font-family:sans-serif;color:var(--text3);background:var(--surface2);border-radius:4px;padding:2px 5px;text-transform:uppercase;letter-spacing:0.4px;flex-shrink:0;}
+.ad-txt{font-size:11px;color:var(--text2);flex:1;}
+.ad-cta{font-size:11px;color:var(--accent);font-weight:700;font-family:sans-serif;flex-shrink:0;cursor:pointer;}
+.ad-x{font-size:12px;color:var(--text3);flex-shrink:0;cursor:pointer;margin-left:2px;}
+
+/* GRADIENTS */
+.g1{background:linear-gradient(135deg,#9B6BFF,#4D9FFF);}
+.g2{background:linear-gradient(135deg,#FF6B35,#FFB347);}
+.g3{background:linear-gradient(135deg,#FF4D8F,#FF6B35);}
+.g4{background:linear-gradient(135deg,#2ECC8F,#4D9FFF);}
+.g5{background:linear-gradient(135deg,#FFB347,#FF4D8F);}
+.g6{background:linear-gradient(135deg,#4D9FFF,#9B6BFF);}
+.g7{background:linear-gradient(135deg,#FF6B35,#FF4D8F);}
+.g8{background:linear-gradient(135deg,#2ECC8F,#9B6BFF);}
+
+.spacer{height:14px;}
+@keyframes fup{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.phone>*{animation:fup 0.4s ease forwards;}
+
+/* RESPONSIVE DESIGN */
+@media (min-width:768px) {
+  .phone { max-width:768px; margin:0 auto; }
+  .fav-header { padding:14px 24px 0; }
+  .fav-banner { margin:0 24px; }
+  .filter-tabs { padding:16px 24px 0; }
+  .sort-row { padding:14px 24px 10px; }
+  .sec-row { padding:10px 24px 10px; }
+  .fav-list { padding:0 24px; }
+  .art-list { padding:0 24px; }
+  .playlist-grid { padding:0 24px; }
+  .album-grid { padding:0 24px; }
+  .fav-player { margin:8px 24px 6px; }
+  .ad { margin:12px 24px 0; }
+}
+
+@media (min-width:1024px) {
+  .phone { max-width:1000px; }
+  .fav-header { padding:18px 32px 0; }
+  .fav-banner { margin:0 32px; }
+  .filter-tabs { padding:20px 32px 0; }
+  .sort-row { padding:16px 32px 12px; }
+  .sec-row { padding:12px 32px 12px; }
+  .fav-list { padding:0 32px; }
+  .art-list { padding:0 32px; }
+  .playlist-grid { padding:0 32px; }
+  .album-grid { padding:0 32px; }
+  .fav-player { margin:10px 32px 6px; }
+  .ad { margin:14px 32px 0; }
+}
+
+@media (max-width:480px) {
+  .fav-header { padding:10px 16px 0; }
+  .fav-banner { margin:0 16px; }
+  .filter-tabs { padding:12px 16px 0; }
+  .sort-row { padding:12px 16px 8px; }
+  .sec-row { padding:8px 16px 8px; }
+  .fav-list { padding:0 14px; }
+  .art-list { padding:0 14px; }
+  .playlist-grid { padding:0 14px; }
+  .album-grid { padding:0 14px; }
+  .fav-player { margin:6px 14px 6px; }
+  .ad { margin:8px 16px 0; }
+}
+</style>
+</head>
+<body>
+<div class="phone">
+  <div class="notch"></div>
+  <div class="scroll">
+    <!-- AD CONTAINER: Header Banner -->
+    <div id="ad-header-banner"></div>
+
+
+    <!-- HEADER -->
+    <div class="fav-header">
+      <div class="fav-title-row">
+        <div class="fav-title">My Favourites</div>
+        <div class="fav-title-right">
+          <div class="theme-toggle" id="themeToggle">
+            <span class="tt-icon" id="ttIcon">🌙</span>
+            <span class="tt-label" id="ttLabel">Dark</span>
+          </div>
+          <div class="fav-count" id="favCount">42 items</div>
+        </div>
+      </div>
+      <div class="fav-banner">
+        <div class="fb-icon">❤️</div>
+        <div class="fb-info">
+          <div class="fb-label">Saved Collection</div>
+          <div class="fb-val" id="bannerVal">42 Songs · 16 Artists</div>
+          <div class="fb-sub" id="bannerSub">Total: 2h 48min</div>
+        </div>
+        <div class="fb-play-all"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg></div>
+      </div>
+    </div>
+
+    <!-- FILTER TABS -->
+    <div class="filter-tabs" id="filterTabs">
+      <div class="ftab on" data-tab="all">All</div>
+      <div class="ftab off" data-tab="songs">Songs</div>
+      <div class="ftab off" data-tab="artists">Artists</div>
+      <div class="ftab off" data-tab="playlists">Playlists</div>
+      <div class="ftab off" data-tab="albums">Albums</div>
+      <div class="ftab off" data-tab="lectures">Lectures</div>
+      <div class="ftab off" data-tab="preachers">Preachers</div>
+    </div>
+
+    <!-- SORT ROW -->
+    <div class="sort-row">
+      <div class="sort-lbl" id="sortLbl">42 items</div>
+      <div class="sort-btn"><svg viewBox="0 0 24 24"><line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="11" y1="18" x2="13" y2="18"/></svg> Recently Added</div>
+    </div>
+
+    <!-- ═══════════ TAB: ALL ═══════════ -->
+    <div class="tab-panel active" id="panel-all">
+      <div class="sec-row"><div class="sec-t">❤️ Songs</div><div class="sec-a">See all</div></div>
+      <div class="fav-list">
+        <div class="frow playing">
+          <div class="frow-num" style="color:var(--pink);"><div class="eq"><div class="eq-b"></div><div class="eq-b"></div><div class="eq-b"></div><div class="eq-b"></div></div></div>
+          <div class="frow-thumb g3">🎵<div class="frow-eq"></div></div>
+          <div class="frow-info"><div class="frow-title on">Fallen Stars</div><div class="frow-artist">Amara Soul</div><div class="frow-stats"><div class="frow-stat"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>48K</div><div class="frow-stat"><svg viewBox="0 0 24 24"><path d="M12 3v10M8 9l4 4 4-4"/><path d="M5 19h14"/></svg>12K</div></div></div>
+          <div class="frow-right"><div class="frow-dur">3:42</div><div class="frow-heart liked"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div></div>
+        </div>
+        <div class="frow"><div class="frow-num">2</div><div class="frow-thumb g1">🎶</div><div class="frow-info"><div class="frow-title">Way Maker</div><div class="frow-artist">Sinach</div><div class="frow-stats"><div class="frow-stat"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>2.4M</div><div class="frow-stat"><svg viewBox="0 0 24 24"><path d="M12 3v10M8 9l4 4 4-4"/><path d="M5 19h14"/></svg>830K</div></div></div><div class="frow-right"><div class="frow-dur">5:33</div><div class="frow-heart liked"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div></div></div>
+        <div class="frow"><div class="frow-num">3</div><div class="frow-thumb g4">🎸</div><div class="frow-info"><div class="frow-title">Holy Ground</div><div class="frow-artist">Nathaniel Bassey</div><div class="frow-stats"><div class="frow-stat"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>1.9M</div><div class="frow-stat"><svg viewBox="0 0 24 24"><path d="M12 3v10M8 9l4 4 4-4"/><path d="M5 19h14"/></svg>610K</div></div></div><div class="frow-right"><div class="frow-dur">4:48</div><div class="frow-heart liked"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div></div></div>
+      </div>
+      <div class="sec-row" style="padding-top:14px;"><div class="sec-t">🎤 Artists</div><div class="sec-a">See all</div></div>
+      <div class="art-list">
+        <div class="arow"><div class="a-img g1">🎤<div class="a-live"></div></div><div class="a-inf"><div class="a-n">Nathaniel Bassey</div><div class="a-m">Gospel · 48 songs</div></div><div class="a-r"><div class="unfollow-btn">Following</div><div class="a-plays">1.2M plays</div></div></div>
+        <div class="arow"><div class="a-img g3">🎵</div><div class="a-inf"><div class="a-n">Sinach</div><div class="a-m">Worship · 62 songs</div></div><div class="a-r"><div class="unfollow-btn">Following</div><div class="a-plays">980K plays</div></div></div>
+        <div class="arow"><div class="a-img g7">🎶</div><div class="a-inf"><div class="a-n">Amara Soul</div><div class="a-m">Gospel · 22 songs</div></div><div class="a-r"><div class="unfollow-btn">Following</div><div class="a-plays">320K plays</div></div></div>
+      </div>
+      <div class="sec-row" style="padding-top:14px;"><div class="sec-t">🎵 Playlists</div><div class="sec-a">See all</div></div>
+      <div class="playlist-grid">
+        <div class="pl-card pc1"><div class="pl-tag">18 songs</div><div class="pl-art">🙏</div><div class="pl-name">Sunday Praise</div><div class="pl-count">18 songs</div><div class="pl-dur">1h 12min</div><div class="pl-play g4"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg></div></div>
+        <div class="pl-card pc5"><div class="pl-tag">12 songs</div><div class="pl-art">❤️</div><div class="pl-name">Top Favourites</div><div class="pl-count">12 songs</div><div class="pl-dur">48min</div><div class="pl-play g7"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg></div></div>
+      </div>
+      <div class="sec-row" style="padding-top:14px;"><div class="sec-t">💿 Albums</div><div class="sec-a">See all</div></div>
+      <div class="album-grid">
+        <div class="alb-card"><div class="alb-art g1">🎵<div class="alb-play-ov"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg></div></div><div class="alb-saved"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div><div class="alb-name">Fallen Stars</div><div class="alb-artist">Amara Soul</div><div class="alb-meta"><div class="alb-count">12 tracks</div><div class="alb-year">2024</div></div></div>
+        <div class="alb-card"><div class="alb-art g3">🎶<div class="alb-play-ov"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg></div></div><div class="alb-saved"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div><div class="alb-name">Holy Ground</div><div class="alb-artist">Nathaniel Bassey</div><div class="alb-meta"><div class="alb-count">10 tracks</div><div class="alb-year">2023</div></div></div>
+      </div>
+      <!-- ═══════════ WA'AZI SECTIONS (in All tab) ═══════════ -->
+      <div class="sec-row" style="padding-top:14px;"><div class="sec-t" style="color:#E8A020;">🎙️ Wa'azi Lectures</div><a class="sec-a" href="all_top_lectures.html" style="text-decoration:none;color:inherit;">See all</a></div>
+      <div class="fav-list">
+        <a class="frow" href="shurafah_waazi_detail.html" style="text-decoration:none;color:inherit;"><div class="frow-num">1</div><div class="frow-thumb" style="background:linear-gradient(135deg,#C8860A,#E8A020);">🎙️</div><div class="frow-info"><div class="frow-title">Hanyar Gaskiya Vol. 3</div><div class="frow-artist">Sh. Ahmad Gumi · Aqeedah</div><div class="frow-stats"><div class="frow-stat"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>1.8M</div><div class="frow-stat"><svg viewBox="0 0 24 24"><path d="M12 3v10M8 9l4 4 4-4"/><path d="M5 19h14"/></svg>540K</div></div></div><div class="frow-right"><div class="frow-dur">1:04:38</div><div class="frow-heart liked"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div></div></a>
+        <a class="frow" href="shurafah_waazi_detail.html" style="text-decoration:none;color:inherit;"><div class="frow-num">2</div><div class="frow-thumb" style="background:linear-gradient(135deg,#E8A020,#F5C842);">📖</div><div class="frow-info"><div class="frow-title">Tafsir Suratul Baqarah</div><div class="frow-artist">Sh. Isah Ali Ibrahim · Tafsir</div><div class="frow-stats"><div class="frow-stat"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>1.5M</div><div class="frow-stat"><svg viewBox="0 0 24 24"><path d="M12 3v10M8 9l4 4 4-4"/><path d="M5 19h14"/></svg>410K</div></div></div><div class="frow-right"><div class="frow-dur">1:32:14</div><div class="frow-heart liked"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div></div></a>
+        <a class="frow" href="shurafah_waazi_detail.html" style="text-decoration:none;color:inherit;"><div class="frow-num">3</div><div class="frow-thumb" style="background:linear-gradient(135deg,#FF4D8F,#C8860A);">⚖️</div><div class="frow-info"><div class="frow-title">Fiqhul Ibadah — Part 12</div><div class="frow-artist">Dr. Aminu Daurawa · Fiqh</div><div class="frow-stats"><div class="frow-stat"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>1.1M</div><div class="frow-stat"><svg viewBox="0 0 24 24"><path d="M12 3v10M8 9l4 4 4-4"/><path d="M5 19h14"/></svg>320K</div></div></div><div class="frow-right"><div class="frow-dur">56:18</div><div class="frow-heart liked"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div></div></a>
+      </div>
+      <div class="sec-row" style="padding-top:14px;"><div class="sec-t" style="color:#E8A020;">🎤 Preachers</div><a class="sec-a" href="all_top_preachers.html" style="text-decoration:none;color:inherit;">See all</a></div>
+      <div class="art-list">
+        <a class="arow" href="shurafah_preacher_profile.html" style="text-decoration:none;color:inherit;"><div class="a-img" style="background:linear-gradient(135deg,#C8860A,#E8A020);">🎙️</div><div class="a-inf"><div class="a-n">Sheikh Ahmad Gumi</div><div class="a-m">Aqeedah · 148 lectures</div></div><div class="a-r"><div class="unfollow-btn">Following</div><div class="a-plays">2.4M followers</div></div></a>
+        <a class="arow" href="shurafah_preacher_profile.html" style="text-decoration:none;color:inherit;"><div class="a-img" style="background:linear-gradient(135deg,#E8A020,#F5C842);">📖</div><div class="a-inf"><div class="a-n">Sheikh Isah Ali Ibrahim</div><div class="a-m">Tafsir · 96 lectures</div></div><div class="a-r"><div class="unfollow-btn">Following</div><div class="a-plays">1.8M followers</div></div></a>
+      </div>
+
+      <div class="ad"><div class="ad-tag">Ad</div><div class="ad-txt">Premium — Unlimited favourites &amp; no ads</div><div class="ad-cta">Try</div><div class="ad-x" onclick="this.parentElement.remove()">✕</div></div>
+      <div class="spacer"></div>
+    </div>
+
+    <!-- ═══════════ TAB: SONGS ═══════════ -->
+    <div class="tab-panel" id="panel-songs">
+      <div class="sec-row"><div class="sec-t">All Favourite Songs</div><div class="sec-a">42 songs</div></div>
+      <div class="fav-list">
+        <div class="frow playing"><div class="frow-num" style="color:var(--pink);"><div class="eq"><div class="eq-b"></div><div class="eq-b"></div><div class="eq-b"></div><div class="eq-b"></div></div></div><div class="frow-thumb g3">🎵<div class="frow-eq"></div></div><div class="frow-info"><div class="frow-title on">Fallen Stars</div><div class="frow-artist">Amara Soul</div><div class="frow-stats"><div class="frow-stat"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>48K</div><div class="frow-stat"><svg viewBox="0 0 24 24"><path d="M12 3v10M8 9l4 4 4-4"/><path d="M5 19h14"/></svg>12K</div></div></div><div class="frow-right"><div class="frow-dur">3:42</div><div class="frow-heart liked"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div></div></div>
+        <div class="frow"><div class="frow-num">2</div><div class="frow-thumb g1">🎶</div><div class="frow-info"><div class="frow-title">Way Maker</div><div class="frow-artist">Sinach</div><div class="frow-stats"><div class="frow-stat"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>2.4M</div><div class="frow-stat"><svg viewBox="0 0 24 24"><path d="M12 3v10M8 9l4 4 4-4"/><path d="M5 19h14"/></svg>830K</div></div></div><div class="frow-right"><div class="frow-dur">5:33</div><div class="frow-heart liked"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div></div></div>
+        <div class="frow"><div class="frow-num">3</div><div class="frow-thumb g4">🎸</div><div class="frow-info"><div class="frow-title">Holy Ground</div><div class="frow-artist">Nathaniel Bassey</div><div class="frow-stats"><div class="frow-stat"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>1.9M</div><div class="frow-stat"><svg viewBox="0 0 24 24"><path d="M12 3v10M8 9l4 4 4-4"/><path d="M5 19h14"/></svg>610K</div></div></div><div class="frow-right"><div class="frow-dur">4:48</div><div class="frow-heart liked"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div></div></div>
+        <div class="frow"><div class="frow-num">4</div><div class="frow-thumb g5">🎼</div><div class="frow-info"><div class="frow-title">Open Heaven</div><div class="frow-artist">Nathaniel Bassey</div><div class="frow-stats"><div class="frow-stat"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>750K</div><div class="frow-stat"><svg viewBox="0 0 24 24"><path d="M12 3v10M8 9l4 4 4-4"/><path d="M5 19h14"/></svg>210K</div></div></div><div class="frow-right"><div class="frow-dur">4:55</div><div class="frow-heart liked"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div></div></div>
+        <div class="frow"><div class="frow-num">5</div><div class="frow-thumb g2">🎤</div><div class="frow-info"><div class="frow-title">Higher Ground</div><div class="frow-artist">Frank Edwards</div><div class="frow-stats"><div class="frow-stat"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>1.4M</div><div class="frow-stat"><svg viewBox="0 0 24 24"><path d="M12 3v10M8 9l4 4 4-4"/><path d="M5 19h14"/></svg>490K</div></div></div><div class="frow-right"><div class="frow-dur">5:01</div><div class="frow-heart liked"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div></div></div>
+        <div class="frow"><div class="frow-num">6</div><div class="frow-thumb g6">🎹</div><div class="frow-info"><div class="frow-title">Grace Overflow</div><div class="frow-artist">Tope Alabi</div><div class="frow-stats"><div class="frow-stat"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>920K</div><div class="frow-stat"><svg viewBox="0 0 24 24"><path d="M12 3v10M8 9l4 4 4-4"/><path d="M5 19h14"/></svg>280K</div></div></div><div class="frow-right"><div class="frow-dur">4:15</div><div class="frow-heart liked"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div></div></div>
+        <div class="frow"><div class="frow-num">7</div><div class="frow-thumb g7">🎵</div><div class="frow-info"><div class="frow-title">Come Alive</div><div class="frow-artist">Lauren Daigle</div><div class="frow-stats"><div class="frow-stat"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>3.1M</div><div class="frow-stat"><svg viewBox="0 0 24 24"><path d="M12 3v10M8 9l4 4 4-4"/><path d="M5 19h14"/></svg>1.2M</div></div></div><div class="frow-right"><div class="frow-dur">4:52</div><div class="frow-heart liked"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div></div></div>
+        <div class="frow"><div class="frow-num">8</div><div class="frow-thumb g8">🎶</div><div class="frow-info"><div class="frow-title">Miracles</div><div class="frow-artist">Dunsin Oyekan</div><div class="frow-stats"><div class="frow-stat"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>640K</div><div class="frow-stat"><svg viewBox="0 0 24 24"><path d="M12 3v10M8 9l4 4 4-4"/><path d="M5 19h14"/></svg>180K</div></div></div><div class="frow-right"><div class="frow-dur">6:20</div><div class="frow-heart liked"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div></div></div>
+        <div class="frow"><div class="frow-num">9</div><div class="frow-thumb g2">🎸</div><div class="frow-info"><div class="frow-title">River Flow</div><div class="frow-artist">Sinach</div><div class="frow-stats"><div class="frow-stat"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>510K</div><div class="frow-stat"><svg viewBox="0 0 24 24"><path d="M12 3v10M8 9l4 4 4-4"/><path d="M5 19h14"/></svg>145K</div></div></div><div class="frow-right"><div class="frow-dur">5:10</div><div class="frow-heart liked"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div></div></div>
+        <div class="frow"><div class="frow-num">10</div><div class="frow-thumb g5">🎼</div><div class="frow-info"><div class="frow-title">Great Are You Lord</div><div class="frow-artist">Nathaniel Bassey</div><div class="frow-stats"><div class="frow-stat"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>880K</div><div class="frow-stat"><svg viewBox="0 0 24 24"><path d="M12 3v10M8 9l4 4 4-4"/><path d="M5 19h14"/></svg>290K</div></div></div><div class="frow-right"><div class="frow-dur">4:30</div><div class="frow-heart liked"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div></div></div>
+      </div>
+      <div class="spacer"></div>
+    </div>
+
+    <!-- ═══════════ TAB: ARTISTS ═══════════ -->
+    <div class="tab-panel" id="panel-artists">
+      <div class="sec-row"><div class="sec-t">Favourite Artists</div><div class="sec-a">16 artists</div></div>
+      <div class="art-list">
+        <div class="arow"><div class="a-img g1">🎤<div class="a-live"></div></div><div class="a-inf"><div class="a-n">Nathaniel Bassey</div><div class="a-m">Gospel · 48 songs · 1.2M plays</div></div><div class="a-r"><div class="unfollow-btn">Following</div><div class="a-plays" style="color:var(--green);">🔴 Live Now</div></div></div>
+        <div class="arow"><div class="a-img g3">🎵</div><div class="a-inf"><div class="a-n">Sinach</div><div class="a-m">Worship · 62 songs · 980K plays</div></div><div class="a-r"><div class="unfollow-btn">Following</div><div class="a-plays">980K plays</div></div></div>
+        <div class="arow"><div class="a-img g7">🎶</div><div class="a-inf"><div class="a-n">Amara Soul</div><div class="a-m">Gospel · 22 songs · 320K plays</div></div><div class="a-r"><div class="unfollow-btn">Following</div><div class="a-plays">320K plays</div></div></div>
+        <div class="arow"><div class="a-img g2">🎸</div><div class="a-inf"><div class="a-n">Frank Edwards</div><div class="a-m">Gospel · 35 songs · 780K plays</div></div><div class="a-r"><div class="unfollow-btn">Following</div><div class="a-plays">780K plays</div></div></div>
+        <div class="arow"><div class="a-img g4">🎼</div><div class="a-inf"><div class="a-n">Tope Alabi</div><div class="a-m">Gospel · 41 songs · 560K plays</div></div><div class="a-r"><div class="unfollow-btn">Following</div><div class="a-plays">560K plays</div></div></div>
+        <div class="arow"><div class="a-img g6">🎹</div><div class="a-inf"><div class="a-n">Dunsin Oyekan</div><div class="a-m">Worship · 19 songs · 420K plays</div></div><div class="a-r"><div class="unfollow-btn">Following</div><div class="a-plays">420K plays</div></div></div>
+        <div class="arow"><div class="a-img g5">🎤</div><div class="a-inf"><div class="a-n">Lauren Daigle</div><div class="a-m">Contemporary · 28 songs</div></div><div class="a-r"><div class="unfollow-btn">Following</div><div class="a-plays">3.1M plays</div></div></div>
+        <div class="arow"><div class="a-img g8">🎵</div><div class="a-inf"><div class="a-n">Tim Godfrey</div><div class="a-m">Gospel · 30 songs · 210K plays</div></div><div class="a-r"><div class="unfollow-btn">Following</div><div class="a-plays">210K plays</div></div></div>
+        <div class="arow"><div class="a-img g2">🎼</div><div class="a-inf"><div class="a-n">Uzairu Badamasi</div><div class="a-m">Hausa Gospel · 40 songs</div></div><div class="a-r"><div class="unfollow-btn">Following</div><div class="a-plays">1.5M plays</div></div></div>
+      </div>
+      <div class="spacer"></div>
+    </div>
+
+    <!-- ═══════════ TAB: PLAYLISTS ═══════════ -->
+    <div class="tab-panel" id="panel-playlists">
+      <div class="sec-row"><div class="sec-t">Saved Playlists</div><div class="sec-a">8 playlists</div></div>
+      <div class="playlist-grid">
+        <div class="pl-card pc1"><div class="pl-tag">18 songs</div><div class="pl-art">🙏</div><div class="pl-name">Sunday Praise</div><div class="pl-count">18 songs</div><div class="pl-dur">1h 12min</div><div class="pl-play g4"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg></div></div>
+        <div class="pl-card pc2"><div class="pl-tag">24 songs</div><div class="pl-art">🔥</div><div class="pl-name">Hot & Trending</div><div class="pl-count">24 songs</div><div class="pl-dur">1h 34min</div><div class="pl-play g2"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg></div></div>
+        <div class="pl-card pc3"><div class="pl-tag">15 songs</div><div class="pl-art">🌙</div><div class="pl-name">Night Worship</div><div class="pl-count">15 songs</div><div class="pl-dur">58min</div><div class="pl-play g3"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg></div></div>
+        <div class="pl-card pc4"><div class="pl-tag">20 songs</div><div class="pl-art">🌿</div><div class="pl-name">Morning Devotion</div><div class="pl-count">20 songs</div><div class="pl-dur">1h 18min</div><div class="pl-play g4"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg></div></div>
+        <div class="pl-card pc5"><div class="pl-tag">12 songs</div><div class="pl-art">❤️</div><div class="pl-name">Top Favourites</div><div class="pl-count">12 songs</div><div class="pl-dur">48min</div><div class="pl-play g7"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg></div></div>
+        <div class="pl-card pc6"><div class="pl-tag">30 songs</div><div class="pl-art">✨</div><div class="pl-name">Gospel Vibes</div><div class="pl-count">30 songs</div><div class="pl-dur">2h 05min</div><div class="pl-play g5"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg></div></div>
+        <div class="pl-card pc2"><div class="pl-tag">10 songs</div><div class="pl-art">🎧</div><div class="pl-name">Deep Focus</div><div class="pl-count">10 songs</div><div class="pl-dur">42min</div><div class="pl-play g1"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg></div></div>
+        <div class="pl-card pc3"><div class="pl-tag">16 songs</div><div class="pl-art">🏆</div><div class="pl-name">All Time Best</div><div class="pl-count">16 songs</div><div class="pl-dur">1h 02min</div><div class="pl-play g6"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg></div></div>
+      </div>
+      <div class="spacer"></div>
+    </div>
+
+    <!-- ═══════════ TAB: ALBUMS ═══════════ -->
+    <div class="tab-panel" id="panel-albums">
+      <div class="sec-row"><div class="sec-t">Saved Albums</div><div class="sec-a">6 albums</div></div>
+      <div class="album-grid">
+        <div class="alb-card"><div class="alb-art g1">🎵<div class="alb-play-ov"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg></div></div><div class="alb-saved"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div><div class="alb-name">Fallen Stars</div><div class="alb-artist">Amara Soul</div><div class="alb-meta"><div class="alb-count">12 tracks</div><div class="alb-year">2024</div></div></div>
+        <div class="alb-card"><div class="alb-art g3">🎶<div class="alb-play-ov"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg></div></div><div class="alb-saved"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div><div class="alb-name">Holy Ground</div><div class="alb-artist">Nathaniel Bassey</div><div class="alb-meta"><div class="alb-count">10 tracks</div><div class="alb-year">2023</div></div></div>
+        <div class="alb-card"><div class="alb-art g4">🎸<div class="alb-play-ov"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg></div></div><div class="alb-saved"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div><div class="alb-name">Overflow</div><div class="alb-artist">Tope Alabi</div><div class="alb-meta"><div class="alb-count">14 tracks</div><div class="alb-year">2024</div></div></div>
+        <div class="alb-card"><div class="alb-art g7">🎤<div class="alb-play-ov"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg></div></div><div class="alb-saved"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div><div class="alb-name">Come Alive</div><div class="alb-artist">Lauren Daigle</div><div class="alb-meta"><div class="alb-count">11 tracks</div><div class="alb-year">2022</div></div></div>
+        <div class="alb-card"><div class="alb-art g6">🎼<div class="alb-play-ov"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg></div></div><div class="alb-saved"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div><div class="alb-name">Miracles</div><div class="alb-artist">Dunsin Oyekan</div><div class="alb-meta"><div class="alb-count">9 tracks</div><div class="alb-year">2023</div></div></div>
+        <div class="alb-card"><div class="alb-art g5">🎹<div class="alb-play-ov"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg></div></div><div class="alb-saved"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div><div class="alb-name">Higher Ground</div><div class="alb-artist">Frank Edwards</div><div class="alb-meta"><div class="alb-count">13 tracks</div><div class="alb-year">2024</div></div></div>
+      </div>
+      <div class="spacer"></div>
+    </div>
+
+    <!-- ═══════════ TAB: LECTURES (Wa'azi) ═══════════ -->
+    <div class="tab-panel" id="panel-lectures">
+      <div class="sec-row"><div class="sec-t" style="color:#E8A020;">🎙️ Favourite Lectures</div><a class="sec-a" href="all_top_lectures.html" style="text-decoration:none;color:inherit;">26 lectures</a></div>
+      <div class="fav-list">
+        <a class="frow" href="shurafah_waazi_detail.html" style="text-decoration:none;color:inherit;"><div class="frow-num">1</div><div class="frow-thumb" style="background:linear-gradient(135deg,#C8860A,#E8A020);">🎙️</div><div class="frow-info"><div class="frow-title">Hanyar Gaskiya Vol. 3</div><div class="frow-artist">Sh. Ahmad Gumi · Aqeedah</div><div class="frow-stats"><div class="frow-stat"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>1.8M</div></div></div><div class="frow-right"><div class="frow-dur">1:04:38</div><div class="frow-heart liked"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div></div></a>
+        <a class="frow" href="shurafah_waazi_detail.html" style="text-decoration:none;color:inherit;"><div class="frow-num">2</div><div class="frow-thumb" style="background:linear-gradient(135deg,#E8A020,#F5C842);">📖</div><div class="frow-info"><div class="frow-title">Tafsir Suratul Baqarah</div><div class="frow-artist">Sh. Isah Ali Ibrahim · Tafsir</div><div class="frow-stats"><div class="frow-stat"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>1.5M</div></div></div><div class="frow-right"><div class="frow-dur">1:32:14</div><div class="frow-heart liked"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div></div></a>
+        <a class="frow" href="shurafah_waazi_detail.html" style="text-decoration:none;color:inherit;"><div class="frow-num">3</div><div class="frow-thumb" style="background:linear-gradient(135deg,#FF4D8F,#C8860A);">⚖️</div><div class="frow-info"><div class="frow-title">Fiqhul Ibadah — Part 12</div><div class="frow-artist">Dr. Aminu Daurawa · Fiqh</div><div class="frow-stats"><div class="frow-stat"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>1.1M</div></div></div><div class="frow-right"><div class="frow-dur">56:18</div><div class="frow-heart liked"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div></div></a>
+        <a class="frow" href="shurafah_waazi_detail.html" style="text-decoration:none;color:inherit;"><div class="frow-num">4</div><div class="frow-thumb" style="background:linear-gradient(135deg,#2ECC8F,#4D9FFF);">🤲</div><div class="frow-info"><div class="frow-title">Du'as for Difficulty</div><div class="frow-artist">Sh. Ahmad Gumi · Du'a</div><div class="frow-stats"><div class="frow-stat"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>980K</div></div></div><div class="frow-right"><div class="frow-dur">32:08</div><div class="frow-heart liked"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div></div></a>
+      </div>
+      <div class="spacer"></div>
+    </div>
+
+    <!-- ═══════════ TAB: PREACHERS (Wa'azi) ═══════════ -->
+    <div class="tab-panel" id="panel-preachers">
+      <div class="sec-row"><div class="sec-t" style="color:#E8A020;">🎤 Followed Preachers</div><a class="sec-a" href="all_top_preachers.html" style="text-decoration:none;color:inherit;">8 preachers</a></div>
+      <div class="art-list">
+        <a class="arow" href="shurafah_preacher_profile.html" style="text-decoration:none;color:inherit;"><div class="a-img" style="background:linear-gradient(135deg,#C8860A,#E8A020);">🎙️</div><div class="a-inf"><div class="a-n">Sheikh Ahmad Gumi</div><div class="a-m">Aqeedah · 148 lectures</div></div><div class="a-r"><div class="unfollow-btn">Following</div><div class="a-plays">2.4M followers</div></div></a>
+        <a class="arow" href="shurafah_preacher_profile.html" style="text-decoration:none;color:inherit;"><div class="a-img" style="background:linear-gradient(135deg,#E8A020,#F5C842);">📖</div><div class="a-inf"><div class="a-n">Sheikh Isah Ali Ibrahim</div><div class="a-m">Tafsir · 96 lectures</div></div><div class="a-r"><div class="unfollow-btn">Following</div><div class="a-plays">1.8M followers</div></div></a>
+        <a class="arow" href="shurafah_preacher_profile.html" style="text-decoration:none;color:inherit;"><div class="a-img" style="background:linear-gradient(135deg,#FF4D8F,#C8860A);">⚖️</div><div class="a-inf"><div class="a-n">Dr. Aminu Daurawa</div><div class="a-m">Fiqh · 74 lectures</div></div><div class="a-r"><div class="unfollow-btn">Following</div><div class="a-plays">1.2M followers</div></div></a>
+        <a class="arow" href="shurafah_preacher_profile.html" style="text-decoration:none;color:inherit;"><div class="a-img" style="background:linear-gradient(135deg,#2ECC8F,#4D9FFF);">🌿</div><div class="a-inf"><div class="a-n">Sheikh Aliyu Maikwaru</div><div class="a-m">Akhlaq · 62 lectures</div></div><div class="a-r"><div class="unfollow-btn">Following</div><div class="a-plays">760K followers</div></div></a>
+      </div>
+      <div class="spacer"></div>
+    </div>
+
+  </div><!-- /scroll -->
+
+  <!-- MINI PLAYER -->
+  <div class="fav-player">
+    <div class="fp-top">
+      <div class="fp-art">🎵</div>
+      <div class="fp-inf">
+        <div class="fp-title">Fallen Stars</div>
+        <div class="fp-artist">Amara Soul</div>
+      </div>
+      <div class="fp-ctrl">
+        <div class="fp-heart"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div>
+        <svg viewBox="0 0 24 24"><polygon points="19 20 9 12 19 4 19 20"/><line x1="5" y1="19" x2="5" y2="5"/></svg>
+        <div class="fp-play"><svg viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg></div>
+        <svg viewBox="0 0 24 24"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19"/></svg>
+      </div>
+    </div>
+    <div class="fp-prog">
+      <span class="fp-t">1:25</span>
+      <div class="fp-bar"><div class="fp-fill"></div></div>
+      <span class="fp-t">3:42</span>
+    </div>
+  </div>
+
+  <!-- BOTTOM NAV (Home · Wa'azi · Explore · Favourites · Profile) -->
+  <div class="bnav">
+    <a class="ni" href="song_portal_web.html" style="text-decoration:none;color:inherit;"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><div class="nl">Home</div></a>
+    <a class="ni" href="shurafah_waazi.html" style="text-decoration:none;color:inherit;"><svg viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg><div class="nl">Wa'azi</div></a>
+    <a class="ni" href="shurafah_explore.html" style="text-decoration:none;color:inherit;"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><div class="nl">Explore</div></a>
+    <a class="ni on" href="favourites_page.html" style="text-decoration:none;color:inherit;"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg><div class="nl">Favourites</div></a>
+    <a class="ni" href="user_profile_page.html" style="text-decoration:none;color:inherit;"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><div class="nl">Profile</div></a>
+  </div>
+
+</div><!-- /phone -->
+
+<script>
+// ── TAB DATA ──
+const TAB_DATA = {
+  all:       { count:'42 items',     bannerVal:'42 Songs · 16 Artists',  bannerSub:'Total: 2h 48min' },
+  songs:     { count:'42 songs',     bannerVal:'42 Favourite Songs',      bannerSub:'Total: 2h 48min' },
+  artists:   { count:'16 artists',   bannerVal:'16 Followed Artists',     bannerSub:'920K combined plays' },
+  playlists: { count:'8 playlists',  bannerVal:'8 Saved Playlists',       bannerSub:'178 songs · 7h 09min' },
+  albums:    { count:'6 albums',     bannerVal:'6 Saved Albums',          bannerSub:'69 tracks · 4h 10min' },
+  lectures:  { count:'26 lectures',  bannerVal:'26 Favourite Lectures',   bannerSub:'Total: 18h 22min' },
+  preachers: { count:'8 preachers',  bannerVal:'8 Followed Preachers',    bannerSub:'7.4M combined followers' }
+};
+
+// ── TAB SWITCHING ──
+document.getElementById('filterTabs').addEventListener('click', e => {
+  const tab = e.target.closest('.ftab');
+  if (!tab) return;
+  const key = tab.dataset.tab;
+  if (tab.classList.contains('on')) return;
+
+  document.querySelectorAll('.ftab').forEach(t => { t.className = 'ftab off'; });
+  tab.className = 'ftab on';
+
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('panel-' + key).classList.add('active');
+
+  document.getElementById('sortLbl').textContent   = TAB_DATA[key].count;
+  document.getElementById('favCount').textContent  = TAB_DATA[key].count;
+  document.getElementById('bannerVal').textContent = TAB_DATA[key].bannerVal;
+  document.getElementById('bannerSub').textContent = TAB_DATA[key].bannerSub;
+
+  document.querySelector('.scroll').scrollTop = 0;
+});
+
+// ── HEART TOGGLE (song rows) ──
+document.addEventListener('click', e => {
+  const heart = e.target.closest('.frow-heart');
+  if (!heart) return;
+  e.stopPropagation();
+  heart.classList.toggle('liked');
+});
+
+// ── UNFOLLOW TOGGLE ──
+document.addEventListener('click', e => {
+  const btn = e.target.closest('.unfollow-btn');
+  if (!btn) return;
+  e.stopPropagation();
+  const following = btn.textContent.trim() === 'Following';
+  btn.textContent      = following ? 'Follow' : 'Following';
+  btn.style.background = following ? 'transparent' : 'rgba(255,77,143,0.1)';
+  btn.style.color      = following ? 'var(--text3)' : 'var(--pink)';
+  btn.style.borderColor= following ? 'var(--border)' : 'rgba(255,77,143,0.3)';
+});
+
+// ── MINI PLAYER HEART ──
+document.querySelector('.fp-heart').addEventListener('click', function() {
+  const path = this.querySelector('path');
+  const isLiked = this.dataset.liked === '1';
+  this.dataset.liked   = isLiked ? '0' : '1';
+  path.style.fill      = isLiked ? 'none' : 'var(--pink)';
+  path.style.stroke    = isLiked ? 'var(--text2)' : 'var(--pink)';
+});
+
+// ── THEME TOGGLE ──
+const _toggle = document.getElementById('themeToggle');
+const _icon   = document.getElementById('ttIcon');
+const _label  = document.getElementById('ttLabel');
+function applyTheme(isLight) {
+  document.body.classList.toggle('light', isLight);
+  _icon.textContent  = isLight ? '☀️' : '🌙';
+  _label.textContent = isLight ? 'Light' : 'Dark';
+}
+applyTheme(localStorage.getItem('shurafah-theme') === 'light');
+_toggle.addEventListener('click', () => {
+  const nowLight = !document.body.classList.contains('light');
+  applyTheme(nowLight);
+  localStorage.setItem('shurafah-theme', nowLight ? 'light' : 'dark');
+});
+
+// Initialize Ads System
+ADS.setUserType('guest');
+ADS.init({
+  enabled: true,
+  placements: {
+    headerBanner: { enabled: true },
+    inFeed: { enabled: true, frequency: 5 },
+    downloadModal: { enabled: true, timer: 5 }
+  }
+});
+</script>
+<script src="ads.js"></script>
+</body>
+</html>

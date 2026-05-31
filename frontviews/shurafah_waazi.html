@@ -1,0 +1,1133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shurafah — Wa'azi · Islamic Preaching</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&family=Amiri:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#05070F;--surface:#0A0E1A;--surface2:#0F1525;--surface3:#141B2E;--surface4:#1A2238;
+  --accent:#C8860A;--accent2:#E8A020;--accent3:#F5C842;
+  --blue:#4D9FFF;--green:#2ECC8F;--purple:#9B6BFF;--pink:#FF4D8F;
+  --red:#FF4444;--teal:#00C9B8;
+  --text:#F0F4FF;--text2:#8A94B0;--text3:#4A5270;
+  --border:rgba(255,255,255,0.06);
+  --gold:linear-gradient(135deg,#C8860A,#E8A020,#F5C842,#E8A020);
+}
+body.light{
+  --bg:#FAF7F0;--surface:#FFFFFF;--surface2:#F2EBD9;--surface3:#E8DFCC;--surface4:#D8CDB4;
+  --text:#1A1206;--text2:#5A4E38;--text3:#9A8E78;
+  --border:rgba(0,0,0,0.08);
+}
+body.light .phone{background:var(--bg);}
+body.light .hero{background:linear-gradient(135deg,#F5E8CC 0%,#E8F0D8 50%,#EEE8FA 100%)!important;border-color:rgba(200,134,10,.25)!important;}
+body.light .mini-player{background:linear-gradient(135deg,#FFF8E8,#F5EFD8)!important;border-color:rgba(200,134,10,.2)!important;}
+body.light .bnav{background:var(--surface);}
+body.light .nav-icon-btn{background:var(--surface2)!important;}
+body.light .search-input{background:var(--surface)!important;color:var(--text)!important;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{
+  background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--text);
+  min-height:100vh;overflow-x:hidden;
+  transition:background 0.3s,color 0.3s;
+}
+.phone,.scroll,.mini-player,.bnav,.nav-icon-btn,.search-input,.chip,.subcat-tile,.ad,.ranked-row,.hcard,.recent-row,.lec-card{
+  transition:background 0.3s,background-color 0.3s,border-color 0.3s,color 0.3s;
+}
+
+/* ── SCROLL ── */
+::-webkit-scrollbar{width:4px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--surface4);border-radius:2px;}
+
+/* ── RESPONSIVE WRAPPER (matches song_portal_web.html) ── */
+.phone{
+  width:100%;background:var(--bg);
+  display:flex;flex-direction:column;min-height:100vh;position:relative;
+}
+
+/* ── TOP NAV ── */
+.topnav{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:10px 18px 0;
+}
+.topnav-left{display:flex;align-items:center;gap:8px;}
+.back-btn{
+  width:32px;height:32px;border-radius:9px;background:var(--surface);
+  border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;
+}
+.back-btn svg{width:14px;height:14px;fill:none;stroke:var(--text2);stroke-width:2;}
+.page-label{font-family:sans-serif;font-size:13px;font-weight:700;}
+.topnav-right{display:flex;gap:8px;}
+.nav-icon-btn{
+  width:32px;height:32px;border-radius:9px;background:var(--surface);
+  border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;
+  position:relative;transition:border-color .15s;
+}
+.nav-icon-btn:hover{border-color:rgba(200,134,10,.3);}
+.nav-icon-btn svg{width:14px;height:14px;fill:none;stroke:var(--text2);stroke-width:2;}
+.notif-dot{position:absolute;top:6px;right:6px;width:5px;height:5px;background:var(--accent2);border-radius:50%;border:1px solid var(--bg);}
+
+/* ── SCROLL AREA ── */
+.scroll{flex:1;overflow-y:auto;overflow-x:hidden;scrollbar-width:none;padding-bottom:80px;}
+.scroll::-webkit-scrollbar{display:none;}
+
+/* ── HERO BANNER ── */
+.hero{
+  margin:14px 16px 0;border-radius:20px;overflow:hidden;position:relative;
+  height:168px;background:linear-gradient(135deg,#1A0E04 0%,#0E1A08 50%,#0A0C1A 100%);
+  border:1px solid rgba(200,134,10,.18);cursor:pointer;
+}
+.hero::before{
+  content:'';position:absolute;top:-40px;right:-40px;width:200px;height:200px;
+  background:radial-gradient(circle,rgba(200,134,10,.22) 0%,transparent 65%);
+}
+.hero::after{
+  content:'';position:absolute;bottom:-30px;left:-20px;width:150px;height:150px;
+  background:radial-gradient(circle,rgba(46,204,143,.1) 0%,transparent 65%);
+}
+.hero-arabesque{
+  position:absolute;top:0;right:0;bottom:0;width:140px;
+  display:flex;align-items:center;justify-content:center;opacity:.07;
+  font-size:80px;font-family:'Amiri',serif;color:var(--accent3);
+  line-height:1;
+}
+.hero-content{
+  position:absolute;inset:0;padding:18px 20px;
+  display:flex;flex-direction:column;justify-content:flex-end;z-index:1;
+}
+.hero-badge{
+  display:inline-flex;align-items:center;gap:4px;margin-bottom:8px;
+  background:rgba(200,134,10,.15);border:1px solid rgba(200,134,10,.3);
+  border-radius:6px;padding:3px 9px;width:fit-content;
+}
+.hero-badge-text{font-size:8px;font-family:sans-serif;font-weight:700;color:var(--accent2);text-transform:uppercase;letter-spacing:.5px;}
+.hero-title{font-family:sans-serif;font-size:17px;font-weight:800;letter-spacing:-.3px;margin-bottom:3px;line-height:1.2;}
+.hero-preacher{font-size:11px;color:rgba(255,255,255,.65);display:flex;align-items:center;gap:5px;margin-bottom:10px;}
+.hero-preacher-dot{width:14px;height:14px;border-radius:50%;background:var(--gold);display:flex;align-items:center;justify-content:center;font-size:6px;font-family:sans-serif;font-weight:700;color:#1A0800;}
+.hero-actions{display:flex;gap:8px;align-items:center;}
+.hero-play{
+  display:flex;align-items:center;gap:6px;padding:7px 16px;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  border-radius:50px;font-family:sans-serif;font-size:11px;font-weight:700;
+  cursor:pointer;box-shadow:0 4px 14px rgba(200,134,10,.4);color:#1A0800;
+}
+.hero-play svg{width:10px;height:10px;fill:#1A0800;}
+.hero-save{
+  width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.1);
+  border:1px solid rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;cursor:pointer;
+}
+.hero-save svg{width:13px;height:13px;fill:none;stroke:white;stroke-width:2;}
+.hero-stats{margin-left:auto;display:flex;gap:10px;}
+.hero-stat{font-size:9px;color:rgba(255,255,255,.55);display:flex;align-items:center;gap:3px;}
+.hero-stat svg{width:9px;height:9px;fill:none;stroke:currentColor;stroke-width:2;}
+
+/* ── SEARCH BAR ── */
+.search-wrap{margin:14px 16px 0;position:relative;}
+.search-input{
+  width:100%;background:var(--surface);border:1px solid var(--border);
+  border-radius:14px;padding:11px 42px 11px 42px;
+  font-size:12px;color:var(--text);font-family:'DM Sans',sans-serif;
+  outline:none;transition:border-color .2s;
+}
+.search-input:focus{border-color:rgba(200,134,10,.35);}
+.search-input::placeholder{color:var(--text3);}
+.search-left-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);}
+.search-left-icon svg{width:14px;height:14px;fill:none;stroke:var(--text3);stroke-width:2;}
+.search-right-btn{
+  position:absolute;right:10px;top:50%;transform:translateY(-50%);
+  width:26px;height:26px;border-radius:8px;background:rgba(200,134,10,.15);
+  border:1px solid rgba(200,134,10,.25);display:flex;align-items:center;justify-content:center;cursor:pointer;
+}
+.search-right-btn svg{width:12px;height:12px;fill:none;stroke:var(--accent2);stroke-width:2;}
+
+/* ── CATEGORY CHIPS ── */
+.chips{display:flex;gap:7px;padding:12px 16px 0;overflow-x:auto;scrollbar-width:none;}
+.chips::-webkit-scrollbar{display:none;}
+.chip{
+  flex-shrink:0;padding:6px 14px;border-radius:50px;
+  font-size:10px;font-family:sans-serif;font-weight:700;
+  cursor:pointer;border:1px solid transparent;white-space:nowrap;transition:all .15s;
+}
+.chip.active{background:var(--accent);color:#1A0800;box-shadow:0 3px 12px rgba(200,134,10,.35);}
+.chip.off{background:var(--surface);color:var(--text2);border-color:var(--border);}
+.chip:hover:not(.active){border-color:rgba(200,134,10,.3);color:var(--text);}
+
+/* ── VIEW ALL BUTTON ── */
+.view-all-btn{
+  display:block;width:calc(100% - 32px);margin:14px 16px 0;padding:13px;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));color:#1A0800;
+  font-family:sans-serif;font-size:12px;font-weight:800;letter-spacing:.4px;
+  border:none;border-radius:14px;cursor:pointer;text-align:center;
+  box-shadow:0 4px 16px rgba(200,134,10,.3);transition:opacity .15s;
+}
+.view-all-btn:hover{opacity:.88;}
+
+/* ── CATEGORY CARDS ── */
+.catscroll{display:flex;gap:10px;padding:4px 16px 0;overflow-x:auto;scrollbar-width:none;}
+.catscroll::-webkit-scrollbar{display:none;}
+.ccat-card{
+  flex-shrink:0;width:104px;border-radius:16px;padding:14px 12px 12px;
+  position:relative;overflow:hidden;cursor:pointer;
+  border:2px solid transparent;transition:transform .15s,box-shadow .15s,border-color .2s;
+  min-height:90px;
+}
+.ccat-card:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,.3);}
+.ccat-card.active{border-color:var(--accent);box-shadow:0 4px 18px rgba(200,134,10,.32);}
+.ccat-icon{font-size:26px;margin-bottom:8px;display:block;}
+.ccat-name{font-family:sans-serif;font-size:11px;font-weight:800;margin-bottom:2px;color:var(--text);}
+.ccat-count{font-size:9px;color:var(--text2);}
+.cc1{background:linear-gradient(135deg,rgba(200,134,10,.18),rgba(232,160,32,.08));}
+.cc2{background:linear-gradient(135deg,rgba(155,107,255,.18),rgba(77,159,255,.08));}
+.cc3{background:linear-gradient(135deg,rgba(77,159,255,.18),rgba(46,204,143,.08));}
+.cc4{background:linear-gradient(135deg,rgba(46,204,143,.18),rgba(0,201,184,.08));}
+.cc5{background:linear-gradient(135deg,rgba(0,201,184,.18),rgba(77,159,255,.08));}
+.cc6{background:linear-gradient(135deg,rgba(255,107,53,.18),rgba(200,134,10,.08));}
+.cc7{background:linear-gradient(135deg,rgba(255,77,143,.18),rgba(155,107,255,.08));}
+
+/* ── SECTION HEADER ── */
+.sh{display:flex;justify-content:space-between;align-items:center;padding:16px 16px 10px;}
+.sh-t{font-family:sans-serif;font-size:13px;font-weight:700;display:flex;align-items:center;gap:7px;}
+.sh-icon{width:22px;height:22px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;}
+.sh-a{font-size:10px;color:var(--accent2);font-weight:600;cursor:pointer;font-family:sans-serif;}
+
+/* ── SUBCATEGORY GRID ── */
+.subcat-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;padding:0 16px;}
+.subcat-tile{
+  border-radius:14px;padding:14px 12px;position:relative;overflow:hidden;
+  cursor:pointer;border:1px solid rgba(255,255,255,.05);min-height:78px;
+  display:flex;flex-direction:column;justify-content:flex-end;
+  transition:transform .15s,box-shadow .15s;
+}
+.subcat-tile:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.3);}
+.subcat-tile::before{content:'';position:absolute;inset:0;opacity:.35;}
+.subcat-emoji{position:absolute;top:10px;right:12px;font-size:24px;opacity:.85;}
+.subcat-name{font-family:sans-serif;font-size:11px;font-weight:800;position:relative;z-index:1;margin-bottom:2px;color:rgba(255,255,255,0.95);}
+.subcat-count{font-size:9px;opacity:.65;position:relative;z-index:1;color:rgba(255,255,255,0.9);}
+.sc1{background:linear-gradient(135deg,#1A0E04,#2A1806);}
+.sc2{background:linear-gradient(135deg,#04141A,#062A1A);}
+.sc3{background:linear-gradient(135deg,#100414,#1A0628);}
+.sc4{background:linear-gradient(135deg,#041A10,#062A08);}
+.sc5{background:linear-gradient(135deg,#0A0414,#14062A);}
+.sc6{background:linear-gradient(135deg,#14100A,#1A1400);}
+.sc7{background:linear-gradient(135deg,#1A0408,#2A0614);}
+.sc8{background:linear-gradient(135deg,#04100A,#041A14);}
+
+/* ── PREACHER SCROLL ── */
+.preachers-scroll{display:flex;gap:12px;padding:0 16px;overflow-x:auto;scrollbar-width:none;}
+.preachers-scroll::-webkit-scrollbar{display:none;}
+.preacher-card{flex-shrink:0;width:88px;cursor:pointer;text-align:center;}
+.preacher-avatar-wrap{position:relative;margin:0 auto 7px;width:68px;height:68px;}
+.preacher-avatar-ring{
+  width:68px;height:68px;border-radius:50%;padding:2px;
+  background:var(--gold);
+  box-shadow:0 4px 14px rgba(200,134,10,.3);
+}
+.preacher-avatar-ring.inactive{background:var(--surface3);}
+.preacher-avatar{
+  width:100%;height:100%;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:22px;border:2px solid var(--bg);
+}
+.preacher-live{
+  position:absolute;bottom:1px;right:1px;background:var(--red);
+  border:2px solid var(--bg);border-radius:50px;padding:1px 5px;
+  font-size:7px;font-family:sans-serif;font-weight:800;color:white;
+  display:flex;align-items:center;gap:2px;
+}
+.live-pulse{width:4px;height:4px;background:white;border-radius:50%;animation:lpulse 1s ease-in-out infinite;}
+@keyframes lpulse{0%,100%{opacity:1}50%{opacity:.2}}
+.preacher-name{font-family:sans-serif;font-size:10px;font-weight:700;margin-bottom:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.preacher-count{font-size:8px;color:var(--text3);}
+.preacher-follow{
+  margin-top:5px;padding:3px 10px;border-radius:50px;
+  font-size:8px;font-family:sans-serif;font-weight:700;cursor:pointer;
+  border:1px solid rgba(200,134,10,.3);color:var(--accent2);background:transparent;
+  transition:all .15s;display:inline-block;
+}
+.preacher-follow.following{background:rgba(200,134,10,.12);}
+
+/* ── MOST DOWNLOADED — ranked list ── */
+.ranked-list{padding:0 16px;display:flex;flex-direction:column;gap:4px;}
+.ranked-row{
+  display:flex;align-items:center;gap:10px;padding:9px 11px;
+  border-radius:13px;cursor:pointer;transition:background .15s;position:relative;
+}
+.ranked-row:hover{background:var(--surface);}
+.ranked-row.playing{background:rgba(200,134,10,.07);}
+.rank-num{
+  width:26px;height:26px;border-radius:8px;display:flex;align-items:center;justify-content:center;
+  font-family:sans-serif;font-size:11px;font-weight:800;flex-shrink:0;
+}
+.rn-1{background:rgba(200,134,10,.2);color:var(--accent3);}
+.rn-2{background:rgba(180,180,200,.1);color:#C8C8DC;}
+.rn-3{background:rgba(205,127,50,.12);color:#CD7F32;}
+.rn-n{background:var(--surface2);color:var(--text3);}
+.ranked-thumb{width:46px;height:46px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0;position:relative;}
+.playing-eq{position:absolute;inset:0;background:rgba(0,0,0,.4);border-radius:10px;display:flex;align-items:center;justify-content:center;}
+.eq{display:flex;gap:2px;align-items:flex-end;height:14px;}
+.eq-b{width:3px;background:var(--accent2);border-radius:2px;animation:eqa .75s ease-in-out infinite alternate;}
+.eq-b:nth-child(1){height:5px;animation-delay:0s;}
+.eq-b:nth-child(2){height:12px;animation-delay:.18s;}
+.eq-b:nth-child(3){height:8px;animation-delay:.09s;}
+.eq-b:nth-child(4){height:14px;animation-delay:.27s;}
+@keyframes eqa{from{transform:scaleY(.35)}to{transform:scaleY(1)}}
+.ranked-info{flex:1;min-width:0;}
+.ranked-title{font-family:sans-serif;font-size:12px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:2px;}
+.ranked-title.on{color:var(--accent2);}
+.ranked-preacher{font-size:10px;color:var(--text2);margin-bottom:3px;}
+.ranked-tags{display:flex;gap:5px;align-items:center;}
+.rtag{font-size:8px;font-family:sans-serif;font-weight:700;padding:2px 6px;border-radius:4px;}
+.rtag-cat{background:rgba(200,134,10,.1);color:var(--accent2);border:1px solid rgba(200,134,10,.2);}
+.rtag-dur{background:var(--surface2);color:var(--text3);}
+.ranked-right{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0;}
+.ranked-dls{font-family:sans-serif;font-size:10px;font-weight:700;color:var(--blue);display:flex;align-items:center;gap:2px;}
+.ranked-dls svg{width:9px;height:9px;fill:none;stroke:var(--blue);stroke-width:2;}
+.ranked-heart{width:22px;height:22px;display:flex;align-items:center;justify-content:center;cursor:pointer;border-radius:50%;}
+.ranked-heart:hover{background:rgba(200,134,10,.1);}
+.ranked-heart svg{width:12px;height:12px;fill:none;stroke:var(--text3);stroke-width:2;}
+.ranked-heart.liked svg{fill:var(--accent2);stroke:var(--accent2);}
+
+/* ── TOP PREACHERS — horizontal cards ── */
+.hscroll{display:flex;gap:10px;padding:0 16px;overflow-x:auto;scrollbar-width:none;}
+.hscroll::-webkit-scrollbar{display:none;}
+.hcard{flex-shrink:0;width:150px;cursor:pointer;}
+.hcard-cover{
+  width:150px;height:100px;border-radius:13px;margin-bottom:7px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:36px;position:relative;overflow:hidden;
+}
+.hcard-cover-ov{position:absolute;inset:0;background:linear-gradient(180deg,transparent 30%,rgba(0,0,0,.6));}
+.hcard-play{
+  position:absolute;bottom:7px;right:7px;width:28px;height:28px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 2px 8px rgba(0,0,0,.4);
+}
+.hcard-play svg{width:10px;height:10px;fill:white;margin-left:1px;}
+.hcard-ep-count{position:absolute;top:7px;left:7px;background:rgba(0,0,0,.55);backdrop-filter:blur(4px);border-radius:5px;padding:2px 6px;font-size:8px;font-family:sans-serif;font-weight:700;color:white;}
+.hcard-name{font-family:sans-serif;font-size:11px;font-weight:700;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.hcard-sub{font-size:9px;color:var(--text2);}
+
+/* ── RECENTLY ADDED — compact list ── */
+.recent-list{padding:0 16px;display:flex;flex-direction:column;gap:3px;}
+.recent-row{
+  display:flex;align-items:center;gap:10px;padding:8px 10px;
+  border-radius:12px;cursor:pointer;transition:background .15s;
+}
+.recent-row:hover{background:var(--surface);}
+.recent-thumb{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;position:relative;}
+.new-badge{
+  position:absolute;top:-4px;right:-4px;background:var(--green);
+  border:1px solid var(--bg);border-radius:50px;padding:1px 5px;
+  font-size:7px;font-family:sans-serif;font-weight:800;color:white;
+}
+.recent-info{flex:1;min-width:0;}
+.recent-title{font-family:sans-serif;font-size:11px;font-weight:700;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.recent-preacher{font-size:9px;color:var(--text2);margin-bottom:3px;}
+.recent-meta{display:flex;gap:7px;}
+.recent-meta-item{font-size:8px;color:var(--text3);display:flex;align-items:center;gap:2px;}
+.recent-meta-item svg{width:8px;height:8px;fill:none;stroke:currentColor;stroke-width:2;}
+.recent-right{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0;}
+.recent-dur{font-size:10px;color:var(--text3);font-family:sans-serif;font-weight:600;}
+.recent-time{font-size:8px;color:var(--text3);}
+.recent-dl{width:24px;height:24px;border-radius:7px;background:rgba(200,134,10,.1);border:1px solid rgba(200,134,10,.2);display:flex;align-items:center;justify-content:center;cursor:pointer;}
+.recent-dl svg{width:10px;height:10px;fill:none;stroke:var(--accent2);stroke-width:2;}
+
+/* ── TOP LECTURES (full list) ── */
+.lecture-list{padding:0 16px;display:flex;flex-direction:column;gap:6px;}
+.lec-card{
+  background:var(--surface);border:1px solid var(--border);border-radius:14px;
+  padding:12px 14px;cursor:pointer;transition:border-color .15s,transform .15s;
+  display:flex;gap:12px;align-items:center;position:relative;overflow:hidden;
+}
+.lec-card:hover{border-color:rgba(200,134,10,.2);transform:translateX(2px);}
+.lec-card::before{content:'';position:absolute;top:0;left:0;bottom:0;width:3px;border-radius:14px 0 0 14px;}
+.lec-art{width:52px;height:52px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
+.lec-info{flex:1;min-width:0;}
+.lec-title{font-family:sans-serif;font-size:12px;font-weight:700;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.lec-preacher{font-size:10px;color:var(--text2);margin-bottom:5px;display:flex;align-items:center;gap:5px;}
+.lec-preacher-badge{width:14px;height:14px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:6px;font-family:sans-serif;font-weight:700;}
+.lec-tags{display:flex;gap:5px;flex-wrap:wrap;}
+.lec-tag{font-size:8px;font-family:sans-serif;font-weight:700;padding:2px 7px;border-radius:50px;}
+.lec-right{display:flex;flex-direction:column;align-items:flex-end;gap:5px;flex-shrink:0;}
+.lec-stat{font-family:sans-serif;font-size:10px;font-weight:700;display:flex;align-items:center;gap:2px;}
+.lec-stat svg{width:9px;height:9px;fill:none;stroke:currentColor;stroke-width:2;}
+.lec-actions{display:flex;gap:4px;}
+.lec-btn{width:26px;height:26px;border-radius:7px;display:flex;align-items:center;justify-content:center;cursor:pointer;border:1px solid var(--border);background:transparent;transition:all .15s;}
+.lec-btn:hover{background:var(--surface2);}
+.lec-btn svg{width:11px;height:11px;fill:none;stroke:var(--text2);stroke-width:2;}
+.lec-btn.play-btn{background:rgba(200,134,10,.12);border-color:rgba(200,134,10,.25);}
+.lec-btn.play-btn svg{stroke:var(--accent2);}
+
+/* ── AD BANNER ── */
+.ad{
+  margin:10px 16px 0;background:var(--surface);border:1px solid var(--border);
+  border-radius:12px;padding:8px 12px;display:flex;align-items:center;gap:8px;
+}
+.ad-tag{font-size:8px;font-family:sans-serif;color:var(--text3);background:var(--surface2);border-radius:4px;padding:2px 5px;text-transform:uppercase;letter-spacing:.4px;flex-shrink:0;}
+.ad-txt{font-size:11px;color:var(--text2);flex:1;}
+.ad-cta{font-size:11px;color:var(--accent2);font-weight:700;font-family:sans-serif;flex-shrink:0;cursor:pointer;}
+.ad-x{font-size:12px;color:var(--text3);flex-shrink:0;cursor:pointer;}
+
+/* ── MINI PLAYER ── */
+.mini-player{
+  margin:6px 12px 0;
+  background:linear-gradient(135deg,#1A0E04,#0E0A18);
+  border-radius:16px;padding:10px 12px;
+  border:1px solid rgba(200,134,10,.2);
+  box-shadow:0 6px 24px rgba(0,0,0,.6);flex-shrink:0;
+}
+.mp-top{display:flex;align-items:center;gap:10px;}
+.mp-art{
+  width:40px;height:40px;border-radius:10px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;font-size:18px;
+  box-shadow:0 3px 10px rgba(200,134,10,.3);
+}
+.mp-inf{flex:1;min-width:0;}
+.mp-title{font-family:sans-serif;font-size:12px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:1px;}
+.mp-preacher{font-size:10px;color:var(--text2);}
+.mp-ctrl{display:flex;align-items:center;gap:6px;}
+.mp-ctrl svg{width:17px;height:17px;fill:none;stroke:var(--text2);stroke-width:2;cursor:pointer;}
+.mp-play-btn{
+  width:34px;height:34px;border-radius:50%;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+  box-shadow:0 3px 12px rgba(200,134,10,.4);
+}
+.mp-play-btn svg{width:13px;height:13px;fill:#1A0800;}
+.mp-prog{display:flex;align-items:center;gap:7px;margin-top:7px;}
+.mp-bar{flex:1;height:3px;background:var(--surface3);border-radius:2px;overflow:hidden;}
+.mp-fill{width:35%;height:100%;background:linear-gradient(90deg,var(--accent),var(--accent3));border-radius:2px;}
+.mp-t{font-size:9px;color:var(--text3);font-family:sans-serif;}
+
+/* ── BOTTOM NAV ── */
+.bnav{
+  display:flex;justify-content:space-around;align-items:center;
+  padding:10px 8px 14px;background:var(--surface);border-top:1px solid var(--border);
+  flex-shrink:0;position:sticky;bottom:0;z-index:10;
+}
+.ni{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:5px 10px;border-radius:10px;}
+.ni.on{background:rgba(200,134,10,.1);}
+.ni svg{width:18px;height:18px;fill:none;stroke:var(--text3);stroke-width:2;}
+.ni.on svg{stroke:var(--accent2);}
+.nl{font-size:9px;font-family:sans-serif;font-weight:700;color:var(--text3);}
+.ni.on .nl{color:var(--accent2);}
+
+/* ── GRADIENTS ── */
+.g1{background:linear-gradient(135deg,#9B6BFF,#4D9FFF);}
+.g2{background:linear-gradient(135deg,#C8860A,#E8A020);}
+.g3{background:linear-gradient(135deg,#FF4D8F,#C8860A);}
+.g4{background:linear-gradient(135deg,#2ECC8F,#4D9FFF);}
+.g5{background:linear-gradient(135deg,#E8A020,#F5C842);}
+.g6{background:linear-gradient(135deg,#4D9FFF,#9B6BFF);}
+.g7{background:linear-gradient(135deg,#C8860A,#FF4D8F);}
+.g8{background:linear-gradient(135deg,#2ECC8F,#9B6BFF);}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.phone>*{animation:fadeUp .4s ease forwards;}
+
+/* ── RESPONSIVE LAYOUT (matches song_portal_web.html) ── */
+@media (min-width:768px){
+  .topnav        { padding:14px 24px 0; }
+  .hero          { margin:18px 24px 0; height:200px; }
+  .search-wrap   { margin:16px 24px 0; }
+  .catscroll     { display:grid; grid-template-columns:repeat(4,1fr); overflow-x:unset; padding:4px 24px 0; gap:10px; }
+  .ccat-card     { width:auto; flex-shrink:unset; }
+  .cat-pills     { padding:0 24px; }
+  .sec-header    { padding:18px 24px 10px; }
+  .preachers-scroll { padding:0 24px; }
+  .trending-list { padding:0 24px; }
+  .featured-row  { padding:0 24px; }
+  .recent-list   { padding:0 24px; }
+  .series-grid   { padding:0 24px; }
+  .browse-grid   { padding:0 24px; }
+  .footer        { padding:24px; }
+  .bnav          { padding-left:24px; padding-right:24px; }
+}
+@media (min-width:1024px){
+  .phone         { max-width:1200px; margin:0 auto; }
+  .topnav        { padding:16px 32px 0; }
+  .hero          { margin:20px 32px 0; height:240px; }
+  .catscroll     { grid-template-columns:repeat(7,1fr); padding:4px 32px 0; }
+  .mini-player   { margin-left:32px; margin-right:32px; }
+  .search-wrap   { margin:18px 32px 0; }
+  .cat-pills     { padding:0 32px; }
+  .sec-header    { padding:22px 32px 12px; }
+  .preachers-scroll { padding:0 32px; gap:14px; }
+  .trending-list { padding:0 32px; }
+  .featured-row  { padding:0 32px; gap:12px; }
+  .recent-list   { padding:0 32px; }
+  .series-grid   { padding:0 32px; gap:12px; grid-template-columns:repeat(3,1fr); }
+  .browse-grid   { padding:0 32px; grid-template-columns:repeat(3,1fr); }
+  .footer        { padding:32px; }
+  .hero-title    { font-size:22px; }
+  .bnav          { padding-left:32px; padding-right:32px; }
+}
+@media (max-width:480px){
+  .topnav        { padding:8px 14px 0; }
+  .hero          { margin:12px 14px 0; }
+  .search-wrap   { margin:12px 14px 0; }
+  .cat-pills     { padding:0 14px; }
+  .sec-header    { padding:14px 14px 8px; }
+  .preachers-scroll { padding:0 14px; }
+  .trending-list { padding:0 14px; }
+  .featured-row  { padding:0 14px; }
+  .recent-list   { padding:0 14px; }
+  .series-grid   { padding:0 14px; }
+  .browse-grid   { padding:0 14px; }
+  .footer        { padding:14px; }
+}
+</style>
+</head>
+<body>
+<div class="phone">
+  <div class="scroll">
+
+    <!-- TOP NAV -->
+    <div class="topnav">
+      <div class="topnav-left">
+        <div class="back-btn"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></div>
+        <div>
+          <div class="page-label">Wa'azi · <span style="font-family:'Amiri',serif;font-size:14px;color:var(--accent2);">وعظ</span></div>
+          <div style="font-size:9px;color:var(--text3);margin-top:1px;">Islamic Preaching & Lectures</div>
+        </div>
+      </div>
+      <div class="topnav-right">
+        <div class="nav-icon-btn">
+          <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+          <div class="notif-dot"></div>
+        </div>
+        <div class="nav-icon-btn" onclick="toggleTheme()">
+          <svg viewBox="0 0 24 24" id="themeIcon"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SEARCH -->
+    <div class="search-wrap">
+      <div class="search-left-icon"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div>
+      <input class="search-input" type="text" placeholder="Search lectures, preachers, topics…" id="searchInput">
+      <div class="search-right-btn"><svg viewBox="0 0 24 24"><line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="11" y1="18" x2="13" y2="18"/></svg></div>
+    </div>
+
+    <!-- HERO BANNER -->
+    <div class="hero" onclick="showToast('Now playing: Hanyar Gaskiya','')">
+      <div class="hero-arabesque">﷽</div>
+      <div class="hero-content">
+        <div class="hero-badge">
+          <div class="hero-badge-text">🔥 Trending Lecture</div>
+        </div>
+        <div class="hero-title">Hanyar Gaskiya — The Path of Truth</div>
+        <div class="hero-preacher">
+          <div class="hero-preacher-dot">SA</div>
+          Sheikh Ahmad Abubakar Gumi · Series Vol. 3
+        </div>
+        <div class="hero-actions">
+          <div class="hero-play">
+            <svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            Play Now
+          </div>
+          <div class="hero-save" onclick="event.stopPropagation();showToast('Saved to library','')"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div>
+          <div class="hero-stats">
+            <div class="hero-stat"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>1.8M</div>
+            <div class="hero-stat"><svg viewBox="0 0 24 24"><path d="M12 3v10M8 9l4 4 4-4"/><path d="M5 19h14"/></svg>620K</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CATEGORY CHIPS -->
+    <div class="chips" id="categoryChips">
+      <div class="chip active" data-cat="all">All</div>
+      <div class="chip off" data-cat="tafsir">Tafsir</div>
+      <div class="chip off" data-cat="aqeedah">Aqeedah</div>
+      <div class="chip off" data-cat="fiqh">Fiqh</div>
+      <div class="chip off" data-cat="seerah">Seerah</div>
+      <div class="chip off" data-cat="hadith">Hadith</div>
+      <div class="chip off" data-cat="akhlaq">Akhlaq</div>
+      <div class="chip off" data-cat="dua">Du'a</div>
+    </div>
+
+    <!-- CATEGORY SECTION -->
+    <div class="sh"><div class="sh-t"><div class="sh-icon" style="background:rgba(200,134,10,.12);">🏷️</div>Browse by Category</div></div>
+    <div class="catscroll" id="categoryCards">
+      <div class="ccat-card cc1" data-cat="tafsir"><span class="ccat-icon">📖</span><div class="ccat-name">Tafsir</div><div class="ccat-count">312 lectures</div></div>
+      <div class="ccat-card cc2" data-cat="aqeedah"><span class="ccat-icon">🕌</span><div class="ccat-name">Aqeedah</div><div class="ccat-count">248 lectures</div></div>
+      <div class="ccat-card cc3" data-cat="fiqh"><span class="ccat-icon">⚖️</span><div class="ccat-name">Fiqh</div><div class="ccat-count">189 lectures</div></div>
+      <div class="ccat-card cc4" data-cat="akhlaq"><span class="ccat-icon">🌿</span><div class="ccat-name">Akhlaq</div><div class="ccat-count">156 lectures</div></div>
+      <div class="ccat-card cc5" data-cat="seerah"><span class="ccat-icon">🕊️</span><div class="ccat-name">Seerah</div><div class="ccat-count">142 lectures</div></div>
+      <div class="ccat-card cc6" data-cat="dua"><span class="ccat-icon">🤲</span><div class="ccat-name">Du'a</div><div class="ccat-count">128 lectures</div></div>
+      <div class="ccat-card cc7" data-cat="hadith"><span class="ccat-icon">📿</span><div class="ccat-name">Hadith</div><div class="ccat-count">210 lectures</div></div>
+    </div>
+
+    <!-- SUB-CATEGORIES -->
+    <div class="sh"><div class="sh-t"><div class="sh-icon" style="background:rgba(200,134,10,.12);">📂</div>Sub-Categories</div><div class="sh-a">See all</div></div>
+    <div class="subcat-grid">
+      <div class="subcat-tile sc1"><div class="subcat-emoji">📖</div><div class="subcat-name">Tafsir Al-Quran</div><div class="subcat-count">312 lectures</div></div>
+      <div class="subcat-tile sc2"><div class="subcat-emoji">🕌</div><div class="subcat-name">Aqeedah</div><div class="subcat-count">248 lectures</div></div>
+      <div class="subcat-tile sc3"><div class="subcat-emoji">⚖️</div><div class="subcat-name">Fiqh & Rulings</div><div class="subcat-count">189 lectures</div></div>
+      <div class="subcat-tile sc4"><div class="subcat-emoji">🌿</div><div class="subcat-name">Akhlaq & Morals</div><div class="subcat-count">156 lectures</div></div>
+      <div class="subcat-tile sc5"><div class="subcat-emoji">🌙</div><div class="subcat-name">Ramadan Series</div><div class="subcat-count">94 lectures</div></div>
+      <div class="subcat-tile sc6"><div class="subcat-emoji">🤲</div><div class="subcat-name">Du'a & Adhkar</div><div class="subcat-count">128 lectures</div></div>
+      <div class="subcat-tile sc7"><div class="subcat-emoji">🕊️</div><div class="subcat-name">Seerah</div><div class="subcat-count">142 lectures</div></div>
+      <div class="subcat-tile sc8"><div class="subcat-emoji">📿</div><div class="subcat-name">Hadith Studies</div><div class="subcat-count">210 lectures</div></div>
+    </div>
+
+    <!-- AD -->
+    <div class="ad">
+      <div class="ad-tag">Ad</div>
+      <div class="ad-txt">Premium — Download unlimited lectures for offline listening</div>
+      <div class="ad-cta">Try Free</div>
+      <div class="ad-x" onclick="this.parentElement.remove()">✕</div>
+    </div>
+
+    <!-- PREACHERS -->
+    <div class="sh"><div class="sh-t"><div class="sh-icon" style="background:rgba(155,107,255,.12);">🎤</div>Featured Preachers</div><div class="sh-a">See all</div></div>
+    <div class="preachers-scroll" id="preachersScroll"></div>
+
+    <!-- MOST DOWNLOADED -->
+    <div class="sh"><div class="sh-t"><div class="sh-icon" style="background:rgba(77,159,255,.12);">⬇️</div>Most Downloaded</div><div class="sh-a">See all</div></div>
+    <div class="ranked-list" id="mostDownloaded"></div>
+
+    <!-- TOP LECTURES (HORIZONTAL) -->
+    <div class="sh"><div class="sh-t"><div class="sh-icon" style="background:rgba(200,134,10,.12);">🏆</div>Top Lecture Series</div><div class="sh-a">See all</div></div>
+    <div class="hscroll" id="topSeries"></div>
+
+    <!-- AD 2 -->
+    <div class="ad" style="margin-top:10px;">
+      <div class="ad-tag">Ad</div>
+      <div class="ad-txt">Learn Arabic online · Special discount for Shurafah users</div>
+      <div class="ad-cta">Learn</div>
+      <div class="ad-x" onclick="this.parentElement.remove()">✕</div>
+    </div>
+
+    <!-- RECENTLY ADDED -->
+    <div class="sh"><div class="sh-t"><div class="sh-icon" style="background:rgba(46,204,143,.12);">✨</div>Recently Added</div><div class="sh-a">See all</div></div>
+    <div class="recent-list" id="recentList"></div>
+
+    <!-- FULL LECTURE LIST (TOP BY PLAYS) -->
+    <div class="sh" style="padding-top:18px;"><div class="sh-t"><div class="sh-icon" style="background:rgba(255,77,143,.1);">🎙️</div>All Lectures</div>
+      <div style="display:flex;gap:6px;align-items:center;">
+        <span style="font-size:9px;color:var(--text3);">Sort:</span>
+        <select id="sortSelect" style="background:var(--surface);border:1px solid var(--border);border-radius:7px;padding:3px 8px;font-size:9px;color:var(--text2);outline:none;cursor:pointer;font-family:sans-serif;font-weight:700;">
+          <option value="plays">Most Played</option>
+          <option value="downloads">Most Downloaded</option>
+          <option value="recent">Recently Added</option>
+          <option value="duration">Longest First</option>
+        </select>
+      </div>
+    </div>
+    <div class="lecture-list" id="lectureList"></div>
+    <a class="view-all-btn" href="all_top_lectures.html">Browse All Lectures →</a>
+
+    <div style="height:16px;"></div>
+
+  </div><!-- /scroll -->
+
+  <!-- MINI PLAYER -->
+  <div class="mini-player">
+    <div class="mp-top">
+      <div class="mp-art g2">🎙️</div>
+      <div class="mp-inf">
+        <div class="mp-title">Hanyar Gaskiya Vol. 3</div>
+        <div class="mp-preacher">Sheikh Ahmad Gumi</div>
+      </div>
+      <div class="mp-ctrl">
+        <svg viewBox="0 0 24 24"><polygon points="19 20 9 12 19 4 19 20"/><line x1="5" y1="19" x2="5" y2="5"/></svg>
+        <div class="mp-play-btn"><svg viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg></div>
+        <svg viewBox="0 0 24 24"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19"/></svg>
+      </div>
+    </div>
+    <div class="mp-prog">
+      <span class="mp-t">18:24</span>
+      <div class="mp-bar"><div class="mp-fill"></div></div>
+      <span class="mp-t">1:04:38</span>
+    </div>
+  </div>
+
+  <!-- BOTTOM NAV (Home · Wa'azi · Explore · Favourites · Profile) -->
+  <div class="bnav">
+    <a class="ni" href="song_portal_web.html" style="text-decoration:none;color:inherit;"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><div class="nl">Home</div></a>
+    <a class="ni on" href="shurafah_waazi.html" style="text-decoration:none;color:inherit;"><svg viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg><div class="nl">Wa'azi</div></a>
+    <a class="ni" href="shurafah_explore.html" style="text-decoration:none;color:inherit;"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><div class="nl">Explore</div></a>
+    <a class="ni" href="favourites_page.html" style="text-decoration:none;color:inherit;"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg><div class="nl">Favourites</div></a>
+    <a class="ni" href="user_profile_page.html" style="text-decoration:none;color:inherit;"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><div class="nl">Profile</div></a>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast" style="position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(16px);background:var(--surface2);border:1px solid var(--border);border-radius:50px;padding:9px 18px;font-size:11px;font-family:sans-serif;font-weight:700;color:var(--text);box-shadow:0 8px 24px rgba(0,0,0,.6);z-index:200;opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;white-space:nowrap;"></div>
+
+<script>
+/* ── Toast ── */
+var toastEl = document.getElementById('toast');
+var toastT  = null;
+function showToast(msg, type) {
+  toastEl.textContent = msg;
+  toastEl.style.opacity = '1';
+  toastEl.style.transform = 'translateX(-50%) translateY(0)';
+  clearTimeout(toastT);
+  toastT = setTimeout(function() {
+    toastEl.style.opacity = '0';
+    toastEl.style.transform = 'translateX(-50%) translateY(16px)';
+  }, 2400);
+}
+
+/* ─────────────────────────────────────────
+   DATA
+   Laravel: var PREACHERS  = {!! json_encode($preachers) !!};
+            var LECTURES   = {!! json_encode($lectures->paginate(20)) !!};
+───────────────────────────────────────── */
+var PREACHERS = [
+  { id:1,  name:'Sh. Ahmad Gumi',    emoji:'🎙️', grad:'g2', lectures:148, followers:'2.4M', live:true  },
+  { id:2,  name:'Sh. Isah Ali Ibrahim', emoji:'📖', grad:'g4', lectures:212, followers:'1.8M', live:false },
+  { id:3,  name:'Sh. Abdallah Usman',emoji:'🕌', grad:'g1', lectures:96,  followers:'980K', live:false },
+  { id:4,  name:'Dr. Aminu Daurawa', emoji:'⚖️', grad:'g5', lectures:184, followers:'1.2M', live:true  },
+  { id:5,  name:'Sh. Aliyu Musa Maikwaru',emoji:'🌿', grad:'g8', lectures:72, followers:'640K', live:false },
+  { id:6,  name:'Sh. Ibrahim Salih', emoji:'🤲', grad:'g6', lectures:128, followers:'820K', live:false },
+  { id:7,  name:'Dr. Auwal Albani',  emoji:'📿', grad:'g7', lectures:156, followers:'1.4M', live:false }
+];
+
+var LECTURES = [
+  { id:1,  title:'Hanyar Gaskiya Vol.3',        preacher:'Sh. Ahmad Gumi',       cat:'Aqeedah', emoji:'🎙️', grad:'g2', plays:'1.8M', dls:'620K', dur:'1:04:38', added:'2 hrs ago',   isNew:true,  liked:true  },
+  { id:2,  title:'Tafsir Suratul Baqarah',      preacher:'Sh. Isah Ali Ibrahim', cat:'Tafsir',  emoji:'📖', grad:'g4', plays:'2.4M', dls:'940K', dur:'1:28:14', added:'Yesterday',   isNew:false, liked:false },
+  { id:3,  title:'Fiqhul Ibadah — Part 12',     preacher:'Dr. Aminu Daurawa',    cat:'Fiqh',   emoji:'⚖️', grad:'g5', plays:'980K', dls:'412K', dur:'58:22',   added:'2 days ago',  isNew:false, liked:true  },
+  { id:4,  title:'Manners in Islam Series',     preacher:'Sh. Aliyu Maikwaru',  cat:'Akhlaq', emoji:'🌿', grad:'g8', plays:'750K', dls:'298K', dur:'44:10',   added:'3 days ago',  isNew:false, liked:false },
+  { id:5,  title:'Seerah — Life of the Prophet',preacher:'Sh. Ibrahim Salih',   cat:'Seerah', emoji:'🕊️', grad:'g6', plays:'640K', dls:'248K', dur:'1:12:05', added:'4 days ago',  isNew:false, liked:false },
+  { id:6,  title:"Du'a of the 10 Days",         preacher:'Dr. Auwal Albani',     cat:"Du'a",   emoji:'🤲', grad:'g7', plays:'520K', dls:'198K', dur:'32:44',   added:'4 days ago',  isNew:false, liked:true  },
+  { id:7,  title:'Hadith Riyadhus Saliheen',    preacher:'Sh. Abdallah Usman',  cat:'Hadith', emoji:'📿', grad:'g1', plays:'480K', dls:'182K', dur:'1:10:28', added:'5 days ago',  isNew:false, liked:false },
+  { id:8,  title:'Ramadan Preparation 2026',    preacher:'Sh. Ahmad Gumi',       cat:'Akhlaq', emoji:'🌙', grad:'g2', plays:'420K', dls:'168K', dur:'48:30',   added:'6 days ago',  isNew:false, liked:false },
+  { id:9,  title:'Marriage in Islam',            preacher:'Dr. Aminu Daurawa',   cat:'Fiqh',   emoji:'💍', grad:'g5', plays:'390K', dls:'154K', dur:'56:12',   added:'1 week ago',  isNew:false, liked:true  },
+  { id:10, title:'Tawheed — Core Beliefs',      preacher:'Sh. Ibrahim Salih',   cat:'Aqeedah',emoji:'🕌', grad:'g6', plays:'360K', dls:'140K', dur:'1:22:08', added:'1 week ago',  isNew:false, liked:false },
+  { id:11, title:'Youth & Islam Today',          preacher:'Dr. Auwal Albani',    cat:'Akhlaq', emoji:'🎯', grad:'g7', plays:'840K', dls:'320K', dur:'38:44',   added:'Today',       isNew:true,  liked:false },
+  { id:12, title:'Adhkar of Morning & Evening', preacher:'Sh. Abdallah Usman',  cat:"Du'a",   emoji:'🌅', grad:'g1', plays:'290K', dls:'112K', dur:'24:18',   added:'Yesterday',   isNew:true,  liked:false }
+];
+
+var TOP_SERIES = [
+  { title:'Hanyar Gaskiya',     preacher:'Sh. Ahmad Gumi',       emoji:'🎙️', grad:'g2', eps:24, plays:'8.4M'  },
+  { title:'Tafsir Al-Quran',    preacher:'Sh. Isah Ali Ibrahim', emoji:'📖', grad:'g4', eps:48, plays:'12.1M' },
+  { title:'Fiqhul Ibadah',      preacher:'Dr. Aminu Daurawa',    emoji:'⚖️', grad:'g5', eps:36, plays:'6.2M'  },
+  { title:'Seerah Series',      preacher:'Sh. Ibrahim Salih',    emoji:'🕊️', grad:'g6', eps:20, plays:'4.8M'  },
+  { title:'Riyadhus Saliheen',  preacher:'Sh. Abdallah Usman',  emoji:'📿', grad:'g1', eps:60, plays:'9.2M'  }
+];
+
+var catColors = {
+  Tafsir:'rgba(200,134,10,.1)',  Aqeedah:'rgba(155,107,255,.1)', Fiqh:'rgba(77,159,255,.1)',
+  Akhlaq:'rgba(46,204,143,.1)',  Seerah:'rgba(0,201,184,.1)',    "Du'a":'rgba(255,107,53,.1)',
+  Hadith:'rgba(255,77,143,.1)'
+};
+var catTextColors = {
+  Tafsir:'var(--accent2)', Aqeedah:'var(--purple)', Fiqh:'var(--blue)',
+  Akhlaq:'var(--green)',   Seerah:'var(--teal)',    "Du'a":'var(--accent)',
+  Hadith:'var(--pink)'
+};
+
+var currentCat = 'all';
+var searchQuery = '';
+var catMap = {
+  'all':null, 'tafsir':'Tafsir', 'aqeedah':'Aqeedah', 'fiqh':'Fiqh',
+  'seerah':'Seerah', 'hadith':'Hadith', 'akhlaq':'Akhlaq', 'dua':"Du'a"
+};
+
+/* ── Render preachers ── */
+function renderPreachers() {
+  var wrap = document.getElementById('preachersScroll');
+  wrap.innerHTML = '';
+  for (var i = 0; i < PREACHERS.length; i++) {
+    var p = PREACHERS[i];
+    var card = document.createElement('div');
+    card.className = 'preacher-card';
+    card.innerHTML =
+      '<div class="preacher-avatar-wrap">' +
+        '<div class="preacher-avatar-ring' + (p.live ? '' : ' inactive') + '">' +
+          '<div class="preacher-avatar ' + p.grad + '">' + p.emoji + '</div>' +
+        '</div>' +
+        (p.live ? '<div class="preacher-live"><div class="live-pulse"></div>LIVE</div>' : '') +
+      '</div>' +
+      '<div class="preacher-name">' + p.name.replace('Sh. ','').replace('Dr. ','') + '</div>' +
+      '<div class="preacher-count">' + p.lectures + ' lectures</div>' +
+      '<div class="preacher-follow" id="pf-' + p.id + '" onclick="followPreacher(' + p.id + ')">Follow</div>';
+    card.onclick = function() { window.location.href = 'shurafah_preacher_profile.html'; };
+    wrap.appendChild(card);
+  }
+}
+
+function followPreacher(id) {
+  event.stopPropagation();
+  var el = document.getElementById('pf-' + id);
+  var following = el.classList.contains('following');
+  el.classList.toggle('following', !following);
+  el.textContent = following ? 'Follow' : 'Following';
+  showToast(following ? 'Unfollowed.' : 'Following!', '');
+}
+
+/* ── Render most downloaded ── */
+function renderMostDownloaded() {
+  var wrap = document.getElementById('mostDownloaded');
+  wrap.innerHTML = '';
+  var catLabel = catMap[currentCat];
+  var base = catLabel ? LECTURES.filter(function(l){ return l.cat === catLabel; }) : LECTURES;
+  var sorted = base.slice().sort(function(a, b) {
+    return parseInt(b.dls.replace(/[KM]/g,'')) - parseInt(a.dls.replace(/[KM]/g,''));
+  });
+  var top = sorted.slice(0, 6);
+  for (var i = 0; i < top.length; i++) {
+    var l = top[i];
+    var rnkCls = i === 0 ? 'rn-1' : i === 1 ? 'rn-2' : i === 2 ? 'rn-3' : 'rn-n';
+    var isPlaying = i === 0;
+    var row = document.createElement('div');
+    row.className = 'ranked-row' + (isPlaying ? ' playing' : '');
+    var rkThumb = l.thumbnail ? 'style="background-image:url(' + l.thumbnail + ');background-size:cover;background-position:center;"' : '';
+    row.innerHTML =
+      '<div class="rank-num ' + rnkCls + '">' + (i+1) + '</div>' +
+      '<div class="ranked-thumb ' + l.grad + '" ' + rkThumb + '>' +
+        (l.thumbnail ? '' : l.emoji) +
+        (isPlaying ? '<div class="playing-eq"><div class="eq"><div class="eq-b"></div><div class="eq-b"></div><div class="eq-b"></div><div class="eq-b"></div></div></div>' : '') +
+      '</div>' +
+      '<div class="ranked-info">' +
+        '<div class="ranked-title' + (isPlaying ? ' on' : '') + '">' + l.title + '</div>' +
+        '<div class="ranked-preacher">' + l.preacher + '</div>' +
+        '<div class="ranked-tags">' +
+          '<span class="rtag rtag-cat">' + l.cat + '</span>' +
+          '<span class="rtag rtag-dur">' + l.dur + '</span>' +
+        '</div>' +
+      '</div>' +
+      '<div class="ranked-right">' +
+        '<div class="ranked-dls"><svg viewBox="0 0 24 24"><path d="M12 3v10M8 9l4 4 4-4"/><path d="M5 19h14"/></svg>' + l.dls + '</div>' +
+        '<div class="ranked-heart' + (l.liked ? ' liked' : '') + '" onclick="likeItem(this);event.stopPropagation();"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div>' +
+      '</div>';
+    row.onclick = function() { showToast('Opening lecture…', ''); };
+    wrap.appendChild(row);
+  }
+}
+
+/* ── Render top series ── */
+function renderTopSeries() {
+  var wrap = document.getElementById('topSeries');
+  wrap.innerHTML = '';
+  for (var i = 0; i < TOP_SERIES.length; i++) {
+    var s = TOP_SERIES[i];
+    var card = document.createElement('div');
+    card.className = 'hcard';
+    var hThumb = s.thumbnail ? 'style="background-image:url(' + s.thumbnail + ');background-size:cover;background-position:center;"' : '';
+    card.innerHTML =
+      '<div class="hcard-cover ' + s.grad + '" ' + hThumb + '>' +
+        (s.thumbnail ? '' : s.emoji) +
+        '<div class="hcard-cover-ov"></div>' +
+        '<div class="hcard-ep-count">' + s.eps + ' eps</div>' +
+        '<div class="hcard-play ' + s.grad + '"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg></div>' +
+      '</div>' +
+      '<div class="hcard-name">' + s.title + '</div>' +
+      '<div class="hcard-sub">' + s.preacher.replace('Sh. ','').replace('Dr. ','') + ' · ' + s.plays + '</div>';
+    card.onclick = function() { window.location.href = 'all_waazi_series.html'; };
+    wrap.appendChild(card);
+  }
+}
+
+/* ── Render recently added ── */
+function renderRecent() {
+  var wrap = document.getElementById('recentList');
+  wrap.innerHTML = '';
+  var catLabel = catMap[currentCat];
+  var base = catLabel ? LECTURES.filter(function(l){ return l.cat === catLabel; }) : LECTURES;
+  var sorted = base.slice().sort(function(a, b) {
+    var order = ['2 hrs ago','Today','Yesterday','2 days ago','3 days ago','4 days ago','5 days ago','6 days ago','1 week ago'];
+    return order.indexOf(a.added) - order.indexOf(b.added);
+  });
+  var recent = sorted.slice(0, 6);
+  for (var i = 0; i < recent.length; i++) {
+    var l = recent[i];
+    var row = document.createElement('div');
+    row.className = 'recent-row';
+    var rcThumb = l.thumbnail ? 'style="background-image:url(' + l.thumbnail + ');background-size:cover;background-position:center;"' : '';
+    row.innerHTML =
+      '<div class="recent-thumb ' + l.grad + '" ' + rcThumb + '>' +
+        (l.thumbnail ? '' : l.emoji) +
+        (l.isNew ? '<div class="new-badge">NEW</div>' : '') +
+      '</div>' +
+      '<div class="recent-info">' +
+        '<div class="recent-title">' + l.title + '</div>' +
+        '<div class="recent-preacher">' + l.preacher + '</div>' +
+        '<div class="recent-meta">' +
+          '<div class="recent-meta-item"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>' + l.plays + '</div>' +
+          '<div class="recent-meta-item"><svg viewBox="0 0 24 24"><path d="M12 3v10M8 9l4 4 4-4"/><path d="M5 19h14"/></svg>' + l.dls + '</div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="recent-right">' +
+        '<div class="recent-dur">' + l.dur + '</div>' +
+        '<div class="recent-time">' + l.added + '</div>' +
+        '<div class="recent-dl" onclick="showToast(\'Downloading…\',\'\');event.stopPropagation();"><svg viewBox="0 0 24 24"><path d="M12 3v10M8 9l4 4 4-4"/><path d="M5 19h14"/></svg></div>' +
+      '</div>';
+    row.onclick = function() { showToast('Opening lecture…', ''); };
+    wrap.appendChild(row);
+  }
+}
+
+/* ── Render full lecture list ── */
+function renderLectures(sortBy) {
+  var catLabel = catMap[currentCat];
+  var sorted = catLabel ? LECTURES.filter(function(l){ return l.cat === catLabel; }) : LECTURES.slice();
+  if (searchQuery) {
+    var q = searchQuery;
+    sorted = sorted.filter(function(l) {
+      return l.title.toLowerCase().indexOf(q) !== -1 ||
+             l.preacher.toLowerCase().indexOf(q) !== -1 ||
+             l.cat.toLowerCase().indexOf(q) !== -1;
+    });
+  }
+  if (sortBy === 'downloads') {
+    sorted.sort(function(a, b) { return parseFloat(b.dls) - parseFloat(a.dls); });
+  } else if (sortBy === 'recent') {
+    var order = ['2 hrs ago','Today','Yesterday','2 days ago','3 days ago','4 days ago','5 days ago','6 days ago','1 week ago'];
+    sorted.sort(function(a, b) { return order.indexOf(a.added) - order.indexOf(b.added); });
+  } else if (sortBy === 'duration') {
+    sorted.sort(function(a, b) {
+      function toSec(d) { var p = d.split(':'); return p.length === 3 ? parseInt(p[0])*3600+parseInt(p[1])*60+parseInt(p[2]) : parseInt(p[0])*60+parseInt(p[1]); }
+      return toSec(b.dur) - toSec(a.dur);
+    });
+  } else {
+    sorted.sort(function(a, b) { return parseFloat(b.plays) - parseFloat(a.plays); });
+  }
+
+  var wrap = document.getElementById('lectureList');
+  wrap.innerHTML = '';
+  for (var i = 0; i < sorted.length; i++) {
+    var l = sorted[i];
+    var cc = catColors[l.cat] || 'rgba(200,134,10,.1)';
+    var ct = catTextColors[l.cat] || 'var(--accent2)';
+    var card = document.createElement('div');
+    card.className = 'lec-card';
+    card.style.borderLeftColor = ct.replace('var(--','').replace(')','');
+    card.style.cssText += ';border-left:3px solid ' + ct + ';';
+    var laThumb = l.thumbnail ? 'style="background-image:url(' + l.thumbnail + ');background-size:cover;background-position:center;"' : '';
+    card.innerHTML =
+      '<div class="lec-art ' + l.grad + '" ' + laThumb + '>' + (l.thumbnail ? '' : l.emoji) + '</div>' +
+      '<div class="lec-info">' +
+        '<div class="lec-title">' + l.title + '</div>' +
+        '<div class="lec-preacher"><div class="lec-preacher-badge ' + l.grad + '">🎙</div>' + l.preacher + '</div>' +
+        '<div class="lec-tags">' +
+          '<span class="lec-tag" style="background:' + cc + ';color:' + ct + ';border:1px solid ' + cc.replace(',.1)',',0.22)').replace(',.12)',',0.25)') + ';">' + l.cat + '</span>' +
+          '<span class="lec-tag" style="background:var(--surface2);color:var(--text3);">⏱ ' + l.dur + '</span>' +
+          (l.isNew ? '<span class="lec-tag" style="background:rgba(46,204,143,.1);color:var(--green);border:1px solid rgba(46,204,143,.22);">NEW</span>' : '') +
+        '</div>' +
+      '</div>' +
+      '<div class="lec-right">' +
+        '<div class="lec-stat" style="color:var(--accent2);"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>' + l.plays + '</div>' +
+        '<div class="lec-stat" style="color:var(--blue);"><svg viewBox="0 0 24 24"><path d="M12 3v10M8 9l4 4 4-4"/><path d="M5 19h14"/></svg>' + l.dls + '</div>' +
+        '<div class="lec-actions">' +
+          '<div class="lec-btn play-btn" onclick="showToast(\'Playing: ' + l.title.replace(/'/g,"\\'") + '\',\'\');event.stopPropagation();"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg></div>' +
+          '<div class="lec-btn" onclick="showToast(\'Downloading…\',\'\');event.stopPropagation();"><svg viewBox="0 0 24 24"><path d="M12 3v10M8 9l4 4 4-4"/><path d="M5 19h14"/></svg></div>' +
+        '</div>' +
+      '</div>';
+    card.onclick = function() { showToast('Opening lecture…', ''); };
+    wrap.appendChild(card);
+  }
+}
+
+/* ── Like toggle ── */
+function likeItem(btn) {
+  btn.classList.toggle('liked');
+}
+
+/* ── Select category (defined early so event listeners can call it) ── */
+function selectCategory(cat) {
+  currentCat = cat || 'all';
+  document.querySelectorAll('.chip').forEach(function(c) {
+    c.className = c.getAttribute('data-cat') === currentCat ? 'chip active' : 'chip off';
+  });
+  document.querySelectorAll('.ccat-card').forEach(function(c) {
+    c.classList.toggle('active', c.getAttribute('data-cat') === currentCat);
+  });
+  renderMostDownloaded();
+  renderRecent();
+  var ss = document.getElementById('sortSelect');
+  renderLectures(ss ? ss.value : 'plays');
+  showToast(currentCat !== 'all' ? 'Showing: ' + catMap[currentCat] : 'Showing all lectures', '');
+}
+
+/* ── Category chip toggle ── */
+(function() {
+  var el = document.getElementById('categoryChips');
+  if (el) el.addEventListener('click', function(e) {
+    var chip = e.target.closest('.chip');
+    if (chip) selectCategory(chip.getAttribute('data-cat'));
+  });
+})();
+
+/* ── Category card click ── */
+(function() {
+  var el = document.getElementById('categoryCards');
+  if (el) el.addEventListener('click', function(e) {
+    var card = e.target.closest('.ccat-card');
+    if (!card) return;
+    var cat = card.getAttribute('data-cat') || 'all';
+    window.location.href = 'all_waazi_lectures.html' + (cat !== 'all' ? '?cat=' + encodeURIComponent(cat) : '');
+  });
+})();
+
+/* ── Sort select ── */
+(function() {
+  var el = document.getElementById('sortSelect');
+  if (el) el.addEventListener('change', function() { renderLectures(this.value); });
+})();
+
+/* ── Theme toggle ── */
+var isLight = localStorage.getItem('shurafah-theme') === 'light';
+function toggleTheme() {
+  isLight = !isLight;
+  localStorage.setItem('shurafah-theme', isLight ? 'light' : 'dark');
+  applyTheme();
+}
+function applyTheme() {
+  document.body.classList.toggle('light', isLight);
+  var icon = document.getElementById('themeIcon');
+  if (icon) {
+    icon.innerHTML = isLight
+      ? '<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>'
+      : '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>';
+    icon.setAttribute('stroke', isLight ? 'var(--text2)' : 'var(--text2)');
+    icon.setAttribute('fill', 'none');
+    icon.setAttribute('stroke-width', '2');
+  }
+}
+applyTheme();
+
+/* ── Notification bell dropdown ── */
+(function() {
+var bellBtn = document.querySelector('.nav-icon-btn');
+if (!bellBtn) return;
+bellBtn.addEventListener('click', function(e) {
+  e.stopPropagation();
+  var existing = document.getElementById('_notif-panel');
+  if (existing) { existing.remove(); return; }
+  var panel = document.createElement('div');
+  panel.id = '_notif-panel';
+  panel.style.cssText = 'position:fixed;z-index:2000;background:var(--surface);border:1px solid var(--border);border-radius:14px;min-width:300px;max-width:340px;box-shadow:0 12px 32px rgba(0,0,0,.6);overflow:hidden;';
+  var rect = this.getBoundingClientRect();
+  panel.style.top = (rect.bottom + 10) + 'px';
+  panel.style.right = '14px';
+  var hdr = document.createElement('div');
+  hdr.style.cssText = 'padding:13px 16px;border-bottom:1px solid var(--border);font-family:\'Syne\',sans-serif;font-size:13px;font-weight:700;color:var(--text);';
+  hdr.textContent = 'Notifications';
+  var body = document.createElement('div');
+  body.style.cssText = 'padding:20px 16px;text-align:center;color:var(--text3);font-size:12px;font-family:sans-serif;';
+  body.textContent = 'No new notifications';
+  panel.appendChild(hdr);
+  panel.appendChild(body);
+  document.body.appendChild(panel);
+  var ndot = document.querySelector('.notif-dot');
+  if (ndot) ndot.style.display = 'none';
+  setTimeout(function() {
+    document.addEventListener('click', function close(ev) {
+      if (!panel.contains(ev.target)) { panel.remove(); document.removeEventListener('click', close); }
+    });
+  }, 10);
+});
+})();
+
+/* ── Back button ── */
+var backBtn = document.querySelector('.back-btn');
+if (backBtn) {
+  backBtn.addEventListener('click', function() { window.history.back(); });
+}
+
+/* ── Sub-category tiles ── */
+document.querySelectorAll('.subcat-tile').forEach(function(tile) {
+  tile.addEventListener('click', function() {
+    var nm = tile.querySelector('.subcat-name');
+    var subcat = nm ? nm.textContent.trim() : '';
+    window.location.href = 'all_waazi_lectures.html' + (subcat ? '?subcat=' + encodeURIComponent(subcat) : '');
+  });
+});
+
+/* ── See all links ── */
+var seeAllMap = {
+  'Sub-Categories':      'all_waazi_subcategories.html',
+  'Featured Preachers':  'all_top_preachers.html',
+  'Most Downloaded':     'all_top_lectures.html',
+  'Top Lecture Series':  'all_waazi_series.html',
+  'Recently Added':      'all_recent_lectures.html',
+  'All Lectures':        'all_top_lectures.html'
+};
+document.querySelectorAll('.sh-a').forEach(function(link) {
+  link.addEventListener('click', function() {
+    var shTitle = link.closest('.sh').querySelector('.sh-t');
+    var text = shTitle ? shTitle.textContent.trim() : '';
+    for (var key in seeAllMap) {
+      if (text.indexOf(key) !== -1) {
+        window.location.href = seeAllMap[key];
+        return;
+      }
+    }
+  });
+});
+
+/* ── Mini player play/pause ── */
+var mpPlaying = false;
+var mpPlayBtn = document.querySelector('.mp-play-btn');
+if (mpPlayBtn) {
+  mpPlayBtn.addEventListener('click', function() {
+    mpPlaying = !mpPlaying;
+    mpPlayBtn.innerHTML = mpPlaying
+      ? '<svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>'
+      : '<svg viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>';
+  });
+}
+
+/* ── Mini player progress bar ── */
+var mpBar = document.querySelector('.mp-bar');
+if (mpBar) {
+  mpBar.style.cursor = 'pointer';
+  mpBar.addEventListener('click', function(e) {
+    var rect = mpBar.getBoundingClientRect();
+    var pct = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+    var fill = document.querySelector('.mp-fill');
+    if (fill) fill.style.width = (pct * 100) + '%';
+  });
+}
+
+/* ── Bottom nav active state ── */
+document.querySelectorAll('.bnav .ni').forEach(function(ni) {
+  ni.addEventListener('click', function() {
+    document.querySelectorAll('.bnav .ni').forEach(function(n) { n.classList.remove('on'); });
+    ni.classList.add('on');
+  });
+});
+
+/* ── Search input ── */
+(function() {
+  var el = document.getElementById('searchInput');
+  if (!el) return;
+  var searchTimer = null;
+  el.addEventListener('input', function() {
+    clearTimeout(searchTimer);
+    var val = this.value.trim().toLowerCase();
+    searchTimer = setTimeout(function() {
+      searchQuery = val;
+      var ss = document.getElementById('sortSelect');
+      renderLectures(ss ? ss.value : 'plays');
+      var ll = document.getElementById('lectureList');
+      if (val && ll && !ll.children.length) {
+        ll.innerHTML = '<div style="padding:24px;text-align:center;color:var(--text3);font-size:12px;">No lectures found</div>';
+      }
+    }, 280);
+  });
+})();
+
+/* ── Ad CTA ── */
+document.querySelectorAll('.ad-cta').forEach(function(cta) {
+  cta.addEventListener('click', function() { showToast('Premium feature coming soon!', ''); });
+});
+
+/* ── Init ── */
+try {
+  renderPreachers();
+  renderMostDownloaded();
+  renderTopSeries();
+  renderRecent();
+  renderLectures('plays');
+} catch(e) { console.error('Waʿazi init error:', e); }
+</script>
+</body>
+</html>

@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Shurafah — Category Songs</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#080B12;--surface:#0F1420;--surface2:#161C2E;--surface3:#1E2740;
+  --accent:#FF6B35;--accent2:#FFB347;
+  --blue:#4D9FFF;--green:#2ECC8F;--purple:#9B6BFF;--pink:#FF4D8F;--yellow:#FFD166;
+  --text:#F0F4FF;--text2:#8A94B0;--text3:#4A5270;
+  --border:rgba(255,255,255,0.06);
+  --cat-color:#FF6B35;--cat-bg:rgba(255,107,53,.12);
+}
+body.light{
+  --bg:#F4F6FC;--surface:#FFFFFF;--surface2:#E8ECF7;--surface3:#D8DEEF;
+  --text:#12172E;--text2:#5A6380;--text3:#9AA0BA;--border:rgba(0,0,0,0.07);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--text);min-height:100vh;display:flex;flex-direction:column;transition:background .3s,color .3s;}
+.phone{width:100%;background:var(--bg);display:flex;flex-direction:column;min-height:100vh;}
+.scroll{flex:1;overflow-y:auto;overflow-x:hidden;scrollbar-width:none;padding-bottom:80px;}
+.scroll::-webkit-scrollbar{display:none;}
+
+/* HEADER */
+.tbar{display:flex;align-items:center;justify-content:space-between;padding:14px 16px 4px;gap:10px;}
+.tb-back{width:36px;height:36px;background:var(--surface);border-radius:50%;display:flex;align-items:center;justify-content:center;border:1px solid var(--border);cursor:pointer;flex-shrink:0;transition:background .2s;text-decoration:none;color:inherit;}
+.tb-back:hover{background:var(--surface2);}
+.tb-back svg{width:14px;height:14px;fill:none;stroke:var(--text);stroke-width:2;}
+.tb-title{flex:1;font-family:sans-serif;font-size:15px;font-weight:800;letter-spacing:-.3px;text-align:center;}
+.theme-toggle{display:inline-flex;align-items:center;gap:6px;background:var(--surface2);border-radius:50px;padding:5px 10px 5px 8px;border:1.5px solid var(--cat-color);cursor:pointer;flex-shrink:0;}
+.tt-icon{font-size:13px;}.tt-label{font-family:sans-serif;font-size:10px;font-weight:700;color:var(--cat-color);letter-spacing:.3px;}
+
+/* CATEGORY HERO */
+.cat-hero{margin:12px 16px 0;border-radius:18px;padding:18px 16px;position:relative;overflow:hidden;min-height:110px;display:flex;flex-direction:column;justify-content:flex-end;}
+.cat-hero::before{content:'';position:absolute;top:0;right:0;width:160px;height:160px;border-radius:50%;opacity:.18;filter:blur(40px);background:var(--cat-color);}
+.cat-hero-icon{font-size:40px;margin-bottom:8px;position:relative;z-index:1;}
+.cat-hero-name{font-family:sans-serif;font-size:22px;font-weight:800;letter-spacing:-.4px;position:relative;z-index:1;margin-bottom:2px;}
+.cat-hero-count{font-size:11px;opacity:.7;position:relative;z-index:1;}
+
+/* STATS */
+.stats-bar{display:flex;gap:0;padding:10px 16px 0;}
+.stat-chip{flex:1;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:8px 10px;text-align:center;margin:0 3px;}
+.stat-chip:first-child{margin-left:0;}.stat-chip:last-child{margin-right:0;}
+.stat-v{font-family:sans-serif;font-size:14px;font-weight:800;color:var(--cat-color);}
+.stat-l{font-size:9px;color:var(--text3);}
+
+/* SEARCH */
+.sw{padding:10px 16px 0;}
+.sb{background:var(--surface);border:1px solid var(--border);border-radius:14px;display:flex;align-items:center;gap:10px;padding:10px 14px;transition:border-color .2s;}
+.sb:focus-within{border-color:var(--cat-color);}
+.sb svg{width:14px;height:14px;fill:none;stroke:var(--text3);stroke-width:2;flex-shrink:0;}
+.sb input{background:transparent;border:none;outline:none;color:var(--text);font-size:13px;flex:1;font-family:'DM Sans',sans-serif;}
+.sb input::placeholder{color:var(--text3);}
+
+/* TOOLBAR */
+.toolbar{display:flex;align-items:center;gap:8px;padding:10px 16px 8px;}
+.shead-c{font-size:10px;color:var(--text3);margin-right:auto;}
+.sort-sel{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:5px 10px;font-size:11px;color:var(--text);font-family:'DM Sans',sans-serif;outline:none;cursor:pointer;}
+.vt-wrap{display:flex;gap:4px;}
+.vt-btn{width:30px;height:30px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;}
+.vt-btn.on{background:var(--cat-color);border-color:transparent;}
+.vt-btn svg{width:14px;height:14px;fill:none;stroke:var(--text2);stroke-width:2;}
+.vt-btn.on svg{stroke:#fff;}
+
+/* CARD VIEW */
+.song-cards{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 16px;}
+.scard{background:var(--surface);border:1px solid var(--border);border-radius:16px;overflow:hidden;cursor:pointer;transition:transform .15s,box-shadow .15s;opacity:0;animation:fadeUp .35s forwards;}
+@keyframes fadeUp{to{opacity:1;transform:translateY(0);}from{opacity:0;transform:translateY(12px);}}
+.scard:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.35);}
+.scard-cover{height:90px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;font-size:34px;}
+.scard-play-ov{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .15s;background:rgba(0,0,0,.25);}
+.scard:hover .scard-play-ov{opacity:1;}
+.scard-play-ov svg{width:28px;height:28px;fill:white;}
+.scard-body{padding:10px 12px 12px;}
+.scard-title{font-family:sans-serif;font-size:12px;font-weight:700;line-height:1.3;margin-bottom:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.scard-artist{font-size:10px;color:var(--text2);margin-bottom:6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.scard-meta{display:flex;align-items:center;justify-content:space-between;}
+.scard-dur{font-size:9px;color:var(--text3);font-family:sans-serif;font-weight:600;}
+.scard-plays{font-size:9px;font-family:sans-serif;font-weight:700;color:var(--cat-color);}
+
+/* LIST VIEW */
+.song-list{display:flex;flex-direction:column;gap:8px;padding:0 16px;}
+.srow{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:10px 12px;cursor:pointer;transition:background .15s;opacity:0;animation:fadeUp .35s forwards;}
+.srow:hover{background:var(--surface2);}
+.srow-num{width:22px;font-family:sans-serif;font-size:11px;font-weight:800;color:var(--text3);text-align:center;flex-shrink:0;}
+.srow-num.top{color:var(--cat-color);}
+.srow-thumb{width:48px;height:48px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;position:relative;overflow:hidden;}
+.srow-play-ov{position:absolute;inset:0;background:rgba(0,0,0,.3);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .15s;border-radius:10px;}
+.srow:hover .srow-play-ov{opacity:1;}
+.srow-play-ov svg{width:14px;height:14px;fill:white;}
+.srow-body{flex:1;min-width:0;}
+.srow-title{font-family:sans-serif;font-size:12px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:3px;}
+.srow-artist{font-size:10px;color:var(--text3);}
+.srow-right{display:flex;flex-direction:column;align-items:flex-end;gap:3px;flex-shrink:0;}
+.srow-plays{font-size:9px;font-family:sans-serif;font-weight:700;color:var(--cat-color);}
+.srow-dur{font-size:9px;color:var(--text3);font-family:sans-serif;font-weight:600;}
+.srow-play-btn{width:32px;height:32px;background:var(--cat-color);border:none;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;box-shadow:0 3px 10px rgba(0,0,0,.3);}
+.srow-play-btn svg{width:11px;height:11px;fill:white;}
+
+/* GRADIENTS */
+.g1{background:linear-gradient(135deg,#9B6BFF,#4D9FFF);}
+.g2{background:linear-gradient(135deg,#FF6B35,#FFB347);}
+.g3{background:linear-gradient(135deg,#FF4D8F,#FF6B35);}
+.g4{background:linear-gradient(135deg,#2ECC8F,#4D9FFF);}
+.g5{background:linear-gradient(135deg,#FFB347,#FF4D8F);}
+.g6{background:linear-gradient(135deg,#4D9FFF,#9B6BFF);}
+.g7{background:linear-gradient(135deg,#FF6B35,#FF4D8F);}
+.g8{background:linear-gradient(135deg,#2ECC8F,#9B6BFF);}
+
+/* PAGINATION */
+.pagination{display:flex;align-items:center;justify-content:center;gap:6px;padding:16px 16px 6px;}
+.pg-btn{min-width:32px;height:32px;padding:0 8px;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text2);font-family:sans-serif;font-size:11px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;transition:all .15s;}
+.pg-btn:hover:not(:disabled){background:var(--surface2);color:var(--text);}
+.pg-btn.on{background:var(--cat-color);color:#fff;border-color:transparent;}
+.pg-btn:disabled{opacity:.35;cursor:not-allowed;}
+
+/* EMPTY */
+.empty{padding:56px 24px;text-align:center;}
+.empty-icon{font-size:48px;margin-bottom:12px;}
+.empty-msg{font-family:sans-serif;font-size:13px;font-weight:700;color:var(--text3);}
+
+/* BOTTOM NAV */
+.bnav{position:fixed;bottom:0;left:0;right:0;width:100%;height:62px;background:var(--surface);border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-around;z-index:50;transition:background .3s;}
+.ni{display:flex;flex-direction:column;align-items:center;gap:3px;padding:4px 10px;cursor:pointer;text-decoration:none;color:var(--text3);transition:color .15s;}
+.ni.on{color:var(--accent);}
+.ni svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;}
+.ni .nl{font-size:9px;font-family:sans-serif;font-weight:700;}
+
+@media(min-width:640px){.tbar{padding:16px 24px 4px;}.stats-bar,.sw,.toolbar{padding-left:24px;padding-right:24px;}.song-cards,.song-list,.pagination{padding-left:24px;padding-right:24px;}.song-cards{grid-template-columns:repeat(3,1fr);}.cat-hero{margin-left:24px;margin-right:24px;}}
+@media(min-width:1024px){.phone{max-width:1200px;margin:0 auto;}.tbar{padding:20px 40px 6px;}.stats-bar,.sw,.toolbar{padding-left:40px;padding-right:40px;}.song-cards,.song-list,.pagination{padding-left:40px;padding-right:40px;}.song-cards{grid-template-columns:repeat(4,1fr);gap:14px;}.cat-hero{margin-left:40px;margin-right:40px;}.bnav{max-width:1200px;left:50%;right:auto;transform:translateX(-50%);padding:0 40px;}}
+@media(max-width:480px){.tbar{padding:12px 14px 4px;}.stats-bar,.sw,.toolbar{padding-left:14px;padding-right:14px;}.song-cards,.song-list,.pagination{padding-left:14px;padding-right:14px;}.cat-hero{margin-left:14px;margin-right:14px;}}
+</style>
+</head>
+<body>
+<div class="phone">
+  <div class="scroll">
+
+    <div class="tbar">
+      <a class="tb-back" href="song_portal_web.html"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></a>
+      <div class="tb-title" id="pageTitle">Category Songs</div>
+      <div class="theme-toggle" id="themeToggle"><span class="tt-icon" id="ttIcon">🌙</span><span class="tt-label" id="ttLabel">Dark</span></div>
+    </div>
+
+    <div class="cat-hero" id="catHero">
+      <div class="cat-hero-icon" id="catIcon">🎵</div>
+      <div class="cat-hero-name" id="catName">Category</div>
+      <div class="cat-hero-count" id="catCountHero">0 songs</div>
+    </div>
+
+    <div class="stats-bar">
+      <div class="stat-chip"><div class="stat-v" id="statTotal">0</div><div class="stat-l">Songs</div></div>
+      <div class="stat-chip"><div class="stat-v" id="statArtists">0</div><div class="stat-l">Artists</div></div>
+      <div class="stat-chip"><div class="stat-v" id="statPlays">0</div><div class="stat-l">Total Plays</div></div>
+    </div>
+
+    <div class="sw">
+      <div class="sb">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" id="searchInput" placeholder="Search songs, artists…">
+      </div>
+    </div>
+
+    <div class="toolbar">
+      <span class="shead-c" id="countLabel">0 songs</span>
+      <select class="sort-sel" id="sortSelect">
+        <option value="plays">Most Played</option>
+        <option value="downloads">Most Downloaded</option>
+        <option value="recent">Most Recent</option>
+        <option value="az">A – Z</option>
+      </select>
+      <div class="vt-wrap">
+        <div class="vt-btn" id="vtCard" title="Card view"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg></div>
+        <div class="vt-btn on" id="vtList" title="List view"><svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg></div>
+      </div>
+    </div>
+
+    <div id="container"></div>
+    <div class="pagination" id="pagination"></div>
+    <div style="height:16px;"></div>
+
+  </div>
+
+  <div class="bnav">
+    <a class="ni on" href="song_portal_web.html"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><div class="nl">Home</div></a>
+    <a class="ni" href="shurafah_waazi.html"><svg viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg><div class="nl">Wa'azi</div></a>
+    <a class="ni" href="shurafah_explore.html"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><div class="nl">Explore</div></a>
+    <a class="ni" href="favourites_page.html"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg><div class="nl">Favourites</div></a>
+    <a class="ni" href="user_profile_page.html"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><div class="nl">Profile</div></a>
+  </div>
+</div>
+
+<script>
+var CAT_CONFIG = {
+  Shairai:      { icon:'🎤', color:'#FF6B35', bg:'rgba(255,107,53,.12)',  heroGrad:'linear-gradient(135deg,#1A0A05,#3D200A)',  border:'rgba(255,107,53,.25)'  },
+  Ashura:       { icon:'🙏', color:'#9B6BFF', bg:'rgba(155,107,255,.12)', heroGrad:'linear-gradient(135deg,#1A0F2E,#2D1B69)', border:'rgba(155,107,255,.25)' },
+  'Ahlul-baiti':{ icon:'🎹', color:'#4D9FFF', bg:'rgba(77,159,255,.12)',  heroGrad:'linear-gradient(135deg,#0A1F2E,#0D3B5E)', border:'rgba(77,159,255,.25)'  },
+  Maulud:       { icon:'🎉', color:'#2ECC8F', bg:'rgba(46,204,143,.12)',  heroGrad:'linear-gradient(135deg,#061A10,#0A2E1A)', border:'rgba(46,204,143,.25)'  },
+  Shuhada:      { icon:'🥁', color:'#FF4D8F', bg:'rgba(255,77,143,.12)',  heroGrad:'linear-gradient(135deg,#200A14,#3D0A1E)', border:'rgba(255,77,143,.25)'  },
+  Shurafah:     { icon:'🎷', color:'#FFB347', bg:'rgba(255,179,71,.12)',  heroGrad:'linear-gradient(135deg,#1A1205,#2E200A)', border:'rgba(255,179,71,.25)'  },
+  Manga:        { icon:'🎧', color:'#4D9FFF', bg:'rgba(77,159,255,.12)',  heroGrad:'linear-gradient(135deg,#0A1420,#0D2A4A)', border:'rgba(77,159,255,.25)'  },
+};
+
+var ALL_SONGS = [
+  /* Shairai */
+  {id:41,title:'Karamin Sarki',     artist:'Uzairu Badamasi', emoji:'🎤',grad:'g2',cat:'Shairai',    dur:'4:45',plays:'2.1M',dls:'720K',added:'Yesterday'},
+  {id:42,title:'Dan Kauye',         artist:'Uzairu Badamasi', emoji:'🎤',grad:'g5',cat:'Shairai',    dur:'5:10',plays:'1.8M',dls:'610K',added:'2 days ago'},
+  {id:43,title:'Soyayyar Zuciya',   artist:'Dan Annas',       emoji:'🎤',grad:'g3',cat:'Shairai',    dur:'3:58',plays:'1.3M',dls:'440K',added:'3 days ago'},
+  {id:44,title:'Gidan Talaka',      artist:'Ali Jita',        emoji:'🎤',grad:'g6',cat:'Shairai',    dur:'4:22',plays:'960K',dls:'310K',added:'4 days ago'},
+  {id:45,title:'Madugun Zamani',    artist:'Uzairu Badamasi', emoji:'🎤',grad:'g1',cat:'Shairai',    dur:'5:35',plays:'840K',dls:'270K',added:'5 days ago'},
+  {id:46,title:'Arzikin Duniya',    artist:'Dan Annas',       emoji:'🎤',grad:'g4',cat:'Shairai',    dur:'4:08',plays:'620K',dls:'200K',added:'1 week ago'},
+  {id:47,title:'Tsoron Allah',      artist:'Malam Kabir',     emoji:'🎤',grad:'g7',cat:'Shairai',    dur:'6:02',plays:'490K',dls:'158K',added:'6 days ago'},
+  {id:48,title:'Hanyar Shiriya',    artist:'Islamic Choir',   emoji:'🎤',grad:'g8',cat:'Shairai',    dur:'5:25',plays:'380K',dls:'124K',added:'3 days ago'},
+  {id:49,title:'Ranar Lahira',      artist:'Uzairu Badamasi', emoji:'🎤',grad:'g2',cat:'Shairai',    dur:'4:50',plays:'720K',dls:'235K',added:'2 days ago'},
+  {id:50,title:'Bakin Dare',        artist:'Ali Jita',        emoji:'🎤',grad:'g5',cat:'Shairai',    dur:'3:44',plays:'560K',dls:'182K',added:'Yesterday'},
+  /* Shuhada */
+  {id:1, title:'Yan siyasa',        artist:'Uzairu Badamasi', emoji:'🥁',grad:'g1',cat:'Shuhada',    dur:'5:33',plays:'2.4M',dls:'830K',added:'2 days ago'},
+  {id:2, title:'Kurmus',            artist:'Uzairu Badamasi', emoji:'🥁',grad:'g4',cat:'Shuhada',    dur:'3:42',plays:'1.9M',dls:'610K',added:'Today'},
+  {id:3, title:'Kubra Shahida ce',  artist:'Uzairu Badamasi', emoji:'🥁',grad:'g3',cat:'Shuhada',    dur:'6:20',plays:'980K',dls:'312K',added:'4 days ago'},
+  {id:4, title:'Rimin Kware',       artist:'Uzairu Badamasi', emoji:'🥁',grad:'g2',cat:'Shuhada',    dur:'6:42',plays:'860K',dls:'280K',added:'5 days ago'},
+  {id:5, title:'A Kasar nan',       artist:'Uzairu Badamasi', emoji:'🥁',grad:'g5',cat:'Shuhada',    dur:'5:01',plays:'1.4M',dls:'490K',added:'1 week ago'},
+  {id:6, title:'Zafin Karatu',      artist:'Dan Annas',       emoji:'🥁',grad:'g6',cat:'Shuhada',    dur:'5:12',plays:'380K',dls:'120K',added:'4 days ago'},
+  {id:7, title:'Sayyidna Abbas',    artist:'Various Artists', emoji:'🥁',grad:'g7',cat:'Shuhada',    dur:'4:45',plays:'520K',dls:'165K',added:'3 days ago'},
+  {id:8, title:'Karbala Nasheed',   artist:'Malam Kabir',     emoji:'🥁',grad:'g8',cat:'Shuhada',    dur:'5:28',plays:'290K',dls:'98K', added:'6 days ago'},
+  {id:9, title:'Juyin juya Haki',   artist:'Uzairu Badamasi', emoji:'🥁',grad:'g1',cat:'Shuhada',    dur:'4:55',plays:'750K',dls:'210K',added:'5 days ago'},
+  {id:10,title:"Ta Sayyida Ma'asuma",artist:'Uzairu Badamasi',emoji:'🥁',grad:'g4',cat:'Shuhada',    dur:'4:28',plays:'520K',dls:'165K',added:'3 days ago'},
+  /* Ashura */
+  {id:11,title:'Ya Hussain',        artist:'Group Lamentation',emoji:'🙏',grad:'g1',cat:'Ashura',   dur:'7:14',plays:'1.2M',dls:'420K',added:'Yesterday'},
+  {id:12,title:'Muharram Memories', artist:'Anasheed Group',  emoji:'🙏',grad:'g4',cat:'Ashura',    dur:'5:55',plays:'840K',dls:'270K',added:'2 days ago'},
+  {id:13,title:'Tears of Karbala',  artist:'Islamic Choir',   emoji:'🙏',grad:'g3',cat:'Ashura',    dur:'6:30',plays:'720K',dls:'230K',added:'3 days ago'},
+  {id:14,title:'Lamentation Night', artist:'Malam Kabir',     emoji:'🙏',grad:'g2',cat:'Ashura',    dur:'8:20',plays:'480K',dls:'152K',added:'5 days ago'},
+  {id:15,title:'Arbaeen March',     artist:'Various Artists', emoji:'🙏',grad:'g5',cat:'Ashura',    dur:'4:48',plays:'380K',dls:'125K',added:'1 week ago'},
+  {id:16,title:'Safar na Hussain',  artist:'Uzairu Badamasi', emoji:'🙏',grad:'g6',cat:'Ashura',    dur:'5:15',plays:'620K',dls:'198K',added:'4 days ago'},
+  {id:17,title:'Karbala Forever',   artist:'Group Lamentation',emoji:'🙏',grad:'g7',cat:'Ashura',  dur:'6:44',plays:'310K',dls:'102K',added:'6 days ago'},
+  {id:18,title:'10th Muharram',     artist:'Anasheed Group',  emoji:'🙏',grad:'g8',cat:'Ashura',    dur:'5:02',plays:'265K',dls:'88K', added:'1 week ago'},
+  /* Ahlul-baiti */
+  {id:19,title:'Ya Ali',            artist:'Group Ahlul-baiti',emoji:'🎹',grad:'g7',cat:'Ahlul-baiti',dur:'4:33',plays:'1.1M',dls:'380K',added:'Yesterday'},
+  {id:20,title:'Fadhila ya Sayyid', artist:'Islamic Choir',   emoji:'🎹',grad:'g8',cat:'Ahlul-baiti',dur:'5:20',plays:'760K',dls:'240K',added:'2 days ago'},
+  {id:21,title:'Al-Ghadir',         artist:'Various Artists', emoji:'🎹',grad:'g1',cat:'Ahlul-baiti',dur:'6:05',plays:'540K',dls:'172K',added:'3 days ago'},
+  {id:22,title:'Mawlid Ahlul-baiti',artist:'Anasheed Group',  emoji:'🎹',grad:'g4',cat:'Ahlul-baiti',dur:'7:10',plays:'420K',dls:'138K',added:'1 week ago'},
+  {id:23,title:'Love of Ahl Bayt',  artist:'Malam Kabir',     emoji:'🎹',grad:'g3',cat:'Ahlul-baiti',dur:'4:55',plays:'310K',dls:'102K',added:'5 days ago'},
+  {id:24,title:'Fadak Remembered',  artist:'Islamic Choir',   emoji:'🎹',grad:'g2',cat:'Ahlul-baiti',dur:'5:38',plays:'270K',dls:'90K', added:'6 days ago'},
+  /* Maulud */
+  {id:25,title:'Ya Nabi Salam',     artist:'Various Artists', emoji:'🎉',grad:'g2',cat:'Maulud',    dur:'5:55',plays:'1.6M',dls:'540K',added:'2 days ago'},
+  {id:26,title:'Madahu Nabiyyi',    artist:'Uzairu Badamasi', emoji:'🎉',grad:'g5',cat:'Maulud',    dur:'4:22',plays:'1.1M',dls:'360K',added:'3 days ago'},
+  {id:27,title:'Maulud Celebration',artist:'Islamic Choir',   emoji:'🎉',grad:'g6',cat:'Maulud',    dur:'6:15',plays:'820K',dls:'265K',added:'Yesterday'},
+  {id:28,title:"Burdah al-Busiri",  artist:'Group Lamentation',emoji:'🎉',grad:'g7',cat:'Maulud',  dur:'8:45',plays:'680K',dls:'220K',added:'4 days ago'},
+  {id:29,title:"Dala'il al-Khayrat",artist:'Various Artists', emoji:'🎉',grad:'g8',cat:'Maulud',    dur:'7:30',plays:'510K',dls:'164K',added:'1 week ago'},
+  {id:30,title:'Naatun Nabawi',     artist:'Anasheed Group',  emoji:'🎉',grad:'g1',cat:'Maulud',    dur:'5:08',plays:'390K',dls:'128K',added:'6 days ago'},
+  /* Shurafah */
+  {id:31,title:'Hausa Classics',    artist:'Maishurafah',     emoji:'🎷',grad:'g4',cat:'Shurafah',  dur:'4:30',plays:'680K',dls:'215K',added:'Yesterday'},
+  {id:32,title:'Taqwa Songs',       artist:'Islamic Choir',   emoji:'🎷',grad:'g3',cat:'Shurafah',  dur:'5:45',plays:'420K',dls:'138K',added:'3 days ago'},
+  {id:33,title:'Adkar Morning',     artist:'Anasheed Group',  emoji:'🎷',grad:'g2',cat:'Shurafah',  dur:'6:10',plays:'310K',dls:'102K',added:'5 days ago'},
+  {id:34,title:'Evening Prayers',   artist:'Various Artists', emoji:'🎷',grad:'g5',cat:'Shurafah',  dur:'4:52',plays:'265K',dls:'88K', added:'1 week ago'},
+  {id:35,title:'Shurafah Originals',artist:'Maishurafah',     emoji:'🎷',grad:'g6',cat:'Shurafah',  dur:'5:20',plays:'195K',dls:'64K', added:'6 days ago'},
+  /* Manga */
+  {id:36,title:'Manga Special',     artist:'Maishurafah',     emoji:'🎧',grad:'g6',cat:'Manga',     dur:'4:15',plays:'520K',dls:'165K',added:'Yesterday'},
+  {id:37,title:'Hausa Pop Mix',     artist:'Ali Jita',        emoji:'🎧',grad:'g7',cat:'Manga',     dur:'3:55',plays:'880K',dls:'290K',added:'2 days ago'},
+  {id:38,title:'Cultural Beats',    artist:'Dan Annas',       emoji:'🎧',grad:'g8',cat:'Manga',     dur:'5:02',plays:'340K',dls:'112K',added:'4 days ago'},
+  {id:39,title:'Northern Nigeria Vibes',artist:'Various Artists',emoji:'🎧',grad:'g1',cat:'Manga', dur:'4:40',plays:'280K',dls:'92K', added:'1 week ago'},
+  {id:40,title:'Manga Remix',       artist:'Maishurafah',     emoji:'🎧',grad:'g2',cat:'Manga',     dur:'4:08',plays:'210K',dls:'70K', added:'5 days ago'},
+];
+
+var params = new URLSearchParams(window.location.search);
+var CURRENT_CAT = params.get('cat') || 'Shairai';
+var cfg = CAT_CONFIG[CURRENT_CAT] || { icon:'🎵', color:'#FF6B35', bg:'rgba(255,107,53,.12)', heroGrad:'linear-gradient(135deg,#1A0A05,#3D200A)', border:'rgba(255,107,53,.25)' };
+
+/* Apply category theme */
+document.documentElement.style.setProperty('--cat-color', cfg.color);
+document.documentElement.style.setProperty('--cat-bg', cfg.bg);
+var hero = document.getElementById('catHero');
+hero.style.background = cfg.heroGrad;
+hero.style.border = '1px solid ' + cfg.border;
+document.getElementById('catIcon').textContent = cfg.icon;
+document.getElementById('catName').textContent = CURRENT_CAT;
+document.getElementById('pageTitle').textContent = cfg.icon + ' ' + CURRENT_CAT;
+document.title = 'Shurafah — ' + CURRENT_CAT;
+document.querySelector('.theme-toggle').style.borderColor = cfg.color;
+document.querySelector('.tt-label').style.color = cfg.color;
+
+var CAT_SONGS = ALL_SONGS.filter(function(s){ return s.cat === CURRENT_CAT; });
+
+function parseNum(v){
+  var s=(v||'0').toString().trim();
+  if(s.endsWith('M'))return parseFloat(s)*1e6;
+  if(s.endsWith('K'))return parseFloat(s)*1e3;
+  return parseFloat(s)||0;
+}
+
+function computeStats(list){
+  var artists={}, totalPlays=0;
+  list.forEach(function(s){ artists[s.artist]=true; totalPlays+=parseNum(s.plays); });
+  var tp=totalPlays>=1e6?(totalPlays/1e6).toFixed(1)+'M':totalPlays>=1e3?Math.round(totalPlays/1e3)+'K':totalPlays;
+  document.getElementById('statTotal').textContent=list.length;
+  document.getElementById('statArtists').textContent=Object.keys(artists).length;
+  document.getElementById('statPlays').textContent=tp+'+';
+  document.getElementById('catCountHero').textContent=CAT_SONGS.length+' songs';
+}
+
+var currentSort='plays', currentView='list', currentPage=1, PAGE_SIZE=5;
+var _filtered=CAT_SONGS.slice();
+
+var _toast=null;
+function showToast(msg){
+  if(!_toast){_toast=document.createElement('div');_toast.style.cssText='position:fixed;bottom:72px;left:50%;transform:translateX(-50%) translateY(8px);background:var(--surface3);color:var(--text);font-family:sans-serif;font-size:12px;font-weight:600;padding:8px 18px;border-radius:50px;z-index:999;border:1px solid var(--border);white-space:nowrap;opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;box-shadow:0 6px 20px rgba(0,0,0,.5);';document.body.appendChild(_toast);}
+  _toast.textContent=msg;_toast.style.opacity=1;_toast.style.transform='translateX(-50%) translateY(0)';
+  clearTimeout(_toast._t);_toast._t=setTimeout(function(){_toast.style.opacity=0;_toast.style.transform='translateX(-50%) translateY(8px)';},2400);
+}
+
+function getSorted(list){
+  var s=list.slice();
+  var ord=['Today','Yesterday','2 hrs ago','2 days ago','3 days ago','4 days ago','5 days ago','6 days ago','1 week ago','2 weeks ago'];
+  if(currentSort==='plays')         s.sort(function(a,b){return parseNum(b.plays)-parseNum(a.plays);});
+  else if(currentSort==='downloads')s.sort(function(a,b){return parseNum(b.dls)-parseNum(a.dls);});
+  else if(currentSort==='recent')   s.sort(function(a,b){return ord.indexOf(a.added)-ord.indexOf(b.added);});
+  else                               s.sort(function(a,b){return a.title.localeCompare(b.title);});
+  return s;
+}
+
+function renderPage(){
+  var cont=document.getElementById('container');
+  cont.innerHTML='';
+  if(!_filtered.length){
+    cont.innerHTML='<div class="empty"><div class="empty-icon">'+cfg.icon+'</div><div class="empty-msg">No songs found in '+CURRENT_CAT+'</div></div>';
+    document.getElementById('pagination').innerHTML='';return;
+  }
+  var tp=Math.ceil(_filtered.length/PAGE_SIZE);
+  if(currentPage>tp)currentPage=1;
+  var start=(currentPage-1)*PAGE_SIZE;
+  var items=_filtered.slice(start,start+PAGE_SIZE);
+
+  if(currentView==='card'){
+    cont.className='song-cards';
+    items.forEach(function(s,i){
+      var el=document.createElement('div');el.className='scard';el.style.animationDelay=(i*0.05)+'s';
+      el.innerHTML='<div class="scard-cover '+s.grad+'">'+s.emoji+
+        '<div class="scard-play-ov"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg></div></div>'+
+        '<div class="scard-body">'+
+          '<div class="scard-title">'+s.title+'</div>'+
+          '<div class="scard-artist">'+s.artist+'</div>'+
+          '<div class="scard-meta"><span class="scard-dur">'+s.dur+'</span><span class="scard-plays">'+s.plays+'</span></div>'+
+        '</div>';
+      el.addEventListener('click',function(){window.location.href='song_detail_page.html';});
+      cont.appendChild(el);
+    });
+  } else {
+    cont.className='song-list';
+    items.forEach(function(s,idx){
+      var rank=start+idx+1;
+      var row=document.createElement('div');row.className='srow';row.style.animationDelay=(idx*0.05)+'s';
+      row.innerHTML=
+        '<div class="srow-num'+(rank<=3?' top':'')+'">'+rank+'</div>'+
+        '<div class="srow-thumb '+s.grad+'">'+s.emoji+
+          '<div class="srow-play-ov"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg></div></div>'+
+        '<div class="srow-body">'+
+          '<div class="srow-title">'+s.title+'</div>'+
+          '<div class="srow-artist">'+s.artist+'</div>'+
+        '</div>'+
+        '<div class="srow-right"><span class="srow-plays">'+s.plays+'</span><span class="srow-dur">'+s.dur+'</span></div>'+
+        '<button class="srow-play-btn"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg></button>';
+      row.querySelector('.srow-play-btn').addEventListener('click',function(e){e.stopPropagation();showToast('Playing: '+s.title);});
+      row.addEventListener('click',function(){window.location.href='song_detail_page.html';});
+      cont.appendChild(row);
+    });
+  }
+  renderPagination(tp);
+}
+
+function renderPagination(tp){
+  var pg=document.getElementById('pagination');pg.innerHTML='';if(tp<=1)return;
+  var prev=document.createElement('button');prev.className='pg-btn';prev.innerHTML='&#8249;';prev.disabled=currentPage===1;
+  prev.addEventListener('click',function(){currentPage--;renderPage();document.querySelector('.scroll').scrollTop=0;});pg.appendChild(prev);
+  var s=Math.max(1,currentPage-2),e=Math.min(tp,s+4);if(e-s<4)s=Math.max(1,e-4);
+  for(var p=s;p<=e;p++){(function(n){var b=document.createElement('button');b.className='pg-btn'+(n===currentPage?' on':'');b.textContent=n;b.addEventListener('click',function(){currentPage=n;renderPage();document.querySelector('.scroll').scrollTop=0;});pg.appendChild(b);})(p);}
+  var next=document.createElement('button');next.className='pg-btn';next.innerHTML='&#8250;';next.disabled=currentPage===tp;
+  next.addEventListener('click',function(){currentPage++;renderPage();document.querySelector('.scroll').scrollTop=0;});pg.appendChild(next);
+}
+
+function apply(){
+  var q=(document.getElementById('searchInput').value||'').trim().toLowerCase();
+  _filtered=getSorted(CAT_SONGS.filter(function(s){return !q||s.title.toLowerCase().includes(q)||s.artist.toLowerCase().includes(q);}));
+  currentPage=1;
+  var n=_filtered.length;
+  document.getElementById('countLabel').textContent=n+' song'+(n!==1?'s':'');
+  renderPage();
+}
+
+function applyTheme(l){document.body.classList.toggle('light',l);document.getElementById('ttIcon').textContent=l?'☀️':'🌙';document.getElementById('ttLabel').textContent=l?'Light':'Dark';}
+applyTheme(localStorage.getItem('shurafah-theme')==='light');
+document.getElementById('themeToggle').addEventListener('click',function(){var n=!document.body.classList.contains('light');applyTheme(n);localStorage.setItem('shurafah-theme',n?'light':'dark');});
+document.getElementById('sortSelect').addEventListener('change',function(){currentSort=this.value;apply();});
+document.getElementById('vtCard').addEventListener('click',function(){currentView='card';this.classList.add('on');document.getElementById('vtList').classList.remove('on');currentPage=1;renderPage();});
+document.getElementById('vtList').addEventListener('click',function(){currentView='list';this.classList.add('on');document.getElementById('vtCard').classList.remove('on');currentPage=1;renderPage();});
+var _st;document.getElementById('searchInput').addEventListener('input',function(){clearTimeout(_st);_st=setTimeout(apply,280);});
+
+computeStats(CAT_SONGS);
+apply();
+</script>
+</body>
+</html>

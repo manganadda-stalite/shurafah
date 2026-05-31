@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Shurafah — Wa'azi Subcategories</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&family=Amiri:ital,wght@0,400;0,700&display=swap" rel="stylesheet">
+<!-- REWRITTEN -->
+<style>
+:root{
+  --bg:#05070F;--surface:#0A0E1A;--surface2:#0F1525;--surface3:#141B2E;--surface4:#1A2238;
+  --accent:#C8860A;--accent2:#E8A020;--accent3:#F5C842;
+  --blue:#4D9FFF;--green:#2ECC8F;--purple:#9B6BFF;--pink:#FF4D8F;
+  --text:#F0F4FF;--text2:#8A94B0;--text3:#4A5270;
+  --border:rgba(255,255,255,0.06);
+  --gold:linear-gradient(135deg,#C8860A,#E8A020,#F5C842,#E8A020);
+}
+body.light{
+  --bg:#FAF7F0;--surface:#FFFFFF;--surface2:#F2EBD9;--surface3:#E8DFCC;
+  --text:#1A1206;--text2:#5A4E38;--text3:#9A8E78;
+  --border:rgba(0,0,0,0.08);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--text);min-height:100vh;display:flex;flex-direction:column;}
+.phone{width:100%;background:var(--bg);display:flex;flex-direction:column;min-height:100vh;position:relative;}
+.scroll{flex:1;overflow-y:auto;overflow-x:hidden;scrollbar-width:none;padding-bottom:80px;}
+.scroll::-webkit-scrollbar{display:none;}
+
+/* HEADER */
+.tbar{display:flex;align-items:center;justify-content:space-between;padding:14px 18px 4px;gap:10px;}
+.tb-back{width:36px;height:36px;background:var(--surface);border-radius:50%;display:flex;align-items:center;justify-content:center;border:1px solid var(--border);cursor:pointer;flex-shrink:0;text-decoration:none;color:inherit;}
+.tb-back svg{width:14px;height:14px;fill:none;stroke:var(--text);stroke-width:2;}
+.tb-title{flex:1;font-family:sans-serif;font-size:18px;font-weight:800;letter-spacing:-.3px;text-align:center;background:linear-gradient(135deg,var(--accent),var(--accent2),var(--accent3));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.theme-toggle{display:inline-flex;align-items:center;gap:6px;background:var(--surface2);border-radius:50px;padding:5px 10px 5px 8px;border:1.5px solid var(--accent2);cursor:pointer;}
+.tt-icon{font-size:13px;}
+.tt-label{font-family:sans-serif;font-size:10px;font-weight:700;color:var(--accent2);letter-spacing:.3px;}
+
+/* SEARCH */
+.sw{padding:10px 18px 0;}
+.sb{background:var(--surface);border:1px solid var(--border);border-radius:14px;display:flex;align-items:center;gap:10px;padding:10px 14px;}
+.sb svg{width:14px;height:14px;fill:none;stroke:var(--text3);stroke-width:2;flex-shrink:0;}
+.sb input{background:transparent;border:none;outline:none;color:var(--text);font-size:13px;flex:1;}
+.sb input::placeholder{color:var(--text3);}
+
+/* FILTER PILLS */
+.fp{display:flex;gap:7px;padding:12px 18px 0;overflow-x:auto;scrollbar-width:none;}
+.fp::-webkit-scrollbar{display:none;}
+.pill{flex-shrink:0;padding:6px 12px;border-radius:50px;font-family:sans-serif;font-size:10px;font-weight:700;cursor:pointer;white-space:nowrap;background:var(--surface);color:var(--text2);border:1px solid var(--border);}
+.pill.on{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#1A0800;border-color:transparent;box-shadow:0 3px 10px rgba(200,134,10,.3);}
+
+/* TOOLBAR */
+.toolbar{display:flex;align-items:center;gap:8px;padding:10px 18px 8px;}
+.shead-c{font-size:10px;color:var(--text3);font-family:sans-serif;font-weight:600;margin-right:auto;}
+
+/* VIEW TOGGLE */
+.vt-wrap{display:flex;gap:4px;}
+.vt-btn{width:30px;height:30px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;}
+.vt-btn.on{background:linear-gradient(135deg,var(--accent),var(--accent2));border-color:transparent;}
+.vt-btn svg{width:14px;height:14px;fill:none;stroke:var(--text2);stroke-width:2;}
+.vt-btn.on svg{stroke:#1A0800;}
+
+/* GRID VIEW */
+.subcat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 18px;}
+.tile{border-radius:16px;padding:18px 14px 14px;position:relative;overflow:hidden;cursor:pointer;
+  border:1px solid rgba(255,255,255,.06);min-height:120px;display:flex;flex-direction:column;
+  justify-content:flex-end;transition:transform .15s,box-shadow .15s;}
+.tile:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.4);}
+.tile::before{content:'';position:absolute;inset:0;background:linear-gradient(to bottom,transparent 35%,rgba(0,0,0,.55));z-index:0;}
+.tile-i{font-size:32px;position:absolute;top:12px;right:13px;opacity:.8;z-index:1;}
+.tile-cat{position:absolute;top:10px;left:10px;font-size:8px;font-family:sans-serif;font-weight:700;
+  padding:2px 7px;border-radius:4px;background:rgba(0,0,0,.35);z-index:1;}
+.tile-n{font-family:sans-serif;font-size:13px;font-weight:800;position:relative;z-index:1;margin-bottom:3px;line-height:1.25;}
+.tile-c{font-size:10px;color:rgba(255,255,255,.6);position:relative;z-index:1;}
+
+/* LIST VIEW */
+.subcat-list{display:flex;flex-direction:column;gap:8px;padding:0 18px;}
+.lrow{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--border);
+  border-radius:14px;padding:11px 13px;cursor:pointer;transition:background .15s,border-color .15s;}
+.lrow:hover{background:var(--surface2);border-color:rgba(200,134,10,.2);}
+.lrow-art{width:50px;height:50px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
+.lrow-info{flex:1;min-width:0;}
+.lrow-title{font-family:sans-serif;font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:4px;}
+.lrow-meta{display:flex;align-items:center;gap:6px;}
+.lrow-badge{font-size:8px;font-family:sans-serif;font-weight:700;border-radius:4px;padding:2px 7px;}
+.lrow-desc{font-size:10px;color:var(--text3);}
+.lrow-right{display:flex;flex-direction:column;align-items:flex-end;gap:3px;flex-shrink:0;}
+.lrow-count{font-family:sans-serif;font-size:14px;font-weight:800;background:var(--gold);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.lrow-lbl{font-size:9px;color:var(--text3);}
+.lrow-arr svg{width:13px;height:13px;fill:none;stroke:var(--text3);stroke-width:2;}
+
+/* EMPTY */
+.empty{padding:48px 24px;text-align:center;}
+.empty-icon{font-size:40px;margin-bottom:12px;}
+.empty-msg{font-family:sans-serif;font-size:13px;font-weight:700;color:var(--text3);}
+
+/* TILE GRADIENTS */
+.c1{background:linear-gradient(135deg,#1A0E04,#3A1A06);}
+.c2{background:linear-gradient(135deg,#100414,#2A0628);}
+.c3{background:linear-gradient(135deg,#04141A,#062A1A);}
+.c4{background:linear-gradient(135deg,#041A14,#062A28);}
+.c5{background:linear-gradient(135deg,#1A0A14,#2A0E18);}
+.c6{background:linear-gradient(135deg,#0A1424,#0E1E3A);}
+
+/* BOTTOM NAV */
+.bnav{display:flex;justify-content:space-around;align-items:center;padding:10px 8px 14px;background:var(--surface);border-top:1px solid var(--border);flex-shrink:0;position:sticky;bottom:0;z-index:10;}
+.ni{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:5px 10px;border-radius:10px;text-decoration:none;color:inherit;}
+.ni.on{background:rgba(200,134,10,.12);}
+.ni svg{width:19px;height:19px;fill:none;stroke:var(--text3);stroke-width:2;}
+.ni.on svg{stroke:var(--accent2);}
+.nl{font-size:9px;font-family:sans-serif;font-weight:700;color:var(--text3);}
+.ni.on .nl{color:var(--accent2);}
+</style>
+</head>
+<body>
+<div class="phone">
+  <div class="scroll">
+    <!-- HEADER -->
+    <div class="tbar">
+      <a class="tb-back" href="shurafah_waazi.html"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></a>
+      <div class="tb-title">📂 Subcategories</div>
+      <div class="theme-toggle" id="themeToggle">
+        <span class="tt-icon" id="ttIcon">🌙</span>
+        <span class="tt-label" id="ttLabel">Dark</span>
+      </div>
+    </div>
+
+    <!-- SEARCH -->
+    <div class="sw">
+      <div class="sb">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" id="searchInput" placeholder="Search subcategories…">
+      </div>
+    </div>
+
+    <!-- FILTER PILLS -->
+    <div class="fp" id="filterPills">
+      <div class="pill on" data-filter="all">All</div>
+      <div class="pill" data-filter="Tafsir">Tafsir</div>
+      <div class="pill" data-filter="Aqeedah">Aqeedah</div>
+      <div class="pill" data-filter="Fiqh">Fiqh</div>
+      <div class="pill" data-filter="Hadith">Hadith</div>
+      <div class="pill" data-filter="Seerah">Seerah</div>
+      <div class="pill" data-filter="Akhlaq">Akhlaq</div>
+    </div>
+
+    <!-- TOOLBAR -->
+    <div class="toolbar">
+      <span class="shead-c" id="countLabel">12 subcategories</span>
+      <div class="vt-wrap">
+        <div class="vt-btn on" id="vtGrid" title="Grid view"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg></div>
+        <div class="vt-btn" id="vtList" title="List view"><svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg></div>
+      </div>
+    </div>
+
+    <!-- CONTAINER -->
+    <div id="subcatContainer"></div>
+    <div style="height:16px;"></div>
+  </div>
+
+  <!-- BOTTOM NAV -->
+  <div class="bnav">
+    <a class="ni" href="song_portal_web.html"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><div class="nl">Home</div></a>
+    <a class="ni on" href="shurafah_waazi.html"><svg viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg><div class="nl">Wa'azi</div></a>
+    <a class="ni" href="shurafah_explore.html"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><div class="nl">Explore</div></a>
+    <a class="ni" href="favourites_page.html"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg><div class="nl">Favourites</div></a>
+    <a class="ni" href="user_profile_page.html"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><div class="nl">Profile</div></a>
+  </div>
+</div>
+<script>
+/* ── DATA ── */
+var SUBCATS = [
+  {name:'Tafsir Surah Al-Fatiha',  cat:'Tafsir',  emoji:'📖', cls:'c1', count:24,  desc:'Commentary on the Opening Chapter'},
+  {name:'Tafsir Surah Al-Baqarah', cat:'Tafsir',  emoji:'📖', cls:'c1', count:48,  desc:'The longest Surah explained in depth'},
+  {name:'Tafsir Suratul Yaseen',   cat:'Tafsir',  emoji:'📖', cls:'c1', count:22,  desc:'Heart of the Quran verse by verse'},
+  {name:'Tafsir Suratul Kahf',     cat:'Tafsir',  emoji:'📖', cls:'c1', count:18,  desc:'The Cave — trials and lessons'},
+  {name:'Tauhid Rububiyyah',       cat:'Aqeedah', emoji:'🕌', cls:'c2', count:32,  desc:'Oneness of Allah in Lordship'},
+  {name:'Tauhid Uluhiyyah',        cat:'Aqeedah', emoji:'🕌', cls:'c2', count:28,  desc:'Oneness of Allah in worship'},
+  {name:'Tauhid Asma was-Sifat',   cat:'Aqeedah', emoji:'🕌', cls:'c2', count:18,  desc:"Allah's Names and Attributes"},
+  {name:'Fiqh as-Salah',           cat:'Fiqh',    emoji:'⚖️', cls:'c3', count:42,  desc:'Rulings and pillars of Prayer'},
+  {name:'Fiqh az-Zakah',           cat:'Fiqh',    emoji:'⚖️', cls:'c3', count:36,  desc:'Zakah obligations and nisab'},
+  {name:'Fiqh as-Siyam',           cat:'Fiqh',    emoji:'⚖️', cls:'c3', count:28,  desc:'Fasting rules — Ramadan & voluntary'},
+  {name:'Seerah an-Nabawiyyah',    cat:'Seerah',  emoji:'🕊️', cls:'c4', count:38,  desc:'Biography of the Prophet ﷺ'},
+  {name:'Stories of the Prophets', cat:'Seerah',  emoji:'✨', cls:'c4', count:26,  desc:'Lives of the Prophets of Allah'},
+  {name:'Manners of the Muslim',   cat:'Akhlaq',  emoji:'🌿', cls:'c5', count:22,  desc:'Islamic etiquette and character'},
+  {name:'Youth & Challenges',      cat:'Akhlaq',  emoji:'🎯', cls:'c5', count:16,  desc:'Islam\'s guidance for the modern youth'},
+  {name:'Sahih al-Bukhari',        cat:'Hadith',  emoji:'📜', cls:'c6', count:54,  desc:'Explanations of the most authentic hadith'},
+  {name:'Sahih Muslim',            cat:'Hadith',  emoji:'📜', cls:'c6', count:42,  desc:'Commentary on Imam Muslim\'s collection'},
+  {name:'Forty Hadith an-Nawawi',  cat:'Hadith',  emoji:'📿', cls:'c6', count:41,  desc:'The foundational 40 hadith explained'}
+];
+
+var catColors = {
+  Tafsir: {bg:'rgba(200,134,10,.15)', text:'var(--accent2)'},
+  Aqeedah:{bg:'rgba(155,107,255,.15)',text:'var(--purple)'},
+  Fiqh:   {bg:'rgba(77,159,255,.15)', text:'var(--blue)'},
+  Seerah: {bg:'rgba(0,201,184,.15)',  text:'var(--teal,#00C9B8)'},
+  Akhlaq: {bg:'rgba(46,204,143,.15)', text:'var(--green)'},
+  Hadith: {bg:'rgba(255,77,143,.15)', text:'var(--pink)'}
+};
+
+var currentFilter = 'all';
+var currentView   = 'grid';
+var searchQ       = '';
+
+function navigate(name) {
+  window.location.href = 'all_waazi_lectures.html?subcat=' + encodeURIComponent(name);
+}
+
+function render() {
+  var list = SUBCATS.filter(function(s) {
+    var cm = currentFilter === 'all' || s.cat === currentFilter;
+    var tm = !searchQ || s.name.toLowerCase().indexOf(searchQ) !== -1 || s.cat.toLowerCase().indexOf(searchQ) !== -1;
+    return cm && tm;
+  });
+  document.getElementById('countLabel').textContent = list.length + ' subcategor' + (list.length !== 1 ? 'ies' : 'y');
+  var cont = document.getElementById('subcatContainer');
+  cont.innerHTML = '';
+  if (!list.length) {
+    cont.innerHTML = '<div class="empty"><div class="empty-icon">📭</div><div class="empty-msg">No subcategories found</div></div>';
+    return;
+  }
+  if (currentView === 'grid') {
+    cont.className = 'subcat-grid';
+    for (var i = 0; i < list.length; i++) {
+      var s = list[i];
+      var cc = catColors[s.cat] || {bg:'rgba(200,134,10,.15)',text:'var(--accent2)'};
+      var tile = document.createElement('div');
+      tile.className = 'tile ' + s.cls;
+      tile.innerHTML =
+        '<div class="tile-i">' + s.emoji + '</div>' +
+        '<span class="tile-cat" style="background:' + cc.bg + ';color:' + cc.text + ';">' + s.cat + '</span>' +
+        '<div class="tile-n">' + s.name + '</div>' +
+        '<div class="tile-c">' + s.count + ' lectures</div>';
+      (function(name){ tile.addEventListener('click', function(){ navigate(name); }); })(s.name);
+      cont.appendChild(tile);
+    }
+  } else {
+    cont.className = 'subcat-list';
+    for (var j = 0; j < list.length; j++) {
+      var lj = list[j];
+      var cj = catColors[lj.cat] || {bg:'rgba(200,134,10,.15)',text:'var(--accent2)'};
+      var row = document.createElement('div');
+      row.className = 'lrow';
+      row.innerHTML =
+        '<div class="lrow-art ' + lj.cls + '">' + lj.emoji + '</div>' +
+        '<div class="lrow-info">' +
+          '<div class="lrow-title">' + lj.name + '</div>' +
+          '<div class="lrow-meta">' +
+            '<span class="lrow-badge" style="background:' + cj.bg + ';color:' + cj.text + ';">' + lj.cat + '</span>' +
+            '<span class="lrow-desc">' + lj.desc + '</span>' +
+          '</div>' +
+        '</div>' +
+        '<div class="lrow-right">' +
+          '<div class="lrow-count">' + lj.count + '</div>' +
+          '<div class="lrow-lbl">lectures</div>' +
+          '<div class="lrow-arr"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div>' +
+        '</div>';
+      (function(name){ row.addEventListener('click', function(){ navigate(name); }); })(lj.name);
+      cont.appendChild(row);
+    }
+  }
+}
+
+/* ── Theme ── */
+function applyTheme(isLight){
+  if(isLight){ document.body.classList.add('light'); document.getElementById('ttIcon').textContent='☀️'; document.getElementById('ttLabel').textContent='Light'; }
+  else { document.body.classList.remove('light'); document.getElementById('ttIcon').textContent='🌙'; document.getElementById('ttLabel').textContent='Dark'; }
+}
+applyTheme(localStorage.getItem('shurafah-theme') === 'light');
+document.getElementById('themeToggle').addEventListener('click', function(){
+  var n = !document.body.classList.contains('light');
+  applyTheme(n);
+  localStorage.setItem('shurafah-theme', n ? 'light' : 'dark');
+});
+
+/* ── Filter pills ── */
+document.getElementById('filterPills').addEventListener('click', function(e) {
+  var pill = e.target.closest('.pill');
+  if (!pill) return;
+  document.querySelectorAll('.pill').forEach(function(p){ p.classList.remove('on'); });
+  pill.classList.add('on');
+  currentFilter = pill.getAttribute('data-filter');
+  render();
+});
+
+/* ── Search ── */
+var st = null;
+document.getElementById('searchInput').addEventListener('input', function(){
+  clearTimeout(st);
+  var v = this.value;
+  st = setTimeout(function(){ searchQ = v.trim().toLowerCase(); render(); }, 250);
+});
+
+/* ── View toggle ── */
+document.getElementById('vtGrid').addEventListener('click', function(){
+  currentView = 'grid';
+  document.getElementById('vtGrid').classList.add('on');
+  document.getElementById('vtList').classList.remove('on');
+  render();
+});
+document.getElementById('vtList').addEventListener('click', function(){
+  currentView = 'list';
+  document.getElementById('vtList').classList.add('on');
+  document.getElementById('vtGrid').classList.remove('on');
+  render();
+});
+
+/* ── Init ── */
+render();
+</script>
+</body>
+</html>

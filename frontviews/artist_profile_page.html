@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Shurafah — Artist Profile</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#080B12;--surface:#0F1420;--surface2:#161C2E;--surface3:#1E2740;
+  --accent:#FF6B35;--accent2:#FFB347;--blue:#4D9FFF;--green:#2ECC8F;
+  --purple:#9B6BFF;--pink:#FF4D8F;--yellow:#FFD166;
+  --text:#F0F4FF;--text2:#8A94B0;--text3:#4A5270;
+  --border:rgba(255,255,255,0.06);
+  --artist:#9B6BFF;
+}
+
+  /* ── LIGHT MODE ── */
+  body.light {
+    --bg:#F4F6FC; --surface:#FFFFFF; --surface2:#E8ECF7; --surface3:#D8DEEF;
+    --text:#12172E; --text2:#5A6380; --text3:#9AA0BA;
+    --border:rgba(0,0,0,0.07);
+  }
+  body.light .phone   { background:var(--bg); }
+  body.light .hero    { background:linear-gradient(135deg,#EEE8FA 0%,#E4EEF8 40%,#E4F2EE 100%) !important; }
+  body.light .mini-player { background:linear-gradient(135deg,#EEF0FA,#E4E8F5) !important; border-color:rgba(255,107,53,0.12) !important; }
+  body.light .bnav    { background:var(--surface); }
+  body.light .prem-card { background:linear-gradient(135deg,#FFF8E8,#FFF2CC,#FFF8E0) !important; }
+
+  /* ── THEME TOGGLE PILL ── */
+  .theme-toggle {
+    display:inline-flex; align-items:center; gap:6px; cursor:pointer;
+    background:var(--surface2); border-radius:50px;
+    padding:5px 11px 5px 9px;
+    border:1.5px solid var(--accent);
+    flex-shrink:0; user-select:none; z-index:100;
+  }
+  .theme-toggle .tt-icon  { font-size:14px; line-height:1; }
+  .theme-toggle .tt-label {
+    font-family:sans-serif; font-size:10px; font-weight:700;
+    color:var(--accent); letter-spacing:0.3px; white-space:nowrap;
+  }
+
+  /* ── SMOOTH TRANSITIONS ── */
+  body, .phone, .scroll, .hero, .mini-player, .bnav,
+  .surface, .user-stats, .main-tabs, .listen-card,
+  .weekly-chart, .about-card, .settings-group, .si-row,
+  .prem-card, .action-row, .srow, .trow, .hcard-art {
+    transition: background 0.3s ease, background-color 0.3s ease,
+                border-color 0.3s ease, color 0.3s ease;
+  }
+
+*{margin:0;padding:0;box-sizing:border-box;}
+body{
+  background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--text);
+  min-height:100vh;display:flex;flex-direction:column;
+}
+
+/* ── WEBSITE WRAPPER ── */
+.phone{
+  width:100%;background:var(--bg);
+  display:flex;flex-direction:column;min-height:100vh;position:relative;
+}
+.notch{display:none;}
+
+/* ── SCROLL ── */
+.scroll{flex:1;overflow-y:auto;overflow-x:hidden;scrollbar-width:none;padding-bottom:110px;}
+.scroll::-webkit-scrollbar{display:none;}
+
+/* ══════════════════════════════════════
+   HERO — Artist cover + avatar overlap
+══════════════════════════════════════ */
+.hero{
+  position:relative;width:100%;height:200px;
+  background:linear-gradient(160deg,#14082A 0%,#0D1240 35%,#1A0A1A 70%,#0A1A14 100%);
+  overflow:visible;flex-shrink:0;
+}
+/* animated gradient mesh */
+.hero::before{
+  content:'';position:absolute;inset:0;
+  background:
+    radial-gradient(ellipse at 20% 30%,rgba(155,107,255,0.35) 0%,transparent 55%),
+    radial-gradient(ellipse at 80% 70%,rgba(77,159,255,0.25) 0%,transparent 55%),
+    radial-gradient(ellipse at 50% 100%,rgba(255,77,143,0.15) 0%,transparent 50%);
+  animation:heroShift 6s ease-in-out infinite alternate;
+}
+@keyframes heroShift{
+  from{opacity:0.7;transform:scale(1);}
+  to{opacity:1;transform:scale(1.04);}
+}
+/* music note particles */
+.hero-particles{position:absolute;inset:0;overflow:hidden;}
+.particle{position:absolute;font-size:14px;opacity:0.08;animation:float 8s ease-in-out infinite;}
+.particle:nth-child(1){top:15%;left:10%;animation-delay:0s;}
+.particle:nth-child(2){top:60%;left:25%;animation-delay:1.5s;}
+.particle:nth-child(3){top:25%;left:70%;animation-delay:3s;}
+.particle:nth-child(4){top:70%;left:80%;animation-delay:4.5s;}
+.particle:nth-child(5){top:45%;left:50%;animation-delay:2s;}
+@keyframes float{0%,100%{transform:translateY(0) rotate(0deg);}50%{transform:translateY(-12px) rotate(8deg);}}
+
+/* Nav */
+.hero-nav{
+  position:absolute;top:0;left:0;right:0;
+  display:flex;justify-content:space-between;align-items:center;
+  padding:14px 16px 0;z-index:10;
+}
+.back-btn,.share-btn{
+  width:32px;height:32px;background:rgba(0,0,0,0.45);backdrop-filter:blur(10px);
+  border-radius:50%;display:flex;align-items:center;justify-content:center;
+  border:1px solid rgba(255,255,255,0.1);cursor:pointer;
+}
+.back-btn svg,.share-btn svg{width:15px;height:15px;fill:none;stroke:white;stroke-width:2;}
+.hero-nav-title{font-family:sans-serif;font-size:13px;font-weight:700;color:rgba(255,255,255,0.85);}
+
+/* Verified badge on hero */
+.hero-verified{
+  position:absolute;top:14px;left:50%;transform:translateX(-50%);
+  display:inline-flex;align-items:center;gap:4px;
+  background:rgba(155,107,255,0.18);border:1px solid rgba(155,107,255,0.4);
+  border-radius:50px;padding:3px 10px;margin-top:24px;
+  font-size:9px;font-weight:700;color:var(--purple);font-family:sans-serif;
+  text-transform:uppercase;letter-spacing:0.5px;
+}
+.hero-verified svg{width:9px;height:9px;fill:var(--purple);}
+
+/* Artist avatar — overlaps hero bottom */
+.avatar-wrap{
+  position:absolute;bottom:-44px;left:50%;transform:translateX(-50%);
+  z-index:20;display:flex;flex-direction:column;align-items:center;
+}
+.avatar-ring{
+  width:88px;height:88px;border-radius:50%;
+  background:linear-gradient(135deg,var(--purple),var(--blue),var(--pink));
+  padding:3px;box-shadow:0 8px 28px rgba(155,107,255,0.45);
+  animation:ringPulse 3s ease-in-out infinite;
+}
+@keyframes ringPulse{0%,100%{box-shadow:0 8px 28px rgba(155,107,255,0.45);}50%{box-shadow:0 8px 36px rgba(155,107,255,0.7);}}
+.avatar-inner{
+  width:100%;height:100%;border-radius:50%;
+  background:linear-gradient(135deg,#2A0E4A,#0E1A4A);
+  display:flex;align-items:center;justify-content:center;
+  font-size:36px;border:3px solid var(--bg);
+}
+.avatar-live{
+  position:absolute;bottom:4px;right:4px;
+  background:var(--green);border:2px solid var(--bg);
+  border-radius:50px;padding:2px 7px;
+  font-size:8px;font-family:sans-serif;font-weight:800;color:white;
+  display:flex;align-items:center;gap:3px;
+}
+.live-dot{width:5px;height:5px;background:white;border-radius:50%;animation:blink 1s ease-in-out infinite;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:0.2;}}
+
+/* ── ARTIST INFO BLOCK ── */
+.artist-info-block{
+  padding:56px 18px 0;text-align:center;
+}
+.artist-name{
+  font-family:sans-serif;font-size:22px;font-weight:800;letter-spacing:-0.4px;
+  margin-bottom:4px;
+}
+.artist-genre{font-size:12px;color:var(--text2);margin-bottom:10px;}
+.artist-tags{display:flex;gap:5px;justify-content:center;flex-wrap:wrap;margin-bottom:14px;}
+.atag{
+  background:rgba(155,107,255,0.12);border:1px solid rgba(155,107,255,0.25);
+  border-radius:50px;padding:3px 10px;font-size:9px;font-weight:700;
+  color:var(--purple);font-family:sans-serif;
+}
+
+/* Stats strip */
+.stats-strip{display:flex;justify-content:space-around;margin-bottom:14px;padding:0 10px;}
+.stat-item{text-align:center;}
+.stat-n{font-family:sans-serif;font-size:16px;font-weight:800;}
+.stat-l{font-size:9px;color:var(--text3);margin-top:2px;}
+.stat-item.s1 .stat-n{color:var(--purple);}
+.stat-item.s2 .stat-n{color:var(--accent);}
+.stat-item.s3 .stat-n{color:var(--blue);}
+.stat-item.s4 .stat-n{color:var(--green);}
+.stat-divider{width:1px;background:var(--border);align-self:center;height:28px;}
+
+/* Action buttons row */
+.action-row{display:flex;gap:8px;padding:0 18px;margin-bottom:4px;}
+.follow-big{
+  flex:1;background:var(--purple);border-radius:12px;padding:11px;
+  text-align:center;font-family:sans-serif;font-size:12px;font-weight:800;
+  cursor:pointer;box-shadow:0 4px 16px rgba(155,107,255,0.38);
+  display:flex;align-items:center;justify-content:center;gap:6px;
+}
+.follow-big svg{width:13px;height:13px;fill:none;stroke:white;stroke-width:2.5;}
+.action-icon-btn{
+  width:42px;height:42px;background:var(--surface);border-radius:12px;
+  display:flex;align-items:center;justify-content:center;
+  border:1px solid var(--border);cursor:pointer;
+}
+.action-icon-btn svg{width:16px;height:16px;fill:none;stroke:var(--text2);stroke-width:2;}
+.action-icon-btn.bell-on svg{stroke:var(--yellow);}
+.action-icon-btn.share-on svg{stroke:var(--green);}
+
+/* Social links row */
+.social-row{display:flex;justify-content:center;gap:10px;padding:12px 18px 0;}
+.social-btn{
+  display:flex;align-items:center;gap:5px;padding:6px 12px;
+  border-radius:50px;font-size:10px;font-weight:700;font-family:sans-serif;
+  cursor:pointer;border:1px solid var(--border);
+}
+.sb-wa{background:rgba(37,211,102,0.1);color:#25D366;border-color:rgba(37,211,102,0.2);}
+.sb-fb{background:rgba(24,119,242,0.1);color:#1877F2;border-color:rgba(24,119,242,0.2);}
+.sb-tw{background:rgba(29,161,242,0.1);color:#1DA1F2;border-color:rgba(29,161,242,0.2);}
+.sb-yt{background:rgba(255,0,0,0.1);color:#FF0000;border-color:rgba(255,0,0,0.2);}
+
+/* ── SECTION HEADER ── */
+.sh{display:flex;justify-content:space-between;align-items:center;padding:16px 18px 10px;}
+.sh-t{font-family:sans-serif;font-size:14px;font-weight:700;}
+.sh-a{font-size:11px;color:var(--purple);font-weight:600;cursor:pointer;}
+
+/* ── ABOUT SECTION ── */
+.about-card{
+  margin:0 14px;background:var(--surface);border-radius:14px;
+  padding:13px;border:1px solid var(--border);
+}
+.about-text{font-size:11px;color:var(--text2);line-height:1.75;max-height:56px;overflow:hidden;transition:max-height 0.35s ease;}
+.about-text.open{max-height:300px;}
+.about-toggle{font-size:10px;color:var(--purple);font-weight:700;cursor:pointer;margin-top:6px;display:inline-block;}
+
+/* Info grid inside about */
+.about-meta{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px;}
+.am-item{}
+.am-key{font-size:9px;color:var(--text3);font-family:sans-serif;text-transform:uppercase;letter-spacing:0.3px;margin-bottom:2px;}
+.am-val{font-size:11px;font-weight:600;font-family:sans-serif;}
+.am-val.pur{color:var(--purple);}
+.am-val.grn{color:var(--green);}
+
+/* ── HORIZONTAL SONG CARDS ── */
+.hscroll{display:flex;gap:9px;padding:0 18px 4px;overflow-x:auto;scrollbar-width:none;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;}
+.hscroll::-webkit-scrollbar{display:none;}
+.hcard{flex-shrink:0;width:130px;cursor:pointer;scroll-snap-align:start;transition:transform .15s;}
+.hcard:hover{transform:translateY(-2px);}
+.hcard-art{width:130px;height:130px;border-radius:12px;margin-bottom:7px;display:flex;align-items:center;justify-content:center;font-size:36px;position:relative;overflow:hidden;}
+.hcard-ov{position:absolute;bottom:0;right:0;background:rgba(0,0,0,0.5);backdrop-filter:blur(4px);padding:4px 6px;border-radius:7px 0 12px 0;}
+.hcard-ov svg{width:10px;height:10px;fill:white;}
+.hcard-t{font-family:sans-serif;font-size:11px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:2px;}
+.hcard-s{font-size:9px;color:var(--text2);}
+
+/* ── FULL SONG LIST (all songs) ── */
+.song-list{padding:0 14px;display:flex;flex-direction:column;gap:2px;}
+.srow{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:12px;cursor:pointer;transition:background 0.15s;}
+.srow:hover{background:var(--surface);}
+.srow.playing{background:rgba(155,107,255,0.07);}
+.s-num{width:18px;text-align:center;font-family:sans-serif;font-size:11px;font-weight:700;color:var(--text3);flex-shrink:0;}
+.s-num.on{color:var(--purple);}
+.s-thumb{width:46px;height:46px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;position:relative;overflow:hidden;}
+.s-eq{position:absolute;inset:0;background:rgba(0,0,0,0.42);display:flex;align-items:center;justify-content:center;}
+.s-info{flex:1;min-width:0;}
+.s-title{font-family:sans-serif;font-size:12px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:2px;}
+.s-title.on{color:var(--purple);}
+.s-artist{font-size:10px;color:var(--text2);margin-bottom:3px;}
+.s-stats{display:flex;gap:7px;}
+.s-stat{font-size:9px;color:var(--text3);display:flex;align-items:center;gap:2px;}
+.s-stat svg{width:8px;height:8px;fill:none;stroke:currentColor;stroke-width:2;}
+.s-right{display:flex;flex-direction:column;align-items:flex-end;gap:5px;flex-shrink:0;}
+.s-dur{font-size:10px;color:var(--text3);font-family:sans-serif;font-weight:600;}
+.s-actions{display:flex;align-items:center;gap:5px;}
+.s-heart{width:20px;height:20px;display:flex;align-items:center;justify-content:center;cursor:pointer;}
+.s-heart svg{width:12px;height:12px;fill:none;stroke:var(--text3);stroke-width:2;}
+.s-heart.liked svg{fill:var(--pink);stroke:var(--pink);}
+.s-more svg{width:13px;height:13px;fill:none;stroke:var(--text3);stroke-width:2;}
+
+/* Equalizer */
+.eq{display:flex;gap:2px;align-items:flex-end;height:13px;}
+.eq-b{width:3px;background:var(--purple);border-radius:2px;animation:eqa 0.75s ease-in-out infinite alternate;}
+.eq-b:nth-child(1){height:5px;animation-delay:0s;}
+.eq-b:nth-child(2){height:11px;animation-delay:0.18s;}
+.eq-b:nth-child(3){height:8px;animation-delay:0.09s;}
+.eq-b:nth-child(4){height:13px;animation-delay:0.27s;}
+@keyframes eqa{from{transform:scaleY(0.35)}to{transform:scaleY(1)}}
+
+/* ── ALBUMS / PROJECTS ── */
+.album-list{padding:0 14px;display:flex;flex-direction:column;gap:8px;}
+.alb-row{
+  display:flex;align-items:center;gap:12px;padding:12px;
+  background:var(--surface);border-radius:14px;border:1px solid var(--border);cursor:pointer;
+  position:relative;overflow:hidden;
+}
+.alb-row::before{content:'';position:absolute;top:0;right:0;width:60px;height:60px;border-radius:0 14px 0 60px;opacity:0.08;}
+.alb-art{width:54px;height:54px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;box-shadow:0 4px 12px rgba(0,0,0,0.3);}
+.alb-info{flex:1;min-width:0;}
+.alb-title{font-family:sans-serif;font-size:13px;font-weight:800;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.alb-meta{font-size:10px;color:var(--text2);margin-bottom:4px;}
+.alb-tags{display:flex;gap:5px;}
+.alb-tag{font-size:8px;border-radius:4px;padding:2px 6px;font-family:sans-serif;font-weight:700;}
+.tag-alb{background:rgba(155,107,255,0.15);color:var(--purple);border:1px solid rgba(155,107,255,0.25);}
+.tag-ep{background:rgba(77,159,255,0.15);color:var(--blue);border:1px solid rgba(77,159,255,0.25);}
+.tag-single{background:rgba(255,107,53,0.15);color:var(--accent);border:1px solid rgba(255,107,53,0.25);}
+.alb-right{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0;}
+.alb-year{font-size:10px;color:var(--text3);font-family:sans-serif;font-weight:600;}
+.alb-count{font-size:9px;color:var(--text3);}
+.alb-play{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin-top:2px;cursor:pointer;}
+.alb-play svg{width:10px;height:10px;fill:white;}
+
+/* ── FEATURED VIDEOS (horizontal) ── */
+.vid-scroll{display:flex;gap:9px;padding:0 18px;overflow-x:auto;scrollbar-width:none;}
+.vid-scroll::-webkit-scrollbar{display:none;}
+.vid-card{flex-shrink:0;width:150px;cursor:pointer;}
+.vid-thumb{width:150px;height:90px;border-radius:11px;background:var(--surface2);margin-bottom:7px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;border:1px solid var(--border);}
+.vid-gradient{position:absolute;inset:0;background:linear-gradient(135deg,rgba(155,107,255,0.3),rgba(77,159,255,0.2));display:flex;align-items:center;justify-content:center;}
+.vid-play-btn{width:34px;height:34px;background:rgba(255,255,255,0.2);backdrop-filter:blur(4px);border-radius:50%;display:flex;align-items:center;justify-content:center;border:1px solid rgba(255,255,255,0.3);}
+.vid-play-btn svg{width:13px;height:13px;fill:white;margin-left:1px;}
+.vid-label{position:absolute;bottom:6px;left:6px;background:rgba(0,0,0,0.6);border-radius:4px;padding:2px 6px;font-size:8px;font-family:sans-serif;font-weight:700;color:white;}
+.vid-title{font-family:sans-serif;font-size:10px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:2px;}
+.vid-views{font-size:9px;color:var(--text3);}
+
+/* ── SIMILAR ARTISTS ── */
+.similar-scroll{display:flex;gap:10px;padding:0 18px;overflow-x:auto;scrollbar-width:none;}
+.similar-scroll::-webkit-scrollbar{display:none;}
+.sim-card{flex-shrink:0;width:80px;cursor:pointer;text-align:center;}
+.sim-avatar{width:64px;height:64px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;margin:0 auto 6px;border:2px solid var(--border);}
+.sim-name{font-family:sans-serif;font-size:10px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.sim-genre{font-size:9px;color:var(--text3);}
+
+/* ── RECENT ACTIVITY ── */
+.activity-list{padding:0 14px;display:flex;flex-direction:column;gap:6px;}
+.act-row{display:flex;align-items:flex-start;gap:9px;padding:9px 11px;background:var(--surface);border-radius:12px;border:1px solid var(--border);}
+.act-icon{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
+.act-body{flex:1;}
+.act-text{font-size:11px;color:var(--text2);line-height:1.5;margin-bottom:3px;}
+.act-text span{color:var(--text);font-weight:600;}
+.act-time{font-size:9px;color:var(--text3);}
+
+/* ── AD BANNER ── */
+.ad{margin:10px 14px 0;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:8px 12px;display:flex;align-items:center;gap:8px;}
+.ad-tag{font-size:8px;font-family:sans-serif;color:var(--text3);background:var(--surface2);border-radius:4px;padding:2px 5px;text-transform:uppercase;letter-spacing:0.4px;flex-shrink:0;}
+.ad-txt{font-size:11px;color:var(--text2);flex:1;}
+.ad-cta{font-size:11px;color:var(--accent);font-weight:700;font-family:sans-serif;flex-shrink:0;cursor:pointer;}
+.ad-x{font-size:12px;color:var(--text3);flex-shrink:0;cursor:pointer;margin-left:3px;}
+
+/* ── MINI PLAYER ── */
+.mini-player{
+  margin:7px 12px 6px;
+  background:linear-gradient(135deg,#160A2E,#0E102A);
+  border-radius:15px;padding:10px 12px;
+  border:1px solid rgba(155,107,255,0.18);
+  box-shadow:0 6px 22px rgba(0,0,0,0.45);flex-shrink:0;
+}
+.mp-top{display:flex;align-items:center;gap:10px;}
+.mp-art{width:38px;height:38px;border-radius:9px;background:linear-gradient(135deg,var(--purple),var(--blue));display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;box-shadow:0 3px 10px rgba(155,107,255,0.38);}
+.mp-inf{flex:1;min-width:0;}
+.mp-title{font-family:sans-serif;font-size:12px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:1px;}
+.mp-artist{font-size:10px;color:var(--text2);}
+.mp-ctrl{display:flex;align-items:center;gap:6px;}
+.mp-heart{width:26px;height:26px;background:rgba(255,77,143,0.1);border:1px solid rgba(255,77,143,0.2);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;}
+.mp-heart svg{width:12px;height:12px;fill:var(--pink);stroke:var(--pink);}
+.mp-ctrl>svg{width:17px;height:17px;fill:none;stroke:var(--text2);stroke-width:2;cursor:pointer;}
+.mp-play{width:32px;height:32px;background:var(--purple);border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 10px rgba(155,107,255,0.45);cursor:pointer;}
+.mp-play svg{width:13px;height:13px;fill:white;}
+.mp-prog{display:flex;align-items:center;gap:7px;margin-top:7px;}
+.pbar{flex:1;height:3px;background:var(--surface3);border-radius:2px;overflow:hidden;}
+.pfill{width:32%;height:100%;background:linear-gradient(90deg,var(--purple),var(--blue));border-radius:2px;}
+.pt{font-size:9px;color:var(--text3);font-family:sans-serif;}
+
+/* ── BOTTOM NAV ── */
+.bnav{display:flex;justify-content:space-around;align-items:center;padding:10px 8px 14px;background:var(--surface);border-top:1px solid var(--border);flex-shrink:0;position:sticky;bottom:0;z-index:10;}
+.ni{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:5px 10px;border-radius:10px;}
+.ni svg{width:18px;height:18px;fill:none;stroke:var(--text3);stroke-width:2;}
+.nl{font-size:9px;font-family:sans-serif;font-weight:700;color:var(--text3);}
+
+/* Gradients */
+.g1{background:linear-gradient(135deg,#9B6BFF,#4D9FFF);}
+.g2{background:linear-gradient(135deg,#FF6B35,#FFB347);}
+.g3{background:linear-gradient(135deg,#FF4D8F,#FF6B35);}
+.g4{background:linear-gradient(135deg,#2ECC8F,#4D9FFF);}
+.g5{background:linear-gradient(135deg,#FFB347,#FF4D8F);}
+.g6{background:linear-gradient(135deg,#4D9FFF,#9B6BFF);}
+.g7{background:linear-gradient(135deg,#FF6B35,#FF4D8F);}
+.g8{background:linear-gradient(135deg,#2ECC8F,#9B6BFF);}
+
+.divider{height:1px;background:var(--border);margin:4px 14px;}
+.spacer{height:12px;}
+
+@keyframes fup{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.phone>*{animation:fup 0.4s ease forwards;}
+
+/* RESPONSIVE DESIGN */
+@media (min-width:768px) {
+  .phone { max-width:768px; margin:0 auto; }
+  .hero { height:240px; }
+  .user-stats { padding:0 24px; }
+  .main-tabs { padding:0 24px; }
+  .listen-card { margin:14px 24px 0; }
+  .weekly-chart { margin:14px 24px 0; }
+  .about-card { margin:14px 24px 0; }
+  .activity-list { padding:0 24px; }
+  .mini-player { margin:10px 24px 6px; }
+  .ad { margin:12px 24px 0; }
+  .divider { margin:4px 24px; }
+}
+
+@media (min-width:1024px) {
+  .phone { max-width:1000px; }
+  .hero { height:280px; }
+  .user-stats { padding:0 32px; }
+  .main-tabs { padding:0 32px; }
+  .listen-card { margin:18px 32px 0; }
+  .weekly-chart { margin:18px 32px 0; }
+  .about-card { margin:18px 32px 0; }
+  .activity-list { padding:0 32px; }
+  .mini-player { margin:12px 32px 6px; }
+  .ad { margin:14px 32px 0; }
+  .divider { margin:4px 32px; }
+}
+
+@media (max-width:480px) {
+  .hcard{width:116px;}
+  .hcard-art{width:116px;height:116px;}
+  .hero { height:180px; }
+  .user-stats { padding:0 16px; }
+  .main-tabs { padding:0 16px; }
+  .listen-card { margin:10px 14px 0; }
+  .weekly-chart { margin:10px 14px 0; }
+  .about-card { margin:10px 14px 0; }
+  .activity-list { padding:0 14px; }
+  .mini-player { margin:8px 12px 6px; }
+  .ad { margin:8px 14px 0; }
+  .divider { margin:4px 14px; }
+}
+</style>
+</head>
+<body>
+<div class="phone">
+  <div class="notch"></div>
+  <div class="scroll">
+    <!-- AD CONTAINER: Header Banner -->
+    <div id="ad-header-banner"></div>
+
+    <!-- ══ HERO ══ -->
+    <div class="hero">
+      <div class="hero-particles">
+        <div class="particle">🎵</div><div class="particle">🎶</div>
+        <div class="particle">🎸</div><div class="particle">🎹</div>
+        <div class="particle">🎤</div>
+      </div>
+      <div class="hero-nav">
+        <div class="back-btn" onclick="history.back()"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></div>
+        <div class="hero-nav-title">Artist Profile</div>
+        <div class="share-btn" id="shareBtn"><svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg></div>
+      </div>
+      <!-- Avatar overlapping hero -->
+      <div class="avatar-wrap">
+        <div class="avatar-ring">
+          <div class="avatar-inner">🎤</div>
+        </div>
+        <div class="avatar-live">
+          <div class="live-dot"></div>
+          LIVE
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ ARTIST INFO ══ -->
+    <div class="artist-info-block">
+      <!-- Verified badge -->
+      <div style="display:flex;justify-content:center;margin-bottom:10px;">
+        <div style="display:inline-flex;align-items:center;gap:4px;background:rgba(155,107,255,0.12);border:1px solid rgba(155,107,255,0.3);border-radius:50px;padding:3px 10px;font-size:9px;font-weight:700;color:var(--purple);font-family:sans-serif;">
+          <svg width="9" height="9" viewBox="0 0 24 24" fill="var(--purple)"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22,4 12,14.01 9,11.01" fill="none" stroke="white" stroke-width="3"/></svg>
+          Verified Artist
+        </div>
+      </div>
+
+      <div class="artist-name">Amara Soul</div>
+      <div class="artist-genre">Gospel · Praise &amp; Worship · Afro-Gospel</div>
+      <div class="artist-tags">
+        <div class="atag">Gospel</div>
+        <div class="atag">Worship</div>
+        <div class="atag">Afro-Gospel</div>
+        <div class="atag">Nigeria</div>
+      </div>
+
+      <!-- Stats strip -->
+      <div class="stats-strip">
+        <div class="stat-item s1">
+          <div class="stat-n">48</div>
+          <div class="stat-l">Songs</div>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item s2">
+          <div class="stat-n">2.1M</div>
+          <div class="stat-l">Total Plays</div>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item s3">
+          <div class="stat-n">320K</div>
+          <div class="stat-l">Followers</div>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item s4">
+          <div class="stat-n">98K</div>
+          <div class="stat-l">Downloads</div>
+        </div>
+      </div>
+
+      <!-- Action buttons -->
+      <div class="action-row" style="flex-wrap:wrap;gap:8px;">
+                <div class="theme-toggle" id="themeToggle">
+          <span class="tt-icon" id="ttIcon">🌙</span>
+          <span class="tt-label" id="ttLabel">Dark</span>
+        </div>
+        
+        <div class="follow-big">
+          <svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
+          Follow Artist
+        </div>
+        <div class="action-icon-btn bell-on" id="bellBtn" title="Notifications on">
+          <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        </div>
+        <div class="action-icon-btn share-on" title="Share artist">
+          <svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+        </div>
+        <div class="action-icon-btn" title="More options">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+        </div>
+      </div>
+
+      <!-- Social links -->
+      <div class="social-row">
+        <div class="social-btn sb-wa">💬 WhatsApp</div>
+        <div class="social-btn sb-fb">📘 Facebook</div>
+        <div class="social-btn sb-tw">🐦 Twitter</div>
+        <div class="social-btn sb-yt">▶ YouTube</div>
+      </div>
+    </div>
+
+    <!-- ══ ABOUT ══ -->
+    <div class="sh"><div class="sh-t">📖 About</div><div class="sh-a" onclick="shareArtist()">Share</div></div>
+    <div class="about-card">
+      <div class="about-text" id="aboutText">
+        Amara Soul is a Nigerian gospel artist and worship leader whose music blends contemporary Afro-Gospel sounds with deep, Spirit-filled lyricism. Born and raised in Lagos, she discovered her gift for music at age 12 in her local church choir. Her debut single "Fallen Stars" broke records across gospel streaming platforms in 2024, accumulating over 2 million plays within the first month. Known for her powerful soprano voice and anointed delivery, Amara has ministered at major gospel concerts across Nigeria, Ghana, Kenya, and the UK. Her mission: to use music as a tool of healing, revival, and global evangelism.
+      </div>
+      <div class="about-toggle" onclick="toggleAbout()">Read more ↓</div>
+      <div class="about-meta">
+        <div class="am-item"><div class="am-key">Origin</div><div class="am-val pur">Lagos, Nigeria</div></div>
+        <div class="am-item"><div class="am-key">Active Since</div><div class="am-val">2018</div></div>
+        <div class="am-item"><div class="am-key">Label</div><div class="am-val grn">Independent</div></div>
+        <div class="am-item"><div class="am-key">Languages</div><div class="am-val">English, Yoruba</div></div>
+      </div>
+    </div>
+
+    <!-- ══ POPULAR SONGS ══ -->
+    <div class="sh"><div class="sh-t">🔥 Popular Songs</div><div class="sh-a" onclick="showToast('All songs coming soon')">See all</div></div>
+    <div class="song-list">
+
+      <div class="srow playing">
+        <div class="s-num on">
+          <div class="eq"><div class="eq-b"></div><div class="eq-b"></div><div class="eq-b"></div><div class="eq-b"></div></div>
+        </div>
+        <div class="s-thumb g1">🎵<div class="s-eq" style="background:rgba(0,0,0,0);"></div></div>
+        <div class="s-info">
+          <div class="s-title on">Fallen Stars</div>
+          <div class="s-artist">Amara Soul · 2025</div>
+          <div class="s-stats">
+            <div class="s-stat"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>48.2K</div>
+            <div class="s-stat"><svg viewBox="0 0 24 24"><path d="M12 3v10M8 9l4 4 4-4"/><path d="M5 19h14"/></svg>12.1K</div>
+          </div>
+        </div>
+        <div class="s-right">
+          <div class="s-dur">3:42</div>
+          <div class="s-actions">
+            <div class="s-heart liked"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div>
+            <div class="s-more"><svg viewBox="0 0 24 24"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="srow">
+        <div class="s-num">2</div>
+        <div class="s-thumb g7">🎶</div>
+        <div class="s-info">
+          <div class="s-title">Grace Rain</div>
+          <div class="s-artist">Amara Soul · 2024</div>
+          <div class="s-stats">
+            <div class="s-stat"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>31.4K</div>
+            <div class="s-stat"><svg viewBox="0 0 24 24"><path d="M12 3v10M8 9l4 4 4-4"/><path d="M5 19h14"/></svg>9.2K</div>
+          </div>
+        </div>
+        <div class="s-right">
+          <div class="s-dur">4:10</div>
+          <div class="s-actions">
+            <div class="s-heart"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div>
+            <div class="s-more"><svg viewBox="0 0 24 24"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="srow">
+        <div class="s-num">3</div>
+        <div class="s-thumb g4">🎸</div>
+        <div class="s-info">
+          <div class="s-title">Overflow</div>
+          <div class="s-artist">Amara Soul · 2024</div>
+          <div class="s-stats">
+            <div class="s-stat"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>22.8K</div>
+            <div class="s-stat"><svg viewBox="0 0 24 24"><path d="M12 3v10M8 9l4 4 4-4"/><path d="M5 19h14"/></svg>6.4K</div>
+          </div>
+        </div>
+        <div class="s-right">
+          <div class="s-dur">5:02</div>
+          <div class="s-actions">
+            <div class="s-heart liked"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div>
+            <div class="s-more"><svg viewBox="0 0 24 24"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="srow">
+        <div class="s-num">4</div>
+        <div class="s-thumb g5">🎼</div>
+        <div class="s-info">
+          <div class="s-title">Morning Dew</div>
+          <div class="s-artist">Amara Soul · 2023</div>
+          <div class="s-stats">
+            <div class="s-stat"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>18.6K</div>
+            <div class="s-stat"><svg viewBox="0 0 24 24"><path d="M12 3v10M8 9l4 4 4-4"/><path d="M5 19h14"/></svg>4.8K</div>
+          </div>
+        </div>
+        <div class="s-right">
+          <div class="s-dur">3:55</div>
+          <div class="s-actions">
+            <div class="s-heart"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div>
+            <div class="s-more"><svg viewBox="0 0 24 24"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="srow">
+        <div class="s-num">5</div>
+        <div class="s-thumb g8">🎤</div>
+        <div class="s-info">
+          <div class="s-title">Deep Calls</div>
+          <div class="s-artist">Amara Soul · 2023</div>
+          <div class="s-stats">
+            <div class="s-stat"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>14.1K</div>
+            <div class="s-stat"><svg viewBox="0 0 24 24"><path d="M12 3v10M8 9l4 4 4-4"/><path d="M5 19h14"/></svg>3.2K</div>
+          </div>
+        </div>
+        <div class="s-right">
+          <div class="s-dur">4:28</div>
+          <div class="s-actions">
+            <div class="s-heart"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div>
+            <div class="s-more"><svg viewBox="0 0 24 24"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg></div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /song-list -->
+
+    <!-- ══ LATEST RELEASE (horizontal) ══ -->
+    <div class="sh"><div class="sh-t">🆕 Latest Releases</div><div class="sh-a" onclick="showToast('All releases coming soon')">See all</div></div>
+    <div class="hscroll">
+      <div class="hcard"><div class="hcard-art g1">🎵<div class="hcard-ov"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg></div></div><div class="hcard-t">Fallen Stars</div><div class="hcard-s">2025 · 3:42</div></div>
+      <div class="hcard"><div class="hcard-art g7">🎶<div class="hcard-ov"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg></div></div><div class="hcard-t">Grace Rain</div><div class="hcard-s">2024 · 4:10</div></div>
+      <div class="hcard"><div class="hcard-art g4">🎸<div class="hcard-ov"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg></div></div><div class="hcard-t">Still Water</div><div class="hcard-s">2024 · 6:14</div></div>
+      <div class="hcard"><div class="hcard-art g5">🎼<div class="hcard-ov"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg></div></div><div class="hcard-t">Overflow</div><div class="hcard-s">2024 · 5:02</div></div>
+      <div class="hcard"><div class="hcard-art g8">🎤<div class="hcard-ov"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg></div></div><div class="hcard-t">Deep Calls</div><div class="hcard-s">2023 · 4:28</div></div>
+    </div>
+
+    <!-- ══ ALBUMS & EPs ══ -->
+    <div class="sh"><div class="sh-t">💿 Albums &amp; EPs</div><div class="sh-a" onclick="showToast('All albums coming soon')">See all</div></div>
+    <div class="album-list">
+
+      <div class="alb-row" style="background:linear-gradient(135deg,#0E1030,#0A1A10);">
+        <div class="alb-art g1">🌟</div>
+        <div class="alb-info">
+          <div class="alb-title">Fallen Stars (Album)</div>
+          <div class="alb-meta">12 tracks · 48 min</div>
+          <div class="alb-tags"><div class="alb-tag tag-alb">Album</div></div>
+        </div>
+        <div class="alb-right">
+          <div class="alb-year">2025</div>
+          <div class="alb-count">12 songs</div>
+          <div class="alb-play g1"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg></div>
+        </div>
+      </div>
+
+      <div class="alb-row" style="background:linear-gradient(135deg,#1A0A10,#0A1020);">
+        <div class="alb-art g7">💧</div>
+        <div class="alb-info">
+          <div class="alb-title">Overflow EP</div>
+          <div class="alb-meta">6 tracks · 28 min</div>
+          <div class="alb-tags"><div class="alb-tag tag-ep">EP</div></div>
+        </div>
+        <div class="alb-right">
+          <div class="alb-year">2024</div>
+          <div class="alb-count">6 songs</div>
+          <div class="alb-play g7"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg></div>
+        </div>
+      </div>
+
+      <div class="alb-row" style="background:linear-gradient(135deg,#0A1A0A,#0E0E2A);">
+        <div class="alb-art g4">🌄</div>
+        <div class="alb-info">
+          <div class="alb-title">Morning Dew</div>
+          <div class="alb-meta">Single · 3:55</div>
+          <div class="alb-tags"><div class="alb-tag tag-single">Single</div></div>
+        </div>
+        <div class="alb-right">
+          <div class="alb-year">2023</div>
+          <div class="alb-count">1 song</div>
+          <div class="alb-play g4"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg></div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ══ SIMILAR ARTISTS ══ -->
+    <div class="sh"><div class="sh-t">👥 Similar Artists</div><div class="sh-a" onclick="showToast('All similar artists coming soon')">See all</div></div>
+    <div class="similar-scroll">
+      <div class="sim-card">
+        <div class="sim-avatar g1">🎤</div>
+        <div class="sim-name">Nathaniel B.</div>
+        <div class="sim-genre">Gospel</div>
+      </div>
+      <div class="sim-card">
+        <div class="sim-avatar g3">🎵</div>
+        <div class="sim-name">Sinach</div>
+        <div class="sim-genre">Worship</div>
+      </div>
+      <div class="sim-card">
+        <div class="sim-avatar g4">🎶</div>
+        <div class="sim-name">Tope Alabi</div>
+        <div class="sim-genre">Gospel</div>
+      </div>
+      <div class="sim-card">
+        <div class="sim-avatar g5">🎼</div>
+        <div class="sim-name">Tim Godfrey</div>
+        <div class="sim-genre">Gospel</div>
+      </div>
+      <div class="sim-card">
+        <div class="sim-avatar g7">🎸</div>
+        <div class="sim-name">Dunsin O.</div>
+        <div class="sim-genre">Worship</div>
+      </div>
+      <div class="sim-card">
+        <div class="sim-avatar g8">🎹</div>
+        <div class="sim-name">Frank E.</div>
+        <div class="sim-genre">Gospel</div>
+      </div>
+    </div>
+
+    <!-- ══ RECENT ACTIVITY ══ -->
+    <div class="sh"><div class="sh-t">📣 Recent Activity</div><div class="sh-a" onclick="showToast('Full activity coming soon')">View all</div></div>
+    <div class="activity-list">
+      <div class="act-row">
+        <div class="act-icon g1">🎵</div>
+        <div class="act-body">
+          <div class="act-text">Released new song <span>"Fallen Stars"</span> — now trending #1 in Gospel</div>
+          <div class="act-time">2 days ago</div>
+        </div>
+      </div>
+      <div class="act-row">
+        <div class="act-icon" style="background:rgba(46,204,143,0.15);font-size:14px;">🏆</div>
+        <div class="act-body">
+          <div class="act-text">Crossed <span>2 Million total plays</span> across all songs</div>
+          <div class="act-time">1 week ago</div>
+        </div>
+      </div>
+      <div class="act-row">
+        <div class="act-icon" style="background:rgba(255,107,53,0.15);font-size:14px;">🎤</div>
+        <div class="act-body">
+          <div class="act-text">Performed live at <span>Lagos Gospel Fest 2025</span></div>
+          <div class="act-time">2 weeks ago</div>
+        </div>
+      </div>
+      <div class="act-row">
+        <div class="act-icon" style="background:rgba(255,209,102,0.12);font-size:14px;">📢</div>
+        <div class="act-body">
+          <div class="act-text">New album <span>"Fallen Stars"</span> announced — 12 tracks dropping soon</div>
+          <div class="act-time">1 month ago</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ AD BANNER ══ -->
+    <div class="ad" id="adBanner">
+      <div class="ad-tag">Ad</div>
+      <div class="ad-txt">Premium — Follow unlimited artists, no ads</div>
+      <div class="ad-cta">Try Free</div>
+      <div class="ad-x">✕</div>
+    </div>
+
+    <div class="spacer"></div>
+  </div><!-- /scroll -->
+
+  <!-- ══ MINI PLAYER ══ -->
+  <div class="mini-player">
+    <div class="mp-top">
+      <div class="mp-art">🎵</div>
+      <div class="mp-inf">
+        <div class="mp-title">Fallen Stars</div>
+        <div class="mp-artist">Amara Soul</div>
+      </div>
+      <div class="mp-ctrl">
+        <div class="mp-heart"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div>
+        <svg viewBox="0 0 24 24"><polygon points="19 20 9 12 19 4 19 20"/><line x1="5" y1="19" x2="5" y2="5"/></svg>
+        <div class="mp-play" id="mpPlayBtn"><svg viewBox="0 0 24 24" id="mpPlayIcon"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg></div>
+        <svg viewBox="0 0 24 24"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19"/></svg>
+      </div>
+    </div>
+    <div class="mp-prog">
+      <span class="pt">1:12</span>
+      <div class="pbar"><div class="pfill"></div></div>
+      <span class="pt">3:42</span>
+    </div>
+  </div>
+
+  <!-- BOTTOM NAV (Home · Wa'azi · Explore · Favourites · Profile) -->
+  <div class="bnav">
+    <a class="ni" href="song_portal_web.html" style="text-decoration:none;color:inherit;"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><div class="nl">Home</div></a>
+    <a class="ni" href="shurafah_waazi.html" style="text-decoration:none;color:inherit;"><svg viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg><div class="nl">Wa'azi</div></a>
+    <a class="ni" href="shurafah_explore.html" style="text-decoration:none;color:inherit;"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><div class="nl">Explore</div></a>
+    <a class="ni" href="favourites_page.html" style="text-decoration:none;color:inherit;"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg><div class="nl">Favourites</div></a>
+    <a class="ni" href="user_profile_page.html" style="text-decoration:none;color:inherit;"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><div class="nl">Profile</div></a>
+  </div>
+
+</div>
+
+<script>
+/* ── Toast ── */
+var _te = document.createElement('div');
+_te.style.cssText = 'position:fixed;bottom:94px;left:50%;transform:translateX(-50%) translateY(14px);background:var(--surface3);color:var(--text);font-family:sans-serif;font-size:12px;font-weight:600;padding:8px 18px;border-radius:50px;z-index:999;border:1px solid var(--border);white-space:nowrap;opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;box-shadow:0 6px 20px rgba(0,0,0,.5);';
+document.body.appendChild(_te);
+var _tt = null;
+function showToast(m) {
+  _te.textContent = m;
+  _te.style.opacity = 1;
+  _te.style.transform = 'translateX(-50%) translateY(0)';
+  clearTimeout(_tt);
+  _tt = setTimeout(function() { _te.style.opacity = 0; _te.style.transform = 'translateX(-50%) translateY(14px)'; }, 2400);
+}
+
+/* ── About toggle ── */
+function toggleAbout() {
+  var d = document.getElementById('aboutText');
+  var t = event.target;
+  if (d.classList.contains('open')) { d.classList.remove('open'); t.textContent = 'Read more ↓'; }
+  else { d.classList.add('open'); t.textContent = 'Read less ↑'; }
+}
+
+/* ── Theme ── */
+function applyTheme(isLight) {
+  document.body.classList.toggle('light', isLight);
+  document.getElementById('ttIcon').textContent  = isLight ? '☀️' : '🌙';
+  document.getElementById('ttLabel').textContent = isLight ? 'Light' : 'Dark';
+}
+applyTheme(localStorage.getItem('shurafah-theme') === 'light');
+document.getElementById('themeToggle').addEventListener('click', function() {
+  var n = !document.body.classList.contains('light');
+  applyTheme(n);
+  localStorage.setItem('shurafah-theme', n ? 'light' : 'dark');
+});
+
+/* ── Follow button ── */
+var followBtn = document.querySelector('.follow-big');
+var following = false;
+followBtn.addEventListener('click', function() {
+  following = !following;
+  if (following) {
+    followBtn.style.background = 'var(--surface3)';
+    followBtn.style.boxShadow  = 'none';
+    followBtn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22,4 12,14.01 9,11.01"/></svg> Following';
+    showToast('✓ Following Amara Soul');
+  } else {
+    followBtn.style.background = 'var(--purple)';
+    followBtn.style.boxShadow  = '0 4px 16px rgba(155,107,255,0.38)';
+    followBtn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg> Follow Artist';
+    showToast('Unfollowed');
+  }
+});
+
+/* ── Heart toggles ── */
+document.querySelectorAll('.s-heart').forEach(function(h) {
+  h.addEventListener('click', function(e) { e.stopPropagation(); h.classList.toggle('liked'); });
+});
+
+/* ── Song rows → song_detail_page.html ── */
+document.querySelectorAll('.srow').forEach(function(row) {
+  row.addEventListener('click', function(e) {
+    if (e.target.closest('.s-heart') || e.target.closest('.s-more')) return;
+    window.location.href = 'song_detail_page.html';
+  });
+});
+
+/* ── s-more toast ── */
+document.querySelectorAll('.s-more').forEach(function(m) {
+  m.addEventListener('click', function(e) { e.stopPropagation(); showToast('More options coming soon'); });
+});
+
+/* ── Latest Release hcards → song_detail_page.html ── */
+document.querySelectorAll('.hcard').forEach(function(c) {
+  c.addEventListener('click', function() { window.location.href = 'song_detail_page.html'; });
+});
+
+/* ── Bell toggle ── */
+var bellOn = true;
+document.getElementById('bellBtn').addEventListener('click', function() {
+  bellOn = !bellOn;
+  this.classList.toggle('bell-on', bellOn);
+  showToast(bellOn ? '🔔 Notifications on' : '🔕 Notifications off');
+});
+
+/* ── Share ── */
+function shareArtist() {
+  if (navigator.share) {
+    navigator.share({ title: 'Amara Soul', url: window.location.href }).catch(function() {});
+  } else if (navigator.clipboard) {
+    navigator.clipboard.writeText(window.location.href).then(function() { showToast('🔗 Link copied!'); }).catch(function() { showToast('🔗 ' + window.location.href); });
+  } else {
+    showToast('🔗 Link copied!');
+  }
+}
+document.getElementById('shareBtn').addEventListener('click', shareArtist);
+
+/* ── Ad close ── */
+document.querySelector('#adBanner .ad-x').addEventListener('click', function() {
+  document.getElementById('adBanner').style.display = 'none';
+});
+
+/* ── Mini player play/pause ── */
+var mpPlaying = false;
+document.getElementById('mpPlayBtn').addEventListener('click', function() {
+  mpPlaying = !mpPlaying;
+  document.getElementById('mpPlayIcon').innerHTML = mpPlaying
+    ? '<polygon points="5 3 19 12 5 21 5 3"/>'
+    : '<rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>';
+});
+
+/* ── Similar artists ── */
+document.querySelectorAll('.sim-card').forEach(function(c) {
+  c.addEventListener('click', function() { window.location.href = 'artist_profile_page.html'; });
+});
+
+/* ── Ads (safe) ── */
+if (typeof ADS !== 'undefined') {
+  try { ADS.setUserType('guest'); ADS.init({ enabled: true, placements: { headerBanner: { enabled: true } } }); } catch(e) {}
+}
+</script>
+<script src="ads.js" onerror="void(0)"></script>
+
+</body>
+</html>

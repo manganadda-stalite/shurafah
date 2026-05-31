@@ -1,0 +1,2880 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Shurafah — My Profile</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#080B12;--surface:#0F1420;--surface2:#161C2E;--surface3:#1E2740;
+  --accent:#FF6B35;--accent2:#FFB347;--blue:#4D9FFF;--green:#2ECC8F;
+  --purple:#9B6BFF;--pink:#FF4D8F;--yellow:#FFD166;--teal:#00C9B8;
+  --text:#F0F4FF;--text2:#8A94B0;--text3:#4A5270;
+  --border:rgba(255,255,255,0.06);
+}
+
+  /* ── LIGHT MODE ── */
+  body.light {
+    --bg:#F4F6FC; --surface:#FFFFFF; --surface2:#E8ECF7; --surface3:#D8DEEF;
+    --text:#12172E; --text2:#5A6380; --text3:#9AA0BA;
+    --border:rgba(0,0,0,0.07);
+  }
+  body.light .phone   { background:var(--bg); }
+  body.light .hero    { background:linear-gradient(135deg,#EEE8FA 0%,#E4EEF8 40%,#E4F2EE 100%) !important; }
+  body.light .mini-player { background:linear-gradient(135deg,#EEF0FA,#E4E8F5) !important; border-color:rgba(255,107,53,0.12) !important; }
+  body.light .bnav    { background:var(--surface); }
+  body.light .prem-card { background:linear-gradient(135deg,#FFF8E8,#FFF2CC,#FFF8E0) !important; }
+
+  /* ── THEME TOGGLE PILL ── */
+  .theme-toggle {
+    display:inline-flex; align-items:center; gap:6px; cursor:pointer;
+    background:var(--surface2); border-radius:50px;
+    padding:5px 11px 5px 9px;
+    border:1.5px solid var(--accent);
+    flex-shrink:0; user-select:none; z-index:100;
+  }
+  .theme-toggle .tt-icon  { font-size:14px; line-height:1; }
+  .theme-toggle .tt-label {
+    font-family:sans-serif; font-size:10px; font-weight:700;
+    color:var(--accent); letter-spacing:0.3px; white-space:nowrap;
+  }
+
+  /* ── SMOOTH TRANSITIONS ── */
+  body, .phone, .scroll, .hero, .mini-player, .bnav,
+  .surface, .user-stats, .main-tabs, .listen-card,
+  .weekly-chart, .about-card, .settings-group, .si-row,
+  .prem-card, .action-row, .srow, .trow, .hcard-art {
+    transition: background 0.3s ease, background-color 0.3s ease,
+                border-color 0.3s ease, color 0.3s ease;
+  }
+
+*{margin:0;padding:0;box-sizing:border-box;}
+body{
+  background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--text);
+  min-height:100vh;display:flex;flex-direction:column;
+}
+
+/* ── WEBSITE WRAPPER ── */
+.phone{
+  width:100%;background:var(--bg);
+  display:flex;flex-direction:column;min-height:100vh;position:relative;
+}
+.notch{display:none;}
+
+/* ── SCROLL ── */
+.scroll{flex:1;overflow-y:auto;overflow-x:hidden;scrollbar-width:none;}
+.scroll::-webkit-scrollbar{display:none;}
+
+/* ══════════════════════════════
+   HERO COVER
+══════════════════════════════ */
+.hero{
+  position:relative;width:100%;height:130px;overflow:visible;flex-shrink:0;
+  background:linear-gradient(135deg,#0A0A1E 0%,#1A0A1A 40%,#0A1A20 100%);
+}
+.hero::before{
+  content:'';position:absolute;inset:0;
+  background:
+    radial-gradient(ellipse at 15% 50%,rgba(255,107,53,0.28) 0%,transparent 55%),
+    radial-gradient(ellipse at 85% 30%,rgba(77,159,255,0.22) 0%,transparent 50%),
+    radial-gradient(ellipse at 50% 100%,rgba(155,107,255,0.2) 0%,transparent 50%);
+  animation:hshift 7s ease-in-out infinite alternate;
+}
+@keyframes hshift{from{opacity:0.7}to{opacity:1}}
+
+/* Cover edit btn */
+.cover-edit{
+  position:absolute;top:14px;right:14px;
+  width:30px;height:30px;background:rgba(0,0,0,0.5);backdrop-filter:blur(8px);
+  border-radius:50%;display:flex;align-items:center;justify-content:center;
+  border:1px solid rgba(255,255,255,0.15);cursor:pointer;z-index:10;
+}
+.cover-edit svg{width:13px;height:13px;fill:none;stroke:white;stroke-width:2;}
+
+/* settings btn */
+.settings-btn{
+  position:absolute;top:14px;left:14px;
+  width:30px;height:30px;background:rgba(0,0,0,0.5);backdrop-filter:blur(8px);
+  border-radius:50%;display:flex;align-items:center;justify-content:center;
+  border:1px solid rgba(255,255,255,0.15);cursor:pointer;z-index:10;
+}
+.settings-btn svg{width:13px;height:13px;fill:none;stroke:white;stroke-width:2;}
+
+/* Avatar */
+.avatar-wrap{
+  position:absolute;bottom:-42px;left:18px;z-index:20;
+}
+.avatar-ring{
+  width:84px;height:84px;border-radius:50%;
+  background:linear-gradient(135deg,var(--accent),var(--accent2),var(--pink));
+  padding:3px;box-shadow:0 6px 22px rgba(255,107,53,0.4);
+}
+.avatar-inner{
+  width:100%;height:100%;border-radius:50%;
+  background:linear-gradient(135deg,#2A100A,#1A0A20);
+  display:flex;align-items:center;justify-content:center;
+  font-size:32px;border:3px solid var(--bg);
+}
+.avatar-edit{
+  position:absolute;bottom:2px;right:2px;
+  width:22px;height:22px;background:var(--accent);border-radius:50%;
+  border:2px solid var(--bg);display:flex;align-items:center;justify-content:center;cursor:pointer;
+}
+.avatar-edit svg{width:10px;height:10px;fill:none;stroke:white;stroke-width:2;}
+
+/* ── USER INFO BLOCK ── */
+.user-info{padding:52px 18px 0;}
+.user-name-row{display:flex;align-items:center;gap:8px;margin-bottom:3px;}
+.user-name{font-family:sans-serif;font-size:20px;font-weight:800;letter-spacing:-0.4px;}
+.premium-badge{
+  display:inline-flex;align-items:center;gap:3px;
+  background:linear-gradient(135deg,var(--yellow),var(--accent2));
+  border-radius:50px;padding:2px 8px;
+  font-size:8px;font-weight:800;color:#1A0A00;font-family:sans-serif;
+  text-transform:uppercase;letter-spacing:0.3px;
+}
+.premium-badge svg{width:8px;height:8px;fill:#1A0A00;}
+.user-handle{font-size:12px;color:var(--text3);margin-bottom:6px;}
+.user-bio{font-size:11px;color:var(--text2);line-height:1.6;margin-bottom:10px;max-width:280px;}
+
+/* Stats row */
+.user-stats{display:flex;gap:0;margin-bottom:12px;background:var(--surface);border-radius:14px;border:1px solid var(--border);overflow:hidden;}
+.us{flex:1;padding:10px 6px;text-align:center;position:relative;}
+.us+.us::before{content:'';position:absolute;left:0;top:20%;bottom:20%;width:1px;background:var(--border);}
+.us-n{font-family:sans-serif;font-size:14px;font-weight:800;}
+.us-l{font-size:9px;color:var(--text3);margin-top:2px;}
+.us.s1 .us-n{color:var(--accent);}
+.us.s2 .us-n{color:var(--blue);}
+.us.s3 .us-n{color:var(--green);}
+.us.s4 .us-n{color:var(--pink);}
+
+/* Edit profile btn row */
+.action-row{display:flex;gap:8px;margin-bottom:4px;}
+.edit-btn{
+  flex:1;background:var(--surface);border:1px solid var(--border);
+  border-radius:12px;padding:10px;text-align:center;
+  font-family:sans-serif;font-size:11px;font-weight:700;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px;
+}
+.edit-btn svg{width:13px;height:13px;fill:none;stroke:var(--text2);stroke-width:2;}
+.share-profile{
+  width:42px;height:42px;background:var(--surface);border:1px solid var(--border);
+  border-radius:12px;display:flex;align-items:center;justify-content:center;cursor:pointer;
+}
+.share-profile svg{width:15px;height:15px;fill:none;stroke:var(--text2);stroke-width:2;}
+.notif-btn{
+  width:42px;height:42px;background:var(--surface);border:1px solid var(--border);
+  border-radius:12px;display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;
+}
+.notif-btn svg{width:15px;height:15px;fill:none;stroke:var(--text2);stroke-width:2;}
+.notif-dot{width:7px;height:7px;background:var(--accent);border-radius:50%;position:absolute;top:8px;right:8px;border:2px solid var(--bg);}
+
+/* ══════════════════════════════
+   MAIN TABS
+══════════════════════════════ */
+.main-tabs{
+  display:flex;background:var(--surface);margin:12px 14px 0;
+  border-radius:13px;padding:3px;border:1px solid var(--border);
+}
+.mtab{
+  flex:1;padding:8px 4px;text-align:center;font-family:sans-serif;
+  font-size:10px;font-weight:700;color:var(--text3);border-radius:10px;cursor:pointer;
+  transition:all 0.2s;white-space:nowrap;
+}
+.mtab.on{background:var(--accent);color:white;box-shadow:0 2px 8px rgba(255,107,53,0.35);}
+
+/* Tab panels */
+.tab-panel{display:none;padding:0;}
+.tab-panel.on{display:block;}
+
+/* ══════════════════════════════
+   TAB 1 — OVERVIEW
+══════════════════════════════ */
+
+/* Premium membership card */
+.prem-card{
+  margin:12px 14px 0;border-radius:16px;padding:14px;
+  background:linear-gradient(135deg,#1A0E00,#2A1500,#1A0800);
+  border:1px solid rgba(255,209,102,0.2);position:relative;overflow:hidden;
+}
+.prem-card::before{content:'';position:absolute;top:-30px;right:-30px;width:120px;height:120px;background:radial-gradient(circle,rgba(255,209,102,0.2) 0%,transparent 70%);}
+.prem-top{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.prem-icon{font-size:28px;}
+.prem-info{flex:1;}
+.prem-title{font-family:sans-serif;font-size:14px;font-weight:800;color:var(--yellow);margin-bottom:2px;}
+.prem-sub{font-size:10px;color:rgba(255,209,102,0.6);}
+.prem-expires{font-size:10px;color:rgba(255,209,102,0.5);margin-left:auto;}
+.prem-perks{display:flex;gap:6px;flex-wrap:wrap;}
+.perk{
+  display:flex;align-items:center;gap:4px;padding:4px 9px;
+  background:rgba(255,209,102,0.08);border:1px solid rgba(255,209,102,0.15);
+  border-radius:50px;font-size:9px;font-weight:700;color:var(--yellow);font-family:sans-serif;
+}
+
+/* Listening stats card */
+.listen-card{margin:10px 14px 0;background:var(--surface);border-radius:14px;padding:13px;border:1px solid var(--border);}
+.lc-title{font-family:sans-serif;font-size:12px;font-weight:700;color:var(--text2);margin-bottom:10px;display:flex;align-items:center;gap:5px;}
+.lc-title svg{width:13px;height:13px;fill:none;stroke:var(--accent);stroke-width:2;}
+.lc-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.lc-item{background:var(--surface2);border-radius:10px;padding:9px 10px;border:1px solid var(--border);}
+.lc-n{font-family:sans-serif;font-size:14px;font-weight:800;margin-bottom:2px;}
+.lc-l{font-size:9px;color:var(--text3);}
+.lc-item.i1 .lc-n{color:var(--accent);}
+.lc-item.i2 .lc-n{color:var(--blue);}
+.lc-item.i3 .lc-n{color:var(--green);}
+.lc-item.i4 .lc-n{color:var(--purple);}
+
+/* Weekly chart */
+.weekly-chart{margin:10px 14px 0;background:var(--surface);border-radius:14px;padding:13px;border:1px solid var(--border);}
+.wc-title{font-family:sans-serif;font-size:12px;font-weight:700;color:var(--text2);margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;}
+.wc-sub{font-size:10px;color:var(--text3);}
+.bars-row{display:flex;align-items:flex-end;gap:5px;height:60px;}
+.bar-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;}
+.bar{border-radius:4px 4px 0 0;width:100%;transition:height 0.3s;}
+.bar-lbl{font-size:8px;color:var(--text3);font-family:sans-serif;}
+.bar-val{font-size:8px;color:var(--text3);font-family:sans-serif;font-weight:700;}
+
+/* Top genre pie-style */
+.genre-row{display:flex;gap:6px;margin:10px 14px 0;flex-wrap:wrap;}
+.genre-pill{
+  display:flex;align-items:center;gap:5px;padding:6px 11px;
+  border-radius:50px;font-size:10px;font-weight:700;font-family:sans-serif;cursor:pointer;
+}
+.gp1{background:rgba(155,107,255,0.12);color:var(--purple);border:1px solid rgba(155,107,255,0.25);}
+.gp2{background:rgba(255,107,53,0.12);color:var(--accent);border:1px solid rgba(255,107,53,0.25);}
+.gp3{background:rgba(46,204,143,0.12);color:var(--green);border:1px solid rgba(46,204,143,0.25);}
+.gp4{background:rgba(77,159,255,0.12);color:var(--blue);border:1px solid rgba(77,159,255,0.25);}
+.gp5{background:rgba(255,77,143,0.12);color:var(--pink);border:1px solid rgba(255,77,143,0.25);}
+.gpct{font-size:9px;opacity:0.6;}
+
+/* Achievements */
+.sh{display:flex;justify-content:space-between;align-items:center;padding:14px 14px 9px;}
+.sh-t{font-family:sans-serif;font-size:13px;font-weight:700;}
+.sh-a{font-size:10px;color:var(--accent);font-weight:600;cursor:pointer;}
+.badges-row{display:flex;gap:8px;padding:0 14px;overflow-x:auto;scrollbar-width:none;}
+.badges-row::-webkit-scrollbar{display:none;}
+.badge-card{
+  flex-shrink:0;width:72px;background:var(--surface);border-radius:14px;
+  padding:10px 6px;border:1px solid var(--border);text-align:center;cursor:pointer;
+}
+.badge-icon{font-size:24px;margin-bottom:5px;}
+.badge-name{font-size:8px;font-family:sans-serif;font-weight:700;color:var(--text2);}
+.badge-card.earned{border-color:rgba(255,209,102,0.3);background:linear-gradient(135deg,#1A1200,#0A0E00);}
+.badge-card.earned .badge-name{color:var(--yellow);}
+
+/* ══════════════════════════════
+   TAB 2 — HISTORY
+══════════════════════════════ */
+.history-filter{display:flex;gap:6px;padding:12px 14px 8px;overflow-x:auto;scrollbar-width:none;}
+.history-filter::-webkit-scrollbar{display:none;}
+.hf{flex-shrink:0;padding:5px 12px;border-radius:50px;font-size:10px;font-weight:700;font-family:sans-serif;cursor:pointer;border:1px solid transparent;}
+.hf.on{background:var(--surface3);color:var(--text);border-color:var(--border);}
+.hf.off{color:var(--text3);}
+
+.hist-section-label{padding:4px 14px 6px;font-size:10px;font-family:sans-serif;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;}
+.hist-list{padding:0 14px;display:flex;flex-direction:column;gap:3px;}
+.hrow{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:12px;cursor:pointer;transition:background 0.15s;}
+.hrow:hover{background:var(--surface);}
+.hr-thumb{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;}
+.hr-info{flex:1;min-width:0;}
+.hr-title{font-family:sans-serif;font-size:12px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:2px;}
+.hr-artist{font-size:10px;color:var(--text2);}
+.hr-right{flex-shrink:0;text-align:right;}
+.hr-when{font-size:9px;color:var(--text3);margin-bottom:3px;}
+.hr-dur{font-size:10px;color:var(--text3);font-family:sans-serif;font-weight:600;}
+.hr-plays{font-size:9px;color:var(--accent);}
+
+/* ══════════════════════════════
+   TAB 3 — DOWNLOADS
+══════════════════════════════ */
+.dl-header-stats{display:flex;gap:8px;padding:12px 14px 8px;}
+.dhs{flex:1;background:var(--surface);border-radius:12px;padding:9px 10px;border:1px solid var(--border);text-align:center;}
+.dhs-n{font-family:sans-serif;font-size:14px;font-weight:800;}
+.dhs-l{font-size:9px;color:var(--text3);}
+.dhs.d1 .dhs-n{color:var(--blue);}
+.dhs.d2 .dhs-n{color:var(--green);}
+.dhs.d3 .dhs-n{color:var(--accent);}
+
+.dl-manage-row{display:flex;justify-content:space-between;align-items:center;padding:4px 14px 8px;}
+.dl-sort{display:flex;align-items:center;gap:4px;font-size:10px;color:var(--text3);}
+.dl-sort svg{width:11px;height:11px;fill:none;stroke:var(--text3);stroke-width:2;}
+.dl-manage-btn{font-size:10px;color:var(--accent);font-weight:700;font-family:sans-serif;cursor:pointer;}
+
+.dl-list{padding:0 14px;display:flex;flex-direction:column;gap:3px;}
+.drow{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:12px;cursor:pointer;transition:background 0.15s;}
+.drow:hover{background:var(--surface);}
+.dr-thumb{width:46px;height:46px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;position:relative;}
+.offline-dot{position:absolute;bottom:-2px;right:-2px;width:13px;height:13px;background:var(--blue);border:2px solid var(--bg);border-radius:50%;display:flex;align-items:center;justify-content:center;}
+.offline-dot svg{width:7px;height:7px;fill:white;}
+.dr-info{flex:1;min-width:0;}
+.dr-title{font-family:sans-serif;font-size:12px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:2px;}
+.dr-artist{font-size:10px;color:var(--text2);margin-bottom:3px;}
+.dr-meta{display:flex;gap:6px;align-items:center;}
+.dr-size{font-size:9px;color:var(--text3);display:flex;align-items:center;gap:2px;}
+.dr-size svg{width:8px;height:8px;fill:none;stroke:var(--blue);stroke-width:2;}
+.dr-quality{font-size:8px;background:rgba(77,159,255,0.12);color:var(--blue);border:1px solid rgba(77,159,255,0.25);border-radius:4px;padding:1px 5px;font-family:sans-serif;font-weight:700;}
+.dr-date{font-size:8px;color:var(--text3);}
+.dr-right{display:flex;flex-direction:column;align-items:flex-end;gap:5px;flex-shrink:0;}
+.dr-dur{font-size:10px;color:var(--text3);font-family:sans-serif;font-weight:600;}
+.dr-more svg{width:13px;height:13px;fill:none;stroke:var(--text3);stroke-width:2;}
+
+/* ══════════════════════════════
+   TAB 4 — SETTINGS
+══════════════════════════════ */
+.settings-section{padding:12px 14px 0;}
+.settings-group{margin-bottom:14px;}
+.sg-label{font-size:10px;font-family:sans-serif;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;padding-left:2px;}
+.sg-items{background:var(--surface);border-radius:14px;border:1px solid var(--border);overflow:hidden;}
+.si-row{
+  display:flex;align-items:center;gap:12px;padding:12px 14px;
+  border-bottom:1px solid var(--border);cursor:pointer;transition:background 0.15s;
+}
+.si-row:last-child{border-bottom:none;}
+.si-row:hover{background:var(--surface2);}
+.si-icon{width:32px;height:32px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.si-icon svg{width:15px;height:15px;fill:none;stroke:white;stroke-width:2;}
+.si-body{flex:1;}
+.si-title{font-family:sans-serif;font-size:12px;font-weight:700;margin-bottom:1px;}
+.si-sub{font-size:10px;color:var(--text3);}
+.si-right{flex-shrink:0;}
+.si-right svg{width:14px;height:14px;fill:none;stroke:var(--text3);stroke-width:2;}
+.si-right.val{font-size:10px;color:var(--text3);font-family:sans-serif;}
+
+/* Toggle switch */
+.toggle{width:36px;height:20px;border-radius:10px;position:relative;cursor:pointer;flex-shrink:0;}
+.toggle.on{background:var(--accent);}
+.toggle.off{background:var(--surface3);}
+.toggle-thumb{position:absolute;top:2px;width:16px;height:16px;background:white;border-radius:50%;transition:left 0.2s;box-shadow:0 1px 4px rgba(0,0,0,0.3);}
+.toggle.on .toggle-thumb{left:18px;}
+.toggle.off .toggle-thumb{left:2px;}
+
+/* Danger zone */
+.danger-row{
+  display:flex;align-items:center;gap:12px;padding:12px 14px;
+  border-bottom:1px solid var(--border);cursor:pointer;
+}
+.danger-row:last-child{border-bottom:none;}
+.si-title.red{color:#FF4444;}
+.si-sub.red{color:rgba(255,68,68,0.6);}
+
+/* ══════════════════════════════
+   TAB 5 — COMMENTS (My Comments)
+══════════════════════════════ */
+.my-comments{padding:0 14px;display:flex;flex-direction:column;gap:8px;padding-top:12px;}
+.mc-card{background:var(--surface);border-radius:14px;padding:12px;border:1px solid var(--border);}
+.mc-song-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;padding-bottom:8px;border-bottom:1px solid var(--border);}
+.mc-thumb{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
+.mc-song-info{flex:1;min-width:0;}
+.mc-song-title{font-family:sans-serif;font-size:11px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.mc-song-artist{font-size:9px;color:var(--text3);}
+.mc-song-link{font-size:9px;color:var(--accent);font-weight:600;flex-shrink:0;}
+.mc-text{font-size:11px;color:var(--text2);line-height:1.55;margin-bottom:7px;}
+.mc-footer{display:flex;align-items:center;gap:10px;}
+.mc-time{font-size:9px;color:var(--text3);}
+.mc-likes{display:flex;align-items:center;gap:3px;font-size:10px;color:var(--pink);}
+.mc-likes svg{width:10px;height:10px;fill:var(--pink);}
+.mc-replies{font-size:10px;color:var(--blue);}
+.mc-del{margin-left:auto;font-size:9px;color:#FF4444;cursor:pointer;}
+
+/* Gradients */
+.g1{background:linear-gradient(135deg,#9B6BFF,#4D9FFF);}
+.g2{background:linear-gradient(135deg,#FF6B35,#FFB347);}
+.g3{background:linear-gradient(135deg,#FF4D8F,#FF6B35);}
+.g4{background:linear-gradient(135deg,#2ECC8F,#4D9FFF);}
+.g5{background:linear-gradient(135deg,#FFB347,#FF4D8F);}
+.g6{background:linear-gradient(135deg,#4D9FFF,#9B6BFF);}
+.g7{background:linear-gradient(135deg,#FF6B35,#FF4D8F);}
+.g8{background:linear-gradient(135deg,#2ECC8F,#9B6BFF);}
+
+/* ── AD BANNER ── */
+.ad{margin:10px 14px 0;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:8px 12px;display:flex;align-items:center;gap:8px;}
+.ad-tag{font-size:8px;font-family:sans-serif;color:var(--text3);background:var(--surface2);border-radius:4px;padding:2px 5px;text-transform:uppercase;letter-spacing:0.4px;flex-shrink:0;}
+.ad-txt{font-size:11px;color:var(--text2);flex:1;}
+.ad-cta{font-size:11px;color:var(--accent);font-weight:700;font-family:sans-serif;flex-shrink:0;cursor:pointer;}
+.ad-x{font-size:12px;color:var(--text3);flex-shrink:0;cursor:pointer;margin-left:3px;}
+
+/* ── PAGINATION ── */
+.pagination{
+  display:flex;align-items:center;justify-content:center;gap:6px;padding:16px 14px;margin-top:8px;flex-wrap:wrap;
+}
+.pag-btn{
+  width:28px;height:28px;border-radius:8px;background:var(--surface2);border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;cursor:pointer;font-family:sans-serif;font-size:11px;font-weight:700;
+  color:var(--text2);transition:all 0.15s;
+}
+.pag-btn:hover{background:var(--surface3);}
+.pag-btn.on{background:var(--accent);color:white;border-color:var(--accent);}
+.pag-btn.disabled{opacity:0.4;cursor:not-allowed;}
+.pag-btn.disabled:hover{background:var(--surface2);}
+.pag-info{font-size:10px;color:var(--text3);font-family:sans-serif;margin:0 4px;}
+
+/* ── MINI PLAYER ── */
+.mini-player{
+  margin:7px 12px 6px;
+  background:linear-gradient(135deg,var(--surface2),var(--surface3));
+  border-radius:15px;padding:10px 12px;
+  border:1px solid rgba(255,107,53,0.14);
+  box-shadow:0 6px 22px rgba(0,0,0,0.45);flex-shrink:0;
+}
+.mp-top{display:flex;align-items:center;gap:10px;}
+.mp-art{width:38px;height:38px;border-radius:9px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;box-shadow:0 3px 10px rgba(255,107,53,0.32);}
+.mp-inf{flex:1;min-width:0;}
+.mp-title{font-family:sans-serif;font-size:12px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:1px;}
+.mp-artist{font-size:10px;color:var(--text2);}
+.mp-ctrl{display:flex;align-items:center;gap:6px;}
+.mp-heart{width:26px;height:26px;background:rgba(255,77,143,0.1);border:1px solid rgba(255,77,143,0.2);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;}
+.mp-heart svg{width:12px;height:12px;fill:var(--pink);stroke:var(--pink);}
+.mp-ctrl>svg{width:17px;height:17px;fill:none;stroke:var(--text2);stroke-width:2;cursor:pointer;}
+.mp-play{width:32px;height:32px;background:var(--accent);border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 10px rgba(255,107,53,0.4);cursor:pointer;}
+.mp-play svg{width:13px;height:13px;fill:white;}
+.mp-prog{display:flex;align-items:center;gap:7px;margin-top:7px;}
+.pbar{flex:1;height:3px;background:var(--surface3);border-radius:2px;overflow:hidden;}
+.pfill{width:45%;height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:2px;}
+.pt{font-size:9px;color:var(--text3);font-family:sans-serif;}
+
+/* ── BOTTOM NAV ── */
+.bnav{display:flex;justify-content:space-around;align-items:center;padding:10px 8px 14px;background:var(--surface);border-top:1px solid var(--border);flex-shrink:0;position:sticky;bottom:0;z-index:10;}
+.ni{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:5px 10px;border-radius:10px;}
+.ni.on{background:rgba(255,107,53,0.1);}
+.ni svg{width:18px;height:18px;fill:none;stroke:var(--text3);stroke-width:2;}
+.ni.on svg{stroke:var(--accent);}
+.nl{font-size:9px;font-family:sans-serif;font-weight:700;color:var(--text3);}
+.ni.on .nl{color:var(--accent);}
+
+.spacer{height:12px;}
+
+/* ══════════════════════════════
+   FAVOURITES TAB (inside profile)
+══════════════════════════════ */
+.fav-tab-head{display:flex;justify-content:space-between;align-items:center;padding:14px 14px 8px;}
+.fav-tab-head .ft-title{font-family:sans-serif;font-size:13px;font-weight:700;display:flex;align-items:center;gap:6px;}
+.fav-tab-head .ft-title svg{width:14px;height:14px;fill:var(--pink);stroke:var(--pink);}
+.fav-tab-head .ft-count{font-size:10px;color:var(--text3);font-family:sans-serif;font-weight:600;}
+.fav-filter{display:flex;gap:6px;padding:0 14px 8px;overflow-x:auto;scrollbar-width:none;}
+.fav-filter::-webkit-scrollbar{display:none;}
+.fav-chip{flex-shrink:0;padding:6px 12px;border-radius:50px;font-family:sans-serif;font-size:10px;font-weight:700;cursor:pointer;border:1px solid var(--border);background:var(--surface);color:var(--text3);}
+.fav-chip.on{background:var(--pink);color:white;border-color:var(--pink);box-shadow:0 2px 8px rgba(255,77,143,0.35);}
+.fav-rows{display:flex;flex-direction:column;}
+.fav-row{display:flex;align-items:center;gap:11px;padding:10px 14px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s;}
+.fav-row:last-child{border-bottom:none;}
+.fav-row:hover{background:rgba(255,255,255,0.02);}
+.fav-thumb{flex-shrink:0;width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;}
+.fav-info{flex:1;min-width:0;}
+.fav-title{font-family:sans-serif;font-size:13px;font-weight:700;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.fav-artist{font-size:11px;color:var(--text3);margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.fav-right{display:flex;align-items:center;gap:10px;flex-shrink:0;}
+.fav-dur{font-size:11px;color:var(--text3);font-family:sans-serif;}
+.fav-heart{width:28px;height:28px;border-radius:50%;background:rgba(255,77,143,0.12);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:transform .15s;}
+.fav-heart:hover{transform:scale(1.1);}
+.fav-heart svg{width:13px;height:13px;fill:var(--pink);stroke:var(--pink);stroke-width:2;}
+.fav-empty{padding:40px 24px;text-align:center;color:var(--text3);font-size:12px;display:none;}
+.fav-empty.show{display:block;}
+.fav-empty .fe-icon{font-size:42px;margin-bottom:10px;}
+
+/* ── PAGINATION ── */
+.pagination{
+  display:flex;align-items:center;justify-content:center;gap:6px;padding:16px 14px;margin-top:8px;flex-wrap:wrap;
+}
+.pag-btn{
+  width:28px;height:28px;border-radius:8px;background:var(--surface2);border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;cursor:pointer;font-family:sans-serif;font-size:11px;font-weight:700;
+  color:var(--text2);transition:all 0.15s;
+}
+.pag-btn:hover{background:var(--surface3);}
+.pag-btn.on{background:var(--accent);color:white;border-color:var(--accent);}
+.pag-btn.disabled{opacity:0.4;cursor:not-allowed;}
+.pag-btn.disabled:hover{background:var(--surface2);}
+.pag-info{font-size:10px;color:var(--text3);font-family:sans-serif;margin:0 4px;}
+
+/* ══════════════════════════════
+   LOCATION SETTINGS (inside Settings tab)
+══════════════════════════════ */
+.loc-group{padding:8px 4px 4px;}
+.loc-field{margin-bottom:12px;}
+.loc-label{font-size:10px;font-family:sans-serif;font-weight:700;color:var(--text3);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.4px;}
+.loc-select-wrap{position:relative;}
+.loc-select{width:100%;background:var(--surface2);border:1.5px solid var(--border);border-radius:12px;padding:12px 36px 12px 14px;font-size:13px;font-family:'DM Sans',sans-serif;color:var(--text);outline:none;-webkit-appearance:none;appearance:none;cursor:pointer;transition:border-color .2s;}
+.loc-select:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(255,107,53,0.12);}
+.loc-select.valid{border-color:var(--green);}
+.loc-select option{background:var(--surface2);color:var(--text);}
+.loc-arrow{position:absolute;right:12px;top:50%;transform:translateY(-50%);pointer-events:none;}
+.loc-arrow svg{width:13px;height:13px;fill:none;stroke:var(--text3);stroke-width:2;}
+.loc-save{display:inline-flex;align-items:center;gap:6px;background:var(--accent);color:white;border-radius:10px;padding:10px 16px;font-family:sans-serif;font-size:12px;font-weight:800;cursor:pointer;box-shadow:0 4px 14px rgba(255,107,53,0.35);margin-top:6px;}
+.loc-save:hover{transform:translateY(-1px);}
+.loc-save svg{width:13px;height:13px;fill:none;stroke:white;stroke-width:2.5;}
+
+@keyframes fup{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.phone>*{animation:fup 0.4s ease forwards;}
+
+/* ── RESPONSIVE ── */
+@media (min-width:640px){
+  .hero           {height:160px;}
+  .user-info      {padding:56px 24px 0;}
+  .main-tabs      {margin:12px 24px 0;}
+  .prem-card,.listen-card,.weekly-chart,.ad{margin-left:24px;margin-right:24px;}
+  .genre-row      {padding-left:24px;padding-right:24px;}
+  .sh             {padding:14px 24px 9px;}
+  .badges-row     {padding:0 24px;}
+  .history-filter {padding:12px 24px 8px;}
+  .hist-section-label{padding:4px 24px 6px;}
+  .hist-list,.dl-list,.my-comments{padding-left:24px;padding-right:24px;}
+  .dl-header-stats{padding:12px 24px 8px;}
+  .dl-manage-row  {padding:4px 24px 8px;}
+  .settings-section{padding:12px 24px 0;}
+  .fav-tab-head   {padding:14px 24px 8px;}
+  .fav-filter     {padding:0 24px 8px;}
+  .fav-row        {padding:10px 24px;}
+  .bnav           {padding:10px 24px 14px;}
+  .ni             {padding:5px 16px;}
+}
+@media (min-width:1024px){
+  .phone          {max-width:1200px;margin:0 auto;}
+  .hero           {height:200px;}
+  .avatar-ring    {width:100px;height:100px;}
+  .avatar-inner   {font-size:40px;}
+  .user-info      {padding:64px 40px 0;}
+  .user-name      {font-size:26px;}
+  .user-bio       {max-width:540px;}
+  .main-tabs      {margin:14px 40px 0;}
+  .prem-card,.listen-card,.weekly-chart,.ad{margin-left:40px;margin-right:40px;}
+  .genre-row      {padding-left:40px;padding-right:40px;}
+  .sh             {padding:18px 40px 10px;}
+  .badges-row     {padding:0 40px;}
+  .history-filter {padding:12px 40px 8px;}
+  .hist-section-label{padding:4px 40px 6px;}
+  .hist-list,.dl-list,.my-comments{padding-left:40px;padding-right:40px;}
+  .dl-header-stats{padding:12px 40px 8px;}
+  .dl-manage-row  {padding:4px 40px 8px;}
+  .settings-section{padding:12px 40px 0;}
+  .fav-tab-head   {padding:14px 40px 8px;}
+  .fav-filter     {padding:0 40px 8px;}
+  .fav-row        {padding:10px 40px;}
+  .bnav           {padding:10px 40px 14px;}
+  .ni             {padding:5px 20px;}
+  .lc-grid        {grid-template-columns:repeat(4,1fr);}
+  .user-stats     {margin-bottom:14px;}
+  .us-n           {font-size:16px;}
+  .hrow,.drow     {padding:10px 14px;}
+  .si-row         {padding:14px 18px;}
+}
+@media (max-width:480px){
+  .user-info      {padding:52px 14px 0;}
+  .main-tabs      {margin:10px 12px 0;}
+  .prem-card,.listen-card,.weekly-chart,.ad{margin-left:12px;margin-right:12px;}
+  .genre-row      {padding:10px 12px 0;}
+  .sh             {padding:12px 12px 8px;}
+  .badges-row     {padding:0 12px;}
+  .history-filter {padding:10px 12px 8px;}
+  .hist-section-label{padding:4px 12px 6px;}
+  .hist-list,.dl-list,.my-comments{padding-left:12px;padding-right:12px;}
+  .dl-header-stats{padding:10px 12px 8px;}
+  .dl-manage-row  {padding:4px 12px 8px;}
+  .settings-section{padding:10px 12px 0;}
+  .fav-tab-head   {padding:12px 12px 8px;}
+  .fav-filter     {padding:0 12px 8px;}
+  .fav-row        {padding:8px 12px;}
+  .bnav           {padding:8px 6px 12px;}
+  .ni             {padding:4px 6px;}
+  .nl             {font-size:8px;}
+  .ni svg         {width:16px;height:16px;}
+}
+</style>
+</head>
+<body>
+<div class="phone">
+  <div class="notch"></div>
+  <div class="scroll">
+    <!-- AD CONTAINER: Header Banner -->
+    <div id="ad-header-banner"></div>
+
+    <!-- ══ HERO ══ -->
+    <div class="hero">
+      <div class="settings-btn"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></div>
+      <div class="cover-edit"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></div>
+      <div class="avatar-wrap">
+        <div class="avatar-ring">
+          <div class="avatar-inner">👤</div>
+        </div>
+        <div class="avatar-edit"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></div>
+      </div>
+    </div>
+
+    <!-- ══ USER INFO ══ -->
+    <div class="user-info">
+      <div class="user-name-row">
+        <div class="user-name">Daniel Nwosu</div>
+        <div class="premium-badge"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>PRO</div>
+      </div>
+      <div class="user-handle">@dan_music · Lagos, Nigeria 🇳🇬</div>
+      <div class="user-bio">Gospel music lover & worship enthusiast. 🙏 Sharing what ministers to my soul. Building community one song at a time.</div>
+
+      <!-- Stats -->
+      <div class="user-stats">
+        <div class="us s1"><div class="us-n">42</div><div class="us-l">Favourites</div></div>
+        <div class="us s2"><div class="us-n">24</div><div class="us-l">Downloads</div></div>
+        <div class="us s3"><div class="us-n">16</div><div class="us-l">Artists</div></div>
+        <div class="us s4"><div class="us-n">6</div><div class="us-l">Playlists</div></div>
+      </div>
+
+      <!-- Action buttons -->
+      <div class="action-row" style="position:relative;">
+                <div class="theme-toggle" id="themeToggle">
+          <span class="tt-icon" id="ttIcon">🌙</span>
+          <span class="tt-label" id="ttLabel">Dark</span>
+        </div>
+        
+        <div class="edit-btn">
+          <svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          Edit Profile
+        </div>
+        <div class="share-profile"><svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg></div>
+        <div class="notif-btn"><svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><div class="notif-dot"></div></div>
+      </div>
+    </div>
+
+    <!-- ══ MAIN TABS ══ -->
+    <div class="main-tabs" id="mainTabs">
+      <div class="mtab on" data-tab="overview">Overview</div>
+      <div class="mtab" data-tab="favourites">Favourites</div>
+      <div class="mtab" data-tab="history">History</div>
+      <div class="mtab" data-tab="downloads">Downloads</div>
+      <div class="mtab" data-tab="comments">Comments</div>
+      <div class="mtab" data-tab="settings">Settings</div>
+    </div>
+
+    <!-- ══════════════════════════════
+         TAB 1 — OVERVIEW
+    ══════════════════════════════ -->
+    <div class="tab-panel on" id="tab-overview">
+
+      <!-- Premium card -->
+      <div class="prem-card">
+        <div class="prem-top">
+          <div class="prem-icon">⭐</div>
+          <div class="prem-info">
+            <div class="prem-title">Shurafah Pro</div>
+            <div class="prem-sub">Premium Member · Active</div>
+          </div>
+          <div class="prem-expires">Expires Dec 2025</div>
+        </div>
+        <div class="prem-perks">
+          <div class="perk">✓ No Ads</div>
+          <div class="perk">✓ Unlimited Downloads</div>
+          <div class="perk">✓ 320 kbps</div>
+          <div class="perk">✓ Offline Mode</div>
+        </div>
+      </div>
+
+      <!-- Listening stats -->
+      <div class="listen-card">
+        <div class="lc-title"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>My Listening Stats</div>
+        <div class="lc-grid">
+          <div class="lc-item i1"><div class="lc-n">1,248</div><div class="lc-l">Total Songs Played</div></div>
+          <div class="lc-item i2"><div class="lc-n">312h</div><div class="lc-l">Total Listen Time</div></div>
+          <div class="lc-item i3"><div class="lc-n">24</div><div class="lc-l">Songs Downloaded</div></div>
+          <div class="lc-item i4"><div class="lc-n">6</div><div class="lc-l">Playlists Created</div></div>
+        </div>
+      </div>
+
+      <!-- Weekly listening chart -->
+      <div class="weekly-chart">
+        <div class="wc-title">
+          Weekly Listening
+          <div class="wc-sub">This week: 14h 22min</div>
+        </div>
+        <div class="bars-row">
+          <div class="bar-wrap">
+            <div class="bar-val">1.2h</div>
+            <div class="bar" style="height:28px;background:var(--surface3);"></div>
+            <div class="bar-lbl">Mon</div>
+          </div>
+          <div class="bar-wrap">
+            <div class="bar-val">2.4h</div>
+            <div class="bar" style="height:44px;background:linear-gradient(180deg,var(--accent),var(--accent2));"></div>
+            <div class="bar-lbl">Tue</div>
+          </div>
+          <div class="bar-wrap">
+            <div class="bar-val">1.8h</div>
+            <div class="bar" style="height:34px;background:var(--surface3);"></div>
+            <div class="bar-lbl">Wed</div>
+          </div>
+          <div class="bar-wrap">
+            <div class="bar-val">3.1h</div>
+            <div class="bar" style="height:56px;background:linear-gradient(180deg,var(--accent),var(--accent2));"></div>
+            <div class="bar-lbl">Thu</div>
+          </div>
+          <div class="bar-wrap">
+            <div class="bar-val">2.0h</div>
+            <div class="bar" style="height:38px;background:var(--surface3);"></div>
+            <div class="bar-lbl">Fri</div>
+          </div>
+          <div class="bar-wrap">
+            <div class="bar-val">2.6h</div>
+            <div class="bar" style="height:48px;background:linear-gradient(180deg,var(--blue),var(--purple));"></div>
+            <div class="bar-lbl">Sat</div>
+          </div>
+          <div class="bar-wrap">
+            <div class="bar-val">1.3h</div>
+            <div class="bar" style="height:24px;background:var(--surface3);"></div>
+            <div class="bar-lbl">Sun</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Top genres -->
+      <div class="sh"><div class="sh-t">🎵 Top Genres</div></div>
+      <div class="genre-row">
+        <div class="genre-pill gp1">🙏 Gospel <span class="gpct">48%</span></div>
+        <div class="genre-pill gp2">🔥 Praise <span class="gpct">22%</span></div>
+        <div class="genre-pill gp3">💧 Worship <span class="gpct">18%</span></div>
+        <div class="genre-pill gp4">🎸 Afrobeat <span class="gpct">8%</span></div>
+        <div class="genre-pill gp5">🎵 R&amp;B <span class="gpct">4%</span></div>
+      </div>
+
+      <!-- Achievements -->
+      <div class="sh"><div class="sh-t">🏆 Achievements</div><div class="sh-a">See all</div></div>
+      <div class="badges-row">
+        <div class="badge-card earned"><div class="badge-icon">🎵</div><div class="badge-name">1K Plays</div></div>
+        <div class="badge-card earned"><div class="badge-icon">⬇️</div><div class="badge-name">Downloader</div></div>
+        <div class="badge-card earned"><div class="badge-icon">❤️</div><div class="badge-name">Superfan</div></div>
+        <div class="badge-card earned"><div class="badge-icon">⭐</div><div class="badge-name">Pro User</div></div>
+        <div class="badge-card" style="opacity:0.4;"><div class="badge-icon">🏆</div><div class="badge-name">10K Plays</div></div>
+        <div class="badge-card" style="opacity:0.4;"><div class="badge-icon">🌍</div><div class="badge-name">Explorer</div></div>
+      </div>
+
+      <!-- Ad -->
+      <div class="ad">
+        <div class="ad-tag">Ad</div>
+        <div class="ad-txt">Share Shurafah &amp; earn free Premium months</div>
+        <div class="ad-cta">Refer</div>
+        <div class="ad-x">✕</div>
+      </div>
+
+      <div class="spacer"></div>
+    </div>
+
+    <!-- ══════════════════════════════
+         TAB 2 — FAVOURITES
+    ══════════════════════════════ -->
+    <div class="tab-panel" id="tab-favourites">
+      <div class="fav-tab-head">
+        <div class="ft-title">
+          <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+          My Favourites
+        </div>
+        <div class="ft-count" id="favTabCount">42 items</div>
+      </div>
+
+      <div class="fav-filter" id="favFilter">
+        <div class="fav-chip on" data-fav="all">All</div>
+        <div class="fav-chip" data-fav="songs">Songs</div>
+        <div class="fav-chip" data-fav="artists">Artists</div>
+        <div class="fav-chip" data-fav="albums">Albums</div>
+        <div class="fav-chip" data-fav="playlists">Playlists</div>
+      </div>
+
+      <div class="fav-rows" id="favRows" data-page="1" data-per-page="5">
+        <div class="fav-row" data-cat="songs">
+          <div class="fav-thumb g1">🎶</div>
+          <div class="fav-info">
+            <div class="fav-title">Way Maker</div>
+            <div class="fav-artist">Sinach · Song</div>
+          </div>
+          <div class="fav-right">
+            <div class="fav-dur">5:33</div>
+            <div class="fav-heart" onclick="toggleFav(this, event)"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div>
+          </div>
+        </div>
+        <div class="fav-row" data-cat="songs">
+          <div class="fav-thumb g4">🎸</div>
+          <div class="fav-info">
+            <div class="fav-title">Holy Ground</div>
+            <div class="fav-artist">Nathaniel Bassey · Song</div>
+          </div>
+          <div class="fav-right">
+            <div class="fav-dur">4:48</div>
+            <div class="fav-heart" onclick="toggleFav(this, event)"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div>
+          </div>
+        </div>
+        <div class="fav-row" data-cat="artists">
+          <div class="fav-thumb g7">🎤</div>
+          <div class="fav-info">
+            <div class="fav-title">Nathaniel Bassey</div>
+            <div class="fav-artist">Gospel · Artist</div>
+          </div>
+          <div class="fav-right">
+            <div class="fav-dur">48 songs</div>
+            <div class="fav-heart" onclick="toggleFav(this, event)"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div>
+          </div>
+        </div>
+        <div class="fav-row" data-cat="artists">
+          <div class="fav-thumb g6">🎤</div>
+          <div class="fav-info">
+            <div class="fav-title">Sinach</div>
+            <div class="fav-artist">Worship · Artist</div>
+          </div>
+          <div class="fav-right">
+            <div class="fav-dur">62 songs</div>
+            <div class="fav-heart" onclick="toggleFav(this, event)"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div>
+          </div>
+        </div>
+        <div class="fav-row" data-cat="albums">
+          <div class="fav-thumb g2">💿</div>
+          <div class="fav-info">
+            <div class="fav-title">Open Heaven</div>
+            <div class="fav-artist">Nathaniel Bassey · Album</div>
+          </div>
+          <div class="fav-right">
+            <div class="fav-dur">10 tracks</div>
+            <div class="fav-heart" onclick="toggleFav(this, event)"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div>
+          </div>
+        </div>
+        <div class="fav-row" data-cat="playlists">
+          <div class="fav-thumb g5">🙏</div>
+          <div class="fav-info">
+            <div class="fav-title">Sunday Praise</div>
+            <div class="fav-artist">Playlist · 18 songs</div>
+          </div>
+          <div class="fav-right">
+            <div class="fav-dur">1h 12min</div>
+            <div class="fav-heart" onclick="toggleFav(this, event)"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div>
+          </div>
+        </div>
+        <div class="fav-row" data-cat="playlists">
+          <div class="fav-thumb g8">❤️</div>
+          <div class="fav-info">
+            <div class="fav-title">Top Favourites</div>
+            <div class="fav-artist">Playlist · 12 songs</div>
+          </div>
+          <div class="fav-right">
+            <div class="fav-dur">48 min</div>
+            <div class="fav-heart" onclick="toggleFav(this, event)"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div>
+          </div>
+        </div>
+      </div>
+      <div class="pagination" id="pag-favRows"></div>
+
+      <div class="fav-empty" id="favEmpty">
+        <div class="fe-icon">❤️</div>
+        <div>No favourites yet in this filter.</div>
+      </div>
+
+      <div class="spacer"></div>
+    </div>
+
+    <!-- ══════════════════════════════
+         TAB 3 — HISTORY
+    ══════════════════════════════ -->
+    <div class="tab-panel" id="tab-history">
+      <div class="history-filter">
+        <div class="hf on">All Time</div>
+        <div class="hf off">Today</div>
+        <div class="hf off">This Week</div>
+        <div class="hf off">This Month</div>
+      </div>
+
+      <div class="hist-section-label">Today</div>
+      <div class="hist-list">
+        <div class="hrow">
+          <div class="hr-thumb g3">🎵</div>
+          <div class="hr-info"><div class="hr-title">Fallen Stars</div><div class="hr-artist">Amara Soul</div></div>
+          <div class="hr-right"><div class="hr-when">Just now</div><div class="hr-dur">3:42</div></div>
+        </div>
+        <div class="hrow">
+          <div class="hr-thumb g1">🎶</div>
+          <div class="hr-info"><div class="hr-title">Way Maker</div><div class="hr-artist">Sinach</div></div>
+          <div class="hr-right"><div class="hr-when">1 hr ago</div><div class="hr-dur">5:33</div></div>
+        </div>
+        <div class="hrow">
+          <div class="hr-thumb g4">🎸</div>
+          <div class="hr-info"><div class="hr-title">Holy Ground</div><div class="hr-artist">Nathaniel Bassey</div></div>
+          <div class="hr-right"><div class="hr-when">2 hrs ago</div><div class="hr-dur">4:48</div></div>
+        </div>
+      </div>
+
+      <div class="hist-section-label" style="margin-top:8px;">Yesterday</div>
+      <div class="hist-list">
+        <div class="hrow">
+          <div class="hr-thumb g5">🎼</div>
+          <div class="hr-info"><div class="hr-title">Open Heaven</div><div class="hr-artist">Nathaniel Bassey</div></div>
+          <div class="hr-right"><div class="hr-when">Yesterday</div><div class="hr-dur">4:55</div></div>
+        </div>
+        <div class="hrow">
+          <div class="hr-thumb g2">🎤</div>
+          <div class="hr-info"><div class="hr-title">Higher Ground</div><div class="hr-artist">Frank Edwards</div></div>
+          <div class="hr-right"><div class="hr-when">Yesterday</div><div class="hr-dur">5:01</div></div>
+        </div>
+        <div class="hrow">
+          <div class="hr-thumb g7">🎵</div>
+          <div class="hr-info"><div class="hr-title">Grace Overflow</div><div class="hr-artist">Tope Alabi</div></div>
+          <div class="hr-right"><div class="hr-when">Yesterday</div><div class="hr-dur">4:15</div></div>
+        </div>
+        <div class="hrow">
+          <div class="hr-thumb g8">🎶</div>
+          <div class="hr-info"><div class="hr-title">Miracles</div><div class="hr-artist">Dunsin Oyekan</div></div>
+          <div class="hr-right"><div class="hr-when">Yesterday</div><div class="hr-dur">6:20</div></div>
+        </div>
+      </div>
+
+      <div class="hist-section-label" style="margin-top:8px;">This Week</div>
+      <div class="hist-list">
+        <div class="hrow">
+          <div class="hr-thumb g6">🎸</div>
+          <div class="hr-info"><div class="hr-title">River Flow</div><div class="hr-artist">Sinach</div></div>
+          <div class="hr-right"><div class="hr-when">Mon</div><div class="hr-dur">5:10</div></div>
+        </div>
+        <div class="hrow">
+          <div class="hr-thumb g4">🎼</div>
+          <div class="hr-info"><div class="hr-title">Come Alive</div><div class="hr-artist">Lauren Daigle</div></div>
+          <div class="hr-right"><div class="hr-when">Mon</div><div class="hr-dur">4:52</div></div>
+        </div>
+        <div class="hrow">
+          <div class="hr-thumb g1">🎵</div>
+          <div class="hr-info"><div class="hr-title">Deep Calls</div><div class="hr-artist">Amara Soul</div></div>
+          <div class="hr-right"><div class="hr-when">Sun</div><div class="hr-dur">4:28</div></div>
+        </div>
+      </div>
+      <div class="pagination" id="pag-histRows"></div>
+
+      <div class="spacer"></div>
+    </div>
+
+    <!-- ══════════════════════════════
+         TAB 3 — DOWNLOADS
+    ══════════════════════════════ -->
+    <div class="tab-panel" id="tab-downloads">
+      <div class="dl-header-stats">
+        <div class="dhs d1"><div class="dhs-n">24</div><div class="dhs-l">Songs</div></div>
+        <div class="dhs d2"><div class="dhs-n">142 MB</div><div class="dhs-l">Used</div></div>
+        <div class="dhs d3"><div class="dhs-n">358 MB</div><div class="dhs-l">Free</div></div>
+      </div>
+
+      <div class="dl-manage-row">
+        <div class="dl-sort"><svg viewBox="0 0 24 24"><line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="11" y1="18" x2="13" y2="18"/></svg> Date Downloaded</div>
+        <div class="dl-manage-btn">Manage Storage</div>
+      </div>
+
+      <div class="dl-list">
+        <div class="drow">
+          <div class="dr-thumb g1">🎵<div class="offline-dot"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div></div>
+          <div class="dr-info">
+            <div class="dr-title">Way Maker</div>
+            <div class="dr-artist">Sinach</div>
+            <div class="dr-meta"><div class="dr-size"><svg viewBox="0 0 24 24"><path d="M12 3v10M8 9l4 4 4-4"/><path d="M5 19h14"/></svg>8.4 MB</div><div class="dr-quality">320 kbps</div><div class="dr-date">Mar 28</div></div>
+          </div>
+          <div class="dr-right"><div class="dr-dur">5:33</div><div class="dr-more"><svg viewBox="0 0 24 24"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg></div></div>
+        </div>
+        <div class="drow">
+          <div class="dr-thumb g3">🎶<div class="offline-dot"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div></div>
+          <div class="dr-info">
+            <div class="dr-title">Fallen Stars</div>
+            <div class="dr-artist">Amara Soul</div>
+            <div class="dr-meta"><div class="dr-size"><svg viewBox="0 0 24 24"><path d="M12 3v10M8 9l4 4 4-4"/><path d="M5 19h14"/></svg>4.2 MB</div><div class="dr-quality">128 kbps</div><div class="dr-date">Mar 27</div></div>
+          </div>
+          <div class="dr-right"><div class="dr-dur">3:42</div><div class="dr-more"><svg viewBox="0 0 24 24"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg></div></div>
+        </div>
+        <div class="drow">
+          <div class="dr-thumb g4">🎸<div class="offline-dot"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div></div>
+          <div class="dr-info">
+            <div class="dr-title">Holy Ground</div>
+            <div class="dr-artist">Nathaniel Bassey</div>
+            <div class="dr-meta"><div class="dr-size"><svg viewBox="0 0 24 24"><path d="M12 3v10M8 9l4 4 4-4"/><path d="M5 19h14"/></svg>6.1 MB</div><div class="dr-quality">320 kbps</div><div class="dr-date">Mar 25</div></div>
+          </div>
+          <div class="dr-right"><div class="dr-dur">4:48</div><div class="dr-more"><svg viewBox="0 0 24 24"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg></div></div>
+        </div>
+        <div class="drow">
+          <div class="dr-thumb g5">🎼<div class="offline-dot"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div></div>
+          <div class="dr-info">
+            <div class="dr-title">Higher Ground</div>
+            <div class="dr-artist">Frank Edwards</div>
+            <div class="dr-meta"><div class="dr-size"><svg viewBox="0 0 24 24"><path d="M12 3v10M8 9l4 4 4-4"/><path d="M5 19h14"/></svg>5.7 MB</div><div class="dr-quality">128 kbps</div><div class="dr-date">Mar 24</div></div>
+          </div>
+          <div class="dr-right"><div class="dr-dur">5:01</div><div class="dr-more"><svg viewBox="0 0 24 24"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg></div></div>
+        </div>
+        <div class="drow">
+          <div class="dr-thumb g7">🎤<div class="offline-dot"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div></div>
+          <div class="dr-info">
+            <div class="dr-title">Open Heaven</div>
+            <div class="dr-artist">Nathaniel Bassey</div>
+            <div class="dr-meta"><div class="dr-size"><svg viewBox="0 0 24 24"><path d="M12 3v10M8 9l4 4 4-4"/><path d="M5 19h14"/></svg>7.2 MB</div><div class="dr-quality">320 kbps</div><div class="dr-date">Mar 20</div></div>
+          </div>
+          <div class="dr-right"><div class="dr-dur">4:55</div><div class="dr-more"><svg viewBox="0 0 24 24"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg></div></div>
+        </div>
+        <div class="drow">
+          <div class="dr-thumb g8">🎵<div class="offline-dot"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div></div>
+          <div class="dr-info">
+            <div class="dr-title">Miracles</div>
+            <div class="dr-artist">Dunsin Oyekan</div>
+            <div class="dr-meta"><div class="dr-size"><svg viewBox="0 0 24 24"><path d="M12 3v10M8 9l4 4 4-4"/><path d="M5 19h14"/></svg>9.1 MB</div><div class="dr-quality">320 kbps</div><div class="dr-date">Mar 18</div></div>
+          </div>
+          <div class="dr-right"><div class="dr-dur">6:20</div><div class="dr-more"><svg viewBox="0 0 24 24"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg></div></div>
+        </div>
+      </div>
+      <div class="pagination" id="pag-dlRows"></div>
+      <div class="spacer"></div>
+    </div>
+
+    <!-- ══════════════════════════════
+         TAB 4 — MY COMMENTS
+    ══════════════════════════════ -->
+    <div class="tab-panel" id="tab-comments">
+      <div class="my-comments">
+
+        <div class="mc-card">
+          <div class="mc-song-row">
+            <div class="mc-thumb g3">🎵</div>
+            <div class="mc-song-info"><div class="mc-song-title">Fallen Stars</div><div class="mc-song-artist">Amara Soul</div></div>
+            <div class="mc-song-link">View →</div>
+          </div>
+          <div class="mc-text">"This song touched my soul deeply. Been on repeat all morning 🙏🔥 Amara Soul is truly anointed!"</div>
+          <div class="mc-footer">
+            <span class="mc-time">2 hrs ago</span>
+            <span class="mc-likes"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>42</span>
+            <span class="mc-replies">💬 3 replies</span>
+            <span class="mc-del">Delete</span>
+          </div>
+        </div>
+
+        <div class="mc-card">
+          <div class="mc-song-row">
+            <div class="mc-thumb g1">🎶</div>
+            <div class="mc-song-info"><div class="mc-song-title">Way Maker</div><div class="mc-song-artist">Sinach</div></div>
+            <div class="mc-song-link">View →</div>
+          </div>
+          <div class="mc-text">"Classic. This song will never get old. Sinach is a gift to the body of Christ 🎶❤️"</div>
+          <div class="mc-footer">
+            <span class="mc-time">Yesterday</span>
+            <span class="mc-likes"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>18</span>
+            <span class="mc-replies">💬 1 reply</span>
+            <span class="mc-del">Delete</span>
+          </div>
+        </div>
+
+        <div class="mc-card">
+          <div class="mc-song-row">
+            <div class="mc-thumb g4">🎸</div>
+            <div class="mc-song-info"><div class="mc-song-title">Holy Ground</div><div class="mc-song-artist">Nathaniel Bassey</div></div>
+            <div class="mc-song-link">View →</div>
+          </div>
+          <div class="mc-text">"Downloaded immediately and shared with my whole church group. We played it during Sunday service!"</div>
+          <div class="mc-footer">
+            <span class="mc-time">3 days ago</span>
+            <span class="mc-likes"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>9</span>
+            <span class="mc-replies">💬 0 replies</span>
+            <span class="mc-del">Delete</span>
+          </div>
+        </div>
+
+        <div class="mc-card">
+          <div class="mc-song-row">
+            <div class="mc-thumb g5">🎼</div>
+            <div class="mc-song-info"><div class="mc-song-title">Miracles</div><div class="mc-song-artist">Dunsin Oyekan</div></div>
+            <div class="mc-song-link">View →</div>
+          </div>
+          <div class="mc-text">"The way this song builds up to the bridge is just INCREDIBLE. 6 minutes of pure worship 🙌"</div>
+          <div class="mc-footer">
+            <span class="mc-time">1 week ago</span>
+            <span class="mc-likes"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>31</span>
+            <span class="mc-replies">💬 5 replies</span>
+            <span class="mc-del">Delete</span>
+          </div>
+        </div>
+
+      </div>
+      <div class="pagination" id="pag-cmtCards"></div>
+      <div class="spacer"></div>
+    </div>
+
+    <!-- ══════════════════════════════
+         TAB 5 — SETTINGS
+    ══════════════════════════════ -->
+    <div class="tab-panel" id="tab-settings">
+      <div class="settings-section">
+
+        <!-- Account -->
+        <div class="settings-group">
+          <div class="sg-label">Account</div>
+          <div class="sg-items">
+            <div class="si-row">
+              <div class="si-icon" style="background:rgba(255,107,53,0.15)"><svg viewBox="0 0 24 24" style="stroke:var(--accent)"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+              <div class="si-body"><div class="si-title">Edit Profile</div><div class="si-sub">Name, bio, photo, handle</div></div>
+              <div class="si-right"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div>
+            </div>
+            <div class="si-row">
+              <div class="si-icon" style="background:rgba(77,159,255,0.15)"><svg viewBox="0 0 24 24" style="stroke:var(--blue)"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+              <div class="si-body"><div class="si-title">Change Password</div><div class="si-sub">Last changed 3 months ago</div></div>
+              <div class="si-right"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div>
+            </div>
+            <div class="si-row">
+              <div class="si-icon" style="background:rgba(255,209,102,0.12)"><svg viewBox="0 0 24 24" style="stroke:var(--yellow)"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
+              <div class="si-body"><div class="si-title">Manage Subscription</div><div class="si-sub">Shurafah Pro · Active</div></div>
+              <div class="si-right"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Location (Zone / State / LGA) -->
+        <div class="settings-group">
+          <div class="sg-label">Location</div>
+          <div class="sg-items">
+            <div class="si-row" style="display:block;">
+              <div class="loc-group">
+                <div class="loc-field">
+                  <div class="loc-label">Zone</div>
+                  <div class="loc-select-wrap">
+                    <select class="loc-select" id="profZoneSelect">
+                      <option value="">Select your zone…</option>
+                      <option value="Rasulil Akram Kano">Rasulil Akram Kano</option>
+                      <option value="Amirul Muuminin Zaria">Amirul Muuminin Zaria</option>
+                      <option value="Sayyada Zahra Kaduna">Sayyada Zahra Kaduna</option>
+                      <option value="Imam Hussan Azare">Imam Hussan Azare</option>
+                      <option value="Imam Hussain Katsina">Imam Hussain Katsina</option>
+                      <option value="Imam Aliyu Zainul&#39;abidin Gombe">Imam Aliyu Zainul&#39;abidin Gombe</option>
+                      <option value="Imam Muhammad Bakir Potiskum">Imam Muhammad Bakir Potiskum</option>
+                      <option value="Imam Ja&#39;afar Assadiq Lagos">Imam Ja&#39;afar Assadiq Lagos</option>
+                      <option value="Imam Musa Kazim Jos">Imam Musa Kazim Jos</option>
+                      <option value="Imam Aliyu Didah Sokoto">Imam Aliyu Didah Sokoto</option>
+                      <option value="Imam Muhammad Jawad Bauchi">Imam Muhammad Jawad Bauchi</option>
+                      <option value="Imam Ali Alhadi Taraba">Imam Ali Alhadi Taraba</option>
+                      <option value="Imam Hassan Alaskari Yola">Imam Hassan Alaskari Yola</option>
+                      <option value="Imam Almahdi Alhujja Abuja">Imam Almahdi Alhujja Abuja</option>
+                      <option value="Sayyid Zakzaky Funtua">Sayyid Zakzaky Funtua</option>
+                    </select>
+                    <div class="loc-arrow"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></div>
+                  </div>
+                </div>
+                <div class="loc-field">
+                  <div class="loc-label">State</div>
+                  <div class="loc-select-wrap">
+                    <select class="loc-select" id="profStateSelect">
+                      <option value="">Select your state…</option>
+                      <option value="Abia">Abia</option>
+                      <option value="Adamawa">Adamawa</option>
+                      <option value="Akwa Ibom">Akwa Ibom</option>
+                      <option value="Anambra">Anambra</option>
+                      <option value="Bauchi">Bauchi</option>
+                      <option value="Bayelsa">Bayelsa</option>
+                      <option value="Benue">Benue</option>
+                      <option value="Borno">Borno</option>
+                      <option value="Cross River">Cross River</option>
+                      <option value="Delta">Delta</option>
+                      <option value="Ebonyi">Ebonyi</option>
+                      <option value="Edo">Edo</option>
+                      <option value="Ekiti">Ekiti</option>
+                      <option value="Enugu">Enugu</option>
+                      <option value="FCT — Abuja">FCT — Abuja</option>
+                      <option value="Gombe">Gombe</option>
+                      <option value="Imo">Imo</option>
+                      <option value="Jigawa">Jigawa</option>
+                      <option value="Kaduna">Kaduna</option>
+                      <option value="Kano">Kano</option>
+                      <option value="Katsina">Katsina</option>
+                      <option value="Kebbi">Kebbi</option>
+                      <option value="Kogi">Kogi</option>
+                      <option value="Kwara">Kwara</option>
+                      <option value="Lagos">Lagos</option>
+                      <option value="Nasarawa">Nasarawa</option>
+                      <option value="Niger">Niger</option>
+                      <option value="Ogun">Ogun</option>
+                      <option value="Ondo">Ondo</option>
+                      <option value="Osun">Osun</option>
+                      <option value="Oyo">Oyo</option>
+                      <option value="Plateau">Plateau</option>
+                      <option value="Rivers">Rivers</option>
+                      <option value="Sokoto">Sokoto</option>
+                      <option value="Taraba">Taraba</option>
+                      <option value="Yobe">Yobe</option>
+                      <option value="Zamfara">Zamfara</option>
+                    </select>
+                    <div class="loc-arrow"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></div>
+                  </div>
+                </div>
+                <div class="loc-field">
+                  <div class="loc-label">Local Government Area (LGA)</div>
+                  <div class="loc-select-wrap">
+                    <select class="loc-select" id="profLgaSelect">
+                      <option value="">Select your LGA…</option>
+                      <optgroup label="Abia" data-state="Abia">
+                        <option value="Aba North" data-state="Abia">Aba North</option>
+                        <option value="Aba South" data-state="Abia">Aba South</option>
+                        <option value="Arochukwu" data-state="Abia">Arochukwu</option>
+                        <option value="Bende" data-state="Abia">Bende</option>
+                        <option value="Ikwuano" data-state="Abia">Ikwuano</option>
+                        <option value="Isiala Ngwa North" data-state="Abia">Isiala Ngwa North</option>
+                        <option value="Isiala Ngwa South" data-state="Abia">Isiala Ngwa South</option>
+                        <option value="Isuikwuato" data-state="Abia">Isuikwuato</option>
+                        <option value="Obi Ngwa" data-state="Abia">Obi Ngwa</option>
+                        <option value="Ohafia" data-state="Abia">Ohafia</option>
+                        <option value="Osisioma" data-state="Abia">Osisioma</option>
+                        <option value="Ugwunagbo" data-state="Abia">Ugwunagbo</option>
+                        <option value="Ukwa East" data-state="Abia">Ukwa East</option>
+                        <option value="Ukwa West" data-state="Abia">Ukwa West</option>
+                        <option value="Umuahia North" data-state="Abia">Umuahia North</option>
+                        <option value="Umuahia South" data-state="Abia">Umuahia South</option>
+                        <option value="Umu Nneochi" data-state="Abia">Umu Nneochi</option>
+                      </optgroup>
+                      <optgroup label="Adamawa" data-state="Adamawa">
+                        <option value="Demsa" data-state="Adamawa">Demsa</option>
+                        <option value="Fufure" data-state="Adamawa">Fufure</option>
+                        <option value="Ganye" data-state="Adamawa">Ganye</option>
+                        <option value="Gayuk" data-state="Adamawa">Gayuk</option>
+                        <option value="Gombi" data-state="Adamawa">Gombi</option>
+                        <option value="Grie" data-state="Adamawa">Grie</option>
+                        <option value="Hong" data-state="Adamawa">Hong</option>
+                        <option value="Jada" data-state="Adamawa">Jada</option>
+                        <option value="Lamurde" data-state="Adamawa">Lamurde</option>
+                        <option value="Madagali" data-state="Adamawa">Madagali</option>
+                        <option value="Maiha" data-state="Adamawa">Maiha</option>
+                        <option value="Mayo Belwa" data-state="Adamawa">Mayo Belwa</option>
+                        <option value="Michika" data-state="Adamawa">Michika</option>
+                        <option value="Mubi North" data-state="Adamawa">Mubi North</option>
+                        <option value="Mubi South" data-state="Adamawa">Mubi South</option>
+                        <option value="Numan" data-state="Adamawa">Numan</option>
+                        <option value="Shelleng" data-state="Adamawa">Shelleng</option>
+                        <option value="Song" data-state="Adamawa">Song</option>
+                        <option value="Toungo" data-state="Adamawa">Toungo</option>
+                        <option value="Yola North" data-state="Adamawa">Yola North</option>
+                        <option value="Yola South" data-state="Adamawa">Yola South</option>
+                      </optgroup>
+                      <optgroup label="Akwa Ibom" data-state="Akwa Ibom">
+                        <option value="Abak" data-state="Akwa Ibom">Abak</option>
+                        <option value="Eastern Obolo" data-state="Akwa Ibom">Eastern Obolo</option>
+                        <option value="Eket" data-state="Akwa Ibom">Eket</option>
+                        <option value="Esit Eket" data-state="Akwa Ibom">Esit Eket</option>
+                        <option value="Essien Udim" data-state="Akwa Ibom">Essien Udim</option>
+                        <option value="Etim Ekpo" data-state="Akwa Ibom">Etim Ekpo</option>
+                        <option value="Etinan" data-state="Akwa Ibom">Etinan</option>
+                        <option value="Ibeno" data-state="Akwa Ibom">Ibeno</option>
+                        <option value="Ibesikpo Asutan" data-state="Akwa Ibom">Ibesikpo Asutan</option>
+                        <option value="Ibiono-Ibom" data-state="Akwa Ibom">Ibiono-Ibom</option>
+                        <option value="Ika" data-state="Akwa Ibom">Ika</option>
+                        <option value="Ikono" data-state="Akwa Ibom">Ikono</option>
+                        <option value="Ikot Abasi" data-state="Akwa Ibom">Ikot Abasi</option>
+                        <option value="Ikot Ekpene" data-state="Akwa Ibom">Ikot Ekpene</option>
+                        <option value="Ini" data-state="Akwa Ibom">Ini</option>
+                        <option value="Itu" data-state="Akwa Ibom">Itu</option>
+                        <option value="Mbo" data-state="Akwa Ibom">Mbo</option>
+                        <option value="Mkpat-Enin" data-state="Akwa Ibom">Mkpat-Enin</option>
+                        <option value="Nsit-Atai" data-state="Akwa Ibom">Nsit-Atai</option>
+                        <option value="Nsit-Ibom" data-state="Akwa Ibom">Nsit-Ibom</option>
+                        <option value="Nsit-Ubium" data-state="Akwa Ibom">Nsit-Ubium</option>
+                        <option value="Obot Akara" data-state="Akwa Ibom">Obot Akara</option>
+                        <option value="Okobo" data-state="Akwa Ibom">Okobo</option>
+                        <option value="Onna" data-state="Akwa Ibom">Onna</option>
+                        <option value="Oron" data-state="Akwa Ibom">Oron</option>
+                        <option value="Oruk Anam" data-state="Akwa Ibom">Oruk Anam</option>
+                        <option value="Udung-Uko" data-state="Akwa Ibom">Udung-Uko</option>
+                        <option value="Ukanafun" data-state="Akwa Ibom">Ukanafun</option>
+                        <option value="Uruan" data-state="Akwa Ibom">Uruan</option>
+                        <option value="Urue-Offong/Oruko" data-state="Akwa Ibom">Urue-Offong/Oruko</option>
+                        <option value="Uyo" data-state="Akwa Ibom">Uyo</option>
+                      </optgroup>
+                      <optgroup label="Anambra" data-state="Anambra">
+                        <option value="Aguata" data-state="Anambra">Aguata</option>
+                        <option value="Anambra East" data-state="Anambra">Anambra East</option>
+                        <option value="Anambra West" data-state="Anambra">Anambra West</option>
+                        <option value="Anaocha" data-state="Anambra">Anaocha</option>
+                        <option value="Awka North" data-state="Anambra">Awka North</option>
+                        <option value="Awka South" data-state="Anambra">Awka South</option>
+                        <option value="Ayamelum" data-state="Anambra">Ayamelum</option>
+                        <option value="Dunukofia" data-state="Anambra">Dunukofia</option>
+                        <option value="Ekwusigo" data-state="Anambra">Ekwusigo</option>
+                        <option value="Idemili North" data-state="Anambra">Idemili North</option>
+                        <option value="Idemili South" data-state="Anambra">Idemili South</option>
+                        <option value="Ihiala" data-state="Anambra">Ihiala</option>
+                        <option value="Njikoka" data-state="Anambra">Njikoka</option>
+                        <option value="Nnewi North" data-state="Anambra">Nnewi North</option>
+                        <option value="Nnewi South" data-state="Anambra">Nnewi South</option>
+                        <option value="Ogbaru" data-state="Anambra">Ogbaru</option>
+                        <option value="Onitsha North" data-state="Anambra">Onitsha North</option>
+                        <option value="Onitsha South" data-state="Anambra">Onitsha South</option>
+                        <option value="Orumba North" data-state="Anambra">Orumba North</option>
+                        <option value="Orumba South" data-state="Anambra">Orumba South</option>
+                        <option value="Oyi" data-state="Anambra">Oyi</option>
+                      </optgroup>
+                      <optgroup label="Bauchi" data-state="Bauchi">
+                        <option value="Alkaleri" data-state="Bauchi">Alkaleri</option>
+                        <option value="Bauchi" data-state="Bauchi">Bauchi</option>
+                        <option value="Bogoro" data-state="Bauchi">Bogoro</option>
+                        <option value="Damban" data-state="Bauchi">Damban</option>
+                        <option value="Darazo" data-state="Bauchi">Darazo</option>
+                        <option value="Dass" data-state="Bauchi">Dass</option>
+                        <option value="Gamawa" data-state="Bauchi">Gamawa</option>
+                        <option value="Ganjuwa" data-state="Bauchi">Ganjuwa</option>
+                        <option value="Giade" data-state="Bauchi">Giade</option>
+                        <option value="Itas/Gadau" data-state="Bauchi">Itas/Gadau</option>
+                        <option value="Jama&#39;are" data-state="Bauchi">Jama&#39;are</option>
+                        <option value="Katagum" data-state="Bauchi">Katagum</option>
+                        <option value="Kirfi" data-state="Bauchi">Kirfi</option>
+                        <option value="Misau" data-state="Bauchi">Misau</option>
+                        <option value="Ningi" data-state="Bauchi">Ningi</option>
+                        <option value="Shira" data-state="Bauchi">Shira</option>
+                        <option value="Tafawa Balewa" data-state="Bauchi">Tafawa Balewa</option>
+                        <option value="Toro" data-state="Bauchi">Toro</option>
+                        <option value="Warji" data-state="Bauchi">Warji</option>
+                        <option value="Zaki" data-state="Bauchi">Zaki</option>
+                      </optgroup>
+                      <optgroup label="Bayelsa" data-state="Bayelsa">
+                        <option value="Brass" data-state="Bayelsa">Brass</option>
+                        <option value="Ekeremor" data-state="Bayelsa">Ekeremor</option>
+                        <option value="Kolokuma/Opokuma" data-state="Bayelsa">Kolokuma/Opokuma</option>
+                        <option value="Nembe" data-state="Bayelsa">Nembe</option>
+                        <option value="Ogbia" data-state="Bayelsa">Ogbia</option>
+                        <option value="Sagbama" data-state="Bayelsa">Sagbama</option>
+                        <option value="Southern Ijaw" data-state="Bayelsa">Southern Ijaw</option>
+                        <option value="Yenagoa" data-state="Bayelsa">Yenagoa</option>
+                      </optgroup>
+                      <optgroup label="Benue" data-state="Benue">
+                        <option value="Ado" data-state="Benue">Ado</option>
+                        <option value="Agatu" data-state="Benue">Agatu</option>
+                        <option value="Apa" data-state="Benue">Apa</option>
+                        <option value="Buruku" data-state="Benue">Buruku</option>
+                        <option value="Gboko" data-state="Benue">Gboko</option>
+                        <option value="Guma" data-state="Benue">Guma</option>
+                        <option value="Gwer East" data-state="Benue">Gwer East</option>
+                        <option value="Gwer West" data-state="Benue">Gwer West</option>
+                        <option value="Katsina-Ala" data-state="Benue">Katsina-Ala</option>
+                        <option value="Konshisha" data-state="Benue">Konshisha</option>
+                        <option value="Kwande" data-state="Benue">Kwande</option>
+                        <option value="Logo" data-state="Benue">Logo</option>
+                        <option value="Makurdi" data-state="Benue">Makurdi</option>
+                        <option value="Obi" data-state="Benue">Obi</option>
+                        <option value="Ogbadibo" data-state="Benue">Ogbadibo</option>
+                        <option value="Ohimini" data-state="Benue">Ohimini</option>
+                        <option value="Oju" data-state="Benue">Oju</option>
+                        <option value="Okpokwu" data-state="Benue">Okpokwu</option>
+                        <option value="Otukpo" data-state="Benue">Otukpo</option>
+                        <option value="Tarka" data-state="Benue">Tarka</option>
+                        <option value="Ukum" data-state="Benue">Ukum</option>
+                        <option value="Ushongo" data-state="Benue">Ushongo</option>
+                        <option value="Vandeikya" data-state="Benue">Vandeikya</option>
+                      </optgroup>
+                      <optgroup label="Borno" data-state="Borno">
+                        <option value="Abadam" data-state="Borno">Abadam</option>
+                        <option value="Askira/Uba" data-state="Borno">Askira/Uba</option>
+                        <option value="Bama" data-state="Borno">Bama</option>
+                        <option value="Bayo" data-state="Borno">Bayo</option>
+                        <option value="Biu" data-state="Borno">Biu</option>
+                        <option value="Chibok" data-state="Borno">Chibok</option>
+                        <option value="Damboa" data-state="Borno">Damboa</option>
+                        <option value="Dikwa" data-state="Borno">Dikwa</option>
+                        <option value="Gubio" data-state="Borno">Gubio</option>
+                        <option value="Guzamala" data-state="Borno">Guzamala</option>
+                        <option value="Gwoza" data-state="Borno">Gwoza</option>
+                        <option value="Hawul" data-state="Borno">Hawul</option>
+                        <option value="Jere" data-state="Borno">Jere</option>
+                        <option value="Kaga" data-state="Borno">Kaga</option>
+                        <option value="Kala/Balge" data-state="Borno">Kala/Balge</option>
+                        <option value="Konduga" data-state="Borno">Konduga</option>
+                        <option value="Kukawa" data-state="Borno">Kukawa</option>
+                        <option value="Kwaya Kusar" data-state="Borno">Kwaya Kusar</option>
+                        <option value="Mafa" data-state="Borno">Mafa</option>
+                        <option value="Magumeri" data-state="Borno">Magumeri</option>
+                        <option value="Maiduguri" data-state="Borno">Maiduguri</option>
+                        <option value="Marte" data-state="Borno">Marte</option>
+                        <option value="Mobbar" data-state="Borno">Mobbar</option>
+                        <option value="Monguno" data-state="Borno">Monguno</option>
+                        <option value="Ngala" data-state="Borno">Ngala</option>
+                        <option value="Nganzai" data-state="Borno">Nganzai</option>
+                        <option value="Shani" data-state="Borno">Shani</option>
+                      </optgroup>
+                      <optgroup label="Cross River" data-state="Cross River">
+                        <option value="Abi" data-state="Cross River">Abi</option>
+                        <option value="Akamkpa" data-state="Cross River">Akamkpa</option>
+                        <option value="Akpabuyo" data-state="Cross River">Akpabuyo</option>
+                        <option value="Bakassi" data-state="Cross River">Bakassi</option>
+                        <option value="Bekwarra" data-state="Cross River">Bekwarra</option>
+                        <option value="Biase" data-state="Cross River">Biase</option>
+                        <option value="Boki" data-state="Cross River">Boki</option>
+                        <option value="Calabar Municipal" data-state="Cross River">Calabar Municipal</option>
+                        <option value="Calabar South" data-state="Cross River">Calabar South</option>
+                        <option value="Etung" data-state="Cross River">Etung</option>
+                        <option value="Ikom" data-state="Cross River">Ikom</option>
+                        <option value="Obanliku" data-state="Cross River">Obanliku</option>
+                        <option value="Obubra" data-state="Cross River">Obubra</option>
+                        <option value="Obudu" data-state="Cross River">Obudu</option>
+                        <option value="Odukpani" data-state="Cross River">Odukpani</option>
+                        <option value="Ogoja" data-state="Cross River">Ogoja</option>
+                        <option value="Yakuur" data-state="Cross River">Yakuur</option>
+                        <option value="Yala" data-state="Cross River">Yala</option>
+                      </optgroup>
+                      <optgroup label="Delta" data-state="Delta">
+                        <option value="Aniocha North" data-state="Delta">Aniocha North</option>
+                        <option value="Aniocha South" data-state="Delta">Aniocha South</option>
+                        <option value="Bomadi" data-state="Delta">Bomadi</option>
+                        <option value="Burutu" data-state="Delta">Burutu</option>
+                        <option value="Ethiope East" data-state="Delta">Ethiope East</option>
+                        <option value="Ethiope West" data-state="Delta">Ethiope West</option>
+                        <option value="Ika North East" data-state="Delta">Ika North East</option>
+                        <option value="Ika South" data-state="Delta">Ika South</option>
+                        <option value="Isoko North" data-state="Delta">Isoko North</option>
+                        <option value="Isoko South" data-state="Delta">Isoko South</option>
+                        <option value="Ndokwa East" data-state="Delta">Ndokwa East</option>
+                        <option value="Ndokwa West" data-state="Delta">Ndokwa West</option>
+                        <option value="Okpe" data-state="Delta">Okpe</option>
+                        <option value="Oshimili North" data-state="Delta">Oshimili North</option>
+                        <option value="Oshimili South" data-state="Delta">Oshimili South</option>
+                        <option value="Patani" data-state="Delta">Patani</option>
+                        <option value="Sapele" data-state="Delta">Sapele</option>
+                        <option value="Udu" data-state="Delta">Udu</option>
+                        <option value="Ughelli North" data-state="Delta">Ughelli North</option>
+                        <option value="Ughelli South" data-state="Delta">Ughelli South</option>
+                        <option value="Ukwuani" data-state="Delta">Ukwuani</option>
+                        <option value="Uvwie" data-state="Delta">Uvwie</option>
+                        <option value="Warri North" data-state="Delta">Warri North</option>
+                        <option value="Warri South" data-state="Delta">Warri South</option>
+                        <option value="Warri South West" data-state="Delta">Warri South West</option>
+                      </optgroup>
+                      <optgroup label="Ebonyi" data-state="Ebonyi">
+                        <option value="Abakaliki" data-state="Ebonyi">Abakaliki</option>
+                        <option value="Afikpo North" data-state="Ebonyi">Afikpo North</option>
+                        <option value="Afikpo South" data-state="Ebonyi">Afikpo South</option>
+                        <option value="Ebonyi" data-state="Ebonyi">Ebonyi</option>
+                        <option value="Ezza North" data-state="Ebonyi">Ezza North</option>
+                        <option value="Ezza South" data-state="Ebonyi">Ezza South</option>
+                        <option value="Ikwo" data-state="Ebonyi">Ikwo</option>
+                        <option value="Ishielu" data-state="Ebonyi">Ishielu</option>
+                        <option value="Ivo" data-state="Ebonyi">Ivo</option>
+                        <option value="Izzi" data-state="Ebonyi">Izzi</option>
+                        <option value="Ohaozara" data-state="Ebonyi">Ohaozara</option>
+                        <option value="Ohaukwu" data-state="Ebonyi">Ohaukwu</option>
+                        <option value="Onicha" data-state="Ebonyi">Onicha</option>
+                      </optgroup>
+                      <optgroup label="Edo" data-state="Edo">
+                        <option value="Akoko-Edo" data-state="Edo">Akoko-Edo</option>
+                        <option value="Egor" data-state="Edo">Egor</option>
+                        <option value="Esan Central" data-state="Edo">Esan Central</option>
+                        <option value="Esan North-East" data-state="Edo">Esan North-East</option>
+                        <option value="Esan South-East" data-state="Edo">Esan South-East</option>
+                        <option value="Esan West" data-state="Edo">Esan West</option>
+                        <option value="Etsako Central" data-state="Edo">Etsako Central</option>
+                        <option value="Etsako East" data-state="Edo">Etsako East</option>
+                        <option value="Etsako West" data-state="Edo">Etsako West</option>
+                        <option value="Igueben" data-state="Edo">Igueben</option>
+                        <option value="Ikpoba Okha" data-state="Edo">Ikpoba Okha</option>
+                        <option value="Oredo" data-state="Edo">Oredo</option>
+                        <option value="Orhionmwon" data-state="Edo">Orhionmwon</option>
+                        <option value="Ovia North-East" data-state="Edo">Ovia North-East</option>
+                        <option value="Ovia South-West" data-state="Edo">Ovia South-West</option>
+                        <option value="Owan East" data-state="Edo">Owan East</option>
+                        <option value="Owan West" data-state="Edo">Owan West</option>
+                        <option value="Uhunmwonde" data-state="Edo">Uhunmwonde</option>
+                      </optgroup>
+                      <optgroup label="Ekiti" data-state="Ekiti">
+                        <option value="Ado Ekiti" data-state="Ekiti">Ado Ekiti</option>
+                        <option value="Efon" data-state="Ekiti">Efon</option>
+                        <option value="Ekiti East" data-state="Ekiti">Ekiti East</option>
+                        <option value="Ekiti South-West" data-state="Ekiti">Ekiti South-West</option>
+                        <option value="Ekiti West" data-state="Ekiti">Ekiti West</option>
+                        <option value="Emure" data-state="Ekiti">Emure</option>
+                        <option value="Gbonyin" data-state="Ekiti">Gbonyin</option>
+                        <option value="Ido Osi" data-state="Ekiti">Ido Osi</option>
+                        <option value="Ijero" data-state="Ekiti">Ijero</option>
+                        <option value="Ikere" data-state="Ekiti">Ikere</option>
+                        <option value="Ikole" data-state="Ekiti">Ikole</option>
+                        <option value="Ilejemeje" data-state="Ekiti">Ilejemeje</option>
+                        <option value="Irepodun/Ifelodun" data-state="Ekiti">Irepodun/Ifelodun</option>
+                        <option value="Ise/Orun" data-state="Ekiti">Ise/Orun</option>
+                        <option value="Moba" data-state="Ekiti">Moba</option>
+                        <option value="Oye" data-state="Ekiti">Oye</option>
+                      </optgroup>
+                      <optgroup label="Enugu" data-state="Enugu">
+                        <option value="Aninri" data-state="Enugu">Aninri</option>
+                        <option value="Awgu" data-state="Enugu">Awgu</option>
+                        <option value="Enugu East" data-state="Enugu">Enugu East</option>
+                        <option value="Enugu North" data-state="Enugu">Enugu North</option>
+                        <option value="Enugu South" data-state="Enugu">Enugu South</option>
+                        <option value="Ezeagu" data-state="Enugu">Ezeagu</option>
+                        <option value="Igbo Etiti" data-state="Enugu">Igbo Etiti</option>
+                        <option value="Igbo Eze North" data-state="Enugu">Igbo Eze North</option>
+                        <option value="Igbo Eze South" data-state="Enugu">Igbo Eze South</option>
+                        <option value="Isi Uzo" data-state="Enugu">Isi Uzo</option>
+                        <option value="Nkanu East" data-state="Enugu">Nkanu East</option>
+                        <option value="Nkanu West" data-state="Enugu">Nkanu West</option>
+                        <option value="Nsukka" data-state="Enugu">Nsukka</option>
+                        <option value="Oji River" data-state="Enugu">Oji River</option>
+                        <option value="Udenu" data-state="Enugu">Udenu</option>
+                        <option value="Udi" data-state="Enugu">Udi</option>
+                        <option value="Uzo Uwani" data-state="Enugu">Uzo Uwani</option>
+                      </optgroup>
+                      <optgroup label="FCT — Abuja" data-state="FCT — Abuja">
+                        <option value="Abaji" data-state="FCT — Abuja">Abaji</option>
+                        <option value="Bwari" data-state="FCT — Abuja">Bwari</option>
+                        <option value="Gwagwalada" data-state="FCT — Abuja">Gwagwalada</option>
+                        <option value="Kuje" data-state="FCT — Abuja">Kuje</option>
+                        <option value="Kwali" data-state="FCT — Abuja">Kwali</option>
+                        <option value="Municipal Area Council" data-state="FCT — Abuja">Municipal Area Council</option>
+                      </optgroup>
+                      <optgroup label="Gombe" data-state="Gombe">
+                        <option value="Akko" data-state="Gombe">Akko</option>
+                        <option value="Balanga" data-state="Gombe">Balanga</option>
+                        <option value="Billiri" data-state="Gombe">Billiri</option>
+                        <option value="Dukku" data-state="Gombe">Dukku</option>
+                        <option value="Funakaye" data-state="Gombe">Funakaye</option>
+                        <option value="Gombe" data-state="Gombe">Gombe</option>
+                        <option value="Kaltungo" data-state="Gombe">Kaltungo</option>
+                        <option value="Kwami" data-state="Gombe">Kwami</option>
+                        <option value="Nafada" data-state="Gombe">Nafada</option>
+                        <option value="Shongom" data-state="Gombe">Shongom</option>
+                        <option value="Yamaltu/Deba" data-state="Gombe">Yamaltu/Deba</option>
+                      </optgroup>
+                      <optgroup label="Imo" data-state="Imo">
+                        <option value="Aboh Mbaise" data-state="Imo">Aboh Mbaise</option>
+                        <option value="Ahiazu Mbaise" data-state="Imo">Ahiazu Mbaise</option>
+                        <option value="Ehime Mbano" data-state="Imo">Ehime Mbano</option>
+                        <option value="Ezinihitte" data-state="Imo">Ezinihitte</option>
+                        <option value="Ideato North" data-state="Imo">Ideato North</option>
+                        <option value="Ideato South" data-state="Imo">Ideato South</option>
+                        <option value="Ihitte/Uboma" data-state="Imo">Ihitte/Uboma</option>
+                        <option value="Ikeduru" data-state="Imo">Ikeduru</option>
+                        <option value="Isiala Mbano" data-state="Imo">Isiala Mbano</option>
+                        <option value="Isu" data-state="Imo">Isu</option>
+                        <option value="Mbaitoli" data-state="Imo">Mbaitoli</option>
+                        <option value="Ngor Okpala" data-state="Imo">Ngor Okpala</option>
+                        <option value="Njaba" data-state="Imo">Njaba</option>
+                        <option value="Nkwerre" data-state="Imo">Nkwerre</option>
+                        <option value="Nwangele" data-state="Imo">Nwangele</option>
+                        <option value="Obowo" data-state="Imo">Obowo</option>
+                        <option value="Oguta" data-state="Imo">Oguta</option>
+                        <option value="Ohaji/Egbema" data-state="Imo">Ohaji/Egbema</option>
+                        <option value="Okigwe" data-state="Imo">Okigwe</option>
+                        <option value="Orlu" data-state="Imo">Orlu</option>
+                        <option value="Orsu" data-state="Imo">Orsu</option>
+                        <option value="Oru East" data-state="Imo">Oru East</option>
+                        <option value="Oru West" data-state="Imo">Oru West</option>
+                        <option value="Owerri Municipal" data-state="Imo">Owerri Municipal</option>
+                        <option value="Owerri North" data-state="Imo">Owerri North</option>
+                        <option value="Owerri West" data-state="Imo">Owerri West</option>
+                        <option value="Unuimo" data-state="Imo">Unuimo</option>
+                      </optgroup>
+                      <optgroup label="Jigawa" data-state="Jigawa">
+                        <option value="Auyo" data-state="Jigawa">Auyo</option>
+                        <option value="Babura" data-state="Jigawa">Babura</option>
+                        <option value="Biriniwa" data-state="Jigawa">Biriniwa</option>
+                        <option value="Birnin Kudu" data-state="Jigawa">Birnin Kudu</option>
+                        <option value="Buji" data-state="Jigawa">Buji</option>
+                        <option value="Dutse" data-state="Jigawa">Dutse</option>
+                        <option value="Gagarawa" data-state="Jigawa">Gagarawa</option>
+                        <option value="Garki" data-state="Jigawa">Garki</option>
+                        <option value="Gumel" data-state="Jigawa">Gumel</option>
+                        <option value="Guri" data-state="Jigawa">Guri</option>
+                        <option value="Gwaram" data-state="Jigawa">Gwaram</option>
+                        <option value="Gwiwa" data-state="Jigawa">Gwiwa</option>
+                        <option value="Hadejia" data-state="Jigawa">Hadejia</option>
+                        <option value="Jahun" data-state="Jigawa">Jahun</option>
+                        <option value="Kafin Hausa" data-state="Jigawa">Kafin Hausa</option>
+                        <option value="Kaugama" data-state="Jigawa">Kaugama</option>
+                        <option value="Kazaure" data-state="Jigawa">Kazaure</option>
+                        <option value="Kiri Kasama" data-state="Jigawa">Kiri Kasama</option>
+                        <option value="Kiyawa" data-state="Jigawa">Kiyawa</option>
+                        <option value="Maigatari" data-state="Jigawa">Maigatari</option>
+                        <option value="Malam Madori" data-state="Jigawa">Malam Madori</option>
+                        <option value="Miga" data-state="Jigawa">Miga</option>
+                        <option value="Ringim" data-state="Jigawa">Ringim</option>
+                        <option value="Roni" data-state="Jigawa">Roni</option>
+                        <option value="Sule Tankarkar" data-state="Jigawa">Sule Tankarkar</option>
+                        <option value="Taura" data-state="Jigawa">Taura</option>
+                        <option value="Yankwashi" data-state="Jigawa">Yankwashi</option>
+                      </optgroup>
+                      <optgroup label="Kaduna" data-state="Kaduna">
+                        <option value="Birnin Gwari" data-state="Kaduna">Birnin Gwari</option>
+                        <option value="Chikun" data-state="Kaduna">Chikun</option>
+                        <option value="Giwa" data-state="Kaduna">Giwa</option>
+                        <option value="Igabi" data-state="Kaduna">Igabi</option>
+                        <option value="Ikara" data-state="Kaduna">Ikara</option>
+                        <option value="Jaba" data-state="Kaduna">Jaba</option>
+                        <option value="Jema&#39;a" data-state="Kaduna">Jema&#39;a</option>
+                        <option value="Kachia" data-state="Kaduna">Kachia</option>
+                        <option value="Kaduna North" data-state="Kaduna">Kaduna North</option>
+                        <option value="Kaduna South" data-state="Kaduna">Kaduna South</option>
+                        <option value="Kagarko" data-state="Kaduna">Kagarko</option>
+                        <option value="Kajuru" data-state="Kaduna">Kajuru</option>
+                        <option value="Kaura" data-state="Kaduna">Kaura</option>
+                        <option value="Kauru" data-state="Kaduna">Kauru</option>
+                        <option value="Kubau" data-state="Kaduna">Kubau</option>
+                        <option value="Kudan" data-state="Kaduna">Kudan</option>
+                        <option value="Lere" data-state="Kaduna">Lere</option>
+                        <option value="Makarfi" data-state="Kaduna">Makarfi</option>
+                        <option value="Sabon Gari" data-state="Kaduna">Sabon Gari</option>
+                        <option value="Sanga" data-state="Kaduna">Sanga</option>
+                        <option value="Soba" data-state="Kaduna">Soba</option>
+                        <option value="Zangon Kataf" data-state="Kaduna">Zangon Kataf</option>
+                        <option value="Zaria" data-state="Kaduna">Zaria</option>
+                      </optgroup>
+                      <optgroup label="Kano" data-state="Kano">
+                        <option value="Ajingi" data-state="Kano">Ajingi</option>
+                        <option value="Albasu" data-state="Kano">Albasu</option>
+                        <option value="Bagwai" data-state="Kano">Bagwai</option>
+                        <option value="Bebeji" data-state="Kano">Bebeji</option>
+                        <option value="Bichi" data-state="Kano">Bichi</option>
+                        <option value="Bunkure" data-state="Kano">Bunkure</option>
+                        <option value="Dala" data-state="Kano">Dala</option>
+                        <option value="Dambatta" data-state="Kano">Dambatta</option>
+                        <option value="Dawakin Kudu" data-state="Kano">Dawakin Kudu</option>
+                        <option value="Dawakin Tofa" data-state="Kano">Dawakin Tofa</option>
+                        <option value="Doguwa" data-state="Kano">Doguwa</option>
+                        <option value="Fagge" data-state="Kano">Fagge</option>
+                        <option value="Gabasawa" data-state="Kano">Gabasawa</option>
+                        <option value="Garko" data-state="Kano">Garko</option>
+                        <option value="Garun Mallam" data-state="Kano">Garun Mallam</option>
+                        <option value="Gaya" data-state="Kano">Gaya</option>
+                        <option value="Gezawa" data-state="Kano">Gezawa</option>
+                        <option value="Gwale" data-state="Kano">Gwale</option>
+                        <option value="Gwarzo" data-state="Kano">Gwarzo</option>
+                        <option value="Kabo" data-state="Kano">Kabo</option>
+                        <option value="Kano Municipal" data-state="Kano">Kano Municipal</option>
+                        <option value="Karaye" data-state="Kano">Karaye</option>
+                        <option value="Kibiya" data-state="Kano">Kibiya</option>
+                        <option value="Kiru" data-state="Kano">Kiru</option>
+                        <option value="Kumbotso" data-state="Kano">Kumbotso</option>
+                        <option value="Kunchi" data-state="Kano">Kunchi</option>
+                        <option value="Kura" data-state="Kano">Kura</option>
+                        <option value="Madobi" data-state="Kano">Madobi</option>
+                        <option value="Makoda" data-state="Kano">Makoda</option>
+                        <option value="Minjibir" data-state="Kano">Minjibir</option>
+                        <option value="Nasarawa" data-state="Kano">Nasarawa</option>
+                        <option value="Rano" data-state="Kano">Rano</option>
+                        <option value="Rimin Gado" data-state="Kano">Rimin Gado</option>
+                        <option value="Rogo" data-state="Kano">Rogo</option>
+                        <option value="Shanono" data-state="Kano">Shanono</option>
+                        <option value="Sumaila" data-state="Kano">Sumaila</option>
+                        <option value="Takai" data-state="Kano">Takai</option>
+                        <option value="Tarauni" data-state="Kano">Tarauni</option>
+                        <option value="Tofa" data-state="Kano">Tofa</option>
+                        <option value="Tsanyawa" data-state="Kano">Tsanyawa</option>
+                        <option value="Tudun Wada" data-state="Kano">Tudun Wada</option>
+                        <option value="Ungogo" data-state="Kano">Ungogo</option>
+                        <option value="Warawa" data-state="Kano">Warawa</option>
+                        <option value="Wudil" data-state="Kano">Wudil</option>
+                      </optgroup>
+                      <optgroup label="Katsina" data-state="Katsina">
+                        <option value="Bakori" data-state="Katsina">Bakori</option>
+                        <option value="Batagarawa" data-state="Katsina">Batagarawa</option>
+                        <option value="Batsari" data-state="Katsina">Batsari</option>
+                        <option value="Baure" data-state="Katsina">Baure</option>
+                        <option value="Bindawa" data-state="Katsina">Bindawa</option>
+                        <option value="Charanchi" data-state="Katsina">Charanchi</option>
+                        <option value="Dan Musa" data-state="Katsina">Dan Musa</option>
+                        <option value="Dandume" data-state="Katsina">Dandume</option>
+                        <option value="Danja" data-state="Katsina">Danja</option>
+                        <option value="Daura" data-state="Katsina">Daura</option>
+                        <option value="Dutsi" data-state="Katsina">Dutsi</option>
+                        <option value="Dutsin Ma" data-state="Katsina">Dutsin Ma</option>
+                        <option value="Faskari" data-state="Katsina">Faskari</option>
+                        <option value="Funtua" data-state="Katsina">Funtua</option>
+                        <option value="Ingawa" data-state="Katsina">Ingawa</option>
+                        <option value="Jibia" data-state="Katsina">Jibia</option>
+                        <option value="Kafur" data-state="Katsina">Kafur</option>
+                        <option value="Kaita" data-state="Katsina">Kaita</option>
+                        <option value="Kankara" data-state="Katsina">Kankara</option>
+                        <option value="Kankia" data-state="Katsina">Kankia</option>
+                        <option value="Katsina" data-state="Katsina">Katsina</option>
+                        <option value="Kurfi" data-state="Katsina">Kurfi</option>
+                        <option value="Kusada" data-state="Katsina">Kusada</option>
+                        <option value="Mai&#39;Adua" data-state="Katsina">Mai&#39;Adua</option>
+                        <option value="Malumfashi" data-state="Katsina">Malumfashi</option>
+                        <option value="Mani" data-state="Katsina">Mani</option>
+                        <option value="Mashi" data-state="Katsina">Mashi</option>
+                        <option value="Matazu" data-state="Katsina">Matazu</option>
+                        <option value="Musawa" data-state="Katsina">Musawa</option>
+                        <option value="Rimi" data-state="Katsina">Rimi</option>
+                        <option value="Sabuwa" data-state="Katsina">Sabuwa</option>
+                        <option value="Safana" data-state="Katsina">Safana</option>
+                        <option value="Sandamu" data-state="Katsina">Sandamu</option>
+                        <option value="Zango" data-state="Katsina">Zango</option>
+                      </optgroup>
+                      <optgroup label="Kebbi" data-state="Kebbi">
+                        <option value="Aleiro" data-state="Kebbi">Aleiro</option>
+                        <option value="Arewa Dandi" data-state="Kebbi">Arewa Dandi</option>
+                        <option value="Argungu" data-state="Kebbi">Argungu</option>
+                        <option value="Augie" data-state="Kebbi">Augie</option>
+                        <option value="Bagudo" data-state="Kebbi">Bagudo</option>
+                        <option value="Birnin Kebbi" data-state="Kebbi">Birnin Kebbi</option>
+                        <option value="Bunza" data-state="Kebbi">Bunza</option>
+                        <option value="Dandi" data-state="Kebbi">Dandi</option>
+                        <option value="Fakai" data-state="Kebbi">Fakai</option>
+                        <option value="Gwandu" data-state="Kebbi">Gwandu</option>
+                        <option value="Jega" data-state="Kebbi">Jega</option>
+                        <option value="Kalgo" data-state="Kebbi">Kalgo</option>
+                        <option value="Koko/Besse" data-state="Kebbi">Koko/Besse</option>
+                        <option value="Maiyama" data-state="Kebbi">Maiyama</option>
+                        <option value="Ngaski" data-state="Kebbi">Ngaski</option>
+                        <option value="Sakaba" data-state="Kebbi">Sakaba</option>
+                        <option value="Shanga" data-state="Kebbi">Shanga</option>
+                        <option value="Suru" data-state="Kebbi">Suru</option>
+                        <option value="Wasagu/Danko" data-state="Kebbi">Wasagu/Danko</option>
+                        <option value="Yauri" data-state="Kebbi">Yauri</option>
+                        <option value="Zuru" data-state="Kebbi">Zuru</option>
+                      </optgroup>
+                      <optgroup label="Kogi" data-state="Kogi">
+                        <option value="Adavi" data-state="Kogi">Adavi</option>
+                        <option value="Ajaokuta" data-state="Kogi">Ajaokuta</option>
+                        <option value="Ankpa" data-state="Kogi">Ankpa</option>
+                        <option value="Bassa" data-state="Kogi">Bassa</option>
+                        <option value="Dekina" data-state="Kogi">Dekina</option>
+                        <option value="Ibaji" data-state="Kogi">Ibaji</option>
+                        <option value="Idah" data-state="Kogi">Idah</option>
+                        <option value="Igalamela-Odolu" data-state="Kogi">Igalamela-Odolu</option>
+                        <option value="Ijumu" data-state="Kogi">Ijumu</option>
+                        <option value="Kabba/Bunu" data-state="Kogi">Kabba/Bunu</option>
+                        <option value="Kogi" data-state="Kogi">Kogi</option>
+                        <option value="Lokoja" data-state="Kogi">Lokoja</option>
+                        <option value="Mopa-Muro" data-state="Kogi">Mopa-Muro</option>
+                        <option value="Ofu" data-state="Kogi">Ofu</option>
+                        <option value="Ogori/Magongo" data-state="Kogi">Ogori/Magongo</option>
+                        <option value="Okehi" data-state="Kogi">Okehi</option>
+                        <option value="Okene" data-state="Kogi">Okene</option>
+                        <option value="Olamaboro" data-state="Kogi">Olamaboro</option>
+                        <option value="Omala" data-state="Kogi">Omala</option>
+                        <option value="Yagba East" data-state="Kogi">Yagba East</option>
+                        <option value="Yagba West" data-state="Kogi">Yagba West</option>
+                      </optgroup>
+                      <optgroup label="Kwara" data-state="Kwara">
+                        <option value="Asa" data-state="Kwara">Asa</option>
+                        <option value="Baruten" data-state="Kwara">Baruten</option>
+                        <option value="Edu" data-state="Kwara">Edu</option>
+                        <option value="Ekiti (Kwara)" data-state="Kwara">Ekiti (Kwara)</option>
+                        <option value="Ifelodun" data-state="Kwara">Ifelodun</option>
+                        <option value="Ilorin East" data-state="Kwara">Ilorin East</option>
+                        <option value="Ilorin South" data-state="Kwara">Ilorin South</option>
+                        <option value="Ilorin West" data-state="Kwara">Ilorin West</option>
+                        <option value="Irepodun" data-state="Kwara">Irepodun</option>
+                        <option value="Isin" data-state="Kwara">Isin</option>
+                        <option value="Kaiama" data-state="Kwara">Kaiama</option>
+                        <option value="Moro" data-state="Kwara">Moro</option>
+                        <option value="Offa" data-state="Kwara">Offa</option>
+                        <option value="Oke Ero" data-state="Kwara">Oke Ero</option>
+                        <option value="Oyun" data-state="Kwara">Oyun</option>
+                        <option value="Pategi" data-state="Kwara">Pategi</option>
+                      </optgroup>
+                      <optgroup label="Lagos" data-state="Lagos">
+                        <option value="Agege" data-state="Lagos">Agege</option>
+                        <option value="Ajeromi-Ifelodun" data-state="Lagos">Ajeromi-Ifelodun</option>
+                        <option value="Alimosho" data-state="Lagos">Alimosho</option>
+                        <option value="Amuwo-Odofin" data-state="Lagos">Amuwo-Odofin</option>
+                        <option value="Apapa" data-state="Lagos">Apapa</option>
+                        <option value="Badagry" data-state="Lagos">Badagry</option>
+                        <option value="Epe" data-state="Lagos">Epe</option>
+                        <option value="Eti Osa" data-state="Lagos">Eti Osa</option>
+                        <option value="Ibeju-Lekki" data-state="Lagos">Ibeju-Lekki</option>
+                        <option value="Ifako-Ijaiye" data-state="Lagos">Ifako-Ijaiye</option>
+                        <option value="Ikeja" data-state="Lagos">Ikeja</option>
+                        <option value="Ikorodu" data-state="Lagos">Ikorodu</option>
+                        <option value="Kosofe" data-state="Lagos">Kosofe</option>
+                        <option value="Lagos Island" data-state="Lagos">Lagos Island</option>
+                        <option value="Lagos Mainland" data-state="Lagos">Lagos Mainland</option>
+                        <option value="Mushin" data-state="Lagos">Mushin</option>
+                        <option value="Ojo" data-state="Lagos">Ojo</option>
+                        <option value="Oshodi-Isolo" data-state="Lagos">Oshodi-Isolo</option>
+                        <option value="Shomolu" data-state="Lagos">Shomolu</option>
+                        <option value="Surulere" data-state="Lagos">Surulere</option>
+                      </optgroup>
+                      <optgroup label="Nasarawa" data-state="Nasarawa">
+                        <option value="Akwanga" data-state="Nasarawa">Akwanga</option>
+                        <option value="Awe" data-state="Nasarawa">Awe</option>
+                        <option value="Doma" data-state="Nasarawa">Doma</option>
+                        <option value="Karu" data-state="Nasarawa">Karu</option>
+                        <option value="Keana" data-state="Nasarawa">Keana</option>
+                        <option value="Keffi" data-state="Nasarawa">Keffi</option>
+                        <option value="Kokona" data-state="Nasarawa">Kokona</option>
+                        <option value="Lafia" data-state="Nasarawa">Lafia</option>
+                        <option value="Nasarawa" data-state="Nasarawa">Nasarawa</option>
+                        <option value="Nasarawa Egon" data-state="Nasarawa">Nasarawa Egon</option>
+                        <option value="Obi" data-state="Nasarawa">Obi</option>
+                        <option value="Toto" data-state="Nasarawa">Toto</option>
+                        <option value="Wamba" data-state="Nasarawa">Wamba</option>
+                      </optgroup>
+                      <optgroup label="Niger" data-state="Niger">
+                        <option value="Agaie" data-state="Niger">Agaie</option>
+                        <option value="Agwara" data-state="Niger">Agwara</option>
+                        <option value="Bida" data-state="Niger">Bida</option>
+                        <option value="Borgu" data-state="Niger">Borgu</option>
+                        <option value="Bosso" data-state="Niger">Bosso</option>
+                        <option value="Chanchaga" data-state="Niger">Chanchaga</option>
+                        <option value="Edati" data-state="Niger">Edati</option>
+                        <option value="Gbako" data-state="Niger">Gbako</option>
+                        <option value="Gurara" data-state="Niger">Gurara</option>
+                        <option value="Katcha" data-state="Niger">Katcha</option>
+                        <option value="Kontagora" data-state="Niger">Kontagora</option>
+                        <option value="Lapai" data-state="Niger">Lapai</option>
+                        <option value="Lavun" data-state="Niger">Lavun</option>
+                        <option value="Magama" data-state="Niger">Magama</option>
+                        <option value="Mariga" data-state="Niger">Mariga</option>
+                        <option value="Mashegu" data-state="Niger">Mashegu</option>
+                        <option value="Mokwa" data-state="Niger">Mokwa</option>
+                        <option value="Munya" data-state="Niger">Munya</option>
+                        <option value="Paikoro" data-state="Niger">Paikoro</option>
+                        <option value="Rafi" data-state="Niger">Rafi</option>
+                        <option value="Rijau" data-state="Niger">Rijau</option>
+                        <option value="Shiroro" data-state="Niger">Shiroro</option>
+                        <option value="Suleja" data-state="Niger">Suleja</option>
+                        <option value="Tafa" data-state="Niger">Tafa</option>
+                        <option value="Wushishi" data-state="Niger">Wushishi</option>
+                      </optgroup>
+                      <optgroup label="Ogun" data-state="Ogun">
+                        <option value="Abeokuta North" data-state="Ogun">Abeokuta North</option>
+                        <option value="Abeokuta South" data-state="Ogun">Abeokuta South</option>
+                        <option value="Ado-Odo/Ota" data-state="Ogun">Ado-Odo/Ota</option>
+                        <option value="Egbado North (Yewa North)" data-state="Ogun">Egbado North (Yewa North)</option>
+                        <option value="Egbado South (Yewa South)" data-state="Ogun">Egbado South (Yewa South)</option>
+                        <option value="Ewekoro" data-state="Ogun">Ewekoro</option>
+                        <option value="Ifo" data-state="Ogun">Ifo</option>
+                        <option value="Ijebu East" data-state="Ogun">Ijebu East</option>
+                        <option value="Ijebu North" data-state="Ogun">Ijebu North</option>
+                        <option value="Ijebu North East" data-state="Ogun">Ijebu North East</option>
+                        <option value="Ijebu Ode" data-state="Ogun">Ijebu Ode</option>
+                        <option value="Ikenne" data-state="Ogun">Ikenne</option>
+                        <option value="Imeko Afon" data-state="Ogun">Imeko Afon</option>
+                        <option value="Ipokia" data-state="Ogun">Ipokia</option>
+                        <option value="Obafemi Owode" data-state="Ogun">Obafemi Owode</option>
+                        <option value="Odeda" data-state="Ogun">Odeda</option>
+                        <option value="Odogbolu" data-state="Ogun">Odogbolu</option>
+                        <option value="Ogun Waterside" data-state="Ogun">Ogun Waterside</option>
+                        <option value="Remo North" data-state="Ogun">Remo North</option>
+                        <option value="Sagamu" data-state="Ogun">Sagamu</option>
+                      </optgroup>
+                      <optgroup label="Ondo" data-state="Ondo">
+                        <option value="Akoko North-East" data-state="Ondo">Akoko North-East</option>
+                        <option value="Akoko North-West" data-state="Ondo">Akoko North-West</option>
+                        <option value="Akoko South-East" data-state="Ondo">Akoko South-East</option>
+                        <option value="Akoko South-West" data-state="Ondo">Akoko South-West</option>
+                        <option value="Akure North" data-state="Ondo">Akure North</option>
+                        <option value="Akure South" data-state="Ondo">Akure South</option>
+                        <option value="Ese Odo" data-state="Ondo">Ese Odo</option>
+                        <option value="Idanre" data-state="Ondo">Idanre</option>
+                        <option value="Ifedore" data-state="Ondo">Ifedore</option>
+                        <option value="Ilaje" data-state="Ondo">Ilaje</option>
+                        <option value="Ile Oluji/Okeigbo" data-state="Ondo">Ile Oluji/Okeigbo</option>
+                        <option value="Irele" data-state="Ondo">Irele</option>
+                        <option value="Odigbo" data-state="Ondo">Odigbo</option>
+                        <option value="Okitipupa" data-state="Ondo">Okitipupa</option>
+                        <option value="Ondo East" data-state="Ondo">Ondo East</option>
+                        <option value="Ondo West" data-state="Ondo">Ondo West</option>
+                        <option value="Ose" data-state="Ondo">Ose</option>
+                        <option value="Owo" data-state="Ondo">Owo</option>
+                      </optgroup>
+                      <optgroup label="Osun" data-state="Osun">
+                        <option value="Aiyedaade" data-state="Osun">Aiyedaade</option>
+                        <option value="Aiyedire" data-state="Osun">Aiyedire</option>
+                        <option value="Atakunmosa East" data-state="Osun">Atakunmosa East</option>
+                        <option value="Atakunmosa West" data-state="Osun">Atakunmosa West</option>
+                        <option value="Boluwaduro" data-state="Osun">Boluwaduro</option>
+                        <option value="Boripe" data-state="Osun">Boripe</option>
+                        <option value="Ede North" data-state="Osun">Ede North</option>
+                        <option value="Ede South" data-state="Osun">Ede South</option>
+                        <option value="Egbedore" data-state="Osun">Egbedore</option>
+                        <option value="Ejigbo" data-state="Osun">Ejigbo</option>
+                        <option value="Ife Central" data-state="Osun">Ife Central</option>
+                        <option value="Ife East" data-state="Osun">Ife East</option>
+                        <option value="Ife North" data-state="Osun">Ife North</option>
+                        <option value="Ife South" data-state="Osun">Ife South</option>
+                        <option value="Ifedayo" data-state="Osun">Ifedayo</option>
+                        <option value="Ifelodun" data-state="Osun">Ifelodun</option>
+                        <option value="Ila" data-state="Osun">Ila</option>
+                        <option value="Ilesa East" data-state="Osun">Ilesa East</option>
+                        <option value="Ilesa West" data-state="Osun">Ilesa West</option>
+                        <option value="Irepodun" data-state="Osun">Irepodun</option>
+                        <option value="Irewole" data-state="Osun">Irewole</option>
+                        <option value="Isokan" data-state="Osun">Isokan</option>
+                        <option value="Iwo" data-state="Osun">Iwo</option>
+                        <option value="Obokun" data-state="Osun">Obokun</option>
+                        <option value="Odo Otin" data-state="Osun">Odo Otin</option>
+                        <option value="Ola Oluwa" data-state="Osun">Ola Oluwa</option>
+                        <option value="Olorunda" data-state="Osun">Olorunda</option>
+                        <option value="Oriade" data-state="Osun">Oriade</option>
+                        <option value="Orolu" data-state="Osun">Orolu</option>
+                        <option value="Osogbo" data-state="Osun">Osogbo</option>
+                      </optgroup>
+                      <optgroup label="Oyo" data-state="Oyo">
+                        <option value="Afijio" data-state="Oyo">Afijio</option>
+                        <option value="Akinyele" data-state="Oyo">Akinyele</option>
+                        <option value="Atiba" data-state="Oyo">Atiba</option>
+                        <option value="Atisbo" data-state="Oyo">Atisbo</option>
+                        <option value="Egbeda" data-state="Oyo">Egbeda</option>
+                        <option value="Ibadan North" data-state="Oyo">Ibadan North</option>
+                        <option value="Ibadan North-East" data-state="Oyo">Ibadan North-East</option>
+                        <option value="Ibadan North-West" data-state="Oyo">Ibadan North-West</option>
+                        <option value="Ibadan South-East" data-state="Oyo">Ibadan South-East</option>
+                        <option value="Ibadan South-West" data-state="Oyo">Ibadan South-West</option>
+                        <option value="Ibarapa Central" data-state="Oyo">Ibarapa Central</option>
+                        <option value="Ibarapa East" data-state="Oyo">Ibarapa East</option>
+                        <option value="Ibarapa North" data-state="Oyo">Ibarapa North</option>
+                        <option value="Ido" data-state="Oyo">Ido</option>
+                        <option value="Irepo" data-state="Oyo">Irepo</option>
+                        <option value="Iseyin" data-state="Oyo">Iseyin</option>
+                        <option value="Itesiwaju" data-state="Oyo">Itesiwaju</option>
+                        <option value="Iwajowa" data-state="Oyo">Iwajowa</option>
+                        <option value="Kajola" data-state="Oyo">Kajola</option>
+                        <option value="Lagelu" data-state="Oyo">Lagelu</option>
+                        <option value="Ogbomosho North" data-state="Oyo">Ogbomosho North</option>
+                        <option value="Ogbomosho South" data-state="Oyo">Ogbomosho South</option>
+                        <option value="Ogo Oluwa" data-state="Oyo">Ogo Oluwa</option>
+                        <option value="Olorunsogo" data-state="Oyo">Olorunsogo</option>
+                        <option value="Oluyole" data-state="Oyo">Oluyole</option>
+                        <option value="Ona Ara" data-state="Oyo">Ona Ara</option>
+                        <option value="Orelope" data-state="Oyo">Orelope</option>
+                        <option value="Ori Ire" data-state="Oyo">Ori Ire</option>
+                        <option value="Oyo East" data-state="Oyo">Oyo East</option>
+                        <option value="Oyo West" data-state="Oyo">Oyo West</option>
+                        <option value="Saki East" data-state="Oyo">Saki East</option>
+                        <option value="Saki West" data-state="Oyo">Saki West</option>
+                        <option value="Surulere (Oyo)" data-state="Oyo">Surulere (Oyo)</option>
+                      </optgroup>
+                      <optgroup label="Plateau" data-state="Plateau">
+                        <option value="Barkin Ladi" data-state="Plateau">Barkin Ladi</option>
+                        <option value="Bassa" data-state="Plateau">Bassa</option>
+                        <option value="Bokkos" data-state="Plateau">Bokkos</option>
+                        <option value="Jos East" data-state="Plateau">Jos East</option>
+                        <option value="Jos North" data-state="Plateau">Jos North</option>
+                        <option value="Jos South" data-state="Plateau">Jos South</option>
+                        <option value="Kanam" data-state="Plateau">Kanam</option>
+                        <option value="Kanke" data-state="Plateau">Kanke</option>
+                        <option value="Langtang North" data-state="Plateau">Langtang North</option>
+                        <option value="Langtang South" data-state="Plateau">Langtang South</option>
+                        <option value="Mangu" data-state="Plateau">Mangu</option>
+                        <option value="Mikang" data-state="Plateau">Mikang</option>
+                        <option value="Pankshin" data-state="Plateau">Pankshin</option>
+                        <option value="Qua&#39;an Pan" data-state="Plateau">Qua&#39;an Pan</option>
+                        <option value="Riyom" data-state="Plateau">Riyom</option>
+                        <option value="Shendam" data-state="Plateau">Shendam</option>
+                        <option value="Wase" data-state="Plateau">Wase</option>
+                      </optgroup>
+                      <optgroup label="Rivers" data-state="Rivers">
+                        <option value="Abua/Odual" data-state="Rivers">Abua/Odual</option>
+                        <option value="Ahoada East" data-state="Rivers">Ahoada East</option>
+                        <option value="Ahoada West" data-state="Rivers">Ahoada West</option>
+                        <option value="Akuku-Toru" data-state="Rivers">Akuku-Toru</option>
+                        <option value="Andoni" data-state="Rivers">Andoni</option>
+                        <option value="Asari-Toru" data-state="Rivers">Asari-Toru</option>
+                        <option value="Bonny" data-state="Rivers">Bonny</option>
+                        <option value="Degema" data-state="Rivers">Degema</option>
+                        <option value="Eleme" data-state="Rivers">Eleme</option>
+                        <option value="Emuoha" data-state="Rivers">Emuoha</option>
+                        <option value="Etche" data-state="Rivers">Etche</option>
+                        <option value="Gokana" data-state="Rivers">Gokana</option>
+                        <option value="Ikwerre" data-state="Rivers">Ikwerre</option>
+                        <option value="Khana" data-state="Rivers">Khana</option>
+                        <option value="Obio/Akpor" data-state="Rivers">Obio/Akpor</option>
+                        <option value="Ogba/Egbema/Ndoni" data-state="Rivers">Ogba/Egbema/Ndoni</option>
+                        <option value="Ogu/Bolo" data-state="Rivers">Ogu/Bolo</option>
+                        <option value="Okrika" data-state="Rivers">Okrika</option>
+                        <option value="Omuma" data-state="Rivers">Omuma</option>
+                        <option value="Opobo/Nkoro" data-state="Rivers">Opobo/Nkoro</option>
+                        <option value="Oyigbo" data-state="Rivers">Oyigbo</option>
+                        <option value="Port Harcourt" data-state="Rivers">Port Harcourt</option>
+                        <option value="Tai" data-state="Rivers">Tai</option>
+                      </optgroup>
+                      <optgroup label="Sokoto" data-state="Sokoto">
+                        <option value="Binji" data-state="Sokoto">Binji</option>
+                        <option value="Bodinga" data-state="Sokoto">Bodinga</option>
+                        <option value="Dange Shuni" data-state="Sokoto">Dange Shuni</option>
+                        <option value="Gada" data-state="Sokoto">Gada</option>
+                        <option value="Goronyo" data-state="Sokoto">Goronyo</option>
+                        <option value="Gudu" data-state="Sokoto">Gudu</option>
+                        <option value="Gwadabawa" data-state="Sokoto">Gwadabawa</option>
+                        <option value="Illela" data-state="Sokoto">Illela</option>
+                        <option value="Isa" data-state="Sokoto">Isa</option>
+                        <option value="Kebbe" data-state="Sokoto">Kebbe</option>
+                        <option value="Kware" data-state="Sokoto">Kware</option>
+                        <option value="Rabah" data-state="Sokoto">Rabah</option>
+                        <option value="Sabon Birni" data-state="Sokoto">Sabon Birni</option>
+                        <option value="Shagari" data-state="Sokoto">Shagari</option>
+                        <option value="Silame" data-state="Sokoto">Silame</option>
+                        <option value="Sokoto North" data-state="Sokoto">Sokoto North</option>
+                        <option value="Sokoto South" data-state="Sokoto">Sokoto South</option>
+                        <option value="Tambuwal" data-state="Sokoto">Tambuwal</option>
+                        <option value="Tangaza" data-state="Sokoto">Tangaza</option>
+                        <option value="Tureta" data-state="Sokoto">Tureta</option>
+                        <option value="Wamako" data-state="Sokoto">Wamako</option>
+                        <option value="Wurno" data-state="Sokoto">Wurno</option>
+                        <option value="Yabo" data-state="Sokoto">Yabo</option>
+                      </optgroup>
+                      <optgroup label="Taraba" data-state="Taraba">
+                        <option value="Ardo Kola" data-state="Taraba">Ardo Kola</option>
+                        <option value="Bali" data-state="Taraba">Bali</option>
+                        <option value="Donga" data-state="Taraba">Donga</option>
+                        <option value="Gashaka" data-state="Taraba">Gashaka</option>
+                        <option value="Gassol" data-state="Taraba">Gassol</option>
+                        <option value="Ibi" data-state="Taraba">Ibi</option>
+                        <option value="Jalingo" data-state="Taraba">Jalingo</option>
+                        <option value="Karim Lamido" data-state="Taraba">Karim Lamido</option>
+                        <option value="Kumi" data-state="Taraba">Kumi</option>
+                        <option value="Lau" data-state="Taraba">Lau</option>
+                        <option value="Sardauna" data-state="Taraba">Sardauna</option>
+                        <option value="Takum" data-state="Taraba">Takum</option>
+                        <option value="Ussa" data-state="Taraba">Ussa</option>
+                        <option value="Wukari" data-state="Taraba">Wukari</option>
+                        <option value="Yorro" data-state="Taraba">Yorro</option>
+                        <option value="Zing" data-state="Taraba">Zing</option>
+                      </optgroup>
+                      <optgroup label="Yobe" data-state="Yobe">
+                        <option value="Bade" data-state="Yobe">Bade</option>
+                        <option value="Bursari" data-state="Yobe">Bursari</option>
+                        <option value="Damaturu" data-state="Yobe">Damaturu</option>
+                        <option value="Fika" data-state="Yobe">Fika</option>
+                        <option value="Fune" data-state="Yobe">Fune</option>
+                        <option value="Geidam" data-state="Yobe">Geidam</option>
+                        <option value="Gujba" data-state="Yobe">Gujba</option>
+                        <option value="Gulani" data-state="Yobe">Gulani</option>
+                        <option value="Jakusko" data-state="Yobe">Jakusko</option>
+                        <option value="Karasuwa" data-state="Yobe">Karasuwa</option>
+                        <option value="Machina" data-state="Yobe">Machina</option>
+                        <option value="Nangere" data-state="Yobe">Nangere</option>
+                        <option value="Nguru" data-state="Yobe">Nguru</option>
+                        <option value="Potiskum" data-state="Yobe">Potiskum</option>
+                        <option value="Tarmuwa" data-state="Yobe">Tarmuwa</option>
+                        <option value="Yunusari" data-state="Yobe">Yunusari</option>
+                        <option value="Yusufari" data-state="Yobe">Yusufari</option>
+                      </optgroup>
+                      <optgroup label="Zamfara" data-state="Zamfara">
+                        <option value="Anka" data-state="Zamfara">Anka</option>
+                        <option value="Bakura" data-state="Zamfara">Bakura</option>
+                        <option value="Birnin Magaji/Kiyaw" data-state="Zamfara">Birnin Magaji/Kiyaw</option>
+                        <option value="Bukkuyum" data-state="Zamfara">Bukkuyum</option>
+                        <option value="Bungudu" data-state="Zamfara">Bungudu</option>
+                        <option value="Gummi" data-state="Zamfara">Gummi</option>
+                        <option value="Gusau" data-state="Zamfara">Gusau</option>
+                        <option value="Kaura Namoda" data-state="Zamfara">Kaura Namoda</option>
+                        <option value="Maradun" data-state="Zamfara">Maradun</option>
+                        <option value="Maru" data-state="Zamfara">Maru</option>
+                        <option value="Shinkafi" data-state="Zamfara">Shinkafi</option>
+                        <option value="Talata Mafara" data-state="Zamfara">Talata Mafara</option>
+                        <option value="Tsafe" data-state="Zamfara">Tsafe</option>
+                        <option value="Zurmi" data-state="Zamfara">Zurmi</option>
+                      </optgroup>
+                    </select>
+                    <div class="loc-arrow"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></div>
+                  </div>
+                </div>
+                <div class="loc-save" id="profLocSave" onclick="saveProfileLocation()">
+                  <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                  Save Location
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Playback -->
+        <div class="settings-group">
+          <div class="sg-label">Playback</div>
+          <div class="sg-items">
+            <div class="si-row">
+              <div class="si-icon" style="background:rgba(155,107,255,0.15)"><svg viewBox="0 0 24 24" style="stroke:var(--purple)"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></div>
+              <div class="si-body"><div class="si-title">Stream Quality</div><div class="si-sub">High quality audio</div></div>
+              <div class="si-right val">320 kbps</div>
+            </div>
+            <div class="si-row">
+              <div class="si-icon" style="background:rgba(77,159,255,0.15)"><svg viewBox="0 0 24 24" style="stroke:var(--blue)"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></div>
+              <div class="si-body"><div class="si-title">Download Quality</div><div class="si-sub">Offline songs quality</div></div>
+              <div class="si-right val">128 kbps</div>
+            </div>
+            <div class="si-row">
+              <div class="si-icon" style="background:rgba(46,204,143,0.15)"><svg viewBox="0 0 24 24" style="stroke:var(--green)"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg></div>
+              <div class="si-body"><div class="si-title">Autoplay</div><div class="si-sub">Play similar songs after queue</div></div>
+              <div class="toggle on" onclick="this.classList.toggle('on');this.classList.toggle('off');"><div class="toggle-thumb"></div></div>
+            </div>
+            <div class="si-row">
+              <div class="si-icon" style="background:rgba(255,107,53,0.15)"><svg viewBox="0 0 24 24" style="stroke:var(--accent)"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="4" y1="4" x2="9" y2="9"/></svg></div>
+              <div class="si-body"><div class="si-title">Crossfade</div><div class="si-sub">Smooth transitions between songs</div></div>
+              <div class="toggle off" onclick="this.classList.toggle('on');this.classList.toggle('off');"><div class="toggle-thumb"></div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Notifications -->
+        <div class="settings-group">
+          <div class="sg-label">Notifications</div>
+          <div class="sg-items">
+            <div class="si-row">
+              <div class="si-icon" style="background:rgba(255,209,102,0.12)"><svg viewBox="0 0 24 24" style="stroke:var(--yellow)"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></div>
+              <div class="si-body"><div class="si-title">New Songs</div><div class="si-sub">Alert when artists release new songs</div></div>
+              <div class="toggle on" onclick="this.classList.toggle('on');this.classList.toggle('off');"><div class="toggle-thumb"></div></div>
+            </div>
+            <div class="si-row">
+              <div class="si-icon" style="background:rgba(255,77,143,0.12)"><svg viewBox="0 0 24 24" style="stroke:var(--pink)"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div>
+              <div class="si-body"><div class="si-title">Comment Replies</div><div class="si-sub">When someone replies to your comments</div></div>
+              <div class="toggle on" onclick="this.classList.toggle('on');this.classList.toggle('off');"><div class="toggle-thumb"></div></div>
+            </div>
+            <div class="si-row">
+              <div class="si-icon" style="background:rgba(77,159,255,0.15)"><svg viewBox="0 0 24 24" style="stroke:var(--blue)"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div>
+              <div class="si-body"><div class="si-title">Trending Alerts</div><div class="si-sub">When songs go viral in your genre</div></div>
+              <div class="toggle off" onclick="this.classList.toggle('on');this.classList.toggle('off');"><div class="toggle-thumb"></div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Privacy -->
+        <div class="settings-group">
+          <div class="sg-label">Privacy & Security</div>
+          <div class="sg-items">
+            <div class="si-row">
+              <div class="si-icon" style="background:rgba(46,204,143,0.15)"><svg viewBox="0 0 24 24" style="stroke:var(--green)"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+              <div class="si-body"><div class="si-title">Private Profile</div><div class="si-sub">Hide your listening activity</div></div>
+              <div class="toggle off" onclick="this.classList.toggle('on');this.classList.toggle('off');"><div class="toggle-thumb"></div></div>
+            </div>
+            <div class="si-row">
+              <div class="si-icon" style="background:rgba(155,107,255,0.15)"><svg viewBox="0 0 24 24" style="stroke:var(--purple)"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 9h6M9 12h6M9 15h4"/></svg></div>
+              <div class="si-body"><div class="si-title">Data & Privacy Policy</div><div class="si-sub">How we use your data</div></div>
+              <div class="si-right"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Appearance -->
+        <div class="settings-group">
+          <div class="sg-label">Appearance</div>
+          <div class="sg-items">
+            <div class="si-row">
+              <div class="si-icon" style="background:rgba(255,209,102,0.12)"><svg viewBox="0 0 24 24" style="stroke:var(--yellow)"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/></svg></div>
+              <div class="si-body"><div class="si-title">Theme</div><div class="si-sub">App colour scheme</div></div>
+              <div class="si-right val">Dark</div>
+            </div>
+            <div class="si-row">
+              <div class="si-icon" style="background:rgba(77,159,255,0.15)"><svg viewBox="0 0 24 24" style="stroke:var(--blue)"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div>
+              <div class="si-body"><div class="si-title">Language</div><div class="si-sub">App display language</div></div>
+              <div class="si-right val">English</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Danger Zone -->
+        <div class="settings-group">
+          <div class="sg-label">Account Actions</div>
+          <div class="sg-items">
+            <div class="danger-row si-row">
+              <div class="si-icon" style="background:rgba(255,68,68,0.1)"><svg viewBox="0 0 24 24" style="stroke:#FF4444"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></div>
+              <div class="si-body"><div class="si-title red">Log Out</div><div class="si-sub red">Sign out of your account</div></div>
+              <div class="si-right"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div>
+            </div>
+            <div class="danger-row si-row">
+              <div class="si-icon" style="background:rgba(255,68,68,0.1)"><svg viewBox="0 0 24 24" style="stroke:#FF4444"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg></div>
+              <div class="si-body"><div class="si-title red">Delete Account</div><div class="si-sub red">Permanently remove your account</div></div>
+              <div class="si-right"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- App version -->
+        <div style="text-align:center;padding:8px 0 4px;">
+          <div style="font-size:10px;color:var(--text3);font-family:sans-serif;">Shurafah v2.4.1 · Built with ❤️</div>
+        </div>
+
+        <div class="ad" style="margin-top:10px;">
+          <div class="ad-tag">Ad</div>
+          <div class="ad-txt">Refer a friend — get 1 month Premium free</div>
+          <div class="ad-cta">Refer Now</div>
+          <div class="ad-x">✕</div>
+        </div>
+        <div class="spacer"></div>
+      </div>
+    </div>
+
+  </div><!-- /scroll -->
+
+  <!-- ══ MINI PLAYER ══ -->
+  <div class="mini-player">
+    <div class="mp-top">
+      <div class="mp-art">🎵</div>
+      <div class="mp-inf">
+        <div class="mp-title">Fallen Stars</div>
+        <div class="mp-artist">Amara Soul</div>
+      </div>
+      <div class="mp-ctrl">
+        <div class="mp-heart"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div>
+        <svg viewBox="0 0 24 24"><polygon points="19 20 9 12 19 4 19 20"/><line x1="5" y1="19" x2="5" y2="5"/></svg>
+        <div class="mp-play"><svg viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg></div>
+        <svg viewBox="0 0 24 24"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19"/></svg>
+      </div>
+    </div>
+    <div class="mp-prog">
+      <span class="pt">1:44</span>
+      <div class="pbar"><div class="pfill"></div></div>
+      <span class="pt">3:42</span>
+    </div>
+  </div>
+
+  <!-- BOTTOM NAV (Home · Wa'azi · Explore · Favourites · Profile) -->
+  <div class="bnav">
+    <a class="ni" href="song_portal_web.html" style="text-decoration:none;color:inherit;"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><div class="nl">Home</div></a>
+    <a class="ni" href="shurafah_waazi.html" style="text-decoration:none;color:inherit;"><svg viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg><div class="nl">Wa'azi</div></a>
+    <a class="ni" href="shurafah_explore.html" style="text-decoration:none;color:inherit;"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><div class="nl">Explore</div></a>
+    <a class="ni" href="favourites_page.html" style="text-decoration:none;color:inherit;"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg><div class="nl">Favourites</div></a>
+    <a class="ni on" href="user_profile_page.html" style="text-decoration:none;color:inherit;"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><div class="nl">Profile</div></a>
+  </div>
+
+</div>
+
+<script>
+// Tab switching
+const tabs = document.querySelectorAll('.mtab');
+const panels = document.querySelectorAll('.tab-panel');
+tabs.forEach(tab => {
+  tab.addEventListener('click', () => {
+    tabs.forEach(t => t.classList.remove('on'));
+    panels.forEach(p => p.classList.remove('on'));
+    tab.classList.add('on');
+    document.getElementById('tab-' + tab.dataset.tab).classList.add('on');
+    // scroll back to top of content
+    document.querySelector('.scroll').scrollTop = document.querySelector('.user-info').offsetTop - 10;
+  });
+});
+
+// ══════════════════════════════
+// PAGINATION ENGINE
+// ══════════════════════════════
+const PER_PAGE = 5;
+const pagState = {};
+
+function buildPaginator(pagId, items, page, total, onGo) {
+  const container = document.getElementById(pagId);
+  if (!container) return;
+  container.innerHTML = '';
+  if (total <= PER_PAGE) return;
+  const totalPages = Math.ceil(total / PER_PAGE);
+  if (totalPages <= 1) return;
+
+  function btn(label, targetPage, isCurrent, isDisabled) {
+    const el = document.createElement('div');
+    el.className = 'pag-btn' + (isCurrent ? ' on' : '') + (isDisabled ? ' disabled' : '');
+    el.innerHTML = label;
+    if (!isDisabled && !isCurrent) {
+      el.addEventListener('click', () => { onGo(targetPage); });
+    }
+    return el;
+  }
+
+  container.appendChild(btn('&#8249;', page - 1, false, page === 1));
+
+  let start = Math.max(1, page - 2);
+  let end = Math.min(totalPages, start + 4);
+  if (end - start < 4) start = Math.max(1, end - 4);
+
+  if (start > 1) {
+    container.appendChild(btn('1', 1, false, false));
+    if (start > 2) {
+      const dots = document.createElement('div');
+      dots.className = 'pag-info'; dots.textContent = '…';
+      container.appendChild(dots);
+    }
+  }
+  for (let p = start; p <= end; p++) {
+    container.appendChild(btn(String(p), p, p === page, false));
+  }
+  if (end < totalPages) {
+    if (end < totalPages - 1) {
+      const dots = document.createElement('div');
+      dots.className = 'pag-info'; dots.textContent = '…';
+      container.appendChild(dots);
+    }
+    container.appendChild(btn(String(totalPages), totalPages, false, false));
+  }
+
+  container.appendChild(btn('&#8250;', page + 1, false, page === totalPages));
+
+  const info = document.createElement('div');
+  info.className = 'pag-info';
+  info.style.cssText = 'width:100%;text-align:center;margin-top:4px;';
+  const from = (page - 1) * PER_PAGE + 1;
+  const to = Math.min(page * PER_PAGE, total);
+  info.textContent = from + '–' + to + ' of ' + total;
+  container.appendChild(info);
+}
+
+// ── FAVOURITES PAGINATION ──
+var favCurrentCat = 'all';
+var favCurrentPage = 1;
+
+function applyFavFilter(category, page) {
+  favCurrentCat = category || favCurrentCat;
+  favCurrentPage = page || 1;
+  const allRows = Array.from(document.querySelectorAll('#favRows .fav-row'));
+  const matched = allRows.filter(r => favCurrentCat === 'all' || r.dataset.cat === favCurrentCat);
+  const total = matched.length;
+  const start = (favCurrentPage - 1) * PER_PAGE;
+  const end = start + PER_PAGE;
+
+  allRows.forEach(r => r.style.display = 'none');
+  matched.forEach((r, i) => { r.style.display = (i >= start && i < end) ? '' : 'none'; });
+
+  document.getElementById('favEmpty').classList.toggle('show', total === 0);
+  document.getElementById('favTabCount').textContent = total + ' item' + (total === 1 ? '' : 's');
+
+  buildPaginator('pag-favRows', matched, favCurrentPage, total, (p) => applyFavFilter(favCurrentCat, p));
+}
+
+document.querySelectorAll('#favFilter .fav-chip').forEach(chip => {
+  chip.addEventListener('click', () => {
+    document.querySelectorAll('#favFilter .fav-chip').forEach(c => c.classList.remove('on'));
+    chip.classList.add('on');
+    applyFavFilter(chip.dataset.fav, 1);
+  });
+});
+
+applyFavFilter('all', 1);
+
+// Toggle favourite (heart) on a row
+function toggleFav(el, ev){
+  if(ev) ev.stopPropagation();
+  const row = el.closest('.fav-row');
+  if(!row) return;
+  row.remove();
+  applyFavFilter(favCurrentCat, 1);
+}
+
+// ── HISTORY PAGINATION ──
+var histCurrentPage = 1;
+var histCurrentFilter = 'All Time';
+
+function applyHistPagination(page) {
+  histCurrentPage = page || 1;
+  const allRows = Array.from(document.querySelectorAll('#tab-history .hrow'));
+  const visibleRows = allRows.filter(r => r.style.display !== 'none');
+  const total = visibleRows.length;
+  const start = (histCurrentPage - 1) * PER_PAGE;
+  const end = start + PER_PAGE;
+
+  visibleRows.forEach((r, i) => { r.style.display = (i >= start && i < end) ? '' : 'none'; });
+
+  const sections = document.querySelectorAll('#tab-history .hist-section-label');
+  sections.forEach(label => {
+    let next = label.nextElementSibling;
+    while (next && next.classList.contains('hist-list')) {
+      const hasVisible = Array.from(next.querySelectorAll('.hrow')).some(r => r.style.display !== 'none');
+      label.style.display = hasVisible ? '' : 'none';
+      next = next.nextElementSibling;
+    }
+  });
+
+  buildPaginator('pag-histRows', visibleRows, histCurrentPage, total, (p) => applyHistPagination(p));
+}
+
+function initHistPagination() {
+  const allRows = document.querySelectorAll('#tab-history .hrow');
+  allRows.forEach(r => r.style.display = '');
+  applyHistPagination(1);
+}
+initHistPagination();
+
+// ── DOWNLOADS PAGINATION ──
+var dlCurrentPage = 1;
+
+function applyDlPagination(page) {
+  dlCurrentPage = page || 1;
+  const allRows = Array.from(document.querySelectorAll('#tab-downloads .drow'));
+  const total = allRows.length;
+  const start = (dlCurrentPage - 1) * PER_PAGE;
+  const end = start + PER_PAGE;
+  allRows.forEach((r, i) => { r.style.display = (i >= start && i < end) ? '' : 'none'; });
+  buildPaginator('pag-dlRows', allRows, dlCurrentPage, total, (p) => applyDlPagination(p));
+}
+applyDlPagination(1);
+
+// ── COMMENTS PAGINATION ──
+var cmtCurrentPage = 1;
+
+function applyCmtPagination(page) {
+  cmtCurrentPage = page || 1;
+  const allCards = Array.from(document.querySelectorAll('#tab-comments .mc-card'));
+  const total = allCards.length;
+  const start = (cmtCurrentPage - 1) * PER_PAGE;
+  const end = start + PER_PAGE;
+  allCards.forEach((c, i) => { c.style.display = (i >= start && i < end) ? '' : 'none'; });
+  buildPaginator('pag-cmtCards', allCards, cmtCurrentPage, total, (p) => applyCmtPagination(p));
+}
+applyCmtPagination(1);
+
+// Location dropdowns (Zone / State / LGA) in Settings tab
+(function () {
+  const profZone  = document.getElementById('profZoneSelect');
+  const profState = document.getElementById('profStateSelect');
+  const profLga   = document.getElementById('profLgaSelect');
+  if (!profZone || !profState || !profLga) return;
+
+  function filterProfLgaByState(state){
+    const groups = profLga.querySelectorAll('optgroup');
+    const placeholder = profLga.querySelector('option[value=""]');
+    if (!state) {
+      groups.forEach(g => { g.style.display=''; g.disabled=false; });
+      if (placeholder) placeholder.textContent = 'Select your LGA…';
+    } else {
+      groups.forEach(g => {
+        const match = g.getAttribute('data-state') === state;
+        g.style.display = match ? '' : 'none';
+        g.disabled = !match;
+      });
+      if (placeholder) placeholder.textContent = 'Select LGA in ' + state + '…';
+    }
+  }
+  filterProfLgaByState('');
+
+  profZone.addEventListener('change', () => {
+    profZone.classList.toggle('valid', !!profZone.value);
+  });
+  profState.addEventListener('change', () => {
+    profState.classList.toggle('valid', !!profState.value);
+    filterProfLgaByState(profState.value);
+    profLga.value = '';
+    profLga.classList.remove('valid');
+  });
+  profLga.addEventListener('change', () => {
+    profLga.classList.toggle('valid', !!profLga.value);
+  });
+})();
+function saveProfileLocation(){
+  const zone  = document.getElementById('profZoneSelect').value;
+  const state = document.getElementById('profStateSelect').value;
+  const lga   = document.getElementById('profLgaSelect').value;
+  if(!zone || !state || !lga){
+    alert('Please select Zone, State, and LGA before saving.');
+    return;
+  }
+  const handle = document.querySelector('.user-handle');
+  if(handle){
+    handle.textContent = '@dan_music · ' + lga + ', ' + state + ' 🇳🇬';
+  }
+  const btn = document.getElementById('profLocSave');
+  const original = btn.innerHTML;
+  btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Saved!';
+  setTimeout(() => { btn.innerHTML = original; }, 1600);
+}
+
+// History filter tabs
+document.querySelectorAll('.hf').forEach(hf => {
+  hf.addEventListener('click', () => {
+    document.querySelectorAll('.hf').forEach(h => {h.classList.remove('on');h.classList.add('off');});
+    hf.classList.add('on'); hf.classList.remove('off');
+    histCurrentFilter = hf.textContent.trim();
+
+    // First reset all rows and sections to visible
+    document.querySelectorAll('#tab-history .hrow').forEach(r => r.style.display = '');
+    document.querySelectorAll('#tab-history .hist-section-label, #tab-history .hist-list').forEach(s => s.style.display = '');
+
+    // Then hide rows not in the selected time window
+    const sections = document.querySelectorAll('#tab-history .hist-section-label, #tab-history .hist-list');
+    if (histCurrentFilter === 'Today') {
+      let show = false;
+      sections.forEach(s => {
+        if (s.classList.contains('hist-section-label')) { show = s.textContent.trim() === 'Today'; }
+        if (!show) { s.style.display = 'none'; if (s.classList.contains('hist-list')) s.querySelectorAll('.hrow').forEach(r => r.style.display = 'none'); }
+      });
+    } else if (histCurrentFilter === 'This Week') {
+      const showSections = ['Today','Yesterday','This Week'];
+      let cur = '';
+      sections.forEach(s => {
+        if (s.classList.contains('hist-section-label')) { cur = s.textContent.trim(); }
+        if (!showSections.includes(cur)) { s.style.display = 'none'; if (s.classList.contains('hist-list')) s.querySelectorAll('.hrow').forEach(r => r.style.display = 'none'); }
+      });
+    }
+
+    applyHistPagination(1);
+  });
+});
+
+// ── STATS ROW: click to jump to relevant tab ──
+document.querySelector('.us.s1').addEventListener('click', () => switchTab('favourites'));
+document.querySelector('.us.s2').addEventListener('click', () => switchTab('downloads'));
+document.querySelector('.us.s3').addEventListener('click', () => switchTab('overview'));
+document.querySelector('.us.s4').addEventListener('click', () => switchTab('overview'));
+function switchTab(name) {
+  document.querySelectorAll('.mtab').forEach(t => t.classList.remove('on'));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('on'));
+  const tab = document.querySelector('.mtab[data-tab="' + name + '"]');
+  if (tab) tab.classList.add('on');
+  const panel = document.getElementById('tab-' + name);
+  if (panel) panel.classList.add('on');
+  document.querySelector('.scroll').scrollTop = 0;
+}
+
+// ── SETTINGS BTN (hero top-left) → jump to Settings tab ──
+document.querySelector('.settings-btn').addEventListener('click', () => switchTab('settings'));
+
+// ── COVER EDIT ──
+document.querySelector('.cover-edit').addEventListener('click', () => {
+  showToast('Cover photo editing coming soon');
+});
+
+// ── AVATAR EDIT ──
+document.querySelector('.avatar-edit').addEventListener('click', () => {
+  showToast('Tap to change your profile photo');
+});
+
+// ── EDIT PROFILE BTN ──
+document.querySelector('.edit-btn').addEventListener('click', () => {
+  const row = document.querySelector('.si-row');
+  switchTab('settings');
+  setTimeout(() => {
+    const editRow = document.querySelector('#tab-settings .si-row');
+    if (editRow) { editRow.style.boxShadow = '0 0 0 2px var(--accent)'; setTimeout(() => editRow.style.boxShadow = '', 1200); }
+  }, 200);
+});
+
+// ── SHARE PROFILE ──
+document.querySelector('.share-profile').addEventListener('click', () => {
+  if (navigator.share) {
+    navigator.share({ title: 'Daniel Nwosu on Shurafah', url: window.location.href });
+  } else if (navigator.clipboard) {
+    navigator.clipboard.writeText(window.location.href);
+    showToast('Profile link copied to clipboard');
+  } else {
+    showToast('Share: @dan_music on Shurafah');
+  }
+});
+
+// ── NOTIFICATION BTN ──
+document.querySelector('.notif-btn').addEventListener('click', () => {
+  const dot = document.querySelector('.notif-dot');
+  if (dot) dot.style.display = 'none';
+  showToast('No new notifications');
+});
+
+// ── AD CLOSE & CTA ──
+document.querySelectorAll('.ad-x').forEach(x => {
+  x.addEventListener('click', () => { x.closest('.ad').style.display = 'none'; });
+});
+document.querySelectorAll('.ad-cta').forEach(cta => {
+  cta.addEventListener('click', () => showToast('Referral feature coming soon!'));
+});
+
+// ── PREMIUM CARD ──
+document.querySelector('.prem-card').addEventListener('click', () => switchTab('settings'));
+
+// ── ACHIEVEMENTS "See all" ──
+document.querySelector('.sh-a').addEventListener('click', () => showToast('All achievements coming soon'));
+
+// ── BADGE CARDS ──
+document.querySelectorAll('.badge-card').forEach(card => {
+  card.addEventListener('click', () => {
+    const name = card.querySelector('.badge-name').textContent;
+    const earned = card.classList.contains('earned');
+    showToast(earned ? '🏆 ' + name + ' — Earned!' : '🔒 ' + name + ' — Not yet earned');
+  });
+});
+
+// ── GENRE PILLS ──
+document.querySelectorAll('.genre-pill').forEach(pill => {
+  pill.addEventListener('click', () => {
+    const genre = pill.childNodes[0].textContent.trim();
+    showToast('Browsing ' + genre + ' genre');
+  });
+});
+
+// ── HISTORY ROWS ──
+document.querySelectorAll('.hrow').forEach(row => {
+  row.addEventListener('click', () => {
+    const title = row.querySelector('.hr-title').textContent;
+    const artist = row.querySelector('.hr-artist').textContent;
+    loadMiniPlayer(title, artist);
+    showToast('Now playing: ' + title);
+  });
+});
+
+// ── DOWNLOAD ROWS ──
+document.querySelectorAll('.drow').forEach(row => {
+  row.addEventListener('click', (e) => {
+    if (e.target.closest('.dr-more')) return;
+    const title = row.querySelector('.dr-title').textContent;
+    const artist = row.querySelector('.dr-artist').textContent;
+    loadMiniPlayer(title, artist);
+    showToast('Playing offline: ' + title);
+  });
+});
+
+// Download "Manage Storage"
+document.querySelector('.dl-manage-btn').addEventListener('click', () => showToast('Storage management coming soon'));
+
+// Download sort
+document.querySelector('.dl-sort').addEventListener('click', () => showToast('Sort options coming soon'));
+
+// Download "⋮" menus
+document.querySelectorAll('.dr-more').forEach(btn => {
+  btn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const title = btn.closest('.drow').querySelector('.dr-title').textContent;
+    showContextMenu(e, [
+      { label: 'Play', action: () => { const row = btn.closest('.drow'); loadMiniPlayer(row.querySelector('.dr-title').textContent, row.querySelector('.dr-artist').textContent); } },
+      { label: 'Share', action: () => showToast('Share link copied') },
+      { label: 'Delete Download', action: () => { btn.closest('.drow').remove(); applyDlPagination(1); showToast(title + ' removed'); } }
+    ]);
+  });
+});
+
+// ── COMMENTS ──
+// "View →" links
+document.querySelectorAll('.mc-song-link').forEach(link => {
+  link.addEventListener('click', () => {
+    const title = link.closest('.mc-card').querySelector('.mc-song-title').textContent;
+    showToast('Opening: ' + title);
+  });
+});
+// Delete comment
+document.querySelectorAll('.mc-del').forEach(btn => {
+  btn.addEventListener('click', () => {
+    if (confirm('Delete this comment?')) {
+      btn.closest('.mc-card').style.animation = 'fup 0.3s ease reverse';
+      setTimeout(() => { btn.closest('.mc-card').remove(); applyCmtPagination(1); }, 280);
+    }
+  });
+});
+// Like comment
+document.querySelectorAll('.mc-likes').forEach(likeEl => {
+  likeEl.style.cursor = 'pointer';
+  likeEl.addEventListener('click', () => {
+    const countText = likeEl.lastChild.textContent.trim();
+    const count = parseInt(countText) || 0;
+    likeEl.lastChild.textContent = count + 1;
+    likeEl.style.transform = 'scale(1.2)';
+    setTimeout(() => likeEl.style.transform = '', 200);
+  });
+});
+
+// ── SETTINGS ROWS ──
+document.querySelectorAll('#tab-settings .si-row').forEach(row => {
+  const title = row.querySelector('.si-title');
+  if (!title) return;
+  const label = title.textContent.trim();
+  if (label === 'Edit Profile') {
+    row.addEventListener('click', () => openEditProfileModal());
+  } else if (label === 'Change Password') {
+    row.addEventListener('click', () => showToast('Change password — coming soon'));
+  } else if (label === 'Manage Subscription') {
+    row.addEventListener('click', () => { switchTab('overview'); showToast('Your subscription is active'); });
+  } else if (label === 'Data & Privacy Policy') {
+    row.addEventListener('click', () => showToast('Privacy policy coming soon'));
+  } else if (label === 'Stream Quality') {
+    row.addEventListener('click', () => cycleValue(row.querySelector('.si-right.val'), ['128 kbps','192 kbps','320 kbps']));
+  } else if (label === 'Download Quality') {
+    row.addEventListener('click', () => cycleValue(row.querySelector('.si-right.val'), ['64 kbps','128 kbps','256 kbps','320 kbps']));
+  } else if (label === 'Theme') {
+    row.addEventListener('click', () => {
+      const isLight = !document.body.classList.contains('light');
+      document.body.classList.toggle('light', isLight);
+      document.getElementById('ttIcon').textContent  = isLight ? '☀️' : '🌙';
+      document.getElementById('ttLabel').textContent = isLight ? 'Light' : 'Dark';
+      localStorage.setItem('shurafah-theme', isLight ? 'light' : 'dark');
+      row.querySelector('.si-right.val').textContent = isLight ? 'Light' : 'Dark';
+    });
+  } else if (label === 'Language') {
+    row.addEventListener('click', () => showToast('Language selection coming soon'));
+  } else if (label === 'Log Out') {
+    row.addEventListener('click', () => {
+      if (confirm('Are you sure you want to log out?')) {
+        showToast('Logging out…');
+        setTimeout(() => { window.location.href = 'login_page.html'; }, 1000);
+      }
+    });
+  } else if (label === 'Delete Account') {
+    row.addEventListener('click', () => {
+      if (confirm('Permanently delete your account? This cannot be undone.')) {
+        if (confirm('Are you absolutely sure? All data will be lost.')) {
+          showToast('Account deletion requested');
+        }
+      }
+    });
+  }
+});
+
+function cycleValue(el, values) {
+  if (!el) return;
+  const cur = el.textContent.trim();
+  const idx = values.indexOf(cur);
+  el.textContent = values[(idx + 1) % values.length];
+  showToast(el.closest('.si-row').querySelector('.si-title').textContent + ': ' + el.textContent);
+}
+
+// ── MINI PLAYER ──
+let mpPlaying = false;
+const mpPlayBtn = document.querySelector('.mp-play');
+const mpPlayIcon = `<svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3" fill="white"/></svg>`;
+const mpPauseIcon = `<svg viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16" fill="white"/><rect x="14" y="4" width="4" height="16" fill="white"/></svg>`;
+
+mpPlayBtn.addEventListener('click', () => {
+  mpPlaying = !mpPlaying;
+  mpPlayBtn.innerHTML = mpPlaying ? mpPauseIcon : mpPlayIcon;
+});
+
+// Prev / Next
+const mpCtrlSvgs = document.querySelectorAll('.mp-ctrl > svg');
+if (mpCtrlSvgs[0]) {
+  mpCtrlSvgs[0].addEventListener('click', () => showToast('Previous track'));
+}
+if (mpCtrlSvgs[1]) {
+  mpCtrlSvgs[1].addEventListener('click', () => showToast('Next track'));
+}
+
+// Progress bar seek
+const pbar = document.querySelector('.pbar');
+pbar.style.cursor = 'pointer';
+pbar.addEventListener('click', (e) => {
+  const rect = pbar.getBoundingClientRect();
+  const pct = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+  document.querySelector('.pfill').style.width = (pct * 100) + '%';
+  const totalSecs = 222;
+  const elapsed = Math.round(pct * totalSecs);
+  const m = Math.floor(elapsed / 60);
+  const s = String(elapsed % 60).padStart(2, '0');
+  document.querySelectorAll('.pt')[0].textContent = m + ':' + s;
+});
+
+function loadMiniPlayer(title, artist) {
+  document.querySelector('.mp-title').textContent = title;
+  document.querySelector('.mp-artist').textContent = artist;
+  document.querySelector('.pfill').style.width = '0%';
+  document.querySelectorAll('.pt')[0].textContent = '0:00';
+  mpPlaying = true;
+  mpPlayBtn.innerHTML = mpPauseIcon;
+}
+
+// ── BOTTOM NAV active state ──
+document.querySelectorAll('.bnav .ni').forEach(ni => {
+  ni.addEventListener('click', function() {
+    document.querySelectorAll('.bnav .ni').forEach(n => n.classList.remove('on'));
+    this.classList.add('on');
+  });
+});
+// Mark current page
+document.querySelectorAll('.bnav .ni').forEach(ni => {
+  const href = ni.getAttribute('href');
+  if (href && window.location.pathname.endsWith(href)) ni.classList.add('on');
+});
+
+// ── EDIT PROFILE MODAL ──
+function openEditProfileModal() {
+  const overlay = document.createElement('div');
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px;';
+  const modal = document.createElement('div');
+  modal.style.cssText = 'background:var(--surface);border-radius:18px;padding:20px;width:100%;max-width:420px;border:1px solid var(--border);';
+  const curName = document.querySelector('.user-name').textContent;
+  const curBio  = document.querySelector('.user-bio').textContent;
+  const curHandle = document.querySelector('.user-handle').textContent;
+  modal.innerHTML = `
+    <div style="font-family:sans-serif;font-size:15px;font-weight:800;margin-bottom:14px;color:var(--text);">Edit Profile</div>
+    <div style="margin-bottom:10px;">
+      <div style="font-size:10px;color:var(--text3);font-weight:700;margin-bottom:4px;text-transform:uppercase;">Display Name</div>
+      <input id="ep-name" value="${curName}" style="width:100%;background:var(--surface2);border:1.5px solid var(--border);border-radius:10px;padding:10px 12px;font-size:13px;color:var(--text);outline:none;font-family:'DM Sans',sans-serif;">
+    </div>
+    <div style="margin-bottom:10px;">
+      <div style="font-size:10px;color:var(--text3);font-weight:700;margin-bottom:4px;text-transform:uppercase;">Handle</div>
+      <input id="ep-handle" value="${curHandle}" style="width:100%;background:var(--surface2);border:1.5px solid var(--border);border-radius:10px;padding:10px 12px;font-size:13px;color:var(--text);outline:none;font-family:'DM Sans',sans-serif;">
+    </div>
+    <div style="margin-bottom:14px;">
+      <div style="font-size:10px;color:var(--text3);font-weight:700;margin-bottom:4px;text-transform:uppercase;">Bio</div>
+      <textarea id="ep-bio" rows="3" style="width:100%;background:var(--surface2);border:1.5px solid var(--border);border-radius:10px;padding:10px 12px;font-size:13px;color:var(--text);outline:none;resize:none;font-family:'DM Sans',sans-serif;">${curBio}</textarea>
+    </div>
+    <div style="display:flex;gap:8px;">
+      <div id="ep-cancel" style="flex:1;padding:10px;border-radius:10px;background:var(--surface2);text-align:center;cursor:pointer;font-family:sans-serif;font-size:12px;font-weight:700;color:var(--text2);">Cancel</div>
+      <div id="ep-save" style="flex:1;padding:10px;border-radius:10px;background:var(--accent);text-align:center;cursor:pointer;font-family:sans-serif;font-size:12px;font-weight:700;color:white;">Save Changes</div>
+    </div>
+  `;
+  overlay.appendChild(modal);
+  document.body.appendChild(overlay);
+  overlay.querySelector('#ep-cancel').addEventListener('click', () => overlay.remove());
+  overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.remove(); });
+  overlay.querySelector('#ep-save').addEventListener('click', () => {
+    const newName   = overlay.querySelector('#ep-name').value.trim();
+    const newHandle = overlay.querySelector('#ep-handle').value.trim();
+    const newBio    = overlay.querySelector('#ep-bio').value.trim();
+    if (newName)   document.querySelector('.user-name').textContent   = newName;
+    if (newHandle) document.querySelector('.user-handle').textContent = newHandle;
+    if (newBio)    document.querySelector('.user-bio').textContent    = newBio;
+    overlay.remove();
+    showToast('Profile updated!');
+  });
+}
+
+// ── CONTEXT MENU ──
+let activeCtxMenu = null;
+function showContextMenu(e, items) {
+  if (activeCtxMenu) activeCtxMenu.remove();
+  const menu = document.createElement('div');
+  menu.style.cssText = `position:fixed;z-index:2000;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:6px;min-width:160px;box-shadow:0 8px 24px rgba(0,0,0,0.5);`;
+  const rect = e.target.getBoundingClientRect();
+  menu.style.top  = Math.min(rect.bottom + 4, window.innerHeight - 160) + 'px';
+  menu.style.right = (window.innerWidth - rect.right) + 'px';
+  items.forEach(item => {
+    const el = document.createElement('div');
+    el.textContent = item.label;
+    el.style.cssText = 'padding:8px 12px;font-size:12px;cursor:pointer;border-radius:8px;color:var(--text);font-family:sans-serif;';
+    el.addEventListener('mouseenter', () => el.style.background = 'var(--surface2)');
+    el.addEventListener('mouseleave', () => el.style.background = '');
+    el.addEventListener('click', () => { item.action(); menu.remove(); activeCtxMenu = null; });
+    menu.appendChild(el);
+  });
+  document.body.appendChild(menu);
+  activeCtxMenu = menu;
+  setTimeout(() => document.addEventListener('click', function close(ev) {
+    if (!menu.contains(ev.target)) { menu.remove(); activeCtxMenu = null; document.removeEventListener('click', close); }
+  }), 10);
+}
+
+// ── TOAST NOTIFICATION ──
+function showToast(msg) {
+  let t = document.getElementById('_toast');
+  if (!t) {
+    t = document.createElement('div');
+    t.id = '_toast';
+    t.style.cssText = 'position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--surface3);color:var(--text);padding:9px 16px;border-radius:50px;font-size:12px;font-family:sans-serif;font-weight:600;z-index:3000;opacity:0;transition:opacity 0.2s,transform 0.2s;pointer-events:none;white-space:nowrap;max-width:90vw;text-align:center;box-shadow:0 4px 16px rgba(0,0,0,0.4);';
+    document.body.appendChild(t);
+  }
+  clearTimeout(t._timer);
+  t.textContent = msg;
+  t.style.opacity = '1';
+  t.style.transform = 'translateX(-50%) translateY(0)';
+  t._timer = setTimeout(() => {
+    t.style.opacity = '0';
+    t.style.transform = 'translateX(-50%) translateY(20px)';
+  }, 2200);
+}
+
+// ── MINI PLAYER HEART (heart toggle on mini player) ──
+document.querySelector('.mp-heart').addEventListener('click', function(){
+  const svg = this.querySelector('svg path');
+  const filled = svg.getAttribute('fill') === 'var(--pink)';
+  this.style.background = filled ? 'transparent' : 'rgba(255,77,143,0.1)';
+  svg.setAttribute('fill', filled ? 'none' : 'var(--pink)');
+  svg.setAttribute('stroke', filled ? 'var(--text2)' : 'var(--pink)');
+});
+</script>
+
+<script src="ads.js"></script>
+<script id="themeScript">
+  const _toggle = document.getElementById('themeToggle');
+  const _icon   = document.getElementById('ttIcon');
+  const _label  = document.getElementById('ttLabel');
+
+  function applyTheme(isLight) {
+    document.body.classList.toggle('light', isLight);
+    _icon.textContent  = isLight ? '☀️' : '🌙';
+    _label.textContent = isLight ? 'Light' : 'Dark';
+    const themeRow = document.querySelector('#tab-settings .si-title');
+    document.querySelectorAll('#tab-settings .si-title').forEach(t => {
+      if (t.textContent.trim() === 'Theme') {
+        const valEl = t.closest('.si-row') && t.closest('.si-row').querySelector('.si-right.val');
+        if (valEl) valEl.textContent = isLight ? 'Light' : 'Dark';
+      }
+    });
+  }
+
+  applyTheme(localStorage.getItem('shurafah-theme') === 'light');
+
+  _toggle.addEventListener('click', () => {
+    const nowLight = !document.body.classList.contains('light');
+    applyTheme(nowLight);
+    localStorage.setItem('shurafah-theme', nowLight ? 'light' : 'dark');
+  });
+
+  // Initialize Ads System
+  if (typeof ADS !== 'undefined') {
+    ADS.setUserType('guest');
+    ADS.init({
+      enabled: true,
+      placements: {
+        headerBanner: { enabled: true }
+      }
+    });
+  }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Shurafah — Playlist Songs</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#080B12;--surface:#0F1420;--surface2:#161C2E;--surface3:#1E2740;
+  --accent:#FF6B35;--accent2:#FFB347;
+  --blue:#4D9FFF;--green:#2ECC8F;--purple:#9B6BFF;--pink:#FF4D8F;--yellow:#FFD166;--teal:#00C9B8;
+  --text:#F0F4FF;--text2:#8A94B0;--text3:#4A5270;
+  --border:rgba(255,255,255,0.06);
+  --pl-color:#FF6B35;--pl-bg:rgba(255,107,53,.12);
+}
+body.light{
+  --bg:#F4F6FC;--surface:#FFFFFF;--surface2:#E8ECF7;--surface3:#D8DEEF;
+  --text:#12172E;--text2:#5A6380;--text3:#9AA0BA;--border:rgba(0,0,0,0.07);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--text);min-height:100vh;display:flex;flex-direction:column;transition:background .3s,color .3s;}
+.phone{width:100%;background:var(--bg);display:flex;flex-direction:column;min-height:100vh;position:relative;}
+.scroll{flex:1;overflow-y:auto;overflow-x:hidden;scrollbar-width:none;padding-bottom:148px;}
+.scroll::-webkit-scrollbar{display:none;}
+
+/* ── TOPBAR ── */
+.tbar{display:flex;align-items:center;justify-content:space-between;padding:14px 16px 4px;gap:10px;}
+.tb-back{width:36px;height:36px;background:var(--surface);border-radius:50%;display:flex;align-items:center;justify-content:center;border:1px solid var(--border);cursor:pointer;flex-shrink:0;transition:background .2s;text-decoration:none;color:inherit;}
+.tb-back:hover{background:var(--surface2);}
+.tb-back svg{width:14px;height:14px;fill:none;stroke:var(--text);stroke-width:2;}
+.tb-title{flex:1;font-family:sans-serif;font-size:15px;font-weight:800;letter-spacing:-.3px;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:0 6px;}
+.theme-toggle{display:inline-flex;align-items:center;gap:6px;background:var(--surface2);border-radius:50px;padding:5px 10px 5px 8px;border:1.5px solid var(--pl-color);cursor:pointer;flex-shrink:0;}
+.tt-icon{font-size:13px;}
+.tt-label{font-family:sans-serif;font-size:10px;font-weight:700;color:var(--pl-color);letter-spacing:.3px;}
+
+/* ── PLAYLIST HERO ── */
+.pl-hero{margin:12px 16px 0;border-radius:18px;overflow:hidden;position:relative;}
+.pl-hero-banner{height:130px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;}
+.pl-hero-banner::before{content:'';position:absolute;inset:0;background:linear-gradient(to bottom,transparent 30%,rgba(0,0,0,.7));z-index:1;}
+.pl-hero-emoji{font-size:52px;z-index:2;position:relative;filter:drop-shadow(0 4px 14px rgba(0,0,0,.5));}
+.pl-hero-cnt{position:absolute;top:10px;right:12px;background:rgba(0,0,0,.5);backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,.12);border-radius:20px;padding:3px 10px;font-size:9px;font-family:sans-serif;font-weight:700;color:var(--accent2);z-index:3;}
+.pl-hero-type{position:absolute;top:10px;left:12px;font-size:8px;font-family:sans-serif;font-weight:700;padding:3px 9px;border-radius:50px;z-index:3;}
+.type-official{background:rgba(255,179,71,.15);color:var(--accent2);border:1px solid rgba(255,179,71,.3);}
+.type-featured{background:rgba(255,107,53,.15);color:var(--accent);border:1px solid rgba(255,107,53,.3);}
+.type-user{background:rgba(77,159,255,.12);color:var(--blue);border:1px solid rgba(77,159,255,.25);}
+.type-auto{background:rgba(46,204,143,.12);color:var(--green);border:1px solid rgba(46,204,143,.25);}
+.type-collab{background:rgba(155,107,255,.12);color:var(--purple);border:1px solid rgba(155,107,255,.25);}
+.pl-hero-body{background:var(--surface);padding:13px 16px 14px;border:1px solid var(--border);border-top:none;border-radius:0 0 18px 18px;}
+.pl-hero-title{font-family:sans-serif;font-size:18px;font-weight:800;letter-spacing:-.3px;margin-bottom:3px;}
+.pl-hero-meta{font-size:11px;color:var(--text2);margin-bottom:10px;}
+.pl-hero-actions{display:flex;gap:8px;}
+.ph-btn{display:flex;align-items:center;justify-content:center;gap:6px;border-radius:11px;padding:9px 0;font-family:sans-serif;font-size:11px;font-weight:800;cursor:pointer;border:none;transition:opacity .15s,transform .1s;}
+.ph-btn:active{transform:scale(.97);}
+.ph-btn-play{flex:2;background:linear-gradient(135deg,var(--accent),var(--accent2));color:white;box-shadow:0 3px 14px rgba(255,107,53,.35);}
+.ph-btn-play:hover{opacity:.9;}
+.ph-btn-shuffle{flex:1;background:var(--surface2);border:1px solid var(--border);color:var(--text2);}
+.ph-btn-shuffle:hover{color:var(--text);}
+.ph-btn-save{width:40px;flex:none;background:var(--surface2);border:1px solid var(--border);color:var(--text2);}
+.ph-btn-share{width:40px;flex:none;background:var(--surface2);border:1px solid var(--border);color:var(--text2);}
+.ph-btn svg{width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:2;flex-shrink:0;}
+
+/* ── STATS ── */
+.stats-bar{display:flex;gap:0;padding:10px 16px 0;}
+.stat-chip{flex:1;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:8px 10px;text-align:center;margin:0 3px;}
+.stat-chip:first-child{margin-left:0;}.stat-chip:last-child{margin-right:0;}
+.stat-v{font-family:sans-serif;font-size:14px;font-weight:800;color:var(--pl-color);}
+.stat-l{font-size:9px;color:var(--text3);}
+
+/* ── SEARCH ── */
+.sw{padding:10px 16px 0;}
+.sb{background:var(--surface);border:1px solid var(--border);border-radius:14px;display:flex;align-items:center;gap:10px;padding:10px 14px;transition:border-color .2s;}
+.sb:focus-within{border-color:var(--pl-color);}
+.sb svg{width:14px;height:14px;fill:none;stroke:var(--text3);stroke-width:2;flex-shrink:0;}
+.sb input{background:transparent;border:none;outline:none;color:var(--text);font-size:13px;flex:1;font-family:'DM Sans',sans-serif;}
+.sb input::placeholder{color:var(--text3);}
+
+/* ── TOOLBAR ── */
+.toolbar{display:flex;align-items:center;gap:8px;padding:10px 16px 8px;}
+.shead-c{font-size:10px;color:var(--text3);margin-right:auto;font-family:sans-serif;font-weight:600;}
+.sort-sel{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:5px 10px;font-size:11px;color:var(--text);font-family:'DM Sans',sans-serif;outline:none;cursor:pointer;}
+.vt-wrap{display:flex;gap:4px;}
+.vt-btn{width:30px;height:30px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;}
+.vt-btn.on{background:var(--pl-color);border-color:transparent;}
+.vt-btn svg{width:14px;height:14px;fill:none;stroke:var(--text2);stroke-width:2;}
+.vt-btn.on svg{stroke:#fff;}
+
+/* ── CARD VIEW ── */
+.song-cards{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 16px;}
+.scard{background:var(--surface);border:1px solid var(--border);border-radius:16px;overflow:hidden;cursor:pointer;transition:transform .15s,box-shadow .15s;}
+.scard:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.35);}
+.scard-cover{height:90px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;font-size:34px;}
+.scard-play-ov{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .15s;background:rgba(0,0,0,.25);}
+.scard:hover .scard-play-ov{opacity:1;}
+.scard-play-ov svg{width:28px;height:28px;fill:white;}
+.scard-body{padding:10px 12px 12px;}
+.scard-title{font-family:sans-serif;font-size:12px;font-weight:700;line-height:1.3;margin-bottom:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.scard-artist{font-size:10px;color:var(--text2);margin-bottom:6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.scard-meta{display:flex;align-items:center;justify-content:space-between;}
+.scard-dur{font-size:9px;color:var(--text3);font-family:sans-serif;font-weight:600;}
+.scard-plays{font-size:9px;font-family:sans-serif;font-weight:700;color:var(--pl-color);}
+
+/* ── LIST VIEW ── */
+.song-list{display:flex;flex-direction:column;gap:8px;padding:0 16px;}
+.srow{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:10px 12px;cursor:pointer;transition:background .15s;}
+.srow:hover{background:var(--surface2);}
+.srow.playing{background:rgba(255,107,53,.06);}
+.srow-num{width:22px;font-family:sans-serif;font-size:11px;font-weight:800;color:var(--text3);text-align:center;flex-shrink:0;}
+.srow-num.top{color:var(--pl-color);}
+.srow-thumb{width:48px;height:48px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;position:relative;overflow:hidden;}
+.srow-play-ov{position:absolute;inset:0;background:rgba(0,0,0,.3);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .15s;border-radius:10px;}
+.srow:hover .srow-play-ov{opacity:1;}
+.srow-play-ov svg{width:14px;height:14px;fill:white;}
+.srow-body{flex:1;min-width:0;}
+.srow-title{font-family:sans-serif;font-size:12px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:3px;}
+.srow-title.on{color:var(--pl-color);}
+.srow-artist{font-size:10px;color:var(--text3);}
+.srow-right{display:flex;flex-direction:column;align-items:flex-end;gap:3px;flex-shrink:0;}
+.srow-plays{font-size:9px;font-family:sans-serif;font-weight:700;color:var(--pl-color);}
+.srow-dur{font-size:9px;color:var(--text3);font-family:sans-serif;font-weight:600;}
+.srow-play-btn{width:32px;height:32px;background:var(--pl-color);border:none;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;box-shadow:0 3px 10px rgba(0,0,0,.3);}
+.srow-play-btn svg{width:11px;height:11px;fill:white;}
+
+/* ── GRADIENT CLASSES ── */
+.g1{background:linear-gradient(135deg,#9B6BFF,#4D9FFF);}
+.g2{background:linear-gradient(135deg,#FF6B35,#FFB347);}
+.g3{background:linear-gradient(135deg,#FF4D8F,#FF6B35);}
+.g4{background:linear-gradient(135deg,#2ECC8F,#4D9FFF);}
+.g5{background:linear-gradient(135deg,#FFB347,#FF4D8F);}
+.g6{background:linear-gradient(135deg,#4D9FFF,#9B6BFF);}
+.g7{background:linear-gradient(135deg,#FF6B35,#FF4D8F);}
+.g8{background:linear-gradient(135deg,#2ECC8F,#9B6BFF);}
+
+/* ── PAGINATION ── */
+.pagination{display:flex;align-items:center;justify-content:center;gap:6px;padding:16px 16px 6px;}
+.pg-btn{min-width:32px;height:32px;padding:0 8px;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text2);font-family:sans-serif;font-size:11px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;transition:all .15s;}
+.pg-btn:hover:not(:disabled){background:var(--surface2);color:var(--text);}
+.pg-btn.on{background:var(--pl-color);color:#fff;border-color:transparent;}
+.pg-btn:disabled{opacity:.35;cursor:not-allowed;}
+
+/* ── EMPTY ── */
+.empty{padding:56px 24px;text-align:center;}
+.empty-icon{font-size:48px;margin-bottom:12px;}
+.empty-msg{font-family:sans-serif;font-size:13px;font-weight:700;color:var(--text3);}
+
+/* ── MINI PLAYER ── */
+.mini-player{position:fixed;bottom:64px;left:0;right:0;width:100%;background:var(--surface2);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:8px 14px;z-index:40;}
+.mp-inner{display:flex;align-items:center;gap:10px;}
+.mp-art{width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;box-shadow:0 3px 10px rgba(255,107,53,.3);}
+.mp-inf{flex:1;min-width:0;}
+.mp-title{font-family:sans-serif;font-size:12px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:1px;}
+.mp-artist{font-size:10px;color:var(--text2);}
+.mp-ctrl{display:flex;align-items:center;gap:8px;flex-shrink:0;}
+.mp-ctrl svg{width:17px;height:17px;fill:none;stroke:var(--text2);stroke-width:2;cursor:pointer;}
+.mp-play{width:34px;height:34px;background:var(--accent);border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 10px rgba(255,107,53,.4);cursor:pointer;}
+.mp-play svg{width:13px;height:13px;fill:white;}
+.mp-heart{cursor:pointer;}
+.mp-heart svg{width:17px;height:17px;fill:none;stroke:var(--text3);stroke-width:2;}
+.mp-heart.liked svg{fill:var(--pink);stroke:var(--pink);}
+.mp-prog{display:flex;align-items:center;gap:7px;margin-top:6px;}
+.mp-bar{flex:1;height:3px;background:var(--surface3);border-radius:2px;overflow:hidden;cursor:pointer;}
+.mp-fill{width:35%;height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:2px;}
+.mp-t{font-size:9px;color:var(--text3);font-family:sans-serif;}
+
+/* ── BOTTOM NAV ── */
+.bnav{position:fixed;bottom:0;left:0;right:0;width:100%;height:64px;background:var(--surface);border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-around;z-index:50;transition:background .3s;}
+.ni{display:flex;flex-direction:column;align-items:center;gap:3px;padding:4px 10px;cursor:pointer;text-decoration:none;color:var(--text3);transition:color .15s;}
+.ni svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;}
+.ni .nl{font-size:9px;font-family:sans-serif;font-weight:700;}
+.ni.on{color:var(--accent);}
+
+/* ── RESPONSIVE ── */
+@media (min-width:640px){
+  .tbar,.sw,.toolbar,.stats-bar{padding-left:24px;padding-right:24px;}
+  .song-cards,.song-list,.pagination{padding-left:24px;padding-right:24px;}
+  .pl-hero{margin-left:24px;margin-right:24px;}
+  .song-cards{grid-template-columns:repeat(3,1fr);}
+}
+@media (min-width:1024px){
+  .phone{max-width:1200px;margin:0 auto;}
+  .tbar,.sw,.toolbar,.stats-bar{padding-left:40px;padding-right:40px;}
+  .song-cards,.song-list,.pagination{padding-left:40px;padding-right:40px;}
+  .pl-hero{margin-left:40px;margin-right:40px;}
+  .song-cards{grid-template-columns:repeat(4,1fr);gap:14px;}
+  .bnav,.mini-player{max-width:1200px;left:50%;right:auto;transform:translateX(-50%);}
+}
+@media (max-width:480px){
+  .tbar,.sw,.toolbar,.stats-bar{padding-left:14px;padding-right:14px;}
+  .song-cards,.song-list,.pagination{padding-left:14px;padding-right:14px;}
+  .pl-hero{margin-left:14px;margin-right:14px;}
+  .ni .nl{font-size:8px;}
+  .ni svg{width:18px;height:18px;}
+}
+</style>
+</head>
+<body>
+<div class="phone">
+  <div class="scroll">
+
+    <!-- TOPBAR -->
+    <div class="tbar">
+      <a class="tb-back" href="all_playlists.html"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></a>
+      <div class="tb-title" id="pageTitle">Playlist Songs</div>
+      <div class="theme-toggle" id="themeToggle"><span class="tt-icon" id="ttIcon">🌙</span><span class="tt-label" id="ttLabel">Dark</span></div>
+    </div>
+
+    <!-- PLAYLIST HERO -->
+    <div class="pl-hero">
+      <div class="pl-hero-banner g2" id="heroBanner">
+        <span class="pl-hero-emoji" id="heroEmoji">🎵</span>
+        <div class="pl-hero-cnt" id="heroCnt">0 songs</div>
+        <span class="pl-hero-type type-official" id="heroType">✓ Official</span>
+      </div>
+      <div class="pl-hero-body">
+        <div class="pl-hero-title" id="heroTitle">Playlist</div>
+        <div class="pl-hero-meta" id="heroMeta">Category · 0 plays · 0 followers</div>
+        <div class="pl-hero-actions">
+          <button class="ph-btn ph-btn-play" id="btnPlayAll"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg> Play All</button>
+          <button class="ph-btn ph-btn-shuffle" id="btnShuffle"><svg viewBox="0 0 24 24"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/></svg> Shuffle</button>
+          <button class="ph-btn ph-btn-save" id="btnSave" title="Save"><svg viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></button>
+          <button class="ph-btn ph-btn-share" id="btnShare" title="Share"><svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg></button>
+        </div>
+      </div>
+    </div>
+
+    <!-- STATS -->
+    <div class="stats-bar">
+      <div class="stat-chip"><div class="stat-v" id="statSongs">0</div><div class="stat-l">Songs</div></div>
+      <div class="stat-chip"><div class="stat-v" id="statDuration">0min</div><div class="stat-l">Duration</div></div>
+      <div class="stat-chip"><div class="stat-v" id="statPlays">0</div><div class="stat-l">Plays</div></div>
+      <div class="stat-chip"><div class="stat-v" id="statFollowers">0</div><div class="stat-l">Followers</div></div>
+    </div>
+
+    <!-- SEARCH -->
+    <div class="sw">
+      <div class="sb">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" id="searchInput" placeholder="Search songs, artists…">
+      </div>
+    </div>
+
+    <!-- TOOLBAR -->
+    <div class="toolbar">
+      <span class="shead-c" id="countLabel">0 songs</span>
+      <select class="sort-sel" id="sortSelect">
+        <option value="default">Default Order</option>
+        <option value="plays">Most Played</option>
+        <option value="recent">Recently Added</option>
+        <option value="az">A – Z</option>
+        <option value="dur">Duration</option>
+      </select>
+      <div class="vt-wrap">
+        <div class="vt-btn" id="vtCard" title="Card view"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg></div>
+        <div class="vt-btn on" id="vtList" title="List view"><svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg></div>
+      </div>
+    </div>
+
+    <div id="container"></div>
+    <div class="pagination" id="pagination"></div>
+    <div style="height:16px;"></div>
+  </div>
+
+  <!-- MINI PLAYER -->
+  <div class="mini-player" id="miniPlayer" style="display:none;">
+    <div class="mp-inner">
+      <div class="mp-art" id="mpArt">🎵</div>
+      <div class="mp-inf">
+        <div class="mp-title" id="mpTitle">Song title</div>
+        <div class="mp-artist" id="mpArtist">Artist</div>
+      </div>
+      <div class="mp-ctrl">
+        <svg viewBox="0 0 24 24"><polygon points="19 20 9 12 19 4 19 20"/><line x1="5" y1="19" x2="5" y2="5"/></svg>
+        <div class="mp-play" id="mpPlay"><svg viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg></div>
+        <svg viewBox="0 0 24 24"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19"/></svg>
+        <div class="mp-heart" id="mpHeart"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div>
+      </div>
+    </div>
+    <div class="mp-prog">
+      <span class="mp-t">1:24</span>
+      <div class="mp-bar"><div class="mp-fill" id="mpFill"></div></div>
+      <span class="mp-t">3:42</span>
+    </div>
+  </div>
+
+  <!-- BOTTOM NAV -->
+  <div class="bnav">
+    <a class="ni on" href="song_portal_web.html"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><div class="nl">Home</div></a>
+    <a class="ni" href="shurafah_waazi.html"><svg viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg><div class="nl">Wa'azi</div></a>
+    <a class="ni" href="shurafah_explore.html"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><div class="nl">Explore</div></a>
+    <a class="ni" href="favourites_page.html"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg><div class="nl">Favourites</div></a>
+    <a class="ni" href="user_profile_page.html"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><div class="nl">Profile</div></a>
+  </div>
+</div>
+
+<script>
+/* ── PLAYLISTS CONFIG (same as all_playlists.html) ── */
+var PLAYLISTS = [
+  {id:1,  title:'Ashura Collection',       emoji:'☪️', grad:'g1', type:'official', featured:true,  category:'Ashura',  songs:28, duration:'1h 52min', plays:'420K', followers:'8.2K' },
+  {id:2,  title:'Sunday Morning Nasheeds', emoji:'🌅', grad:'g2', type:'official', featured:true,  category:'Shairai', songs:18, duration:'1h 14min', plays:'310K', followers:'6.4K' },
+  {id:3,  title:'Muharram Vibes',          emoji:'🌙', grad:'g3', type:'official', featured:false, category:'Ashura',  songs:22, duration:'1h 28min', plays:'284K', followers:'5.1K' },
+  {id:4,  title:'Maulud Classics',         emoji:'🎉', grad:'g4', type:'official', featured:true,  category:'Maulud',  songs:15, duration:'58min',    plays:'198K', followers:'3.8K' },
+  {id:5,  title:'Best of Uzairu',          emoji:'🎤', grad:'g5', type:'official', featured:true,  category:'Mix',     songs:32, duration:'2h 08min', plays:'640K', followers:'12.1K'},
+  {id:6,  title:'Deep Night Worship',      emoji:'🕯️', grad:'g6', type:'official', featured:false, category:'Shairai', songs:12, duration:'48min',    plays:'152K', followers:'2.9K' },
+  {id:7,  title:'Karbala Remembrance',     emoji:'🌹', grad:'g7', type:'official', featured:false, category:'Shuhada', songs:24, duration:'1h 36min', plays:'228K', followers:'4.6K' },
+  {id:8,  title:'Ramadan Special 2026',    emoji:'⭐', grad:'g8', type:'official', featured:true,  category:'Mix',     songs:30, duration:'2h 01min', plays:'580K', followers:'9.8K' },
+  {id:9,  title:'Ahmad Isah Best',         emoji:'🎵', grad:'g1', type:'official', featured:false, category:'Shairai', songs:20, duration:'1h 18min', plays:'190K', followers:'3.4K' },
+  {id:10, title:'Shuhada Anthems',         emoji:'⚔️', grad:'g2', type:'official', featured:false, category:'Shuhada', songs:16, duration:'1h 04min', plays:'144K', followers:'2.7K' },
+  {id:11, title:'My Morning Playlist',     emoji:'🌄', grad:'g3', type:'user',     featured:false, category:'Mix',     songs:10, duration:'42min',    plays:'1.2K', followers:'48'   },
+  {id:12, title:'Favourite Nasheeds',      emoji:'❤️', grad:'g4', type:'user',     featured:false, category:'Mix',     songs:24, duration:'1h 38min', plays:'3.8K', followers:'124'  },
+  {id:13, title:'Ashura 2026 Mix',         emoji:'🎶', grad:'g5', type:'user',     featured:false, category:'Ashura',  songs:8,  duration:'34min',    plays:'980',  followers:'21'   },
+  {id:14, title:'Auto: Top Shairai',       emoji:'🤖', grad:'g6', type:'auto',     featured:false, category:'Shairai', songs:50, duration:'3h 22min', plays:'88K',  followers:'1.4K' },
+  {id:15, title:'Auto: Trending Today',    emoji:'🔥', grad:'g7', type:'auto',     featured:false, category:'Mix',     songs:20, duration:'1h 12min', plays:'52K',  followers:'840'  },
+  {id:16, title:'Kano Chapter Collab',     emoji:'🤝', grad:'g8', type:'collab',   featured:false, category:'Mix',     songs:36, duration:'2h 24min', plays:'22K',  followers:'640'  }
+];
+
+/* ── SONGS PER PLAYLIST ── */
+var PLAYLIST_SONGS = {
+  1: [
+    {id:101,title:"Ya Husayn Ya Shaheed",      artist:"Uzairu Badamasi",       dur:"4:18",plays:"98K", grad:'g1',emoji:'☪️'},
+    {id:102,title:"Karbala Ka'aba",            artist:"Shamsudden Fudiyya",    dur:"3:52",plays:"87K", grad:'g3',emoji:'🌹'},
+    {id:103,title:"Muharram Nau",              artist:"Maishurafah",           dur:"5:06",plays:"74K", grad:'g7',emoji:'🌙'},
+    {id:104,title:"Lamentation of the Heart",  artist:"Hafiz Abdullahi",       dur:"4:42",plays:"66K", grad:'g6',emoji:'💜'},
+    {id:105,title:"Imam Ali Zain",             artist:"Ibrahim Khali",         dur:"3:28",plays:"59K", grad:'g1',emoji:'✨'},
+    {id:106,title:"Azadari Forever",           artist:"Uzairu Badamasi",       dur:"6:14",plays:"52K", grad:'g4',emoji:'🕯️'},
+    {id:107,title:"Safar Mubarak",             artist:"Saidu Arzika",          dur:"3:34",plays:"47K", grad:'g2',emoji:'🌟'},
+    {id:108,title:"Rawdah Al-Husayn",          artist:"Yusuf Badamasi",        dur:"4:56",plays:"44K", grad:'g5',emoji:'🌺'},
+    {id:109,title:"Ziyara Ya Imam",            artist:"Shamsudden Fudiyya",    dur:"3:18",plays:"38K", grad:'g8',emoji:'☪️'},
+    {id:110,title:"Tears of Karbala",          artist:"Maishurafah",           dur:"5:22",plays:"35K", grad:'g3',emoji:'💧'},
+    {id:111,title:"Labayk Ya Husayn",          artist:"Ahmad Isah Katsina",    dur:"4:04",plays:"31K", grad:'g7',emoji:'🔴'},
+    {id:112,title:"Ashura Salawat",            artist:"Ibrahim Khali",         dur:"3:48",plays:"28K", grad:'g6',emoji:'🌙'}
+  ],
+  2: [
+    {id:201,title:"Subhi Yana Tasbihi",        artist:"Uzairu Badamasi",       dur:"4:12",plays:"82K", grad:'g2',emoji:'🌅'},
+    {id:202,title:"Salatu Ma'as Salamin",      artist:"Maishurafah",           dur:"3:36",plays:"71K", grad:'g5',emoji:'🌤️'},
+    {id:203,title:"Dua Al-Fajr",              artist:"Hafiz Abdullahi",       dur:"5:48",plays:"63K", grad:'g4',emoji:'🤲'},
+    {id:204,title:"Morning Salawat",           artist:"Shamsudden Fudiyya",    dur:"3:22",plays:"58K", grad:'g1',emoji:'☀️'},
+    {id:205,title:"Bismillah Fatiha",          artist:"Ahmad Isah Katsina",    dur:"4:30",plays:"49K", grad:'g8',emoji:'📖'},
+    {id:206,title:"Nasheed Al-Subh",           artist:"Saidu Arzika",          dur:"3:58",plays:"44K", grad:'g3',emoji:'🌅'},
+    {id:207,title:"Rise with Allah",           artist:"Ibrahim Khali",         dur:"4:14",plays:"37K", grad:'g6',emoji:'🌟'},
+    {id:208,title:"Ya Rasulullah Sabah",       artist:"Yusuf Badamasi",        dur:"3:44",plays:"32K", grad:'g2',emoji:'🌸'}
+  ],
+  3: [
+    {id:301,title:"Muharram Ka Chand",         artist:"Uzairu Badamasi",       dur:"4:44",plays:"76K", grad:'g3',emoji:'🌙'},
+    {id:302,title:"Husayniyya Nights",         artist:"Shamsudden Fudiyya",    dur:"3:58",plays:"64K", grad:'g7',emoji:'🌙'},
+    {id:303,title:"Vibes of Sorrow",           artist:"Maishurafah",           dur:"5:12",plays:"58K", grad:'g1',emoji:'💜'},
+    {id:304,title:"Muharram Meditation",       artist:"Hafiz Abdullahi",       dur:"6:04",plays:"52K", grad:'g4',emoji:'🕯️'},
+    {id:305,title:"Za'ima Ya Imam",            artist:"Ahmad Isah Katsina",    dur:"3:34",plays:"43K", grad:'g6',emoji:'☪️'},
+    {id:306,title:"Night of Ashura",           artist:"Ibrahim Khali",         dur:"4:22",plays:"38K", grad:'g8',emoji:'🌑'},
+    {id:307,title:"Sorrow Never Ends",         artist:"Saidu Arzika",          dur:"4:58",plays:"32K", grad:'g5',emoji:'🌹'},
+    {id:308,title:"Layla Muharram",            artist:"Yusuf Badamasi",        dur:"3:46",plays:"27K", grad:'g2',emoji:'🌙'}
+  ],
+  4: [
+    {id:401,title:"Maulid An-Nabi",            artist:"Maishurafah",           dur:"5:22",plays:"68K", grad:'g4',emoji:'🌟'},
+    {id:402,title:"Ya Nabi Salamu Alayka",     artist:"Uzairu Badamasi",       dur:"4:06",plays:"57K", grad:'g2',emoji:'🎉'},
+    {id:403,title:"Maulud Madina",             artist:"Shamsudden Fudiyya",    dur:"3:42",plays:"51K", grad:'g5',emoji:'🕌'},
+    {id:404,title:"Birth of the Best",         artist:"Hafiz Abdullahi",       dur:"4:56",plays:"44K", grad:'g1',emoji:'🌸'},
+    {id:405,title:"Rahma Li'l Alameen",        artist:"Ahmad Isah Katsina",    dur:"3:28",plays:"38K", grad:'g8',emoji:'✨'},
+    {id:406,title:"Salawat Al-Mawlid",         artist:"Ibrahim Khali",         dur:"4:34",plays:"32K", grad:'g6',emoji:'🌙'},
+    {id:407,title:"Classic Maulud Hausa",      artist:"Saidu Arzika",          dur:"5:02",plays:"26K", grad:'g3',emoji:'🎵'}
+  ],
+  5: [
+    {id:501,title:"Wa'in Makka",               artist:"Uzairu Badamasi",       dur:"5:16",plays:"142K",grad:'g5',emoji:'🎤'},
+    {id:502,title:"Laila",                     artist:"Uzairu Badamasi",       dur:"3:54",plays:"128K",grad:'g2',emoji:'🎤'},
+    {id:503,title:"Garuda Mai Girma",          artist:"Uzairu Badamasi",       dur:"4:28",plays:"116K",grad:'g7',emoji:'🎤'},
+    {id:504,title:"Ina Son Kowa",              artist:"Uzairu Badamasi",       dur:"3:36",plays:"104K",grad:'g1',emoji:'🎤'},
+    {id:505,title:"Muhibbuna",                 artist:"Uzairu Badamasi",       dur:"4:44",plays:"98K", grad:'g4',emoji:'🎤'},
+    {id:506,title:"Allah Ya Dawo",             artist:"Uzairu Badamasi",       dur:"3:18",plays:"91K", grad:'g3',emoji:'🎤'},
+    {id:507,title:"Soyayya",                   artist:"Uzairu Badamasi",       dur:"5:02",plays:"84K", grad:'g8',emoji:'🎤'},
+    {id:508,title:"Badamasi Legends",          artist:"Uzairu Badamasi",       dur:"4:14",plays:"76K", grad:'g6',emoji:'🎤'},
+    {id:509,title:"Kufirata",                  artist:"Uzairu Badamasi",       dur:"3:48",plays:"69K", grad:'g5',emoji:'🎤'},
+    {id:510,title:"Karima",                    artist:"Uzairu Badamasi",       dur:"4:32",plays:"62K", grad:'g2',emoji:'🎤'},
+    {id:511,title:"Mafia Badamasi",            artist:"Uzairu Badamasi",       dur:"3:22",plays:"55K", grad:'g1',emoji:'🎤'},
+    {id:512,title:"Diamond Crown",             artist:"Uzairu Badamasi",       dur:"4:56",plays:"48K", grad:'g7',emoji:'🎤'}
+  ],
+  6: [
+    {id:601,title:"Night Ibada",               artist:"Maishurafah",           dur:"6:18",plays:"44K", grad:'g6',emoji:'🕯️'},
+    {id:602,title:"Tahajjud Nasheeds",         artist:"Hafiz Abdullahi",       dur:"5:44",plays:"38K", grad:'g4',emoji:'🌙'},
+    {id:603,title:"Qiyam Al-Layl",             artist:"Shamsudden Fudiyya",    dur:"4:52",plays:"32K", grad:'g2',emoji:'🕌'},
+    {id:604,title:"Silent Prayers",            artist:"Ahmad Isah Katsina",    dur:"6:06",plays:"26K", grad:'g8',emoji:'🤲'},
+    {id:605,title:"Darkness & Light",          artist:"Ibrahim Khali",         dur:"5:28",plays:"22K", grad:'g5',emoji:'⭐'},
+    {id:606,title:"Late Night Dhikr",          artist:"Saidu Arzika",          dur:"4:36",plays:"18K", grad:'g1',emoji:'🌟'}
+  ],
+  7: [
+    {id:701,title:"Zikra Karbala",             artist:"Uzairu Badamasi",       dur:"4:48",plays:"72K", grad:'g7',emoji:'🌹'},
+    {id:702,title:"Shuhada Al-Islam",          artist:"Shamsudden Fudiyya",    dur:"3:56",plays:"64K", grad:'g3',emoji:'⚔️'},
+    {id:703,title:"Blood of the Martyrs",      artist:"Maishurafah",           dur:"5:14",plays:"57K", grad:'g1',emoji:'🩸'},
+    {id:704,title:"Husayn Forever",            artist:"Hafiz Abdullahi",       dur:"4:28",plays:"49K", grad:'g6',emoji:'🌹'},
+    {id:705,title:"Ali Akbar",                 artist:"Ahmad Isah Katsina",    dur:"3:42",plays:"43K", grad:'g4',emoji:'🌙'},
+    {id:706,title:"Zainab's Lament",           artist:"Ibrahim Khali",         dur:"5:58",plays:"36K", grad:'g8',emoji:'💔'},
+    {id:707,title:"Karbala Road",              artist:"Saidu Arzika",          dur:"4:16",plays:"29K", grad:'g2',emoji:'🌅'},
+    {id:708,title:"Martyrdom Salawat",         artist:"Yusuf Badamasi",        dur:"3:32",plays:"24K", grad:'g5',emoji:'✨'}
+  ],
+  8: [
+    {id:801,title:"Ramadan Kareem",            artist:"Uzairu Badamasi",       dur:"4:36",plays:"128K",grad:'g8',emoji:'⭐'},
+    {id:802,title:"Saumu Mubarak",             artist:"Maishurafah",           dur:"3:48",plays:"112K",grad:'g2',emoji:'🌙'},
+    {id:803,title:"Laylat Al-Qadr",            artist:"Shamsudden Fudiyya",    dur:"5:24",plays:"98K", grad:'g4',emoji:'✨'},
+    {id:804,title:"Eid Countdown",             artist:"Hafiz Abdullahi",       dur:"3:18",plays:"88K", grad:'g6',emoji:'🎉'},
+    {id:805,title:"Tarawih Nights",            artist:"Ahmad Isah Katsina",    dur:"4:52",plays:"76K", grad:'g1',emoji:'🕌'},
+    {id:806,title:"Fasting Spirit",            artist:"Ibrahim Khali",         dur:"4:06",plays:"64K", grad:'g5',emoji:'🌟'},
+    {id:807,title:"Iftar Nasheed",             artist:"Saidu Arzika",          dur:"3:34",plays:"56K", grad:'g3',emoji:'🌅'},
+    {id:808,title:"Ramadan Special 2026",      artist:"Yusuf Badamasi",        dur:"5:12",plays:"47K", grad:'g7',emoji:'⭐'},
+    {id:809,title:"Sadaqah Spirit",            artist:"Uzairu Badamasi",       dur:"4:22",plays:"38K", grad:'g8',emoji:'🤲'},
+    {id:810,title:"Night of Power",            artist:"Maishurafah",           dur:"6:08",plays:"32K", grad:'g4',emoji:'💜'}
+  ],
+  9: [
+    {id:901,title:"Ahmad Isah Classic Vol.1",  artist:"Ahmad Isah Katsina",    dur:"4:44",plays:"62K", grad:'g1',emoji:'🎵'},
+    {id:902,title:"Katsina Melody",            artist:"Ahmad Isah Katsina",    dur:"3:52",plays:"54K", grad:'g4',emoji:'🎵'},
+    {id:903,title:"Kano Legend",               artist:"Ahmad Isah Katsina",    dur:"5:08",plays:"48K", grad:'g7',emoji:'🎵'},
+    {id:904,title:"Hausa Nasheed Master",      artist:"Ahmad Isah Katsina",    dur:"4:16",plays:"41K", grad:'g2',emoji:'🎵'},
+    {id:905,title:"Ya Rasulullah (Ahmad)",     artist:"Ahmad Isah Katsina",    dur:"3:28",plays:"35K", grad:'g5',emoji:'🎵'},
+    {id:906,title:"Shairai Classic",           artist:"Ahmad Isah Katsina",    dur:"4:54",plays:"29K", grad:'g8',emoji:'🎵'},
+    {id:907,title:"Ahmad Live Session",        artist:"Ahmad Isah Katsina",    dur:"3:38",plays:"24K", grad:'g3',emoji:'🎵'},
+    {id:908,title:"Northern Soul",             artist:"Ahmad Isah Katsina",    dur:"5:22",plays:"18K", grad:'g6',emoji:'🎵'}
+  ],
+  10:[
+    {id:1001,title:"Shaheed Ya Shaheed",       artist:"Uzairu Badamasi",       dur:"4:58",plays:"54K", grad:'g2',emoji:'⚔️'},
+    {id:1002,title:"Ja'afar Al-Tayyar",        artist:"Shamsudden Fudiyya",    dur:"3:44",plays:"46K", grad:'g7',emoji:'⚔️'},
+    {id:1003,title:"Battle of Badr",           artist:"Maishurafah",           dur:"5:18",plays:"39K", grad:'g4',emoji:'🌟'},
+    {id:1004,title:"Hamza Ibn Abdul-Muttalib", artist:"Hafiz Abdullahi",       dur:"4:06",plays:"33K", grad:'g1',emoji:'⚔️'},
+    {id:1005,title:"Anthem of Courage",        artist:"Ahmad Isah Katsina",    dur:"3:32",plays:"27K", grad:'g6',emoji:'🛡️'},
+    {id:1006,title:"Lions of Allah",           artist:"Ibrahim Khali",         dur:"4:44",plays:"22K", grad:'g8',emoji:'🔥'},
+    {id:1007,title:"Shuhada Legacy",           artist:"Saidu Arzika",          dur:"5:02",plays:"17K", grad:'g3',emoji:'🌹'},
+    {id:1008,title:"March of the Martyrs",     artist:"Yusuf Badamasi",        dur:"3:58",plays:"14K", grad:'g5',emoji:'⚔️'}
+  ],
+  11:[
+    {id:1101,title:"Fajr Blessing",            artist:"Maishurafah",           dur:"3:48",plays:"320", grad:'g3',emoji:'🌄'},
+    {id:1102,title:"Morning Gratitude",        artist:"Hafiz Abdullahi",       dur:"4:22",plays:"280", grad:'g5',emoji:'☀️'},
+    {id:1103,title:"Daily Dhikr",              artist:"Uzairu Badamasi",       dur:"5:04",plays:"242", grad:'g1',emoji:'🌿'},
+    {id:1104,title:"Rise & Shine Nasheed",     artist:"Ibrahim Khali",         dur:"3:16",plays:"198", grad:'g8',emoji:'🌅'},
+    {id:1105,title:"Morning Salawat",          artist:"Shamsudden Fudiyya",    dur:"4:38",plays:"164", grad:'g4',emoji:'🌸'}
+  ],
+  12:[
+    {id:1201,title:"Laila (Favourite)",        artist:"Uzairu Badamasi",       dur:"3:54",plays:"980", grad:'g4',emoji:'❤️'},
+    {id:1202,title:"Ya Nabi Favourite",        artist:"Maishurafah",           dur:"4:28",plays:"854", grad:'g2',emoji:'❤️'},
+    {id:1203,title:"Karbala Love",             artist:"Shamsudden Fudiyya",    dur:"5:14",plays:"742", grad:'g6',emoji:'❤️'},
+    {id:1204,title:"Salawat Fav",              artist:"Hafiz Abdullahi",       dur:"3:38",plays:"682", grad:'g1',emoji:'❤️'},
+    {id:1205,title:"Night Dhikr Saved",        artist:"Ahmad Isah Katsina",    dur:"4:52",plays:"614", grad:'g8',emoji:'❤️'},
+    {id:1206,title:"Nasheeds I Love",          artist:"Ibrahim Khali",         dur:"3:26",plays:"558", grad:'g5',emoji:'❤️'},
+    {id:1207,title:"Top Pick Maulud",          artist:"Saidu Arzika",          dur:"4:16",plays:"494", grad:'g3',emoji:'❤️'},
+    {id:1208,title:"Saved: Ashura Track",      artist:"Yusuf Badamasi",        dur:"5:36",plays:"438", grad:'g7',emoji:'❤️'}
+  ],
+  13:[
+    {id:1301,title:"Ashura 2026 Opener",       artist:"Uzairu Badamasi",       dur:"4:42",plays:"320", grad:'g5',emoji:'🎶'},
+    {id:1302,title:"Muharram 2026",            artist:"Shamsudden Fudiyya",    dur:"3:56",plays:"268", grad:'g3',emoji:'🎶'},
+    {id:1303,title:"Husayn Remix 2026",        artist:"Maishurafah",           dur:"5:28",plays:"214", grad:'g7',emoji:'🎶'},
+    {id:1304,title:"New Era Karbala",          artist:"Hafiz Abdullahi",       dur:"4:14",plays:"178", grad:'g1',emoji:'🎶'}
+  ],
+  14:[
+    {id:1401,title:"Top Shairai #1",           artist:"Uzairu Badamasi",       dur:"4:28",plays:"28K", grad:'g6',emoji:'🤖'},
+    {id:1402,title:"Top Shairai #2",           artist:"Shamsudden Fudiyya",    dur:"3:44",plays:"24K", grad:'g2',emoji:'🤖'},
+    {id:1403,title:"Top Shairai #3",           artist:"Maishurafah",           dur:"4:52",plays:"21K", grad:'g4',emoji:'🤖'},
+    {id:1404,title:"Top Shairai #4",           artist:"Ahmad Isah Katsina",    dur:"3:36",plays:"18K", grad:'g8',emoji:'🤖'},
+    {id:1405,title:"Top Shairai #5",           artist:"Hafiz Abdullahi",       dur:"5:08",plays:"15K", grad:'g5',emoji:'🤖'},
+    {id:1406,title:"Top Shairai #6",           artist:"Ibrahim Khali",         dur:"4:16",plays:"13K", grad:'g1',emoji:'🤖'},
+    {id:1407,title:"Top Shairai #7",           artist:"Saidu Arzika",          dur:"3:58",plays:"11K", grad:'g3',emoji:'🤖'},
+    {id:1408,title:"Top Shairai #8",           artist:"Yusuf Badamasi",        dur:"4:44",plays:"9.4K",grad:'g7',emoji:'🤖'},
+    {id:1409,title:"Top Shairai #9",           artist:"Uzairu Badamasi",       dur:"3:22",plays:"7.8K",grad:'g6',emoji:'🤖'},
+    {id:1410,title:"Top Shairai #10",          artist:"Malam Kasim",           dur:"5:14",plays:"6.4K",grad:'g2',emoji:'🤖'}
+  ],
+  15:[
+    {id:1501,title:"Trending Now #1",          artist:"Uzairu Badamasi",       dur:"3:48",plays:"18K", grad:'g7',emoji:'🔥'},
+    {id:1502,title:"Trending Now #2",          artist:"Maishurafah",           dur:"4:22",plays:"15K", grad:'g3',emoji:'🔥'},
+    {id:1503,title:"Trending Now #3",          artist:"Shamsudden Fudiyya",    dur:"3:56",plays:"12K", grad:'g5',emoji:'🔥'},
+    {id:1504,title:"Trending Now #4",          artist:"Ahmad Isah Katsina",    dur:"5:04",plays:"10K", grad:'g1',emoji:'🔥'},
+    {id:1505,title:"Trending Now #5",          artist:"Hafiz Abdullahi",       dur:"4:12",plays:"8.2K",grad:'g8',emoji:'🔥'},
+    {id:1506,title:"Trending Now #6",          artist:"Ibrahim Khali",         dur:"3:34",plays:"6.8K",grad:'g4',emoji:'🔥'},
+    {id:1507,title:"Trending Now #7",          artist:"Saidu Arzika",          dur:"4:46",plays:"5.4K",grad:'g2',emoji:'🔥'},
+    {id:1508,title:"Trending Now #8",          artist:"Yusuf Badamasi",        dur:"3:28",plays:"4.2K",grad:'g6',emoji:'🔥'}
+  ],
+  16:[
+    {id:1601,title:"Kano Collab Vol.1",        artist:"Uzairu Badamasi",       dur:"4:34",plays:"6.4K",grad:'g8',emoji:'🤝'},
+    {id:1602,title:"Northern Voices United",   artist:"Shamsudden Fudiyya",    dur:"5:12",plays:"5.8K",grad:'g4',emoji:'🤝'},
+    {id:1603,title:"Chapter Anthem",           artist:"Maishurafah",           dur:"3:46",plays:"4.9K",grad:'g2',emoji:'🤝'},
+    {id:1604,title:"Kano Night Session",       artist:"Hafiz Abdullahi",       dur:"4:58",plays:"4.2K",grad:'g6',emoji:'🤝'},
+    {id:1605,title:"All Stars Nasheed",        artist:"Ahmad Isah Katsina",    dur:"3:32",plays:"3.7K",grad:'g1',emoji:'🤝'},
+    {id:1606,title:"Collaboration Special",    artist:"Ibrahim Khali",         dur:"5:24",plays:"3.1K",grad:'g5',emoji:'🤝'},
+    {id:1607,title:"Kano Rising",              artist:"Saidu Arzika",          dur:"4:08",plays:"2.6K",grad:'g3',emoji:'🤝'},
+    {id:1608,title:"United Hausa Nasheeds",    artist:"Yusuf Badamasi",        dur:"3:54",plays:"2.1K",grad:'g7',emoji:'🤝'},
+    {id:1609,title:"Friday Night Collab",      artist:"Malam Kasim",           dur:"4:42",plays:"1.7K",grad:'g8',emoji:'🤝'},
+    {id:1610,title:"Amara & Friends",          artist:"Amara Soul",            dur:"5:16",plays:"1.4K",grad:'g4',emoji:'🤝'}
+  ]
+};
+
+/* ── STATE ── */
+var playlistId  = 1;
+var playlist    = null;
+var allSongs    = [];
+var filtered    = [];
+var currentView = 'list';
+var currentSort = 'default';
+var currentPage = 1;
+var PAGE_SIZE   = 5;
+var nowPlaying  = null;
+var isPlaying   = false;
+
+/* ── TYPE LABELS & CLASSES ── */
+var typeLabels  = {official:'✓ Official', featured:'⭐ Featured', user:'👤 User', auto:'⚡ Auto', collab:'🤝 Collab'};
+var typeClasses = {official:'type-official', featured:'type-featured', user:'type-user', auto:'type-auto', collab:'type-collab'};
+
+/* ── INIT ── */
+(function init() {
+  var params = new URLSearchParams(window.location.search);
+  playlistId = parseInt(params.get('id')) || 1;
+
+  playlist = null;
+  for (var i = 0; i < PLAYLISTS.length; i++) {
+    if (PLAYLISTS[i].id === playlistId) { playlist = PLAYLISTS[i]; break; }
+  }
+  if (!playlist) playlist = PLAYLISTS[0];
+
+  allSongs = PLAYLIST_SONGS[playlist.id] || [];
+
+  /* Update CSS color variable to match playlist gradient accent */
+  var colorMap = {g1:'#9B6BFF',g2:'#FF6B35',g3:'#FF4D8F',g4:'#2ECC8F',g5:'#FFB347',g6:'#4D9FFF',g7:'#FF6B35',g8:'#2ECC8F'};
+  var plColor = colorMap[playlist.grad] || '#FF6B35';
+  document.documentElement.style.setProperty('--pl-color', plColor);
+  document.documentElement.style.setProperty('--pl-bg', plColor.replace('#','rgba(').replace(/^rgba\(/, 'rgba(') + ',.12)');
+
+  /* Hero */
+  document.getElementById('pageTitle').textContent = playlist.title;
+  document.getElementById('heroEmoji').textContent = playlist.emoji;
+  document.getElementById('heroBanner').className = 'pl-hero-banner ' + playlist.grad;
+  document.getElementById('heroCnt').textContent = playlist.songs + ' songs';
+
+  var tLabel = playlist.featured ? typeLabels.featured : typeLabels[playlist.type] || playlist.type;
+  var tClass = playlist.featured ? 'type-featured' : (typeClasses[playlist.type] || 'type-official');
+  var heroType = document.getElementById('heroType');
+  heroType.textContent = tLabel;
+  heroType.className = 'pl-hero-type ' + tClass;
+
+  document.getElementById('heroTitle').textContent = playlist.title;
+  document.getElementById('heroMeta').textContent = playlist.category + ' · ' + playlist.plays + ' plays · ' + playlist.followers + ' followers';
+
+  /* Stats */
+  document.getElementById('statSongs').textContent = playlist.songs;
+  document.getElementById('statDuration').textContent = playlist.duration;
+  document.getElementById('statPlays').textContent = playlist.plays;
+  document.getElementById('statFollowers').textContent = playlist.followers;
+
+  applyTheme(localStorage.getItem('shurafah-theme') === 'light');
+  apply();
+})();
+
+/* ── SORT ── */
+function getSorted(list) {
+  var s = list.slice();
+  if (currentSort === 'plays') {
+    s.sort(function(a,b){ return parseFloat(b.plays) - parseFloat(a.plays); });
+  } else if (currentSort === 'az') {
+    s.sort(function(a,b){ return a.title.localeCompare(b.title); });
+  } else if (currentSort === 'dur') {
+    s.sort(function(a,b){
+      function toSec(d){ var p=d.split(':'); return parseInt(p[0])*60+parseInt(p[1]); }
+      return toSec(b.dur) - toSec(a.dur);
+    });
+  }
+  return s;
+}
+
+/* ── APPLY (search + sort + render) ── */
+function apply() {
+  var q = (document.getElementById('searchInput').value || '').trim().toLowerCase();
+  filtered = getSorted(allSongs.filter(function(s) {
+    return !q || s.title.toLowerCase().indexOf(q) !== -1 || s.artist.toLowerCase().indexOf(q) !== -1;
+  }));
+  currentPage = 1;
+  document.getElementById('countLabel').textContent = filtered.length + ' song' + (filtered.length !== 1 ? 's' : '');
+  renderPage();
+}
+
+/* ── RENDER ── */
+function renderPage() {
+  var cont = document.getElementById('container');
+  cont.innerHTML = '';
+  if (!filtered.length) {
+    cont.innerHTML = '<div class="empty"><div class="empty-icon">🔍</div><div class="empty-msg">No songs found</div></div>';
+    document.getElementById('pagination').innerHTML = '';
+    return;
+  }
+  var totalPages = Math.ceil(filtered.length / PAGE_SIZE);
+  if (currentPage > totalPages) currentPage = 1;
+  var start = (currentPage - 1) * PAGE_SIZE;
+  var items = filtered.slice(start, start + PAGE_SIZE);
+
+  if (currentView === 'card') {
+    cont.className = 'song-cards';
+    items.forEach(function(s) {
+      var card = document.createElement('div');
+      card.className = 'scard';
+      card.innerHTML =
+        '<div class="scard-cover ' + s.grad + '">' +
+          '<span>' + s.emoji + '</span>' +
+          '<div class="scard-play-ov"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg></div>' +
+        '</div>' +
+        '<div class="scard-body">' +
+          '<div class="scard-title">' + s.title + '</div>' +
+          '<div class="scard-artist">' + s.artist + '</div>' +
+          '<div class="scard-meta"><span class="scard-dur">' + s.dur + '</span><span class="scard-plays">' + s.plays + '</span></div>' +
+        '</div>';
+      card.querySelector('.scard-play-ov').addEventListener('click', function(e) { e.stopPropagation(); playSong(s); });
+      card.addEventListener('click', function() { window.location.href = 'song_detail_page.html'; });
+      cont.appendChild(card);
+    });
+  } else {
+    cont.className = 'song-list';
+    items.forEach(function(s, idx) {
+      var globalIdx = start + idx + 1;
+      var isNow = nowPlaying && nowPlaying.id === s.id;
+      var row = document.createElement('div');
+      row.className = 'srow' + (isNow ? ' playing' : '');
+      row.innerHTML =
+        '<div class="srow-num' + (globalIdx <= 3 ? ' top' : '') + '">' + (isNow ?
+          '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--pl-color)" stroke-width="2"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>'
+          : globalIdx) + '</div>' +
+        '<div class="srow-thumb ' + s.grad + '">' +
+          s.emoji +
+          '<div class="srow-play-ov"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg></div>' +
+        '</div>' +
+        '<div class="srow-body">' +
+          '<div class="srow-title' + (isNow ? ' on' : '') + '">' + s.title + '</div>' +
+          '<div class="srow-artist">' + s.artist + '</div>' +
+        '</div>' +
+        '<div class="srow-right">' +
+          '<span class="srow-plays">' + s.plays + '</span>' +
+          '<span class="srow-dur">' + s.dur + '</span>' +
+        '</div>' +
+        '<button class="srow-play-btn"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg></button>';
+      row.querySelector('.srow-play-btn').addEventListener('click', function(e) { e.stopPropagation(); playSong(s); });
+      row.addEventListener('click', function() { window.location.href = 'song_detail_page.html'; });
+      cont.appendChild(row);
+    });
+  }
+  renderPagination(totalPages);
+}
+
+function renderPagination(totalPages) {
+  var pg = document.getElementById('pagination');
+  pg.innerHTML = '';
+  if (totalPages <= 1) return;
+  var prev = document.createElement('button');
+  prev.className = 'pg-btn'; prev.innerHTML = '&#8249;'; prev.disabled = currentPage === 1;
+  prev.addEventListener('click', function() { currentPage--; renderPage(); document.querySelector('.scroll').scrollTop = 0; });
+  pg.appendChild(prev);
+  var maxB = 5, startP = Math.max(1, currentPage - 2), endP = Math.min(totalPages, startP + maxB - 1);
+  if (endP - startP < maxB - 1) startP = Math.max(1, endP - maxB + 1);
+  for (var n = startP; n <= endP; n++) {
+    (function(num) {
+      var btn = document.createElement('button');
+      btn.className = 'pg-btn' + (num === currentPage ? ' on' : '');
+      btn.textContent = num;
+      btn.addEventListener('click', function() { currentPage = num; renderPage(); document.querySelector('.scroll').scrollTop = 0; });
+      pg.appendChild(btn);
+    })(n);
+  }
+  var next = document.createElement('button');
+  next.className = 'pg-btn'; next.innerHTML = '&#8250;'; next.disabled = currentPage === totalPages;
+  next.addEventListener('click', function() { currentPage++; renderPage(); document.querySelector('.scroll').scrollTop = 0; });
+  pg.appendChild(next);
+}
+
+/* ── MINI PLAYER ── */
+function playSong(s) {
+  nowPlaying = s;
+  isPlaying  = true;
+  var mp = document.getElementById('miniPlayer');
+  mp.style.display = 'block';
+  document.getElementById('mpArt').textContent = s.emoji;
+  document.getElementById('mpTitle').textContent = s.title;
+  document.getElementById('mpArtist').textContent = s.artist;
+  document.getElementById('mpPlay').innerHTML = '<svg viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>';
+  document.getElementById('mpFill').style.width = '35%';
+  renderPage();
+}
+
+document.getElementById('mpPlay').addEventListener('click', function() {
+  isPlaying = !isPlaying;
+  this.innerHTML = isPlaying
+    ? '<svg viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>'
+    : '<svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>';
+});
+
+document.getElementById('mpHeart').addEventListener('click', function() {
+  this.classList.toggle('liked');
+});
+
+/* ── HERO PLAY ALL ── */
+document.getElementById('btnPlayAll').addEventListener('click', function() {
+  if (allSongs.length) playSong(allSongs[0]);
+});
+document.getElementById('btnShuffle').addEventListener('click', function() {
+  if (allSongs.length) {
+    var rand = allSongs[Math.floor(Math.random() * allSongs.length)];
+    playSong(rand);
+  }
+});
+document.getElementById('btnSave').addEventListener('click', function() {
+  var svg = this.querySelector('svg');
+  svg.style.stroke = svg.style.stroke === 'var(--pl-color)' ? '' : 'var(--pl-color)';
+});
+document.getElementById('btnShare').addEventListener('click', function() {
+  if (navigator.share) {
+    navigator.share({ title: playlist.title, url: window.location.href });
+  } else {
+    navigator.clipboard && navigator.clipboard.writeText(window.location.href);
+  }
+});
+
+/* ── THEME ── */
+function applyTheme(isLight) {
+  document.body.classList.toggle('light', isLight);
+  document.getElementById('ttIcon').textContent  = isLight ? '☀️' : '🌙';
+  document.getElementById('ttLabel').textContent = isLight ? 'Light' : 'Dark';
+}
+document.getElementById('themeToggle').addEventListener('click', function() {
+  var n = !document.body.classList.contains('light');
+  applyTheme(n);
+  localStorage.setItem('shurafah-theme', n ? 'light' : 'dark');
+});
+
+/* ── VIEW TOGGLE ── */
+document.getElementById('vtList').addEventListener('click', function() {
+  currentView = 'list';
+  document.getElementById('vtList').classList.add('on');
+  document.getElementById('vtCard').classList.remove('on');
+  currentPage = 1; renderPage();
+});
+document.getElementById('vtCard').addEventListener('click', function() {
+  currentView = 'card';
+  document.getElementById('vtCard').classList.add('on');
+  document.getElementById('vtList').classList.remove('on');
+  currentPage = 1; renderPage();
+});
+
+/* ── SORT ── */
+document.getElementById('sortSelect').addEventListener('change', function() {
+  currentSort = this.value; apply();
+});
+
+/* ── SEARCH ── */
+var st = null;
+document.getElementById('searchInput').addEventListener('input', function() {
+  clearTimeout(st); st = setTimeout(apply, 260);
+});
+</script>
+</body>
+</html>

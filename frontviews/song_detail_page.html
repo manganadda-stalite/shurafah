@@ -1,0 +1,1186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Shurafah — Song Detail</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#080B12;--surface:#0F1420;--surface2:#161C2E;--surface3:#1E2740;
+  --accent:#FF6B35;--accent2:#FFB347;--blue:#4D9FFF;--green:#2ECC8F;
+  --purple:#9B6BFF;--pink:#FF4D8F;--yellow:#FFD166;
+  --text:#F0F4FF;--text2:#8A94B0;--text3:#4A5270;
+  --border:rgba(255,255,255,0.06);
+}
+
+  /* ── LIGHT MODE ── */
+  body.light {
+    --bg:#F4F6FC; --surface:#FFFFFF; --surface2:#E8ECF7; --surface3:#D8DEEF;
+    --text:#12172E; --text2:#5A6380; --text3:#9AA0BA;
+    --border:rgba(0,0,0,0.07);
+  }
+  body.light .phone        { background:var(--bg); }
+  body.light .hero         { background:linear-gradient(135deg,#EEE8FA 0%,#E4EEF8 40%,#E4F2EE 100%) !important; }
+  body.light .hero::before { opacity:0.4; }
+  body.light .hero::after  { opacity:0.4; }
+  body.light .fav-banner   { background:linear-gradient(135deg,#F5E8F0,#EDE8F8) !important; }
+  body.light .fav-player   { background:linear-gradient(135deg,#F5E8F0,#EDE8F8) !important; border-color:rgba(255,77,143,0.15) !important; }
+  body.light .lib-player   { background:linear-gradient(135deg,#EEF0FA,#E4E8F5) !important; }
+  body.light .player-card  { background:linear-gradient(135deg,#EEF0FA,#E4E8F5) !important; border-color:rgba(255,107,53,0.1) !important; }
+  body.light .artist-card  { background:linear-gradient(135deg,#EDE8FA,#E8EEF8) !important; border-color:rgba(155,107,255,0.15) !important; }
+  body.light .pc1          { background:linear-gradient(135deg,#E8F0FA,#E8F4EE) !important; }
+  body.light .pc2          { background:linear-gradient(135deg,#FAF0E8,#FAF0DC) !important; }
+  body.light .pc3          { background:linear-gradient(135deg,#EFE8FA,#E8E8FA) !important; }
+  body.light .pc4          { background:linear-gradient(135deg,#E8FAF0,#E8F0FA) !important; }
+  body.light .pc5          { background:linear-gradient(135deg,#FAE8F0,#F0E8FA) !important; }
+  body.light .pc6          { background:linear-gradient(135deg,#FAFAE8,#FAF0E8) !important; }
+  body.light .bnav         { background:var(--surface); }
+  body.light .lib-header   { background:linear-gradient(180deg,rgba(244,246,252,1) 0%,rgba(244,246,252,0) 100%) !important; }
+
+  /* ── THEME TOGGLE PILL ── */
+  .theme-toggle {
+    display:inline-flex; align-items:center; gap:6px; cursor:pointer;
+    background:var(--surface2); border-radius:50px;
+    padding:5px 11px 5px 9px;
+    border:1.5px solid var(--accent);
+    flex-shrink:0; user-select:none;
+  }
+  .theme-toggle .tt-icon  { font-size:14px; line-height:1; }
+  .theme-toggle .tt-label {
+    font-family:sans-serif; font-size:10px; font-weight:700;
+    color:var(--accent); letter-spacing:0.3px; white-space:nowrap;
+  }
+
+  /* ── SMOOTH TRANSITIONS ── */
+  body, .phone, .scroll, .hero, .fav-player, .lib-player, .player-card,
+  .bnav, .fav-banner, .artist-card, .pl-card, .arow, .frow, .drow, .hrow,
+  .srow, .rrow, .star-section, .quality-section, .share-section,
+  .meta-card, .desc-card, .dl-progress {
+    transition: background 0.3s ease, background-color 0.3s ease,
+                border-color 0.3s ease, color 0.3s ease;
+  }
+
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--text);min-height:100vh;display:flex;flex-direction:column;}
+
+/* PHONE */
+.phone{width:100%;background:var(--bg);display:flex;flex-direction:column;min-height:100vh;position:relative;}
+.notch{display:none;}
+
+/* SCROLL */
+.scroll{flex:1;overflow-y:auto;overflow-x:hidden;scrollbar-width:none;padding-bottom:80px;}
+.scroll::-webkit-scrollbar{display:none;}
+
+/* ══ HERO ══ */
+.hero{position:relative;width:100%;height:226px;background:linear-gradient(135deg,#1A0A3A 0%,#0D1A4A 40%,#0A2A1A 100%);overflow:hidden;flex-shrink:0;}
+.hero::before{content:'';position:absolute;top:-40px;left:-40px;width:200px;height:200px;background:radial-gradient(circle,rgba(155,107,255,0.32) 0%,transparent 70%);border-radius:50%;}
+.hero::after{content:'';position:absolute;bottom:-20px;right:-20px;width:180px;height:180px;background:radial-gradient(circle,rgba(255,107,53,0.28) 0%,transparent 70%);border-radius:50%;}
+
+/* Vinyl */
+.vinyl-wrap{position:absolute;top:50%;right:24px;transform:translateY(-52%);width:118px;height:118px;}
+.vinyl{width:118px;height:118px;border-radius:50%;background:conic-gradient(from 0deg,#1a1a2e,#16213e,#0f3460,#1a1a2e,#16213e,#0f3460,#1a1a2e);display:flex;align-items:center;justify-content:center;box-shadow:0 8px 32px rgba(0,0,0,0.6),0 0 0 2px rgba(255,255,255,0.08);animation:spin 8s linear infinite;position:relative;}
+@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+.vinyl::before{content:'';position:absolute;width:88px;height:88px;border-radius:50%;border:1px solid rgba(255,255,255,0.07);}
+.vinyl::after{content:'';position:absolute;width:64px;height:64px;border-radius:50%;border:1px solid rgba(255,255,255,0.05);}
+.vinyl-center{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#9B6BFF,#4D9FFF,#2ECC8F);display:flex;align-items:center;justify-content:center;font-size:18px;box-shadow:0 4px 16px rgba(155,107,255,0.5);position:relative;z-index:2;animation:cspin 8s linear infinite;}
+@keyframes cspin{from{transform:rotate(0deg)}to{transform:rotate(-360deg)}}
+
+/* Hero nav */
+.hero-nav{position:absolute;top:0;left:0;right:0;display:flex;justify-content:space-between;align-items:center;padding:14px 16px 0;z-index:10;}
+.back-btn,.opts-btn{width:32px;height:32px;background:rgba(0,0,0,0.42);backdrop-filter:blur(8px);border-radius:50%;display:flex;align-items:center;justify-content:center;border:1px solid rgba(255,255,255,0.1);cursor:pointer;}
+.back-btn svg{width:15px;height:15px;fill:none;stroke:white;stroke-width:2;}
+.opts-btn svg{width:15px;height:15px;fill:white;}
+.hero-title-sm{font-family:sans-serif;font-size:13px;font-weight:700;color:rgba(255,255,255,0.9);}
+
+/* Hero info */
+.hero-info{position:absolute;bottom:14px;left:16px;z-index:10;max-width:185px;}
+.badge-row{display:flex;gap:5px;align-items:center;margin-bottom:6px;flex-wrap:wrap;}
+.hero-cat{display:inline-block;background:rgba(255,107,53,0.2);border:1px solid rgba(255,107,53,0.4);border-radius:6px;padding:2px 7px;font-size:8px;font-weight:700;color:var(--accent);font-family:sans-serif;text-transform:uppercase;letter-spacing:0.5px;}
+.official-badge{display:inline-flex;align-items:center;gap:3px;background:rgba(46,204,143,0.15);border:1px solid rgba(46,204,143,0.35);border-radius:6px;padding:2px 7px;font-size:8px;font-weight:700;color:var(--green);font-family:sans-serif;}
+.official-badge svg{width:9px;height:9px;fill:var(--green);}
+.offline-badge{display:inline-flex;align-items:center;gap:3px;background:rgba(77,159,255,0.15);border:1px solid rgba(77,159,255,0.3);border-radius:6px;padding:2px 7px;font-size:8px;font-weight:700;color:var(--blue);font-family:sans-serif;}
+.offline-badge svg{width:9px;height:9px;fill:var(--blue);}
+.hero-song{font-family:sans-serif;font-size:17px;font-weight:800;letter-spacing:-0.3px;line-height:1.2;margin-bottom:4px;text-shadow:0 2px 8px rgba(0,0,0,0.5);}
+.hero-artist{font-size:11px;color:rgba(255,255,255,0.7);display:flex;align-items:center;gap:4px;}
+.artist-dot{width:14px;height:14px;border-radius:50%;background:linear-gradient(135deg,var(--purple),var(--blue));display:flex;align-items:center;justify-content:center;font-size:6px;}
+
+/* ══ STAR RATING ══ */
+.star-section{margin:12px 14px 0;background:var(--surface);border-radius:14px;padding:12px 14px;border:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.star-left{}
+.star-label{font-size:10px;color:var(--text3);font-family:sans-serif;text-transform:uppercase;letter-spacing:0.4px;margin-bottom:4px;}
+.stars{display:flex;gap:3px;}
+.star{font-size:18px;cursor:pointer;transition:transform 0.15s;}
+.star:hover{transform:scale(1.2);}
+.star-right{text-align:right;}
+.star-avg{font-family:sans-serif;font-size:22px;font-weight:800;color:var(--yellow);}
+.star-count{font-size:10px;color:var(--text3);}
+
+/* ══ PLAYER CARD ══ */
+.player-card{margin:12px 14px 0;background:linear-gradient(135deg,var(--surface2),var(--surface3));border-radius:18px;padding:14px;border:1px solid rgba(255,107,53,0.12);box-shadow:0 8px 28px rgba(0,0,0,0.4);}
+
+/* Waveform */
+.waveform-wrap{position:relative;height:36px;margin-bottom:4px;cursor:pointer;}
+.waveform{display:flex;align-items:center;gap:2px;height:36px;overflow:hidden;}
+.progress-thumb{position:absolute;top:50%;transform:translate(-50%,-50%);width:11px;height:11px;background:white;border-radius:50%;left:38%;box-shadow:0 2px 8px rgba(255,107,53,0.6);border:2px solid var(--accent);}
+.time-row{display:flex;justify-content:space-between;margin-bottom:10px;}
+.time-cur{font-size:11px;font-family:sans-serif;font-weight:700;color:var(--accent);}
+.time-tot{font-size:11px;font-family:sans-serif;font-weight:700;color:var(--text3);}
+
+/* Controls */
+.ctrl-row{display:flex;align-items:center;justify-content:center;gap:14px;margin-bottom:10px;}
+.ctrl-btn svg{width:18px;height:18px;fill:none;stroke:var(--text2);stroke-width:2;cursor:pointer;}
+.ctrl-btn.sm svg{width:13px;height:13px;stroke:var(--text3);}
+.play-big{width:46px;height:46px;background:var(--accent);border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 18px rgba(255,107,53,0.5);cursor:pointer;}
+.play-big svg{width:18px;height:18px;fill:white;}
+
+/* Volume */
+.vol-row{display:flex;align-items:center;gap:8px;margin-bottom:12px;}
+.vol-row svg{width:13px;height:13px;fill:none;stroke:var(--text3);stroke-width:2;flex-shrink:0;}
+.vol-track{flex:1;height:3px;background:var(--surface3);border-radius:2px;position:relative;cursor:pointer;}
+.vol-fill{width:70%;height:100%;background:linear-gradient(90deg,var(--blue),var(--purple));border-radius:2px;}
+.vol-thumb{position:absolute;top:50%;right:30%;transform:translate(50%,-50%);width:10px;height:10px;background:white;border-radius:50%;border:2px solid var(--blue);box-shadow:0 1px 6px rgba(77,159,255,0.5);}
+
+/* Action pills */
+.action-row{display:flex;align-items:center;gap:5px;}
+.act{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:7px 3px;background:var(--surface);border-radius:11px;border:1px solid var(--border);cursor:pointer;transition:background 0.15s;}
+.act:hover{background:var(--surface3);}
+.act svg{width:15px;height:15px;fill:none;stroke:var(--text2);stroke-width:2;}
+.act.liked svg.heart{fill:var(--pink);stroke:var(--pink);}
+.act-label{font-size:8px;font-family:sans-serif;font-weight:700;color:var(--text3);}
+.act.liked .act-label{color:var(--pink);}
+.act.dl-act svg{stroke:var(--blue);}
+.act.dl-act .act-label{color:var(--blue);}
+.act.share-act svg{stroke:var(--green);}
+.act.share-act .act-label{color:var(--green);}
+.act.report-act svg{stroke:#FF4444;}
+.act.report-act .act-label{color:#FF4444;}
+
+/* ══ DOWNLOAD PROGRESS ══ */
+.dl-progress{margin:10px 14px 0;background:var(--surface);border-radius:13px;padding:10px 13px;border:1px solid rgba(77,159,255,0.2);}
+.dl-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px;}
+.dl-title{font-family:sans-serif;font-size:11px;font-weight:700;color:var(--blue);}
+.dl-pct{font-family:sans-serif;font-size:11px;font-weight:800;color:var(--blue);}
+.dl-bar-bg{height:5px;background:var(--surface2);border-radius:3px;overflow:hidden;margin-bottom:6px;}
+.dl-bar-fill{height:100%;width:68%;background:linear-gradient(90deg,var(--blue),var(--purple));border-radius:3px;animation:dlpulse 1.5s ease-in-out infinite;}
+@keyframes dlpulse{0%,100%{opacity:1}50%{opacity:0.7}}
+.dl-meta{display:flex;justify-content:space-between;}
+.dl-meta span{font-size:9px;color:var(--text3);}
+
+/* ══ DOWNLOAD QUALITY ══ */
+.quality-section{margin:10px 14px 0;background:var(--surface);border-radius:14px;padding:12px 13px;border:1px solid var(--border);}
+.q-title{font-family:sans-serif;font-size:11px;font-weight:700;color:var(--text2);margin-bottom:9px;display:flex;align-items:center;gap:5px;}
+.q-title svg{width:13px;height:13px;fill:none;stroke:var(--blue);stroke-width:2;}
+.q-opts{display:flex;gap:6px;}
+.qopt{flex:1;padding:8px 5px;border-radius:10px;border:1px solid var(--border);text-align:center;cursor:pointer;transition:all 0.15s;}
+.qopt.selected{background:rgba(77,159,255,0.12);border-color:rgba(77,159,255,0.4);}
+.q-kbps{font-family:sans-serif;font-size:12px;font-weight:800;color:var(--text);}
+.qopt.selected .q-kbps{color:var(--blue);}
+.q-label{font-size:8px;color:var(--text3);margin-top:1px;}
+.qopt.selected .q-label{color:var(--blue);}
+.q-size{font-size:8px;color:var(--text3);margin-top:1px;}
+.q-dl-btn{margin-top:9px;width:100%;background:var(--blue);border-radius:10px;padding:9px;display:flex;align-items:center;justify-content:center;gap:7px;cursor:pointer;box-shadow:0 3px 14px rgba(77,159,255,0.3);}
+.q-dl-btn svg{width:13px;height:13px;fill:none;stroke:white;stroke-width:2;}
+.q-dl-btn span{font-family:sans-serif;font-size:12px;font-weight:700;color:white;}
+
+/* ══ SHARE BUTTONS ══ */
+.share-section{margin:10px 14px 0;background:var(--surface);border-radius:14px;padding:12px 13px;border:1px solid var(--border);}
+.share-title{font-family:sans-serif;font-size:11px;font-weight:700;color:var(--text2);margin-bottom:9px;display:flex;align-items:center;gap:5px;}
+.share-title svg{width:13px;height:13px;fill:none;stroke:var(--green);stroke-width:2;}
+.share-btns{display:flex;gap:8px;}
+.shr{flex:1;border-radius:11px;padding:9px 5px;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;border:1px solid var(--border);transition:all 0.15s;}
+.shr:hover{transform:translateY(-1px);}
+.shr-icon{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;}
+.shr-wa{background:rgba(37,211,102,0.15);border:1px solid rgba(37,211,102,0.3);}
+.shr-fb{background:rgba(24,119,242,0.15);border:1px solid rgba(24,119,242,0.3);}
+.shr-tw{background:rgba(29,161,242,0.15);border:1px solid rgba(29,161,242,0.3);}
+.shr-lnk{background:rgba(255,255,255,0.06);border:1px solid var(--border);}
+.shr-label{font-size:8px;font-family:sans-serif;font-weight:700;color:var(--text3);}
+
+/* ══ SONG META ══ */
+.meta-card{margin:10px 14px 0;background:var(--surface);border-radius:14px;padding:12px 13px;border:1px solid var(--border);}
+.meta-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:9px;}
+.meta-title-lbl{font-family:sans-serif;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.4px;}
+.meta-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;}
+.mk{font-size:9px;color:var(--text3);font-family:sans-serif;text-transform:uppercase;letter-spacing:0.3px;margin-bottom:2px;}
+.mv{font-size:12px;font-weight:600;font-family:sans-serif;}
+.mv.ac{color:var(--accent);}
+.mv.bl{color:var(--blue);}
+.mv.gr{color:var(--green);}
+.stat-row{display:flex;gap:7px;margin-top:10px;}
+.sp{flex:1;background:var(--surface2);border-radius:10px;padding:7px 9px;display:flex;align-items:center;gap:5px;border:1px solid var(--border);}
+.sp svg{width:13px;height:13px;flex-shrink:0;}
+.sp-n{font-family:sans-serif;font-size:12px;font-weight:800;}
+.sp-l{font-size:9px;color:var(--text3);}
+.sp-plays svg{fill:none;stroke:var(--accent);stroke-width:2;}
+.sp-plays .sp-n{color:var(--accent);}
+.sp-dl svg{fill:none;stroke:var(--blue);stroke-width:2;}
+.sp-dl .sp-n{color:var(--blue);}
+.sp-fav svg{fill:var(--pink);stroke:var(--pink);}
+.sp-fav .sp-n{color:var(--pink);}
+
+/* ══ SONG DESCRIPTION ══ */
+.desc-card{margin:10px 14px 0;background:var(--surface);border-radius:14px;padding:12px 13px;border:1px solid var(--border);}
+.desc-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+.desc-title{font-family:sans-serif;font-size:11px;font-weight:700;color:var(--text2);}
+.desc-body{font-size:11px;color:var(--text2);line-height:1.7;max-height:56px;overflow:hidden;transition:max-height 0.3s ease;}
+.desc-body.open{max-height:200px;}
+.desc-toggle{font-size:10px;color:var(--accent);font-weight:600;cursor:pointer;margin-top:4px;display:inline-block;}
+
+/* ══ ARTIST MINI-CARD ══ */
+.artist-card{margin:10px 14px 0;border-radius:16px;padding:13px;border:1px solid rgba(155,107,255,0.18);position:relative;overflow:hidden;background:linear-gradient(135deg,#180E2E,#0E1840);}
+.artist-card::before{content:'';position:absolute;top:-30px;right:-30px;width:120px;height:120px;background:radial-gradient(circle,rgba(155,107,255,0.2) 0%,transparent 70%);}
+.ac-top{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.ac-avatar{width:50px;height:50px;border-radius:50%;background:linear-gradient(135deg,var(--purple),var(--blue));display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;box-shadow:0 4px 14px rgba(155,107,255,0.4);position:relative;}
+.verified{position:absolute;bottom:-1px;right:-1px;width:16px;height:16px;background:var(--blue);border-radius:50%;border:2px solid var(--bg);display:flex;align-items:center;justify-content:center;}
+.verified svg{width:8px;height:8px;fill:white;}
+.ac-info{flex:1;}
+.ac-name{font-family:sans-serif;font-size:14px;font-weight:800;margin-bottom:2px;}
+.ac-genre{font-size:10px;color:var(--text2);}
+.ac-stats{display:flex;gap:14px;margin-bottom:10px;}
+.ac-stat{text-align:center;}
+.ac-stat-n{font-family:sans-serif;font-size:13px;font-weight:800;}
+.ac-stat-l{font-size:9px;color:var(--text3);}
+.ac-actions{display:flex;gap:8px;}
+.follow-btn{flex:1;background:var(--purple);border-radius:10px;padding:9px;text-align:center;font-family:sans-serif;font-size:11px;font-weight:700;cursor:pointer;box-shadow:0 3px 12px rgba(155,107,255,0.35);}
+.msg-btn{width:38px;height:38px;background:rgba(255,255,255,0.07);border:1px solid var(--border);border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;}
+.msg-btn svg{width:15px;height:15px;fill:none;stroke:var(--text2);stroke-width:2;}
+
+/* ══ MORE BY ARTIST ══ */
+.sh{display:flex;justify-content:space-between;align-items:center;padding:14px 14px 9px;}
+.sh-t{font-family:sans-serif;font-size:13px;font-weight:700;}
+.sh-a{font-size:10px;color:var(--accent);font-weight:500;cursor:pointer;}
+.hscroll{display:flex;gap:9px;padding:0 14px;overflow-x:auto;scrollbar-width:none;}
+.hscroll::-webkit-scrollbar{display:none;}
+.hcard{flex-shrink:0;width:100px;cursor:pointer;}
+.hcard-art{width:100px;height:100px;border-radius:11px;margin-bottom:6px;display:flex;align-items:center;justify-content:center;font-size:32px;position:relative;overflow:hidden;}
+.hcard-ov{position:absolute;bottom:0;right:0;background:rgba(0,0,0,0.5);backdrop-filter:blur(4px);padding:4px 5px;border-radius:7px 0 11px 0;}
+.hcard-ov svg{width:10px;height:10px;fill:white;}
+.hcard-t{font-family:sans-serif;font-size:10px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:1px;}
+.hcard-s{font-size:9px;color:var(--text2);}
+
+/* ══ AD BANNER ══ */
+.ad-banner{margin:10px 14px 0;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:8px 12px;display:flex;align-items:center;gap:8px;}
+.ad-tag{font-size:8px;font-family:sans-serif;color:var(--text3);background:var(--surface2);border-radius:4px;padding:2px 5px;text-transform:uppercase;letter-spacing:0.4px;flex-shrink:0;}
+.ad-txt{font-size:11px;color:var(--text2);flex:1;}
+.ad-cta{font-size:11px;color:var(--accent);font-weight:700;font-family:sans-serif;flex-shrink:0;cursor:pointer;}
+.ad-x{font-size:12px;color:var(--text3);flex-shrink:0;cursor:pointer;margin-left:4px;}
+
+/* ══ COMMENTS ══ */
+.comment-input-wrap{padding:0 14px 10px;display:flex;gap:8px;align-items:flex-start;}
+.user-av{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--purple),var(--blue));display:flex;align-items:center;justify-content:center;font-size:10px;font-family:sans-serif;font-weight:700;flex-shrink:0;margin-top:1px;}
+.input-wrap{flex:1;position:relative;}
+.input-field{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:13px;padding:9px 36px 9px 12px;font-size:11px;color:var(--text3);font-family:'DM Sans',sans-serif;outline:none;}
+.send-btn{position:absolute;right:8px;top:50%;transform:translateY(-50%);width:22px;height:22px;background:var(--accent);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;}
+.send-btn svg{width:10px;height:10px;fill:white;}
+
+/* Comment items */
+.comments-list{padding:0 14px;display:flex;flex-direction:column;gap:10px;}
+.citem{display:flex;gap:8px;}
+.cav{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-family:sans-serif;font-weight:700;flex-shrink:0;margin-top:1px;}
+.cbody{flex:1;}
+.c-header{display:flex;align-items:center;gap:5px;margin-bottom:3px;}
+.c-name{font-family:sans-serif;font-size:11px;font-weight:700;}
+.c-time{font-size:9px;color:var(--text3);}
+.c-text{font-size:11px;color:var(--text2);line-height:1.5;}
+.c-actions{display:flex;gap:10px;margin-top:4px;align-items:center;}
+.c-like{display:flex;align-items:center;gap:3px;font-size:10px;color:var(--text3);cursor:pointer;}
+.c-like svg{width:10px;height:10px;fill:none;stroke:var(--text3);stroke-width:2;}
+.c-like.on svg{fill:var(--pink);stroke:var(--pink);}
+.c-like.on{color:var(--pink);}
+.c-reply-btn{font-size:10px;color:var(--accent);cursor:pointer;font-weight:600;}
+.c-report{font-size:10px;color:#FF4444;cursor:pointer;font-weight:600;margin-left:auto;}
+
+/* Reply thread */
+.reply-thread{margin-top:8px;margin-left:0;padding-left:12px;border-left:2px solid var(--surface3);display:flex;flex-direction:column;gap:8px;}
+.reply-item{display:flex;gap:7px;}
+.reply-av{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:8px;font-family:sans-serif;font-weight:700;flex-shrink:0;}
+.reply-body{}
+.reply-name{font-family:sans-serif;font-size:10px;font-weight:700;margin-bottom:1px;}
+.reply-time{font-size:9px;color:var(--text3);margin-left:5px;}
+.reply-text{font-size:10px;color:var(--text2);line-height:1.5;}
+.reply-input-wrap{display:flex;gap:6px;align-items:center;margin-top:6px;}
+.reply-av-sm{width:22px;height:22px;border-radius:50%;background:linear-gradient(135deg,var(--purple),var(--blue));display:flex;align-items:center;justify-content:center;font-size:8px;font-family:sans-serif;font-weight:700;flex-shrink:0;}
+.reply-input{flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:6px 10px;font-size:10px;color:var(--text3);font-family:'DM Sans',sans-serif;outline:none;}
+.reply-send{width:20px;height:20px;background:var(--accent);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;}
+.reply-send svg{width:9px;height:9px;fill:white;}
+
+/* ══ RELATED SONGS ══ */
+.related-list{padding:0 14px;display:flex;flex-direction:column;gap:3px;}
+.rrow{display:flex;align-items:center;gap:9px;padding:7px 9px;border-radius:12px;cursor:pointer;transition:background 0.15s;}
+.rrow:hover{background:var(--surface);}
+.r-thumb{width:44px;height:44px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;}
+.r-info{flex:1;min-width:0;}
+.r-title{font-family:sans-serif;font-size:11px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:2px;}
+.r-artist{font-size:10px;color:var(--text2);margin-bottom:2px;}
+.r-stats{display:flex;gap:8px;}
+.r-stat{font-size:9px;color:var(--text3);display:flex;align-items:center;gap:2px;}
+.r-stat svg{width:8px;height:8px;fill:none;stroke:currentColor;stroke-width:2;}
+.r-right{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0;}
+.r-dur{font-size:10px;color:var(--text3);font-family:sans-serif;font-weight:600;}
+.r-play{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;}
+.r-play svg{width:10px;height:10px;fill:white;}
+
+/* Gradients */
+.g1{background:linear-gradient(135deg,#9B6BFF,#4D9FFF);}
+.g2{background:linear-gradient(135deg,#FF6B35,#FFB347);}
+.g3{background:linear-gradient(135deg,#FF4D8F,#FF6B35);}
+.g4{background:linear-gradient(135deg,#2ECC8F,#4D9FFF);}
+.g5{background:linear-gradient(135deg,#FFB347,#FF4D8F);}
+.g6{background:linear-gradient(135deg,#4D9FFF,#9B6BFF);}
+.g7{background:linear-gradient(135deg,#FF6B35,#FF4D8F);}
+.g8{background:linear-gradient(135deg,#2ECC8F,#9B6BFF);}
+
+.divider{height:1px;background:var(--border);margin:4px 14px;}
+.spacer{height:12px;}
+
+/* BOTTOM NAV */
+.bnav{display:flex;justify-content:space-around;align-items:center;padding:10px 8px 14px;background:var(--surface);border-top:1px solid var(--border);flex-shrink:0;position:sticky;bottom:0;z-index:10;}
+.ni{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:5px 10px;border-radius:10px;}
+.ni.on{background:rgba(255,107,53,0.1);}
+.ni svg{width:18px;height:18px;fill:none;stroke:var(--text3);stroke-width:2;}
+.ni.on svg{stroke:var(--accent);}
+.nl{font-size:9px;font-family:sans-serif;font-weight:700;color:var(--text3);}
+.ni.on .nl{color:var(--accent);}
+
+@keyframes fup{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.phone>*{animation:fup 0.4s ease forwards;}
+
+/* RESPONSIVE DESIGN */
+@media (min-width:768px) {
+  .star-section { margin:14px 20px 0; }
+  .player-card { margin:14px 20px 0; }
+  .dl-progress { margin:12px 20px 0; }
+  .quality-section { margin:12px 20px 0; }
+  .share-section { margin:12px 20px 0; }
+  .meta-card { margin:12px 20px 0; }
+  .desc-card { margin:12px 20px 0; }
+  .artist-card { margin:12px 20px 0; }
+  .sh { padding:16px 20px 10px; }
+  .hscroll { padding:0 20px; }
+  .comment-input-wrap { padding:0 20px 10px; }
+  .comments-list { padding:0 20px; }
+  .related-list { padding:0 20px; }
+  .ad-banner { margin:12px 20px 0; }
+  .divider { margin:4px 20px; }
+}
+
+@media (min-width:1024px) {
+  .phone { max-width:1200px; margin:0 auto; }
+  .star-section { margin:18px 28px 0; }
+  .player-card { margin:18px 28px 0; }
+  .dl-progress { margin:14px 28px 0; }
+  .quality-section { margin:14px 28px 0; }
+  .share-section { margin:14px 28px 0; }
+  .meta-card { margin:14px 28px 0; }
+  .desc-card { margin:14px 28px 0; }
+  .artist-card { margin:14px 28px 0; }
+  .sh { padding:20px 28px 12px; }
+  .hscroll { padding:0 28px; gap:12px; }
+  .comment-input-wrap { padding:0 28px 12px; }
+  .comments-list { padding:0 28px; }
+  .related-list { padding:0 28px; }
+  .ad-banner { margin:14px 28px 0; }
+  .divider { margin:4px 28px; }
+}
+
+@media (max-width:480px) {
+  .star-section { margin:10px 12px 0; }
+  .player-card { margin:10px 12px 0; }
+  .dl-progress { margin:8px 12px 0; }
+  .quality-section { margin:8px 12px 0; }
+  .share-section { margin:8px 12px 0; }
+  .meta-card { margin:8px 12px 0; }
+  .desc-card { margin:8px 12px 0; }
+  .artist-card { margin:8px 12px 0; }
+  .sh { padding:12px 12px 8px; }
+  .hscroll { padding:0 12px; gap:8px; }
+  .comment-input-wrap { padding:0 12px 8px; }
+  .comments-list { padding:0 12px; }
+  .related-list { padding:0 12px; }
+  .ad-banner { margin:8px 12px 0; }
+  .divider { margin:4px 12px; }
+}
+</style>
+</head>
+<body>
+<div class="phone">
+  <div class="notch"></div>
+  <div class="scroll">
+
+    <!-- ══ HERO ══ -->
+    <div class="hero">
+      <div class="hero-nav">
+        <div class="back-btn" onclick="history.back()"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></div>
+        <div class="hero-title-sm">Song Detail</div>
+        <div class="opts-btn" id="optsBtn"><svg viewBox="0 0 24 24"><circle cx="12" cy="5" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="12" cy="19" r="1.5"/></svg></div>
+      </div>
+      <div class="vinyl-wrap">
+        <div class="vinyl" id="vinyl"><div class="vinyl-center">🎵</div></div>
+      </div>
+      <div class="hero-info">
+        <div class="badge-row">
+          <div class="hero-cat">Shuhada</div>
+          <div class="official-badge">
+            <svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22,4 12,14.01 9,11.01"/></svg>
+            Official
+          </div>
+          <div class="offline-badge">
+            <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Saved
+          </div>
+        </div>
+        <div class="hero-song">Kurmus</div>
+        <div class="hero-artist">
+          <div class="artist-dot">🎤</div>
+          Uzairu Badamasi
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ STAR RATING ══ -->
+    <div style="padding:10px 14px 0;display:flex;justify-content:flex-end;"><div class="theme-toggle" id="themeToggle">
+        <span class="tt-icon" id="ttIcon">🌙</span>
+        <span class="tt-label" id="ttLabel">Dark</span>
+      </div></div>
+  <div class="star-section">
+      <div class="star-left">
+        <div class="star-label">Your Rating</div>
+        <div class="stars">
+          <span class="star">⭐</span>
+          <span class="star">⭐</span>
+          <span class="star">⭐</span>
+          <span class="star">⭐</span>
+          <span class="star" style="filter:grayscale(1);opacity:0.4;">⭐</span>
+        </div>
+      </div>
+      <div class="star-right">
+        <div class="star-avg">4.7</div>
+        <div class="star-count">2,841 ratings</div>
+      </div>
+    </div>
+
+    <!-- ══ PLAYER CARD ══ -->
+    <div class="player-card">
+      <div class="waveform-wrap" id="waveformWrap">
+        <div class="waveform" id="waveform"></div>
+        <div class="progress-thumb" id="progressThumb"></div>
+      </div>
+      <div class="time-row">
+        <span class="time-cur">1:25</span>
+        <span class="time-tot">3:42</span>
+      </div>
+      <div class="ctrl-row">
+        <div class="ctrl-btn sm" id="shuffleBtn"><svg viewBox="0 0 24 24"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="4" y1="4" x2="9" y2="9"/></svg></div>
+        <div class="ctrl-btn" id="prevBtn"><svg viewBox="0 0 24 24"><polygon points="19 20 9 12 19 4 19 20"/><line x1="5" y1="19" x2="5" y2="5"/></svg></div>
+        <div class="play-big" id="playBig"><svg viewBox="0 0 24 24" id="playBigIcon"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg></div>
+        <div class="ctrl-btn" id="nextBtn"><svg viewBox="0 0 24 24"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19"/></svg></div>
+        <div class="ctrl-btn sm" id="repeatBtn"><svg viewBox="0 0 24 24"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg></div>
+      </div>
+      <!-- Volume Slider -->
+      <div class="vol-row">
+        <svg viewBox="0 0 24 24"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/></svg>
+        <div class="vol-track" id="volTrack">
+          <div class="vol-fill" id="volFill"></div>
+          <div class="vol-thumb" id="volThumb"></div>
+        </div>
+        <svg viewBox="0 0 24 24"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+      </div>
+      <!-- Action pills -->
+      <div class="action-row">
+        <div class="act liked" id="favAct">
+          <svg class="heart" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+          <div class="act-label">Favourite</div>
+        </div>
+        <div class="act dl-act" id="dlAct">
+          <svg viewBox="0 0 24 24"><path d="M12 3v12"/><path d="M8 11l4 4 4-4"/><path d="M5 19h14" stroke-linecap="round"/></svg>
+          <div class="act-label">Download</div>
+        </div>
+        <div class="act share-act" id="shareActBtn">
+          <svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+          <div class="act-label">Share</div>
+        </div>
+        <div class="act report-act" id="reportActBtn">
+          <svg viewBox="0 0 24 24"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>
+          <div class="act-label">Report</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- AD CONTAINER: Detail Page Ad -->
+    <div id="ad-detail-rectangle"></div>
+
+    <!-- ══ DOWNLOAD PROGRESS ══ -->
+    <div class="dl-progress" id="dlProgressEl" style="display:none;">
+      <div class="dl-top">
+        <div class="dl-title">⬇ Downloading…</div>
+        <div class="dl-pct">68%</div>
+      </div>
+      <div class="dl-bar-bg"><div class="dl-bar-fill"></div></div>
+      <div class="dl-meta">
+        <span>5.7 MB of 8.4 MB</span>
+        <span>320 kbps · 1.2 MB/s</span>
+      </div>
+    </div>
+
+    <!-- ══ DOWNLOAD QUALITY ══ -->
+    <div class="quality-section">
+      <div class="q-title">
+        <svg viewBox="0 0 24 24"><path d="M12 3v12"/><path d="M8 11l4 4 4-4"/><path d="M5 19h14" stroke-linecap="round"/></svg>
+        Download Quality
+      </div>
+      <div class="q-opts">
+        <div class="qopt">
+          <div class="q-kbps">64</div>
+          <div class="q-label">kbps</div>
+          <div class="q-size">2.1 MB</div>
+        </div>
+        <div class="qopt selected">
+          <div class="q-kbps">128</div>
+          <div class="q-label">kbps</div>
+          <div class="q-size">4.2 MB</div>
+        </div>
+        <div class="qopt">
+          <div class="q-kbps">320</div>
+          <div class="q-label">kbps</div>
+          <div class="q-size">8.4 MB</div>
+        </div>
+      </div>
+      <div class="q-dl-btn">
+        <svg viewBox="0 0 24 24"><path d="M12 3v12"/><path d="M8 11l4 4 4-4"/><path d="M5 19h14" stroke-linecap="round"/></svg>
+        <span>Download · 128 kbps (4.2 MB)</span>
+      </div>
+    </div>
+
+    <!-- ══ SHARE BUTTONS ══ -->
+    <div class="share-section">
+      <div class="share-title">
+        <svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+        Share Song
+      </div>
+      <div class="share-btns">
+        <div class="shr" data-platform="wa">
+          <div class="shr-icon shr-wa">💬</div>
+          <div class="shr-label">WhatsApp</div>
+        </div>
+        <div class="shr" data-platform="fb">
+          <div class="shr-icon shr-fb">📘</div>
+          <div class="shr-label">Facebook</div>
+        </div>
+        <div class="shr" data-platform="tw">
+          <div class="shr-icon shr-tw">🐦</div>
+          <div class="shr-label">Twitter / X</div>
+        </div>
+        <div class="shr" data-platform="lnk">
+          <div class="shr-icon shr-lnk">🔗</div>
+          <div class="shr-label">Copy Link</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ SONG META ══ -->
+    <div class="meta-card">
+      <div class="meta-top">
+        <div class="meta-title-lbl">Song Info</div>
+      </div>
+      <div class="meta-grid">
+        <div><div class="mk">Artist</div><div class="mv">Uzairu Badamasi</div></div>
+        <div><div class="mk">Duration</div><div class="mv ac">3:42</div></div>
+        <div><div class="mk">Category</div><div class="mv">Shuhada</div></div>
+        <div><div class="mk">Sub-Category</div><div class="mv">shurafah</div></div>
+        <div><div class="mk">Uploaded</div><div class="mv bl">Mar 12, 2025</div></div>
+        <div><div class="mk">File Size</div><div class="mv">8.4 MB</div></div>
+        <div><div class="mk">Language</div><div class="mv">English</div></div>
+        <div><div class="mk">Source</div><div class="mv gr">✔ Official</div></div>
+      </div>
+      <div class="stat-row">
+        <div class="sp sp-plays">
+          <svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          <div><div class="sp-n">48.2K</div><div class="sp-l">Plays</div></div>
+        </div>
+        <div class="sp sp-dl">
+          <svg viewBox="0 0 24 24"><path d="M12 3v10M8 9l4 4 4-4"/><path d="M5 19h14" stroke-linecap="round"/></svg>
+          <div><div class="sp-n">12.1K</div><div class="sp-l">Downloads</div></div>
+        </div>
+        <div class="sp sp-fav">
+          <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+          <div><div class="sp-n">3.8K</div><div class="sp-l">Favourites</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ SONG DESCRIPTION ══ -->
+    <div class="desc-card">
+      <div class="desc-hdr"><div class="desc-title">📖 About this Song</div></div>
+      <div class="desc-body" id="descBody">"Kurmus” is a spiritual and reflective Hausa song that talks about life, faith, and the consequences of one’s actions. It reminds listeners about the temporary nature of the world and encourages humility, repentance, and staying on the right path.</div>
+      <div class="desc-toggle" onclick="toggleDesc()">Read more ↓</div>
+    </div>
+
+    <!-- ══ ARTIST MINI-CARD ══ -->
+    <div class="artist-card" id="artistCardEl" style="cursor:pointer;" onclick="if(event.target.closest('#followArtistBtn')||event.target.closest('#msgArtistBtn'))return;window.location.href='artist_profile_page.html';">
+      <div class="ac-top">
+        <div class="ac-avatar">
+          🎤
+          <div class="verified"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+        </div>
+        <div class="ac-info">
+          <div class="ac-name">Uzairu Badamasi</div>
+          <div class="ac-genre">Shuhada</div>
+        </div>
+      </div>
+      <div class="ac-stats">
+        <div class="ac-stat">
+          <div class="ac-stat-n" style="color:var(--accent);">48</div>
+          <div class="ac-stat-l">Songs</div>
+        </div>
+        <div class="ac-stat">
+          <div class="ac-stat-n" style="color:var(--blue);">320K</div>
+          <div class="ac-stat-l">Followers</div>
+        </div>
+        <div class="ac-stat">
+          <div class="ac-stat-n" style="color:var(--green);">2.1M</div>
+          <div class="ac-stat-l">Total Plays</div>
+        </div>
+      </div>
+      <div class="ac-actions">
+        <div class="follow-btn" id="followArtistBtn">+ Follow Artist</div>
+        <div class="msg-btn" id="msgArtistBtn"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+      </div>
+    </div>
+
+    <!-- ══ MORE BY ARTIST ══ -->
+    <div class="sh"><div class="sh-t">More by Uzairu Badamasi</div><div class="sh-a" onclick="window.location.href='all_songs_by_artist.html'">See all</div></div>
+    <div class="hscroll">
+      <div class="hcard">
+        <div class="hcard-art g1">🎵<div class="hcard-ov"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg></div></div>
+        <div class="hcard-t">Taba ku lashe</div><div class="hcard-s">4:10</div>
+      </div>
+      <div class="hcard">
+        <div class="hcard-art g7">🎶<div class="hcard-ov"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg></div></div>
+        <div class="hcard-t">Zunar Jini</div><div class="hcard-s">3:55</div>
+      </div>
+      <div class="hcard">
+        <div class="hcard-art g4">🎸<div class="hcard-ov"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg></div></div>
+        <div class="hcard-t">Tattaki</div><div class="hcard-s">5:02</div>
+      </div>
+      <div class="hcard">
+        <div class="hcard-art g5">🎼<div class="hcard-ov"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg></div></div>
+        <div class="hcard-t">Ta Sayyida Ma'asuma</div><div class="hcard-s">4:28</div>
+      </div>
+      <div class="hcard">
+        <div class="hcard-art g8">🎤<div class="hcard-ov"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg></div></div>
+        <div class="hcard-t">Motar Sayyid</div><div class="hcard-s">6:14</div>
+      </div>
+    </div>
+
+    <!-- ══ AD BANNER ══ -->
+    <div class="ad-banner" id="adBannerEl">
+      <div class="ad-tag">Ad</div>
+      <div class="ad-txt">Upgrade Premium — No Ads &amp; Unlimited Downloads</div>
+      <div class="ad-cta">Try Free</div>
+      <div class="ad-x">✕</div>
+    </div>
+
+    <!-- ══ COMMENTS ══ -->
+    <div class="sh">
+      <div class="sh-t">💬 Comments <span style="font-size:10px;background:var(--accent);color:white;border-radius:50px;padding:1px 7px;font-family:sans-serif;font-weight:700;margin-left:4px;">24</span></div>
+      <div class="sh-a" onclick="window.location.href='all_comments.html'">View all</div>
+    </div>
+    <div class="comment-input-wrap">
+      <div class="user-av">DN</div>
+      <div class="input-wrap">
+        <div class="input-field" id="commentInput" contenteditable="true" style="outline:none;cursor:text;" data-placeholder="Add a comment…">Add a comment…</div>
+        <div class="send-btn" id="sendCommentBtn"><svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></div>
+      </div>
+    </div>
+    <div class="comments-list">
+
+      <!-- Comment 1 with reply thread -->
+      <div class="citem">
+        <div class="cav g1">JB</div>
+        <div class="cbody">
+          <div class="c-header">
+            <span class="c-name">James Bright</span>
+            <span class="c-time">2 hrs ago</span>
+          </div>
+          <div class="c-text">This song touched my soul deeply. Been on repeat all morning 🙏🔥</div>
+          <div class="c-actions">
+            <div class="c-like on"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>42</div>
+            <div class="c-reply-btn">Reply</div>
+            <div class="c-report">Report</div>
+          </div>
+          <!-- Reply thread -->
+          <div class="reply-thread">
+            <div class="reply-item">
+              <div class="reply-av g3">SC</div>
+              <div class="reply-body">
+                <div><span class="reply-name">Sarah C.</span><span class="reply-time">1 hr ago</span></div>
+                <div class="reply-text">Same! It's been on loop since yesterday 😭❤️</div>
+              </div>
+            </div>
+            <div class="reply-item">
+              <div class="reply-av g4">MO</div>
+              <div class="reply-body">
+                <div><span class="reply-name">Michael O.</span><span class="reply-time">45 min ago</span></div>
+                <div class="reply-text">@James Bright God bless you brother, keep sharing the gospel!</div>
+              </div>
+            </div>
+            <!-- Reply input -->
+            <div class="reply-input-wrap">
+              <div class="reply-av-sm">DN</div>
+              <div class="reply-input">Reply to James…</div>
+              <div class="reply-send"><svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Comment 2 -->
+      <div class="citem">
+        <div class="cav g5">AK</div>
+        <div class="cbody">
+          <div class="c-header">
+            <span class="c-name">Ada K.</span>
+            <span class="c-time">5 hrs ago</span>
+          </div>
+          <div class="c-text">Amara Soul never misses! The production is incredible 🎶 downloaded immediately.</div>
+          <div class="c-actions">
+            <div class="c-like"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>18</div>
+            <div class="c-reply-btn">Reply</div>
+            <div class="c-report">Report</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Comment 3 -->
+      <div class="citem">
+        <div class="cav g2">TE</div>
+        <div class="cbody">
+          <div class="c-header">
+            <span class="c-name">Tunde E.</span>
+            <span class="c-time">Yesterday</span>
+          </div>
+          <div class="c-text">The chorus gives me chills every single time 😭 Shared with my whole church group!</div>
+          <div class="c-actions">
+            <div class="c-like on"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>31</div>
+            <div class="c-reply-btn">Reply</div>
+            <div class="c-report">Report</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="divider" style="margin-top:14px;"></div>
+
+    <!-- ══ RELATED SONGS ══ -->
+    <div class="sh"><div class="sh-t">🎵 Related Songs</div><div class="sh-a" onclick="window.location.href='all_related_songs.html'">See all</div></div>
+    <div class="related-list">
+      <div class="rrow">
+        <div class="r-thumb g1">🎵</div>
+        <div class="r-info">
+          <div class="r-title">Yan siyasa</div>
+          <div class="r-artist">Uzairu Badamasi</div>
+          <div class="r-stats">
+            <div class="r-stat"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>2.4M</div>
+            <div class="r-stat"><svg viewBox="0 0 24 24"><path d="M12 3v10M8 9l4 4 4-4"/><path d="M5 19h14"/></svg>830K</div>
+          </div>
+        </div>
+        <div class="r-right">
+          <div class="r-dur">5:33</div>
+          <div class="r-play g1"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg></div>
+        </div>
+      </div>
+      <div class="rrow">
+        <div class="r-thumb g4">🎶</div>
+        <div class="r-info">
+          <div class="r-title">Qudus Remix</div>
+          <div class="r-artist">Uzairu Badamasi</div>
+          <div class="r-stats">
+            <div class="r-stat"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>1.9M</div>
+            <div class="r-stat"><svg viewBox="0 0 24 24"><path d="M12 3v10M8 9l4 4 4-4"/><path d="M5 19h14"/></svg>610K</div>
+          </div>
+        </div>
+        <div class="r-right">
+          <div class="r-dur">4:48</div>
+          <div class="r-play g4"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg></div>
+        </div>
+      </div>
+      <div class="rrow">
+        <div class="r-thumb g3">🎸</div>
+        <div class="r-info">
+          <div class="r-title">A Kasar nan</div>
+          <div class="r-artist">Uzairu Badamasi</div>
+          <div class="r-stats">
+            <div class="r-stat"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>1.4M</div>
+            <div class="r-stat"><svg viewBox="0 0 24 24"><path d="M12 3v10M8 9l4 4 4-4"/><path d="M5 19h14"/></svg>490K</div>
+          </div>
+        </div>
+        <div class="r-right">
+          <div class="r-dur">5:01</div>
+          <div class="r-play g3"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg></div>
+        </div>
+      </div>
+      <div class="rrow">
+        <div class="r-thumb g2">🎼</div>
+        <div class="r-info">
+          <div class="r-title">Juyin juya Haki</div>
+          <div class="r-artist">Uzairu Badamasi</div>
+          <div class="r-stats">
+            <div class="r-stat"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>750K</div>
+            <div class="r-stat"><svg viewBox="0 0 24 24"><path d="M12 3v10M8 9l4 4 4-4"/><path d="M5 19h14"/></svg>210K</div>
+          </div>
+        </div>
+        <div class="r-right">
+          <div class="r-dur">4:55</div>
+          <div class="r-play g2"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg></div>
+        </div>
+      </div>
+      <div class="rrow">
+        <div class="r-thumb g5">🎤</div>
+        <div class="r-info">
+          <div class="r-title">Kubra Shahida ce</div>
+          <div class="r-artist">Uzairu Badamasi</div>
+          <div class="r-stats">
+            <div class="r-stat"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>980K</div>
+            <div class="r-stat"><svg viewBox="0 0 24 24"><path d="M12 3v10M8 9l4 4 4-4"/><path d="M5 19h14"/></svg>312K</div>
+          </div>
+        </div>
+        <div class="r-right">
+          <div class="r-dur">6:20</div>
+          <div class="r-play g5"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg></div>
+        </div>
+      </div>
+    </div>
+    <div class="spacer"></div>
+
+  </div><!-- /scroll -->
+<!-- Theme toggle fallback -->
+
+  <!-- BOTTOM NAV (Home · Wa'azi · Explore · Favourites · Profile) -->
+  <div class="bnav">
+    <a class="ni" href="song_portal_web.html" style="text-decoration:none;color:inherit;"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><div class="nl">Home</div></a>
+    <a class="ni" href="shurafah_waazi.html" style="text-decoration:none;color:inherit;"><svg viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg><div class="nl">Wa'azi</div></a>
+    <a class="ni" href="shurafah_explore.html" style="text-decoration:none;color:inherit;"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><div class="nl">Explore</div></a>
+    <a class="ni" href="favourites_page.html" style="text-decoration:none;color:inherit;"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg><div class="nl">Favourites</div></a>
+    <a class="ni" href="user_profile_page.html" style="text-decoration:none;color:inherit;"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><div class="nl">Profile</div></a>
+  </div>
+
+</div>
+
+<script>
+/* ── Toast ── */
+var _te = document.createElement('div');
+_te.style.cssText = 'position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(14px);background:var(--surface3);color:var(--text);font-family:sans-serif;font-size:12px;font-weight:600;padding:8px 18px;border-radius:50px;z-index:999;border:1px solid var(--border);white-space:nowrap;opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;box-shadow:0 6px 20px rgba(0,0,0,.5);';
+document.body.appendChild(_te);
+var _tt = null;
+function showToast(m) {
+  _te.textContent = m;
+  _te.style.opacity = 1;
+  _te.style.transform = 'translateX(-50%) translateY(0)';
+  clearTimeout(_tt);
+  _tt = setTimeout(function() { _te.style.opacity = 0; _te.style.transform = 'translateX(-50%) translateY(14px)'; }, 2400);
+}
+
+/* ── Waveform ── */
+var wf = document.getElementById('waveform');
+var TOTAL_BARS = 66, playPct = 0.38;
+var playedCount = Math.floor(TOTAL_BARS * playPct);
+for (var i = 0; i < TOTAL_BARS; i++) {
+  var b = document.createElement('div');
+  var h = Math.max(4, Math.min(30, 7 + Math.sin(i*0.38)*6 + Math.sin(i*1.05)*4 + Math.random()*10));
+  b.style.cssText = 'width:3px;height:' + h + 'px;border-radius:2px;flex-shrink:0;background:' + (i < playedCount ? 'var(--accent)' : 'var(--surface3)');
+  wf.appendChild(b);
+}
+document.getElementById('progressThumb').style.left = (playPct * 100) + '%';
+
+/* ── Waveform seek ── */
+document.getElementById('waveformWrap').addEventListener('click', function(e) {
+  var rect = this.getBoundingClientRect();
+  var pct = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+  playPct = pct;
+  playedCount = Math.floor(TOTAL_BARS * pct);
+  var bars = wf.children;
+  for (var j = 0; j < bars.length; j++) {
+    bars[j].style.background = j < playedCount ? 'var(--accent)' : 'var(--surface3)';
+  }
+  document.getElementById('progressThumb').style.left = (pct * 100) + '%';
+  var totalSecs = 222, cur = Math.floor(totalSecs * pct);
+  document.querySelector('.time-cur').textContent = Math.floor(cur/60) + ':' + String(cur%60).padStart(2,'0');
+});
+
+/* ── Volume slider ── */
+document.getElementById('volTrack').addEventListener('click', function(e) {
+  var rect = this.getBoundingClientRect();
+  var pct = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+  document.getElementById('volFill').style.width = (pct * 100) + '%';
+  document.getElementById('volThumb').style.right = ((1 - pct) * 100) + '%';
+});
+
+/* ── Play / Pause ── */
+var isPlaying = false;
+document.getElementById('playBig').addEventListener('click', function() {
+  isPlaying = !isPlaying;
+  document.getElementById('playBigIcon').innerHTML = isPlaying
+    ? '<polygon points="5 3 19 12 5 21 5 3"/>'
+    : '<rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>';
+  document.getElementById('vinyl').style.animationPlayState = isPlaying ? 'running' : 'paused';
+});
+
+/* ── Shuffle toggle ── */
+var shuffleOn = false;
+document.getElementById('shuffleBtn').addEventListener('click', function() {
+  shuffleOn = !shuffleOn;
+  this.querySelector('svg').style.stroke = shuffleOn ? 'var(--accent)' : 'var(--text3)';
+  showToast(shuffleOn ? '🔀 Shuffle on' : '🔀 Shuffle off');
+});
+
+/* ── Repeat toggle ── */
+var repeatOn = false;
+document.getElementById('repeatBtn').addEventListener('click', function() {
+  repeatOn = !repeatOn;
+  this.querySelector('svg').style.stroke = repeatOn ? 'var(--accent)' : 'var(--text3)';
+  showToast(repeatOn ? '🔁 Repeat on' : '🔁 Repeat off');
+});
+
+/* ── Prev / Next ── */
+document.getElementById('prevBtn').addEventListener('click', function() { showToast('⏮ Previous track'); });
+document.getElementById('nextBtn').addEventListener('click', function() { window.location.href = 'song_detail_page.html'; });
+
+/* ── Favourite pill ── */
+document.getElementById('favAct').addEventListener('click', function() {
+  this.classList.toggle('liked');
+  var on = this.classList.contains('liked');
+  this.querySelector('.act-label').textContent = on ? 'Favourited' : 'Favourite';
+  showToast(on ? '❤️ Added to favourites' : 'Removed from favourites');
+});
+
+/* ── Download pill ── */
+document.getElementById('dlAct').addEventListener('click', function() {
+  startDownloadFlow();
+});
+
+function simulateDownload() {
+  var el = document.getElementById('dlProgressEl');
+  var fillEl = el.querySelector('.dl-bar-fill');
+  var pctEl  = el.querySelector('.dl-pct');
+  var pct = 0;
+  var iv = setInterval(function() {
+    pct = Math.min(100, pct + Math.floor(Math.random() * 8) + 2);
+    fillEl.style.width = pct + '%';
+    pctEl.textContent = pct + '%';
+    if (pct >= 100) {
+      clearInterval(iv);
+      setTimeout(function() { el.style.display = 'none'; showToast('✅ Download complete!'); }, 800);
+    }
+  }, 200);
+}
+
+function startDownloadFlow() {
+  var sc = document.querySelector('.scroll');
+  var begin = function() {
+    document.getElementById('dlProgressEl').style.display = 'block';
+    if (sc) { sc.scrollTop += 120; }
+    showToast('⬇ Download started');
+    simulateDownload();
+  };
+  var usedAds = false;
+  if (typeof ADS !== 'undefined') {
+    try {
+      var cfg = ADS.config && ADS.config.placements && ADS.config.placements.downloadModal;
+      if (cfg && cfg.enabled) {
+        usedAds = true;
+        window.adDownloadCallback = function() { begin(); };
+        ADS.renderDownloadModal(window.adDownloadCallback);
+      }
+    } catch(e){}
+  }
+  if (!usedAds) { begin(); }
+}
+
+/* ── Share pill ── */
+document.getElementById('shareActBtn').addEventListener('click', function() {
+  document.querySelector('.share-section').scrollIntoView({ behavior: 'smooth' });
+});
+
+/* ── Report pill ── */
+document.getElementById('reportActBtn').addEventListener('click', function() { showToast('⚑ Report submitted. Thank you.'); });
+
+/* ── Opts button ── */
+document.getElementById('optsBtn').addEventListener('click', function() { showToast('More options coming soon'); });
+
+/* ── Quality selector ── */
+document.querySelectorAll('.qopt').forEach(function(o) {
+  o.addEventListener('click', function() {
+    document.querySelectorAll('.qopt').forEach(function(x) { x.classList.remove('selected'); });
+    o.classList.add('selected');
+    document.querySelector('.q-dl-btn span').textContent = 'Download · ' + o.querySelector('.q-kbps').textContent + ' kbps (' + o.querySelector('.q-size').textContent + ')';
+  });
+});
+
+/* ── Download quality button ── */
+document.querySelector('.q-dl-btn').addEventListener('click', function() {
+  startDownloadFlow();
+});
+
+/* ── Share platform buttons ── */
+document.querySelectorAll('.shr[data-platform]').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    var url = encodeURIComponent(window.location.href);
+    var text = encodeURIComponent('Listen to "Kurmus" by Uzairu Badamasi on Shurafah');
+    var p = this.getAttribute('data-platform');
+    if (p === 'wa')  window.open('https://wa.me/?text=' + text + '%20' + url, '_blank');
+    if (p === 'fb')  window.open('https://www.facebook.com/sharer/sharer.php?u=' + url, '_blank');
+    if (p === 'tw')  window.open('https://twitter.com/intent/tweet?text=' + text + '&url=' + url, '_blank');
+    if (p === 'lnk') {
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(window.location.href).then(function() { showToast('🔗 Link copied!'); }).catch(function() { showToast('🔗 Link copied!'); });
+      } else { showToast('🔗 Link copied!'); }
+    }
+  });
+});
+
+/* ── Star rating ── */
+document.querySelectorAll('.star').forEach(function(s, i, all) {
+  s.addEventListener('click', function() {
+    all.forEach(function(st, j) {
+      st.style.filter  = j <= i ? '' : 'grayscale(1)';
+      st.style.opacity = j <= i ? '1' : '0.4';
+    });
+    showToast('⭐ Rated ' + (i + 1) + ' star' + (i > 0 ? 's' : ''));
+  });
+});
+
+/* ── Description toggle ── */
+function toggleDesc() {
+  var d = document.getElementById('descBody');
+  var t = event.target;
+  if (d.classList.contains('open')) { d.classList.remove('open'); t.textContent = 'Read more ↓'; }
+  else { d.classList.add('open'); t.textContent = 'Read less ↑'; }
+}
+
+/* ── Follow artist ── */
+var artistFollowing = false;
+document.getElementById('followArtistBtn').addEventListener('click', function() {
+  artistFollowing = !artistFollowing;
+  this.textContent = artistFollowing ? '✓ Following' : '+ Follow Artist';
+  this.style.background = artistFollowing ? 'var(--surface3)' : 'var(--purple)';
+  this.style.boxShadow  = artistFollowing ? 'none' : '0 3px 12px rgba(155,107,255,0.35)';
+  showToast(artistFollowing ? '✓ Following Uzairu Badamasi' : 'Unfollowed');
+});
+
+/* ── Message artist ── */
+document.getElementById('msgArtistBtn').addEventListener('click', function() { showToast('💬 Messaging coming soon'); });
+
+/* ── hcards (More by artist) ── */
+document.querySelectorAll('.hscroll .hcard').forEach(function(c) {
+  c.addEventListener('click', function() { window.location.href = 'song_detail_page.html'; });
+});
+
+/* ── Ad close ── */
+document.querySelector('#adBannerEl .ad-x').addEventListener('click', function() {
+  document.getElementById('adBannerEl').style.display = 'none';
+});
+
+/* ── Comment input placeholder behavior ── */
+var ci = document.getElementById('commentInput');
+ci.addEventListener('focus', function() { if (this.textContent === 'Add a comment…') { this.textContent = ''; this.style.color = 'var(--text)'; } });
+ci.addEventListener('blur',  function() { if (!this.textContent.trim()) { this.textContent = 'Add a comment…'; this.style.color = 'var(--text3)'; } });
+
+/* ── Send comment ── */
+document.getElementById('sendCommentBtn').addEventListener('click', function() {
+  var txt = ci.textContent.trim();
+  if (!txt || txt === 'Add a comment…') { showToast('Type a comment first'); return; }
+  var list = document.querySelector('.comments-list');
+  var item = document.createElement('div');
+  item.className = 'citem';
+  item.style.animation = 'fup .3s ease both';
+  item.innerHTML = '<div class="cav g6">DN</div><div class="cbody"><div class="c-header"><span class="c-name">You</span><span class="c-time">Just now</span></div><div class="c-text">' + txt + '</div><div class="c-actions"><div class="c-like"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>0</div></div></div>';
+  list.insertBefore(item, list.firstChild);
+  ci.textContent = 'Add a comment…';
+  ci.style.color = 'var(--text3)';
+  showToast('✓ Comment posted');
+});
+
+/* ── Comment likes ── */
+document.querySelector('.comments-list').addEventListener('click', function(e) {
+  var likeEl = e.target.closest('.c-like');
+  if (likeEl) {
+    likeEl.classList.toggle('on');
+    var num = parseInt(likeEl.textContent) || 0;
+    likeEl.innerHTML = likeEl.innerHTML.replace(/\d+$/, likeEl.classList.contains('on') ? num + 1 : Math.max(0, num - 1));
+    return;
+  }
+  var replyBtn = e.target.closest('.c-reply-btn');
+  if (replyBtn) {
+    var thread = replyBtn.closest('.cbody').querySelector('.reply-thread');
+    if (!thread) {
+      thread = document.createElement('div');
+      thread.className = 'reply-thread';
+      thread.innerHTML = '<div class="reply-input-wrap"><div class="reply-av-sm">DN</div><div class="reply-input" contenteditable="true" style="outline:none;cursor:text;color:var(--text3);">Write a reply…</div><div class="reply-send"><svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></div></div>';
+      replyBtn.closest('.cbody').appendChild(thread);
+      var ri = thread.querySelector('.reply-input');
+      ri.addEventListener('focus', function() { if (this.textContent === 'Write a reply…') { this.textContent = ''; this.style.color = 'var(--text)'; } });
+      ri.addEventListener('blur',  function() { if (!this.textContent.trim()) { this.textContent = 'Write a reply…'; this.style.color = 'var(--text3)'; } });
+      thread.querySelector('.reply-send').addEventListener('click', function() {
+        var rt = ri.textContent.trim();
+        if (!rt || rt === 'Write a reply…') return;
+        var rItem = document.createElement('div');
+        rItem.className = 'reply-item';
+        rItem.innerHTML = '<div class="reply-av g6">DN</div><div class="reply-body"><div><span class="reply-name">You</span><span class="reply-time">Just now</span></div><div class="reply-text">' + rt + '</div></div>';
+        thread.insertBefore(rItem, thread.querySelector('.reply-input-wrap'));
+        ri.textContent = 'Write a reply…';
+        ri.style.color = 'var(--text3)';
+        showToast('✓ Reply posted');
+      });
+    }
+    var ri2 = thread.querySelector('.reply-input');
+    if (ri2) { ri2.focus(); }
+    return;
+  }
+  var reportEl = e.target.closest('.c-report');
+  if (reportEl) { showToast('⚑ Comment reported'); }
+});
+
+/* ── Related songs ── */
+document.querySelectorAll('.rrow').forEach(function(row) {
+  row.addEventListener('click', function(e) {
+    if (e.target.closest('.r-play')) return;
+    window.location.href = 'song_detail_page.html';
+  });
+});
+document.querySelectorAll('.r-play').forEach(function(btn) {
+  btn.addEventListener('click', function(e) { e.stopPropagation(); window.location.href = 'song_detail_page.html'; });
+});
+
+/* ── Theme ── */
+function applyTheme(isLight) {
+  document.body.classList.toggle('light', isLight);
+  document.getElementById('ttIcon').textContent  = isLight ? '☀️' : '🌙';
+  document.getElementById('ttLabel').textContent = isLight ? 'Light' : 'Dark';
+}
+applyTheme(localStorage.getItem('shurafah-theme') === 'light');
+document.getElementById('themeToggle').addEventListener('click', function() {
+  var n = !document.body.classList.contains('light');
+  applyTheme(n);
+  localStorage.setItem('shurafah-theme', n ? 'light' : 'dark');
+});
+
+/* ── Ads (safe) ── */
+function __initAdsFromConfig() {
+  try {
+    if (typeof ADS === 'undefined') return;
+    ADS.setUserType('guest');
+    var cfg = {};
+    try { cfg = JSON.parse(localStorage.getItem('adsInterstitialConfig') || '{}'); } catch(e) { cfg = {}; }
+    var timer = parseInt(cfg.timer) || 5;
+    var enabled = (cfg.enabled !== false);
+    var showSkip = (cfg.showSkip !== false);
+    ADS.init({ placements: { detailPageAds: { enabled: true }, downloadModal: { enabled: enabled, timer: timer, showSkip: showSkip } } });
+  } catch(e) {}
+}
+if (typeof ADS !== 'undefined') { __initAdsFromConfig(); }
+</script>
+<script src="ads.js" onload="if(window.__initAdsFromConfig){__initAdsFromConfig();}" onerror="void(0)"></script>
+</body>
+</html>

@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Shurafah — Sub-Categories</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#080B12;--surface:#0F1420;--surface2:#161C2E;--surface3:#1E2740;
+  --accent:#FF6B35;--accent2:#FFB347;--blue:#4D9FFF;--green:#2ECC8F;
+  --purple:#9B6BFF;--pink:#FF4D8F;--yellow:#FFD166;
+  --text:#F0F4FF;--text2:#8A94B0;--text3:#4A5270;
+  --border:rgba(255,255,255,0.06);
+}
+body.light{
+  --bg:#F4F6FC;--surface:#FFFFFF;--surface2:#E8ECF7;--surface3:#D8DEEF;
+  --text:#12172E;--text2:#5A6380;--text3:#9AA0BA;
+  --border:rgba(0,0,0,0.07);
+}
+body.light .hero-strip{background:linear-gradient(135deg,#EEF8F0,#E8F4EE) !important;border-color:rgba(46,204,143,0.2) !important;}
+body.light .sub-row{border-color:rgba(0,0,0,0.06) !important;}
+body.light .sub-tile{border-color:rgba(0,0,0,0.06) !important;}
+body.light .parent-label-wrap{background:var(--surface2) !important;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--text);min-height:100vh;display:flex;flex-direction:column;}
+.phone{width:100%;background:var(--bg);display:flex;flex-direction:column;min-height:100vh;}
+.scroll{flex:1;overflow-y:auto;overflow-x:hidden;scrollbar-width:none;}
+.scroll::-webkit-scrollbar{display:none;}
+
+/* STATUS */
+.status{display:flex;justify-content:space-between;align-items:center;padding:14px 22px 0;font-size:11px;font-weight:700;font-family:sans-serif;}
+.si{display:flex;gap:5px;align-items:center;}
+.si svg{width:12px;height:12px;fill:var(--text);}
+
+/* TOP NAV */
+.topnav{display:flex;align-items:center;gap:12px;padding:12px 16px 0;}
+.back-btn{width:34px;height:34px;background:var(--surface);border-radius:50%;display:flex;align-items:center;justify-content:center;border:1px solid var(--border);cursor:pointer;flex-shrink:0;}
+.back-btn svg{width:15px;height:15px;fill:none;stroke:var(--text2);stroke-width:2;}
+.page-title{font-family:sans-serif;font-size:18px;font-weight:800;flex:1;}
+.page-title span{background:linear-gradient(135deg,var(--green),var(--blue));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.theme-toggle{display:inline-flex;align-items:center;gap:5px;cursor:pointer;background:var(--surface2);border-radius:50px;padding:5px 10px 5px 8px;border:1.5px solid var(--accent);flex-shrink:0;user-select:none;}
+.theme-toggle .tt-icon{font-size:13px;}
+.theme-toggle .tt-label{font-family:sans-serif;font-size:9px;font-weight:700;color:var(--accent);}
+
+/* HERO STRIP */
+.hero-strip{margin:14px 14px 0;background:linear-gradient(135deg,#081410,#081820,#080E14);border-radius:16px;padding:14px 16px;border:1px solid rgba(46,204,143,0.2);position:relative;overflow:hidden;display:flex;align-items:center;gap:14px;}
+.hero-strip::before{content:'';position:absolute;top:-30px;right:-30px;width:130px;height:130px;background:radial-gradient(circle,rgba(46,204,143,0.15) 0%,transparent 70%);}
+.hs-icon{font-size:28px;flex-shrink:0;}
+.hs-info{flex:1;}
+.hs-label{font-size:10px;color:rgba(46,204,143,0.7);margin-bottom:2px;text-transform:uppercase;letter-spacing:0.4px;font-family:sans-serif;font-weight:600;}
+.hs-val{font-family:sans-serif;font-size:18px;font-weight:800;color:var(--green);}
+.hs-sub{font-size:10px;color:var(--text3);margin-top:1px;}
+.hs-stats{display:flex;gap:14px;}
+.hs-stat-n{font-family:sans-serif;font-size:14px;font-weight:800;}
+.hs-stat-l{font-size:9px;color:var(--text3);margin-top:1px;}
+
+/* SEARCH */
+.search-wrap{margin:12px 14px 0;position:relative;}
+.search-input{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:10px 14px 10px 38px;font-size:12px;color:var(--text);font-family:'DM Sans',sans-serif;outline:none;transition:border-color 0.2s;}
+.search-input::placeholder{color:var(--text3);}
+.search-input:focus{border-color:rgba(46,204,143,0.4);}
+.search-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);}
+.search-icon svg{width:14px;height:14px;fill:none;stroke:var(--text3);stroke-width:2;}
+
+/* PARENT FILTER PILLS */
+.filter-row{display:flex;gap:8px;padding:10px 14px 0;overflow-x:auto;scrollbar-width:none;}
+.filter-row::-webkit-scrollbar{display:none;}
+.fpill{flex-shrink:0;padding:6px 13px;border-radius:50px;font-size:10px;font-weight:700;font-family:sans-serif;cursor:pointer;border:1px solid var(--border);white-space:nowrap;background:var(--surface);color:var(--text2);}
+.fpill.on{background:var(--green);color:white;border-color:var(--green);box-shadow:0 3px 10px rgba(46,204,143,0.28);}
+
+/* SORT + VIEW */
+.sort-row{display:flex;justify-content:space-between;align-items:center;padding:10px 14px 8px;}
+.sort-info{font-size:11px;color:var(--text3);}
+.sort-info b{color:var(--text2);}
+.view-toggle{display:flex;gap:4px;background:var(--surface);border-radius:9px;padding:3px;border:1px solid var(--border);}
+.vt-btn{width:28px;height:26px;border-radius:6px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background 0.15s;}
+.vt-btn.active{background:var(--green);}
+.vt-btn svg{width:13px;height:13px;fill:none;stroke:var(--text3);stroke-width:2;}
+.vt-btn.active svg{stroke:white;}
+
+/* PARENT GROUP LABEL */
+.parent-label-wrap{margin:10px 14px 4px;display:flex;align-items:center;gap:8px;}
+.parent-badge{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:8px;font-family:sans-serif;font-size:10px;font-weight:700;white-space:nowrap;border:1px solid;}
+.parent-line{flex:1;height:1px;background:var(--border);}
+.parent-count{font-size:9px;color:var(--text3);white-space:nowrap;}
+
+/* ── GRID VIEW ── */
+.sub-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;padding:0 14px;}
+
+.sub-tile{border-radius:14px;padding:13px 12px;cursor:pointer;position:relative;overflow:hidden;border:1px solid rgba(255,255,255,0.05);min-height:90px;display:flex;flex-direction:column;justify-content:flex-end;transition:transform 0.15s,box-shadow 0.15s;}
+.sub-tile:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(0,0,0,0.3);}
+.sub-tile::before{content:'';position:absolute;top:-18px;right:-18px;width:70px;height:70px;border-radius:50%;background:rgba(255,255,255,0.05);}
+
+.st-emoji{position:absolute;top:10px;right:11px;font-size:22px;opacity:0.85;}
+.st-parent{position:absolute;top:8px;left:8px;font-size:7px;font-family:sans-serif;font-weight:700;padding:2px 6px;border-radius:4px;background:rgba(0,0,0,0.3);color:rgba(255,255,255,0.7);text-transform:uppercase;letter-spacing:0.3px;}
+.st-name{font-family:sans-serif;font-size:12px;font-weight:800;margin-bottom:2px;position:relative;z-index:1;}
+.st-count{font-size:9px;color:rgba(255,255,255,0.55);position:relative;z-index:1;}
+.st-bar{position:absolute;bottom:0;left:0;height:3px;border-radius:0 0 0 14px;opacity:0.7;}
+
+/* ── LIST VIEW ── */
+.sub-list{padding:0 14px;display:flex;flex-direction:column;gap:5px;}
+
+.sub-row{display:flex;align-items:center;gap:11px;padding:11px 13px;background:var(--surface);border-radius:13px;border:1px solid var(--border);cursor:pointer;transition:border-color 0.15s,transform 0.15s;}
+.sub-row:hover{border-color:rgba(46,204,143,0.25);transform:translateX(2px);}
+
+.sr-icon{width:44px;height:44px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0;}
+.sr-info{flex:1;min-width:0;}
+.sr-name{font-family:sans-serif;font-size:12px;font-weight:700;margin-bottom:1px;}
+.sr-parent{font-size:9px;margin-bottom:4px;display:inline-flex;align-items:center;gap:3px;}
+.sr-parent-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0;}
+.sr-desc{font-size:10px;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:4px;}
+.sr-progress{height:3px;background:var(--surface3);border-radius:2px;overflow:hidden;}
+.sr-progress-fill{height:100%;border-radius:2px;}
+.sr-right{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0;}
+.sr-count{font-family:sans-serif;font-size:13px;font-weight:800;color:var(--green);}
+.sr-lbl{font-size:9px;color:var(--text3);}
+.sr-arrow svg{width:13px;height:13px;fill:none;stroke:var(--text3);stroke-width:2;}
+
+/* PAGINATION */
+.pagination-wrap{margin:16px 14px;background:var(--surface);border-radius:16px;padding:14px 16px;border:1px solid var(--border);}
+.page-info{text-align:center;font-size:11px;color:var(--text3);margin-bottom:12px;}
+.page-info b{color:var(--text2);}
+.page-progress{height:3px;background:var(--surface3);border-radius:2px;overflow:hidden;margin-bottom:14px;}
+.page-progress-fill{height:100%;background:linear-gradient(90deg,var(--green),var(--blue));border-radius:2px;transition:width 0.4s ease;}
+.page-controls{display:flex;align-items:center;gap:8px;}
+.pg-btn{height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;gap:6px;cursor:pointer;font-family:sans-serif;font-size:11px;font-weight:700;padding:0 14px;transition:all 0.15s;border:1px solid var(--border);}
+.pg-prev{background:var(--surface2);color:var(--text2);}
+.pg-prev:hover{border-color:rgba(46,204,143,0.3);}
+.pg-prev.disabled{opacity:0.35;pointer-events:none;}
+.pg-next{background:var(--green);color:white;flex:1;border-color:var(--green);box-shadow:0 3px 12px rgba(46,204,143,0.28);}
+.pg-next.disabled{opacity:0.4;pointer-events:none;}
+.pg-btn svg{width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:2.5;}
+.page-dots{flex:1;display:flex;justify-content:center;gap:5px;align-items:center;}
+.pdot{width:7px;height:7px;border-radius:50%;background:var(--surface3);cursor:pointer;transition:all 0.2s;}
+.pdot.active{background:var(--green);width:18px;border-radius:4px;}
+.end-msg{text-align:center;padding:12px 14px;font-size:11px;color:var(--text3);font-family:sans-serif;}
+
+/* MINI PLAYER */
+.mini-player{margin:6px 12px 6px;background:linear-gradient(135deg,#081410,#081820);border-radius:15px;padding:10px 12px;border:1px solid rgba(46,204,143,0.15);box-shadow:0 6px 22px rgba(0,0,0,0.45);flex-shrink:0;}
+.mp-top{display:flex;align-items:center;gap:10px;}
+.mp-art{width:38px;height:38px;border-radius:9px;background:linear-gradient(135deg,var(--green),var(--blue));display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.mp-inf{flex:1;min-width:0;}
+.mp-title{font-family:sans-serif;font-size:12px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:1px;}
+.mp-artist{font-size:10px;color:var(--text2);}
+.mp-ctrl{display:flex;align-items:center;gap:6px;}
+.mp-ctrl > svg{width:17px;height:17px;fill:none;stroke:var(--text2);stroke-width:2;cursor:pointer;}
+.mp-play{width:32px;height:32px;background:var(--green);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;}
+.mp-play svg{width:13px;height:13px;fill:white;}
+.mp-prog{display:flex;align-items:center;gap:7px;margin-top:7px;}
+.mp-bar{flex:1;height:3px;background:var(--surface3);border-radius:2px;overflow:hidden;}
+.mp-fill{width:60%;height:100%;background:linear-gradient(90deg,var(--green),var(--blue));border-radius:2px;}
+.mp-t{font-size:9px;color:var(--text3);font-family:sans-serif;}
+
+/* BOTTOM NAV */
+.bnav{display:flex;justify-content:space-around;align-items:center;padding:10px 8px 14px;background:var(--surface);border-top:1px solid var(--border);flex-shrink:0;position:sticky;bottom:0;z-index:10;}
+.ni{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:5px 10px;border-radius:10px;}
+.ni.on{background:rgba(255,107,53,0.1);}
+.ni svg{width:18px;height:18px;fill:none;stroke:var(--text3);stroke-width:2;}
+.ni.on svg{stroke:var(--accent);}
+.nl{font-size:9px;font-family:sans-serif;font-weight:700;color:var(--text3);}
+.ni.on .nl{color:var(--accent);}
+
+/* tile colour themes */
+.sc1{background:linear-gradient(135deg,#1A0A3A,#2A0A2A);}
+.sc2{background:linear-gradient(135deg,#0A1530,#0A2030);}
+.sc3{background:linear-gradient(135deg,#0A200E,#0A1A18);}
+.sc4{background:linear-gradient(135deg,#1A1200,#1A0A00);}
+.sc5{background:linear-gradient(135deg,#200808,#2A1000);}
+.sc6{background:linear-gradient(135deg,#0A0A2A,#14082A);}
+.sc7{background:linear-gradient(135deg,#0A180A,#0A2012);}
+.sc8{background:linear-gradient(135deg,#1A0E04,#140A10);}
+
+.spacer{height:10px;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* RESPONSIVE DESIGN */
+@media (min-width:768px) {
+  .phone { max-width:768px; margin:0 auto; }
+  .topnav { padding:16px 24px 0; }
+  .hero-strip { margin:18px 24px 0; }
+  .search-wrap { margin:16px 24px 0; }
+  .sort-row { padding:12px 24px 10px; }
+  .sub-grid { padding:0 24px; gap:12px; }
+  .sub-list { padding:0 24px; }
+  .mini-player { margin:10px 24px 6px; }
+}
+
+@media (min-width:1024px) {
+  .phone { max-width:1000px; }
+  .topnav { padding:20px 32px 0; }
+  .hero-strip { margin:22px 32px 0; }
+  .search-wrap { margin:20px 32px 0; }
+  .sort-row { padding:14px 32px 12px; }
+  .sub-grid { padding:0 32px; gap:14px; }
+  .sub-list { padding:0 32px; }
+  .mini-player { margin:12px 32px 6px; }
+}
+
+@media (max-width:480px) {
+  .topnav { padding:10px 14px 0; }
+  .hero-strip { margin:12px 12px 0; }
+  .search-wrap { margin:10px 12px 0; }
+  .sort-row { padding:10px 12px 8px; }
+  .sub-grid { padding:0 12px; gap:8px; }
+  .sub-list { padding:0 12px; }
+  .mini-player { margin:8px 12px 6px; }
+}
+
+/* Thumbnail display styles */
+.st-visual{position:absolute;top:10px;right:11px;width:40px;height:40px;border-radius:10px;overflow:hidden;display:flex;align-items:center;justify-content:center;}
+.st-thumb{width:100%;height:100%;object-fit:cover;}
+.sr-visual{width:44px;height:44px;border-radius:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden;}
+.sr-thumb{width:100%;height:100%;object-fit:cover;}
+</style>
+</head>
+<body>
+<div class="phone">
+  <div class="scroll">
+    <!-- AD CONTAINER: Header Banner -->
+    <div id="ad-header-banner"></div>
+
+
+    <!-- TOP NAV -->
+    <div class="topnav">
+      <div class="back-btn" onclick="history.back()">
+        <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+      </div>
+      <div class="page-title">📁 <span>Sub-Categories</span></div>
+      <div class="theme-toggle" id="themeToggle">
+        <span class="tt-icon" id="ttIcon">🌙</span>
+        <span class="tt-label" id="ttLabel">Dark</span>
+      </div>
+    </div>
+
+    <!-- HERO STRIP -->
+    <!-- Laravel: {{ $totalSubcats }}, {{ $totalParents }}, {{ $totalSongs }} -->
+    <div class="hero-strip">
+      <div class="hs-icon">📁</div>
+      <div class="hs-info">
+        <div class="hs-label">Browse Sub-Categories</div>
+        <div class="hs-val">36 Sub-Categories</div>
+        <div class="hs-sub">Nested under 8 parent categories</div>
+      </div>
+      <div class="hs-stats">
+        <div><div class="hs-stat-n" style="color:var(--green);">36</div><div class="hs-stat-l">Sub-cats</div></div>
+        <div><div class="hs-stat-n" style="color:var(--blue);">8</div><div class="hs-stat-l">Parents</div></div>
+        <div><div class="hs-stat-n" style="color:var(--accent);">4.2K</div><div class="hs-stat-l">Songs</div></div>
+      </div>
+    </div>
+
+    <!-- SEARCH -->
+    <!-- Laravel: value="{{ request('q') }}" -->
+    <div class="search-wrap">
+      <div class="search-icon">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      </div>
+      <input class="search-input" id="searchInput" type="text" placeholder="Search sub-categories…">
+    </div>
+
+    <!-- PARENT FILTER PILLS -->
+    <!-- Laravel: active class based on request('parent') -->
+    <div class="filter-row" id="filterRow">
+      <div class="fpill on"  data-filter="all">All</div>
+      <div class="fpill off" data-filter="Shairai">📖 Shairai</div>
+      <div class="fpill off" data-filter="Ashura">☪️ Ashura</div>
+      <div class="fpill off" data-filter="Ahlul-baiti">🌟 Ahlul-baiti</div>
+      <div class="fpill off" data-filter="Maulud">🎉 Maulud</div>
+      <div class="fpill off" data-filter="Shuhada">⚔️ Shuhada</div>
+      <div class="fpill off" data-filter="Shurafah">🎵 Shurafah</div>
+    </div>
+
+    <!-- SORT + VIEW -->
+    <div class="sort-row">
+      <!-- Laravel: {{ $from }}–{{ $to }} of {{ $total }} -->
+      <div class="sort-info">Showing <b id="rangeLabel">1–10</b> of <b id="totalLabel">36</b></div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <div class="view-toggle">
+          <div class="vt-btn active" id="gridViewBtn" onclick="setView('grid')">
+            <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+          </div>
+          <div class="vt-btn" id="listViewBtn" onclick="setView('list')">
+            <svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SUBCATS CONTAINER — JS renders here -->
+    <!-- Laravel: group by parent, loop $subcategories -->
+    <div id="subcatsContainer"></div>
+
+    <!-- PAGINATION -->
+    <!-- Laravel: {{ $subcats->links() }} -->
+    <div class="pagination-wrap" id="paginationWrap">
+      <div class="page-info">Page <b id="curPage">1</b> of <b id="totalPages">4</b> &nbsp;·&nbsp; 10 per page</div>
+      <div class="page-progress">
+        <div class="page-progress-fill" id="progressFill" style="width:25%;"></div>
+      </div>
+      <div class="page-controls">
+        <div class="pg-btn pg-prev disabled" id="prevBtn" onclick="changePage(-1)">
+          <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+          Prev
+        </div>
+        <div class="page-dots" id="pageDots"></div>
+        <div class="pg-btn pg-next" id="nextBtn" onclick="changePage(1)">
+          Next
+          <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+      </div>
+    </div>
+
+    <div class="end-msg" id="endMsg" style="display:none;">📁 All sub-categories shown!</div>
+    <div class="spacer"></div>
+  </div>
+
+  <!-- MINI PLAYER -->
+  <div class="mini-player">
+    <div class="mp-top">
+      <div class="mp-art">🎵</div>
+      <div class="mp-inf">
+        <div class="mp-title">Salatin Awliya</div>
+        <div class="mp-artist">Ahmad Isah Katsina</div>
+      </div>
+      <div class="mp-ctrl">
+        <svg viewBox="0 0 24 24"><polygon points="19 20 9 12 19 4 19 20"/><line x1="5" y1="19" x2="5" y2="5"/></svg>
+        <div class="mp-play"><svg viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg></div>
+        <svg viewBox="0 0 24 24"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19"/></svg>
+      </div>
+    </div>
+    <div class="mp-prog">
+      <span class="mp-t">3:05</span>
+      <div class="mp-bar"><div class="mp-fill"></div></div>
+      <span class="mp-t">5:14</span>
+    </div>
+  </div>
+
+  <!-- BOTTOM NAV (Home · Wa'azi · Explore · Favourites · Profile) -->
+  <div class="bnav">
+    <a class="ni on" href="song_portal_web.html" style="text-decoration:none;color:inherit;"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><div class="nl">Home</div></a>
+    <a class="ni" href="shurafah_waazi.html" style="text-decoration:none;color:inherit;"><svg viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg><div class="nl">Wa'azi</div></a>
+    <a class="ni" href="shurafah_explore.html" style="text-decoration:none;color:inherit;"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><div class="nl">Explore</div></a>
+    <a class="ni" href="favourites_page.html" style="text-decoration:none;color:inherit;"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg><div class="nl">Favourites</div></a>
+    <a class="ni" href="user_profile_page.html" style="text-decoration:none;color:inherit;"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><div class="nl">Profile</div></a>
+  </div>
+</div>
+
+<script>
+// Clock
+function tick() {
+  var n = new Date();
+  var clkEl = document.getElementById('clk');
+  if (clkEl) clkEl.textContent = String(n.getHours()).padStart(2,'0') + ':' + String(n.getMinutes()).padStart(2,'0');
+}
+tick();
+setInterval(tick, 30000);
+
+// ─────────────────────────────────────────────────────────
+// STATIC DATA — 36 sub-categories, 4 pages of 10 (last page 6)
+// Laravel: var ALL_SUBCATS = {!! json_encode($subcategories) !!};
+// Each object maps to a SubCategory model field.
+// parent = parent category name (foreign key label)
+// ─────────────────────────────────────────────────────────
+var ALL_SUBCATS = [
+  /* ── Shairai (8) ── */
+  { id:1,  name:'Kasida Annabiyya',  parent:'Shairai',    emoji:'📖', tileCls:'sc1', barColor:'#9B6BFF', parentColor:'#9B6BFF', songs:210, fillPct:17, desc:'Prophetic odes and poetry in Hausa' },
+  { id:2,  name:'Madahu Annabi',     parent:'Shairai',    emoji:'🎙️', tileCls:'sc1', barColor:'#9B6BFF', parentColor:'#9B6BFF', songs:185, fillPct:15, desc:'Praises of the Prophet in verse' },
+  { id:3,  name:'Wakar Sallah',      parent:'Shairai',    emoji:'🌙', tileCls:'sc1', barColor:'#9B6BFF', parentColor:'#9B6BFF', songs:162, fillPct:13, desc:'Eid and prayer celebration songs' },
+  { id:4,  name:'Ilimin Addini',     parent:'Shairai',    emoji:'📚', tileCls:'sc1', barColor:'#9B6BFF', parentColor:'#9B6BFF', songs:148, fillPct:12, desc:'Islamic educational songs and chants' },
+  { id:5,  name:'Wasiyya',           parent:'Shairai',    emoji:'✍️', tileCls:'sc1', barColor:'#9B6BFF', parentColor:'#9B6BFF', songs:130, fillPct:10, desc:'Spiritual advices set to music' },
+  { id:6,  name:'Duba da Gargadi',   parent:'Shairai',    emoji:'⚠️', tileCls:'sc1', barColor:'#9B6BFF', parentColor:'#9B6BFF', songs:118, fillPct:10, desc:'Warnings and reminders in song' },
+  { id:7,  name:'Zuhdu da Tawadu',   parent:'Shairai',    emoji:'🕊️', tileCls:'sc1', barColor:'#9B6BFF', parentColor:'#9B6BFF', songs:145, fillPct:12, desc:'Songs of humility and piety' },
+  { id:8,  name:'Yabon Sahabbai',    parent:'Shairai',    emoji:'🌿', tileCls:'sc1', barColor:'#9B6BFF', parentColor:'#9B6BFF', songs:142, fillPct:11, desc:'Praise songs for the Companions' },
+
+  /* ── Ashura (5) ── */
+  { id:9,  name:'Ziyarat Ashura',    parent:'Ashura',     emoji:'☪️', tileCls:'sc2', barColor:'#4D9FFF', parentColor:'#4D9FFF', songs:210, fillPct:24, desc:'Pilgrimage recitations for Ashura day' },
+  { id:10, name:'Karbala Songs',     parent:'Ashura',     emoji:'🌊', tileCls:'sc2', barColor:'#4D9FFF', parentColor:'#4D9FFF', songs:195, fillPct:22, desc:'Songs commemorating the battle of Karbala' },
+  { id:11, name:'Muharram Nasheeds', parent:'Ashura',     emoji:'🕯️', tileCls:'sc2', barColor:'#4D9FFF', parentColor:'#4D9FFF', songs:178, fillPct:20, desc:'Sacred songs of the month of Muharram' },
+  { id:12, name:'Lamentation Songs', parent:'Ashura',     emoji:'💧', tileCls:'sc2', barColor:'#4D9FFF', parentColor:'#4D9FFF', songs:162, fillPct:18, desc:'Songs of mourning and grief' },
+  { id:13, name:'Dua Kumayl',        parent:'Ashura',     emoji:'🤲', tileCls:'sc2', barColor:'#4D9FFF', parentColor:'#4D9FFF', songs:145, fillPct:16, desc:'Supplication and spiritual prayers' },
+
+  /* ── Ahlul-baiti (4) ── */
+  { id:14, name:'Yabon Imam Ali',    parent:'Ahlul-baiti',emoji:'⚡', tileCls:'sc3', barColor:'#FFD166', parentColor:'#FFD166', songs:188, fillPct:29, desc:'Songs in praise of Imam Ali (AS)' },
+  { id:15, name:'Yabon Imam Hassan', parent:'Ahlul-baiti',emoji:'🌺', tileCls:'sc3', barColor:'#FFD166', parentColor:'#FFD166', songs:156, fillPct:24, desc:'Songs in praise of Imam Hassan (AS)' },
+  { id:16, name:'Yabon Imam Husayn', parent:'Ahlul-baiti',emoji:'🦁', tileCls:'sc3', barColor:'#FFD166', parentColor:'#FFD166', songs:172, fillPct:26, desc:'Songs in praise of Imam Husayn (AS)' },
+  { id:17, name:'Yabon Sayyida Fatima',parent:'Ahlul-baiti',emoji:'🌸',tileCls:'sc3', barColor:'#FFD166', parentColor:'#FFD166', songs:138, fillPct:21, desc:'Songs in praise of Lady Fatima (AS)' },
+
+  /* ── Maulud (6) ── */
+  { id:18, name:'Maulud Barzanji',   parent:'Maulud',     emoji:'🎉', tileCls:'sc4', barColor:'#2ECC8F', parentColor:'#2ECC8F', songs:115, fillPct:21, desc:'Barzanji recitations for the Maulud' },
+  { id:19, name:'Maulud Diba\'i',    parent:'Maulud',     emoji:'🌟', tileCls:'sc4', barColor:'#2ECC8F', parentColor:'#2ECC8F', songs:98,  fillPct:18, desc:'Diba\'i style Maulud songs' },
+  { id:20, name:'Wakar Rabin Niyya', parent:'Maulud',     emoji:'🎶', tileCls:'sc4', barColor:'#2ECC8F', parentColor:'#2ECC8F', songs:88,  fillPct:16, desc:'Songs of intention and devotion' },
+  { id:21, name:'Hidiyal Nabi',      parent:'Maulud',     emoji:'☀️', tileCls:'sc4', barColor:'#2ECC8F', parentColor:'#2ECC8F', songs:80,  fillPct:15, desc:'Songs of prophetic guidance' },
+  { id:22, name:'Salawat',           parent:'Maulud',     emoji:'✨', tileCls:'sc4', barColor:'#2ECC8F', parentColor:'#2ECC8F', songs:92,  fillPct:17, desc:'Blessings upon the Prophet' },
+  { id:23, name:'Nasheedi Maulud',   parent:'Maulud',     emoji:'🎵', tileCls:'sc4', barColor:'#2ECC8F', parentColor:'#2ECC8F', songs:70,  fillPct:13, desc:'General Maulud nasheed songs' },
+
+  /* ── Shuhada (5) ── */
+  { id:24, name:'Shahidai Karbala',  parent:'Shuhada',    emoji:'⚔️', tileCls:'sc5', barColor:'#FF6B35', parentColor:'#FF6B35', songs:130, fillPct:30, desc:'Songs for the martyrs of Karbala' },
+  { id:25, name:'Gwagwarmayar Addini',parent:'Shuhada',   emoji:'🛡️', tileCls:'sc5', barColor:'#FF6B35', parentColor:'#FF6B35', songs:105, fillPct:24, desc:'Songs of religious struggle and sacrifice' },
+  { id:26, name:'Tarihin Jihadi',    parent:'Shuhada',    emoji:'📜', tileCls:'sc5', barColor:'#FF6B35', parentColor:'#FF6B35', songs:90,  fillPct:21, desc:'Historical songs of Islamic struggle' },
+  { id:27, name:'Yabon Shuhada',     parent:'Shuhada',    emoji:'🌹', tileCls:'sc5', barColor:'#FF6B35', parentColor:'#FF6B35', songs:72,  fillPct:17, desc:'Tributes to Islamic martyrs' },
+  { id:28, name:'Takin Zuciya',      parent:'Shuhada',    emoji:'💔', tileCls:'sc5', barColor:'#FF6B35', parentColor:'#FF6B35', songs:35,  fillPct:8,  desc:'Heartfelt mourning songs' },
+
+  /* ── Shurafah (3) ── */
+  { id:29, name:'Shurafah Classics', parent:'Shurafah',   emoji:'🎵', tileCls:'sc6', barColor:'#9B6BFF', parentColor:'#9B6BFF', songs:140, fillPct:44, desc:'Classic Shurafah songs and collections' },
+  { id:30, name:'Modern Shurafah',   parent:'Shurafah',   emoji:'🎹', tileCls:'sc6', barColor:'#9B6BFF', parentColor:'#9B6BFF', songs:105, fillPct:33, desc:'Contemporary Shurafah productions' },
+  { id:31, name:'Shurafah Remixes',  parent:'Shurafah',   emoji:'🔄', tileCls:'sc6', barColor:'#9B6BFF', parentColor:'#9B6BFF', songs:73,  fillPct:23, desc:'Remixed and reimagined Shurafah' },
+
+  /* ── Manga (3) ── */
+  { id:32, name:'Manga Hausa',       parent:'Manga',      emoji:'🎙️', tileCls:'sc7', barColor:'#2ECC8F', parentColor:'#2ECC8F', songs:42,  fillPct:48, desc:'Traditional Hausa Manga vocals' },
+  { id:33, name:'Manga Modern',      parent:'Manga',      emoji:'🎧', tileCls:'sc7', barColor:'#2ECC8F', parentColor:'#2ECC8F', songs:28,  fillPct:32, desc:'Modern takes on Manga style' },
+  { id:34, name:'Manga Instrumentals',parent:'Manga',     emoji:'🥁', tileCls:'sc7', barColor:'#2ECC8F', parentColor:'#2ECC8F', songs:18,  fillPct:20, desc:'Instrumental Manga arrangements' },
+
+  /* ── Manqaba (2) ── */
+  { id:35, name:'Manqabat Scholars', parent:'Manqaba',    emoji:'📿', tileCls:'sc8', barColor:'#FFB347', parentColor:'#FFB347', songs:32,  fillPct:60, desc:'Praises dedicated to Islamic scholars' },
+  { id:36, name:'Manqabat Saints',   parent:'Manqaba',    emoji:'🌙', tileCls:'sc8', barColor:'#FFB347', parentColor:'#FFB347', songs:21,  fillPct:40, desc:'Songs honouring Islamic saints' }
+];
+
+/* parent meta for group labels */
+var PARENT_META = {
+  'Shairai':    { emoji:'📖', color:'#9B6BFF', bg:'rgba(155,107,255,0.12)', border:'rgba(155,107,255,0.25)' },
+  'Ashura':     { emoji:'☪️', color:'#4D9FFF', bg:'rgba(77,159,255,0.12)',  border:'rgba(77,159,255,0.25)'  },
+  'Ahlul-baiti':{ emoji:'🌟', color:'#FFD166', bg:'rgba(255,209,102,0.12)', border:'rgba(255,209,102,0.25)' },
+  'Maulud':     { emoji:'🎉', color:'#2ECC8F', bg:'rgba(46,204,143,0.12)',  border:'rgba(46,204,143,0.25)'  },
+  'Shuhada':    { emoji:'⚔️', color:'#FF6B35', bg:'rgba(255,107,53,0.12)',  border:'rgba(255,107,53,0.25)'  },
+  'Shurafah':   { emoji:'🎵', color:'#9B6BFF', bg:'rgba(155,107,255,0.12)', border:'rgba(155,107,255,0.25)' },
+  'Manga':      { emoji:'🎙️', color:'#2ECC8F', bg:'rgba(46,204,143,0.12)',  border:'rgba(46,204,143,0.25)'  },
+  'Manqaba':    { emoji:'📿', color:'#FFB347', bg:'rgba(255,179,71,0.12)',   border:'rgba(255,179,71,0.25)'  }
+};
+
+var PER_PAGE      = 10;
+var currentPage   = 1;
+var currentView   = 'grid';
+var currentFilter = 'all';
+var searchQuery   = '';
+
+function getFiltered() {
+  var list = ALL_SUBCATS.slice();
+  if (currentFilter !== 'all') {
+    list = list.filter(function(s){ return s.parent === currentFilter; });
+  }
+  if (searchQuery) {
+    var q = searchQuery.toLowerCase();
+    list = list.filter(function(s){
+      return s.name.toLowerCase().indexOf(q) !== -1 ||
+             s.parent.toLowerCase().indexOf(q) !== -1 ||
+             s.desc.toLowerCase().indexOf(q) !== -1;
+    });
+  }
+  return list;
+}
+
+function getTotalPages(filtered) {
+  return Math.max(1, Math.ceil(filtered.length / PER_PAGE));
+}
+
+function setView(v) {
+  currentView = v;
+  document.getElementById('gridViewBtn').classList.toggle('active', v === 'grid');
+  document.getElementById('listViewBtn').classList.toggle('active', v === 'list');
+  renderSubcats();
+}
+
+function renderSubcats() {
+  var filtered = getFiltered();
+  var tp    = getTotalPages(filtered);
+  if (currentPage > tp) { currentPage = 1; }
+
+  var start = (currentPage - 1) * PER_PAGE;
+  var end   = Math.min(start + PER_PAGE, filtered.length);
+  var page  = filtered.slice(start, end);
+
+  document.getElementById('rangeLabel').textContent   = filtered.length === 0 ? '0' : (start + 1) + '–' + end;
+  document.getElementById('totalLabel').textContent   = filtered.length;
+  document.getElementById('curPage').textContent      = currentPage;
+  document.getElementById('totalPages').textContent   = tp;
+  document.getElementById('progressFill').style.width = (currentPage / tp * 100) + '%';
+  document.getElementById('endMsg').style.display     = (currentPage === tp) ? 'block' : 'none';
+  document.getElementById('paginationWrap').style.display = (tp <= 1) ? 'none' : 'block';
+  document.getElementById('prevBtn').classList.toggle('disabled', currentPage === 1);
+  document.getElementById('nextBtn').classList.toggle('disabled', currentPage === tp);
+
+  // Dots
+  var dotsEl = document.getElementById('pageDots');
+  dotsEl.innerHTML = '';
+  for (var p = Math.max(1, currentPage - 2); p <= Math.min(tp, currentPage + 2); p++) {
+    var d = document.createElement('div');
+    d.className = 'pdot' + (p === currentPage ? ' active' : '');
+    (function(pp) { d.onclick = function() { goToPage(pp); }; }(p));
+    dotsEl.appendChild(d);
+  }
+
+  var container = document.getElementById('subcatsContainer');
+  container.innerHTML = '';
+
+  if (page.length === 0) {
+    container.innerHTML = '<div style="text-align:center;padding:32px 14px;color:var(--text3);font-size:12px;">No sub-categories found.</div>';
+    return;
+  }
+
+  /* Group by parent — only when filter is 'all' and view is list */
+  var useGroups = (currentFilter === 'all' && !searchQuery && currentView === 'list');
+
+  if (useGroups) {
+    /* build ordered groups for current page */
+    var groups = {};
+    var groupOrder = [];
+    for (var i = 0; i < page.length; i++) {
+      var s = page[i];
+      if (!groups[s.parent]) {
+        groups[s.parent] = [];
+        groupOrder.push(s.parent);
+      }
+      groups[s.parent].push(s);
+    }
+
+    var delay = 0;
+    for (var gi = 0; gi < groupOrder.length; gi++) {
+      var pName  = groupOrder[gi];
+      var pMeta  = PARENT_META[pName] || { emoji:'📁', color:'#8A94B0', bg:'rgba(138,148,176,0.1)', border:'rgba(138,148,176,0.2)' };
+      var pItems = groups[pName];
+
+      /* parent label */
+      var labelWrap = document.createElement('div');
+      labelWrap.className = 'parent-label-wrap';
+      labelWrap.innerHTML =
+        '<div class="parent-badge" style="background:' + pMeta.bg + ';color:' + pMeta.color + ';border-color:' + pMeta.border + ';">' +
+          pMeta.emoji + ' ' + pName +
+        '</div>' +
+        '<div class="parent-line"></div>' +
+        '<div class="parent-count">' + pItems.length + ' sub-cat' + (pItems.length !== 1 ? 's' : '') + '</div>';
+      container.appendChild(labelWrap);
+
+      var list = document.createElement('div');
+      list.className = 'sub-list';
+      for (var si = 0; si < pItems.length; si++) {
+        list.appendChild(buildListRow(pItems[si], delay));
+        delay++;
+      }
+      container.appendChild(list);
+    }
+
+  } else if (currentView === 'grid') {
+    var grid = document.createElement('div');
+    grid.className = 'sub-grid';
+    for (var j = 0; j < page.length; j++) {
+      grid.appendChild(buildGridTile(page[j], j));
+    }
+    container.appendChild(grid);
+
+  } else {
+    var flatList = document.createElement('div');
+    flatList.className = 'sub-list';
+    for (var k = 0; k < page.length; k++) {
+      flatList.appendChild(buildListRow(page[k], k));
+    }
+    container.appendChild(flatList);
+  }
+
+  document.querySelector('.scroll').scrollTop = 0;
+}
+
+function buildGridTile(s, delay) {
+  var tile = document.createElement('div');
+  tile.className = 'sub-tile ' + s.tileCls;
+  tile.style.animation = 'fadeUp 0.3s ease both';
+  tile.style.animationDelay = (delay * 0.05) + 's';
+  tile.innerHTML =
+    '<div class="st-parent">' + s.parent + '</div>' +
+    '<div class="st-emoji">' + s.emoji + '</div>' +
+    '<div class="st-name">' + s.name + '</div>' +
+    '<div class="st-count">' + s.songs + ' songs</div>' +
+    '<div class="st-bar" style="width:' + s.fillPct + '%;background:' + s.barColor + ';"></div>';
+  tile.addEventListener('click', function() {
+    window.location.href = 'subcategory_songs.html?cat=' + encodeURIComponent(s.parent);
+  });
+  return tile;
+}
+
+function buildListRow(s, delay) {
+  var pMeta = PARENT_META[s.parent] || { color:'#8A94B0' };
+  var row = document.createElement('div');
+  row.className = 'sub-row';
+  row.style.animation = 'fadeUp 0.3s ease both';
+  row.style.animationDelay = (delay * 0.04) + 's';
+  row.innerHTML =
+    '<div class="sr-icon ' + s.tileCls + '">' + s.emoji + '</div>' +
+    '<div class="sr-info">' +
+      '<div class="sr-name">' + s.name + '</div>' +
+      '<div class="sr-parent">' +
+        '<div class="sr-parent-dot" style="background:' + pMeta.color + ';"></div>' +
+        '<span style="color:' + pMeta.color + ';font-family:Syne,sans-serif;font-weight:700;font-size:9px;">' + s.parent + '</span>' +
+      '</div>' +
+      '<div class="sr-desc">' + s.desc + '</div>' +
+      '<div class="sr-progress"><div class="sr-progress-fill" style="width:' + s.fillPct + '%;background:' + s.barColor + ';"></div></div>' +
+    '</div>' +
+    '<div class="sr-right">' +
+      '<div class="sr-count">' + s.songs + '</div>' +
+      '<div class="sr-lbl">songs</div>' +
+      '<div class="sr-arrow"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div>' +
+    '</div>';
+  row.addEventListener('click', function() {
+    window.location.href = 'subcategory_songs.html?cat=' + encodeURIComponent(s.parent);
+  });
+  return row;
+}
+
+function changePage(dir) {
+  var tp = getTotalPages(getFiltered());
+  var next = currentPage + dir;
+  if (next >= 1 && next <= tp) {
+    currentPage = next;
+    renderSubcats();
+  }
+}
+
+function goToPage(p) {
+  currentPage = p;
+  renderSubcats();
+}
+
+/* Filter pills */
+document.getElementById('filterRow').addEventListener('click', function(e) {
+  var pill = e.target.closest('.fpill');
+  if (!pill) return;
+  var pills = document.querySelectorAll('.fpill');
+  for (var i = 0; i < pills.length; i++) { pills[i].className = 'fpill off'; }
+  pill.className = 'fpill on';
+  currentFilter = pill.getAttribute('data-filter');
+  currentPage   = 1;
+  renderSubcats();
+});
+
+/* Search */
+var searchTimer = null;
+document.getElementById('searchInput').addEventListener('input', function() {
+  clearTimeout(searchTimer);
+  var val = this.value;
+  searchTimer = setTimeout(function() {
+    searchQuery = val.trim();
+    currentPage = 1;
+    renderSubcats();
+  }, 250);
+});
+
+/* Theme */
+var _t = document.getElementById('themeToggle');
+var _i = document.getElementById('ttIcon');
+var _l = document.getElementById('ttLabel');
+function applyTheme(isLight) {
+  document.body.classList.toggle('light', isLight);
+  _i.textContent = isLight ? '☀️' : '🌙';
+  _l.textContent = isLight ? 'Light' : 'Dark';
+}
+applyTheme(localStorage.getItem('shurafah-theme') === 'light');
+_t.addEventListener('click', function() {
+  var n = !document.body.classList.contains('light');
+  applyTheme(n);
+  localStorage.setItem('shurafah-theme', n ? 'light' : 'dark');
+});
+
+/* Init */
+renderSubcats();
+
+// Mini player
+var _mpPlay = document.querySelector('.mp-play');
+var _mpPlaying = false;
+if (_mpPlay) {
+  _mpPlay.addEventListener('click', function() {
+    _mpPlaying = !_mpPlaying;
+    this.innerHTML = _mpPlaying
+      ? '<svg viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16" fill="white"/><rect x="14" y="4" width="4" height="16" fill="white"/></svg>'
+      : '<svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3" fill="white"/></svg>';
+  });
+}
+var _mpArt = document.querySelector('.mp-art'), _mpInf = document.querySelector('.mp-inf');
+if (_mpArt) { _mpArt.style.cursor = 'pointer'; _mpArt.addEventListener('click', function() { window.location.href = 'song_detail_page.html'; }); }
+if (_mpInf) { _mpInf.style.cursor = 'pointer'; _mpInf.addEventListener('click', function() { window.location.href = 'song_detail_page.html'; }); }
+var _mpCtrl = document.querySelectorAll('.mp-ctrl > svg');
+if (_mpCtrl[0]) { _mpCtrl[0].style.cursor = 'pointer'; }
+if (_mpCtrl[1]) { _mpCtrl[1].style.cursor = 'pointer'; }
+
+// Initialize Ads System
+if (typeof ADS !== 'undefined') {
+  ADS.setUserType('guest');
+  ADS.init({
+    enabled: true,
+    placements: {
+      headerBanner: { enabled: true },
+      inFeed: { enabled: true, frequency: 5 },
+      downloadModal: { enabled: true, timer: 5 }
+    }
+  });
+}
+</script>
+<script src="ads.js"></script>
+</body>
+</html>

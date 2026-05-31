@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Shurafah — Featured Songs</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#080B12;--surface:#0F1420;--surface2:#161C2E;--surface3:#1E2740;
+  --accent:#FF6B35;--accent2:#FFB347;--blue:#4D9FFF;--green:#2ECC8F;
+  --purple:#9B6BFF;--pink:#FF4D8F;--yellow:#FFD166;
+  --text:#F0F4FF;--text2:#8A94B0;--text3:#4A5270;
+  --border:rgba(255,255,255,0.06);
+}
+body.light{
+  --bg:#F4F6FC;--surface:#FFFFFF;--surface2:#E8ECF7;--surface3:#D8DEEF;
+  --text:#12172E;--text2:#5A6380;--text3:#9AA0BA;
+  --border:rgba(0,0,0,0.07);
+}
+body.light .feat-card{background:linear-gradient(135deg,#EDE8FA,#E8F0FA) !important;border-color:rgba(155,107,255,0.15) !important;}
+body.light .hero-strip{background:linear-gradient(135deg,#F0E8FA,#E8EEF8) !important;border-color:rgba(155,107,255,0.2) !important;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--text);min-height:100vh;display:flex;flex-direction:column;}
+.phone{width:100%;background:var(--bg);display:flex;flex-direction:column;min-height:100vh;}
+.scroll{flex:1;overflow-y:auto;overflow-x:hidden;scrollbar-width:none;}
+.scroll::-webkit-scrollbar{display:none;}
+
+/* STATUS */
+.status{display:flex;justify-content:space-between;align-items:center;padding:14px 22px 0;font-size:11px;font-weight:700;font-family:sans-serif;}
+.si{display:flex;gap:5px;align-items:center;}
+.si svg{width:12px;height:12px;fill:var(--text);}
+
+/* TOP NAV */
+.topnav{display:flex;align-items:center;gap:12px;padding:12px 16px 0;}
+.back-btn{width:34px;height:34px;background:var(--surface);border-radius:50%;display:flex;align-items:center;justify-content:center;border:1px solid var(--border);cursor:pointer;flex-shrink:0;}
+.back-btn svg{width:15px;height:15px;fill:none;stroke:var(--text2);stroke-width:2;}
+.page-title{font-family:sans-serif;font-size:18px;font-weight:800;letter-spacing:-0.3px;flex:1;}
+.page-title span{background:linear-gradient(135deg,var(--purple),var(--blue));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.theme-toggle{display:inline-flex;align-items:center;gap:5px;cursor:pointer;background:var(--surface2);border-radius:50px;padding:5px 10px 5px 8px;border:1.5px solid var(--accent);flex-shrink:0;user-select:none;}
+.theme-toggle .tt-icon{font-size:13px;}
+.theme-toggle .tt-label{font-family:sans-serif;font-size:9px;font-weight:700;color:var(--accent);}
+
+/* HERO STRIP */
+.hero-strip{margin:14px 14px 0;background:linear-gradient(135deg,#120A2A,#0A102E,#0A1A18);border-radius:16px;padding:14px 16px;border:1px solid rgba(155,107,255,0.2);position:relative;overflow:hidden;display:flex;align-items:center;gap:14px;}
+.hero-strip::before{content:'';position:absolute;top:-30px;right:-30px;width:130px;height:130px;background:radial-gradient(circle,rgba(155,107,255,0.2) 0%,transparent 70%);}
+.hs-icon{font-size:30px;flex-shrink:0;}
+.hs-info{flex:1;}
+.hs-label{font-size:10px;color:rgba(155,107,255,0.6);margin-bottom:2px;text-transform:uppercase;letter-spacing:0.4px;font-family:sans-serif;font-weight:600;}
+.hs-val{font-family:sans-serif;font-size:18px;font-weight:800;color:var(--purple);}
+.hs-sub{font-size:10px;color:var(--text3);margin-top:1px;}
+.hs-badges{display:flex;gap:5px;flex-wrap:wrap;}
+.hs-badge{background:rgba(155,107,255,0.15);border:1px solid rgba(155,107,255,0.3);border-radius:50px;padding:3px 9px;font-family:sans-serif;font-size:9px;font-weight:700;color:var(--purple);}
+.hs-badge.green{background:rgba(46,204,143,0.12);border-color:rgba(46,204,143,0.3);color:var(--green);}
+.hs-badge.orange{background:rgba(255,107,53,0.12);border-color:rgba(255,107,53,0.3);color:var(--accent);}
+
+/* FILTER ROW */
+.filter-row{display:flex;align-items:center;gap:8px;padding:12px 14px 0;overflow-x:auto;scrollbar-width:none;}
+.filter-row::-webkit-scrollbar{display:none;}
+.fpill{flex-shrink:0;padding:6px 13px;border-radius:50px;font-size:10px;font-weight:700;font-family:sans-serif;cursor:pointer;border:1px solid transparent;white-space:nowrap;}
+.fpill.on{background:var(--purple);color:white;box-shadow:0 3px 10px rgba(155,107,255,0.3);}
+.fpill.off{background:var(--surface);color:var(--text2);border-color:var(--border);}
+
+/* SORT ROW */
+.sort-row{display:flex;justify-content:space-between;align-items:center;padding:10px 14px 8px;}
+.sort-info{font-size:11px;color:var(--text3);}
+.sort-info span{color:var(--text2);font-weight:600;}
+.view-toggle{display:flex;gap:4px;background:var(--surface);border-radius:9px;padding:3px;border:1px solid var(--border);}
+.vt-btn{width:28px;height:26px;border-radius:6px;display:flex;align-items:center;justify-content:center;cursor:pointer;}
+.vt-btn.active{background:var(--purple);}
+.vt-btn svg{width:13px;height:13px;fill:none;stroke:var(--text3);stroke-width:2;}
+.vt-btn.active svg{stroke:white;}
+
+/* ─── CARD VIEW (default) ─── */
+.feat-grid{padding:0 14px;display:flex;flex-direction:column;gap:10px;}
+
+.feat-card{border-radius:16px;padding:13px 14px;border:1px solid var(--border);cursor:pointer;position:relative;overflow:hidden;display:flex;align-items:center;gap:12px;transition:transform 0.15s,box-shadow 0.15s;}
+.feat-card:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(0,0,0,0.3);}
+.feat-card::before{content:'';position:absolute;inset:0;opacity:0.05;}
+
+/* card colour variants */
+.fc-v1{background:linear-gradient(135deg,#180E2A,#0E1E3A);}
+.fc-v2{background:linear-gradient(135deg,#0E1A0E,#0A2E1A);}
+.fc-v3{background:linear-gradient(135deg,#200A1A,#3A0E2E);}
+.fc-v4{background:linear-gradient(135deg,#1A150A,#2E240A);}
+.fc-v5{background:linear-gradient(135deg,#0A1828,#0E0E2A);}
+.fc-v6{background:linear-gradient(135deg,#1A0A10,#2A0A1A);}
+
+.fc-art{width:56px;height:56px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;position:relative;}
+.fc-featured-dot{position:absolute;top:-3px;right:-3px;width:12px;height:12px;background:var(--yellow);border-radius:50%;border:2px solid var(--bg);}
+
+.fc-body{flex:1;min-width:0;}
+.fc-title{font-family:sans-serif;font-size:13px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:2px;}
+.fc-artist{font-size:10px;color:var(--text2);margin-bottom:6px;}
+.fc-tags{display:flex;gap:5px;align-items:center;flex-wrap:wrap;}
+.fc-tag{font-size:8px;font-family:sans-serif;font-weight:700;padding:2px 7px;border-radius:50px;text-transform:uppercase;letter-spacing:0.3px;}
+.tag-hot{background:rgba(255,107,53,0.15);color:var(--accent);border:1px solid rgba(255,107,53,0.3);}
+.tag-new{background:rgba(46,204,143,0.15);color:var(--green);border:1px solid rgba(46,204,143,0.3);}
+.tag-top{background:rgba(155,107,255,0.15);color:var(--purple);border:1px solid rgba(155,107,255,0.3);}
+.tag-fire{background:rgba(255,179,71,0.15);color:var(--accent2);border:1px solid rgba(255,179,71,0.3);}
+.tag-collab{background:rgba(77,159,255,0.15);color:var(--blue);border:1px solid rgba(77,159,255,0.3);}
+.tag-remix{background:rgba(255,77,143,0.15);color:var(--pink);border:1px solid rgba(255,77,143,0.3);}
+
+.fc-right{display:flex;flex-direction:column;align-items:flex-end;gap:8px;flex-shrink:0;}
+.fc-dur{font-size:10px;color:var(--text3);font-family:sans-serif;font-weight:600;}
+.fc-actions{display:flex;align-items:center;gap:5px;}
+.heart{width:22px;height:22px;display:flex;align-items:center;justify-content:center;cursor:pointer;border-radius:50%;}
+.heart svg{width:13px;height:13px;fill:none;stroke:var(--text3);stroke-width:2;}
+.heart.liked svg{fill:var(--pink);stroke:var(--pink);}
+.heart:hover{background:rgba(255,77,143,0.1);}
+.play-circle{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;}
+.play-circle svg{width:10px;height:10px;fill:white;margin-left:1px;}
+
+/* Stats row inside card */
+.fc-stats{display:flex;gap:8px;margin-top:5px;}
+.fc-stat{display:flex;align-items:center;gap:2px;font-size:9px;color:var(--text3);}
+.fc-stat svg{width:8px;height:8px;fill:none;stroke:currentColor;stroke-width:2;}
+
+/* ─── LIST VIEW ─── */
+.feat-list{padding:0 14px;display:flex;flex-direction:column;gap:3px;display:none;}
+.list-row{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:12px;cursor:pointer;transition:background 0.15s;}
+.list-row:hover{background:var(--surface);}
+.lr-num{width:20px;text-align:center;font-family:sans-serif;font-size:11px;font-weight:700;color:var(--text3);flex-shrink:0;}
+.lr-thumb{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+.lr-info{flex:1;min-width:0;}
+.lr-title{font-family:sans-serif;font-size:12px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:2px;}
+.lr-artist{font-size:10px;color:var(--text2);}
+.lr-right{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0;}
+.lr-dur{font-size:10px;color:var(--text3);font-family:sans-serif;font-weight:600;}
+
+/* PAGINATION */
+.pagination-wrap{margin:16px 14px;background:var(--surface);border-radius:16px;padding:14px 16px;border:1px solid var(--border);}
+.page-info{text-align:center;font-size:11px;color:var(--text3);margin-bottom:12px;}
+.page-info span{color:var(--text2);font-weight:600;}
+.page-progress{height:3px;background:var(--surface3);border-radius:2px;overflow:hidden;margin-bottom:14px;}
+.page-progress-fill{height:100%;background:linear-gradient(90deg,var(--purple),var(--blue));border-radius:2px;transition:width 0.4s ease;}
+.page-controls{display:flex;align-items:center;gap:8px;}
+.pg-prev,.pg-next{height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;gap:6px;cursor:pointer;border:1px solid var(--border);font-family:sans-serif;font-size:11px;font-weight:700;flex-shrink:0;padding:0 14px;transition:all 0.15s;}
+.pg-prev{background:var(--surface2);color:var(--text2);}
+.pg-prev:hover{border-color:rgba(155,107,255,0.3);color:var(--text);}
+.pg-prev.disabled{opacity:0.35;pointer-events:none;}
+.pg-next{background:var(--purple);color:white;flex:1;box-shadow:0 3px 12px rgba(155,107,255,0.3);}
+.pg-next:hover{box-shadow:0 5px 18px rgba(155,107,255,0.45);}
+.pg-next.disabled{opacity:0.35;pointer-events:none;}
+.pg-prev svg,.pg-next svg{width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:2.5;}
+.page-dots{flex:1;display:flex;justify-content:center;gap:5px;align-items:center;}
+.pdot{width:7px;height:7px;border-radius:50%;background:var(--surface3);cursor:pointer;transition:all 0.2s;}
+.pdot.active{background:var(--purple);width:18px;border-radius:4px;}
+.end-msg{text-align:center;padding:14px;font-size:11px;color:var(--text3);font-family:sans-serif;}
+
+/* MINI PLAYER */
+.mini-player{margin:6px 12px 6px;background:linear-gradient(135deg,#160A2E,#0E102A);border-radius:15px;padding:10px 12px;border:1px solid rgba(155,107,255,0.18);box-shadow:0 6px 22px rgba(0,0,0,0.45);flex-shrink:0;}
+.mp-top{display:flex;align-items:center;gap:10px;}
+.mp-art{width:38px;height:38px;border-radius:9px;background:linear-gradient(135deg,var(--purple),var(--blue));display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.mp-inf{flex:1;min-width:0;}
+.mp-title{font-family:sans-serif;font-size:12px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:1px;}
+.mp-artist{font-size:10px;color:var(--text2);}
+.mp-ctrl{display:flex;align-items:center;gap:6px;}
+.mp-ctrl>svg{width:17px;height:17px;fill:none;stroke:var(--text2);stroke-width:2;cursor:pointer;}
+.mp-play{width:32px;height:32px;background:var(--purple);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;}
+.mp-play svg{width:13px;height:13px;fill:white;}
+.mp-prog{display:flex;align-items:center;gap:7px;margin-top:7px;}
+.mp-bar{flex:1;height:3px;background:var(--surface3);border-radius:2px;overflow:hidden;}
+.mp-fill{width:42%;height:100%;background:linear-gradient(90deg,var(--purple),var(--blue));border-radius:2px;}
+.mp-t{font-size:9px;color:var(--text3);font-family:sans-serif;}
+
+/* BOTTOM NAV */
+.bnav{display:flex;justify-content:space-around;align-items:center;padding:10px 8px 14px;background:var(--surface);border-top:1px solid var(--border);flex-shrink:0;position:sticky;bottom:0;z-index:10;}
+.ni{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:5px 10px;border-radius:10px;}
+.ni.on{background:rgba(255,107,53,0.1);}
+.ni svg{width:18px;height:18px;fill:none;stroke:var(--text3);stroke-width:2;}
+.ni.on svg{stroke:var(--accent);}
+.nl{font-size:9px;font-family:sans-serif;font-weight:700;color:var(--text3);}
+.ni.on .nl{color:var(--accent);}
+
+/* Gradients */
+.g1{background:linear-gradient(135deg,#9B6BFF,#4D9FFF);}
+.g2{background:linear-gradient(135deg,#FF6B35,#FFB347);}
+.g3{background:linear-gradient(135deg,#FF4D8F,#FF6B35);}
+.g4{background:linear-gradient(135deg,#2ECC8F,#4D9FFF);}
+.g5{background:linear-gradient(135deg,#FFB347,#FF4D8F);}
+.g6{background:linear-gradient(135deg,#4D9FFF,#9B6BFF);}
+.g7{background:linear-gradient(135deg,#FF6B35,#FF4D8F);}
+.g8{background:linear-gradient(135deg,#2ECC8F,#9B6BFF);}
+
+.spacer{height:10px;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+/* RESPONSIVE DESIGN */
+@media (min-width:768px) {
+  .phone { max-width:768px; margin:0 auto; }
+  .topnav { padding:16px 24px 0; }
+  .hero-strip { margin:18px 24px 0; }
+  .filter-row { padding:14px 24px 0; }
+  .sort-row { padding:12px 24px 10px; }
+  .feat-grid { padding:0 24px; }
+  .feat-list { padding:0 24px; }
+  .mini-player { margin:10px 24px 6px; }
+}
+
+@media (min-width:1024px) {
+  .phone { max-width:1000px; }
+  .topnav { padding:20px 32px 0; }
+  .hero-strip { margin:22px 32px 0; }
+  .filter-row { padding:18px 32px 0; }
+  .sort-row { padding:14px 32px 12px; }
+  .feat-grid { padding:0 32px; }
+  .feat-list { padding:0 32px; }
+  .mini-player { margin:12px 32px 6px; }
+}
+
+@media (max-width:480px) {
+  .topnav { padding:10px 14px 0; }
+  .hero-strip { margin:12px 12px 0; }
+  .filter-row { padding:12px 12px 0; }
+  .sort-row { padding:10px 12px 8px; }
+  .feat-grid { padding:0 12px; }
+  .feat-list { padding:0 12px; }
+  .mini-player { margin:8px 12px 6px; }
+}
+</style>
+</head>
+<body>
+<div class="phone">
+  <div class="scroll">
+    <!-- AD CONTAINER: Header Banner -->
+    <div id="ad-header-banner"></div>
+
+
+    <!-- TOP NAV -->
+    <div class="topnav">
+      <div class="back-btn" onclick="history.back()">
+        <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+      </div>
+      <div class="page-title">⭐ <span>Featured Songs</span></div>
+      <div class="theme-toggle" id="themeToggle">
+        <span class="tt-icon" id="ttIcon">🌙</span>
+        <span class="tt-label" id="ttLabel">Dark</span>
+      </div>
+    </div>
+
+    <!-- HERO STRIP -->
+    <div class="hero-strip">
+      <div class="hs-icon">⭐</div>
+      <div class="hs-info">
+        <div class="hs-label">Curated Collection</div>
+        <div class="hs-val">156 Featured</div>
+        <div class="hs-sub">Hand-picked by the Shurafah editorial team</div>
+        <div class="hs-badges" style="margin-top:6px;">
+          <div class="hs-badge orange">🔥 Hot</div>
+          <div class="hs-badge green">✨ New</div>
+          <div class="hs-badge">👑 Top Pick</div>
+          <div class="hs-badge">⚡ Rising</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FILTER PILLS -->
+    <div class="filter-row" id="filterRow">
+      <div class="fpill on" data-filter="all">All</div>
+      <div class="fpill off" data-filter="hot">🔥 Hot</div>
+      <div class="fpill off" data-filter="new">✨ New</div>
+      <div class="fpill off" data-filter="top">👑 Top Pick</div>
+      <div class="fpill off" data-filter="rising">⚡ Rising</div>
+      <div class="fpill off" data-filter="collab">🤝 Collab</div>
+      <div class="fpill off" data-filter="remix">🔄 Remix</div>
+    </div>
+
+    <!-- SORT + VIEW TOGGLE -->
+    <div class="sort-row">
+      <div class="sort-info">Showing <span id="rangeLabel">1–8</span> of <span id="totalLabel">156</span></div>
+      <div class="view-toggle">
+        <div class="vt-btn active" id="cardViewBtn" onclick="setView('card')">
+          <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+        </div>
+        <div class="vt-btn" id="listViewBtn" onclick="setView('list')">
+          <svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- CARD VIEW -->
+    <div class="feat-grid" id="cardView"></div>
+
+    <!-- LIST VIEW -->
+    <div class="feat-list" id="listView"></div>
+
+    <!-- PAGINATION -->
+    <div class="pagination-wrap" id="paginationWrap">
+      <div class="page-info">Page <span id="curPage">1</span> of <span id="totalPages">20</span> · <span id="perPageLabel">8</span> songs per page</div>
+      <div class="page-progress">
+        <div class="page-progress-fill" id="progressFill" style="width:5%;"></div>
+      </div>
+      <div class="page-controls">
+        <div class="pg-prev disabled" id="prevBtn" onclick="changePage(-1)">
+          <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+          Prev
+        </div>
+        <div class="page-dots" id="pageDots"></div>
+        <div class="pg-next" id="nextBtn" onclick="changePage(1)">
+          Next
+          <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+      </div>
+    </div>
+    <div class="end-msg" id="endMsg" style="display:none;">⭐ You've seen all featured songs!</div>
+
+    <div class="spacer"></div>
+  </div>
+
+  <!-- MINI PLAYER -->
+  <div class="mini-player">
+    <div class="mp-top">
+      <div class="mp-art">🎵</div>
+      <div class="mp-inf">
+        <div class="mp-title">Fallen Stars</div>
+        <div class="mp-artist">Amara Soul</div>
+      </div>
+      <div class="mp-ctrl">
+        <svg viewBox="0 0 24 24"><polygon points="19 20 9 12 19 4 19 20"/><line x1="5" y1="19" x2="5" y2="5"/></svg>
+        <div class="mp-play"><svg viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg></div>
+        <svg viewBox="0 0 24 24"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19"/></svg>
+      </div>
+    </div>
+    <div class="mp-prog">
+      <span class="mp-t">0:48</span>
+      <div class="mp-bar"><div class="mp-fill"></div></div>
+      <span class="mp-t">3:42</span>
+    </div>
+  </div>
+
+  <!-- BOTTOM NAV (Home · Wa'azi · Explore · Favourites · Profile) -->
+  <div class="bnav">
+    <a class="ni on" href="song_portal_web.html" style="text-decoration:none;color:inherit;"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><div class="nl">Home</div></a>
+    <a class="ni" href="shurafah_waazi.html" style="text-decoration:none;color:inherit;"><svg viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg><div class="nl">Wa'azi</div></a>
+    <a class="ni" href="shurafah_explore.html" style="text-decoration:none;color:inherit;"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><div class="nl">Explore</div></a>
+    <a class="ni" href="favourites_page.html" style="text-decoration:none;color:inherit;"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg><div class="nl">Favourites</div></a>
+    <a class="ni" href="user_profile_page.html" style="text-decoration:none;color:inherit;"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><div class="nl">Profile</div></a>
+  </div>
+</div>
+
+<script>
+// Clock
+function tick(){const n=new Date();const clkEl=document.getElementById('clk');if(clkEl)clkEl.textContent=String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0');}
+tick();setInterval(tick,30000);
+
+function fmtNum(n){return n>=1000000?(n/1000000).toFixed(1)+'M':n>=1000?(n/1000).toFixed(0)+'K':n;}
+function rand(a,b){return Math.floor(Math.random()*(b-a+1))+a;}
+
+const TITLES=['Fallen Stars','Grace Rain','Overflow','Morning Dew','Deep Calls','Ya Nabi Salamu','Salatin Awliya','Zaman Lafiya','Muhibbul Husayn','Nasrun min Allah','Qasida Burda','Manaqib e Ali','Laila Tul Qadr','Karbala Remix','Wakar Sallah','Wasiyya','Asma ul Husna','Bismillah','Al Fatihah','Dua Kumayl','Ziyarat Ashura','Ya Hussain','Durar al Aqiqah','Mafatih al Jinan','Wakar Annabi','Kubra Shahida ce','Tattaki','Zunar Jini','Taba ku lashe','River Flow','Holy Ground','Come Alive'];
+const ARTISTS=['Amara Soul','Uzairu Badamasi','Ahmad Isah','Yusuf Badamasi','Maishurafah','Ibrahim Khali','Sa\'idu Arzika','Nathaniel Bassey','Sinach','Tope Alabi','Frank Edwards','Dunsin Oyekan'];
+const TAGS_POOL=['hot','new','top','rising','collab','remix'];
+const TAG_META={
+  hot:{label:'🔥 Hot',cls:'tag-hot'},
+  new:{label:'✨ New',cls:'tag-new'},
+  top:{label:'👑 Top Pick',cls:'tag-top'},
+  rising:{label:'⚡ Rising',cls:'tag-fire'},
+  collab:{label:'🤝 Collab',cls:'tag-collab'},
+  remix:{label:'🔄 Remix',cls:'tag-remix'}
+};
+const GRADS=['g1','g2','g3','g4','g5','g6','g7','g8'];
+const CARD_VARS=['fc-v1','fc-v2','fc-v3','fc-v4','fc-v5','fc-v6'];
+const EMOJIS=['🎵','🎶','🎸','🎼','🎤','🎹','🎙️','🌟'];
+const PLAY_GRADS=['g1','g2','g3','g4','g5','g6','g7','g8'];
+
+const ALL_SONGS = Array.from({length:156},(_,i)=>{
+  const plays=rand(200000,3200000);
+  const dls=Math.floor(plays*(0.25+Math.random()*0.3));
+  const mins=rand(3,7),secs=rand(0,59);
+  const tagCount=rand(1,2);
+  const tags=[];
+  const pool=[...TAGS_POOL];
+  for(let t=0;t<tagCount;t++){
+    const idx=rand(0,pool.length-1);
+    tags.push(pool.splice(idx,1)[0]);
+  }
+  return{
+    title:TITLES[i%TITLES.length]+(i>=TITLES.length?' '+(Math.floor(i/TITLES.length)+1):''),
+    artist:ARTISTS[i%ARTISTS.length],
+    grad:GRADS[i%GRADS.length],
+    cardVar:CARD_VARS[i%CARD_VARS.length],
+    playGrad:PLAY_GRADS[i%PLAY_GRADS.length],
+    emoji:EMOJIS[i%EMOJIS.length],
+    dur:`${mins}:${String(secs).padStart(2,'0')}`,
+    plays,dls,
+    tags,
+    liked:Math.random()>0.55,
+    thumbnail:null
+  };
+});
+
+const PER_PAGE=8;
+let currentPage=1;
+let currentFilter='all';
+let currentView='card';
+let filteredSongs=[...ALL_SONGS];
+
+function getFiltered(){
+  return currentFilter==='all'?[...ALL_SONGS]:ALL_SONGS.filter(s=>s.tags.includes(currentFilter));
+}
+function totalPages(){return Math.ceil(filteredSongs.length/PER_PAGE);}
+
+function setView(v){
+  currentView=v;
+  document.getElementById('cardView').style.display=v==='card'?'flex':'none';
+  document.getElementById('listView').style.display=v==='list'?'flex':'none';
+  document.getElementById('listView').style.flexDirection='column';
+  document.getElementById('cardViewBtn').classList.toggle('active',v==='card');
+  document.getElementById('listViewBtn').classList.toggle('active',v==='list');
+  renderSongs();
+}
+
+function renderSongs(){
+  filteredSongs=getFiltered();
+  const tp=totalPages();
+  if(currentPage>tp)currentPage=1;
+  const start=(currentPage-1)*PER_PAGE,end=Math.min(start+PER_PAGE,filteredSongs.length);
+  const page=filteredSongs.slice(start,end);
+
+  document.getElementById('rangeLabel').textContent=`${start+1}–${end}`;
+  document.getElementById('totalLabel').textContent=filteredSongs.length;
+  document.getElementById('curPage').textContent=currentPage;
+  document.getElementById('totalPages').textContent=tp;
+  document.getElementById('perPageLabel').textContent=PER_PAGE;
+  document.getElementById('progressFill').style.width=(currentPage/tp*100)+'%';
+  document.getElementById('endMsg').style.display=currentPage===tp?'block':'none';
+  document.getElementById('paginationWrap').style.display=tp<=1?'none':'block';
+  document.getElementById('prevBtn').classList.toggle('disabled',currentPage===1);
+  document.getElementById('nextBtn').classList.toggle('disabled',currentPage===tp);
+
+  // Dots
+  const dots=document.getElementById('pageDots');dots.innerHTML='';
+  for(let p=Math.max(1,currentPage-2);p<=Math.min(tp,currentPage+2);p++){
+    const d=document.createElement('div');
+    d.className='pdot'+(p===currentPage?' active':'');
+    d.onclick=(()=>{const pp=p;return()=>goToPage(pp);})();
+    dots.appendChild(d);
+  }
+
+  if(currentView==='card'){
+    const grid=document.getElementById('cardView');grid.innerHTML='';
+    page.forEach((s,i)=>{
+      const tagsHtml=s.tags.map(t=>`<div class="fc-tag ${TAG_META[t].cls}">${TAG_META[t].label}</div>`).join('');
+      const card=document.createElement('div');
+      card.className=`feat-card ${s.cardVar}`;
+      card.style.animationDelay=(i*0.06)+'s';
+      card.style.animation='fadeUp 0.3s ease forwards';
+      card.style.opacity='0';
+      card.innerHTML=`
+        <div class="fc-art ${s.grad}" style="${s.thumbnail?'background-image:url('+s.thumbnail+');background-size:cover;background-position:center;':''}">${s.thumbnail?'':''+s.emoji}<div class="fc-featured-dot"></div></div>
+        <div class="fc-body">
+          <div class="fc-title">${s.title}</div>
+          <div class="fc-artist">${s.artist}</div>
+          <div class="fc-tags">${tagsHtml}</div>
+          <div class="fc-stats">
+            <div class="fc-stat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>${fmtNum(s.plays)}</div>
+            <div class="fc-stat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v10M8 9l4 4 4-4"/><path d="M5 19h14"/></svg>${fmtNum(s.dls)}</div>
+          </div>
+        </div>
+        <div class="fc-right">
+          <div class="fc-dur">${s.dur}</div>
+          <div class="fc-actions">
+            <div class="heart ${s.liked?'liked':''}" data-idx="${start+i}">
+              <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+            </div>
+            <div class="play-circle ${s.playGrad}"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg></div>
+          </div>
+        </div>`;
+      card.addEventListener('click', function(e) {
+        if (e.target.closest('.heart') || e.target.closest('.play-circle')) return;
+        window.location.href = 'song_detail_page.html';
+      });
+      card.querySelector('.play-circle').addEventListener('click', function(e) {
+        e.stopPropagation();
+        window.location.href = 'song_detail_page.html';
+      });
+      grid.appendChild(card);
+    });
+  } else {
+    const list=document.getElementById('listView');list.innerHTML='';
+    page.forEach((s,i)=>{
+      const row=document.createElement('div');
+      row.className='list-row';
+      row.style.animation='fadeUp 0.3s ease forwards';
+      row.style.animationDelay=(i*0.04)+'s';
+      row.style.opacity='0';
+      const tagsHtml=s.tags.map(t=>`<div class="fc-tag ${TAG_META[t].cls}" style="font-size:7px;padding:1px 5px;">${TAG_META[t].label}</div>`).join('');
+      row.innerHTML=`
+        <div class="lr-num">${start+i+1}</div>
+        <div class="lr-thumb ${s.grad}" style="${s.thumbnail?'background-image:url('+s.thumbnail+');background-size:cover;background-position:center;':''}">${s.thumbnail?'':s.emoji}</div>
+        <div class="lr-info">
+          <div class="lr-title">${s.title}</div>
+          <div class="lr-artist">${s.artist}</div>
+          <div style="display:flex;gap:4px;margin-top:2px;">${tagsHtml}</div>
+        </div>
+        <div class="lr-right">
+          <div class="lr-dur">${s.dur}</div>
+          <div class="heart ${s.liked?'liked':''}" data-idx="${start+i}">
+            <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+          </div>
+        </div>`;
+      row.addEventListener('click', function(e) {
+        if (e.target.closest('.heart')) return;
+        window.location.href = 'song_detail_page.html';
+      });
+      list.appendChild(row);
+    });
+  }
+
+  // Heart toggles
+  document.querySelectorAll('.heart[data-idx]').forEach(h=>{
+    h.addEventListener('click',e=>{
+      e.stopPropagation();
+      h.classList.toggle('liked');
+      filteredSongs[parseInt(h.dataset.idx)].liked=!filteredSongs[parseInt(h.dataset.idx)].liked;
+    });
+  });
+
+  document.querySelector('.scroll').scrollTop=0;
+}
+
+function changePage(dir){
+  const tp=totalPages();
+  if(currentPage+dir>=1&&currentPage+dir<=tp){currentPage+=dir;renderSongs();}
+}
+function goToPage(p){currentPage=p;renderSongs();}
+
+// Filter pills
+document.getElementById('filterRow').addEventListener('click',e=>{
+  const pill=e.target.closest('.fpill');
+  if(!pill)return;
+  document.querySelectorAll('.fpill').forEach(p=>p.className='fpill off');
+  pill.className='fpill on';
+  currentFilter=pill.dataset.filter;
+  currentPage=1;
+  renderSongs();
+});
+
+// Theme
+const _t=document.getElementById('themeToggle'),_i=document.getElementById('ttIcon'),_l=document.getElementById('ttLabel');
+function applyTheme(isLight){document.body.classList.toggle('light',isLight);_i.textContent=isLight?'☀️':'🌙';_l.textContent=isLight?'Light':'Dark';}
+applyTheme(localStorage.getItem('shurafah-theme')==='light');
+_t.addEventListener('click',()=>{const n=!document.body.classList.contains('light');applyTheme(n);localStorage.setItem('shurafah-theme',n?'light':'dark');});
+
+// Init
+renderSongs();
+
+// Mini player
+var _mpPlay = document.querySelector('.mp-play');
+var _mpPlaying = false;
+if (_mpPlay) {
+  _mpPlay.addEventListener('click', function() {
+    _mpPlaying = !_mpPlaying;
+    this.innerHTML = _mpPlaying
+      ? '<svg viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16" fill="white"/><rect x="14" y="4" width="4" height="16" fill="white"/></svg>'
+      : '<svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3" fill="white"/></svg>';
+  });
+}
+var _mpArt = document.querySelector('.mp-art'), _mpInf = document.querySelector('.mp-inf');
+if (_mpArt) { _mpArt.style.cursor='pointer'; _mpArt.addEventListener('click', function(){ window.location.href='song_detail_page.html'; }); }
+if (_mpInf) { _mpInf.style.cursor='pointer'; _mpInf.addEventListener('click', function(){ window.location.href='song_detail_page.html'; }); }
+var _mpCtrl = document.querySelectorAll('.mp-ctrl > svg');
+if (_mpCtrl[0]) { _mpCtrl[0].style.cursor='pointer'; _mpCtrl[0].addEventListener('click', function(){ _mpPlaying=true; if(_mpPlay){_mpPlay.innerHTML='<svg viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16" fill="white"/><rect x="14" y="4" width="4" height="16" fill="white"/></svg>';} }); }
+if (_mpCtrl[1]) { _mpCtrl[1].style.cursor='pointer'; _mpCtrl[1].addEventListener('click', function(){ _mpPlaying=true; if(_mpPlay){_mpPlay.innerHTML='<svg viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16" fill="white"/><rect x="14" y="4" width="4" height="16" fill="white"/></svg>';} }); }
+
+// Initialize Ads System
+if (typeof ADS !== 'undefined') {
+  ADS.setUserType('guest');
+  ADS.init({
+    enabled: true,
+    placements: {
+      headerBanner: { enabled: true },
+      inFeed: { enabled: true, frequency: 5 },
+      downloadModal: { enabled: true, timer: 5 }
+    }
+  });
+}
+</script>
+<script src="ads.js"></script>
+</body>
+</html>

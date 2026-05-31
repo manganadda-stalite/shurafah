@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Shurafah — All Playlists</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#080B12;--surface:#0F1420;--surface2:#161C2E;--surface3:#1E2740;--surface4:#263050;
+  --accent:#FF6B35;--accent2:#FFB347;
+  --blue:#4D9FFF;--green:#2ECC8F;--purple:#9B6BFF;--pink:#FF4D8F;--yellow:#FFD166;--teal:#00C9B8;
+  --text:#F0F4FF;--text2:#8A94B0;--text3:#4A5270;
+  --border:rgba(255,255,255,0.06);
+  --orange:linear-gradient(135deg,#FF6B35,#FFB347);
+}
+body.light{
+  --bg:#F4F6FC;--surface:#FFFFFF;--surface2:#E8ECF7;--surface3:#D8DEEF;
+  --text:#12172E;--text2:#5A6380;--text3:#9AA0BA;
+  --border:rgba(0,0,0,0.07);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--text);min-height:100vh;display:flex;flex-direction:column;transition:background .3s,color .3s;}
+.phone{width:100%;background:var(--bg);display:flex;flex-direction:column;min-height:100vh;position:relative;}
+.scroll{flex:1;overflow-y:auto;overflow-x:hidden;scrollbar-width:none;padding-bottom:88px;}
+.scroll::-webkit-scrollbar{display:none;}
+
+/* HEADER */
+.tbar{display:flex;align-items:center;justify-content:space-between;padding:14px 18px 4px;gap:10px;}
+.tb-back{width:36px;height:36px;background:var(--surface);border-radius:50%;display:flex;align-items:center;justify-content:center;border:1px solid var(--border);cursor:pointer;flex-shrink:0;text-decoration:none;color:inherit;transition:background .2s;}
+.tb-back:hover{background:var(--surface2);}
+.tb-back svg{width:14px;height:14px;fill:none;stroke:var(--text);stroke-width:2;}
+.tb-title{flex:1;font-family:sans-serif;font-size:17px;font-weight:800;letter-spacing:-.3px;text-align:center;background:var(--orange);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.theme-toggle{display:inline-flex;align-items:center;gap:6px;background:var(--surface2);border-radius:50px;padding:5px 10px 5px 8px;border:1.5px solid var(--accent);cursor:pointer;flex-shrink:0;transition:background .2s;}
+.tt-icon{font-size:13px;}
+.tt-label{font-family:sans-serif;font-size:10px;font-weight:700;color:var(--accent);letter-spacing:.3px;}
+
+/* STATS */
+.stats-bar{display:flex;gap:0;padding:10px 18px 0;}
+.stat-chip{flex:1;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:10px 12px;text-align:center;margin:0 3px;}
+.stat-chip:first-child{margin-left:0;}.stat-chip:last-child{margin-right:0;}
+.stat-v{font-family:sans-serif;font-size:16px;font-weight:800;background:var(--orange);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.stat-l{font-size:9px;color:var(--text3);}
+
+/* SEARCH */
+.sw{padding:10px 18px 0;}
+.sb{background:var(--surface);border:1px solid var(--border);border-radius:14px;display:flex;align-items:center;gap:10px;padding:10px 14px;transition:border-color .2s;}
+.sb:focus-within{border-color:var(--accent);}
+.sb svg{width:14px;height:14px;fill:none;stroke:var(--text3);stroke-width:2;flex-shrink:0;}
+.sb input{background:transparent;border:none;outline:none;color:var(--text);font-size:13px;flex:1;font-family:'DM Sans',sans-serif;}
+.sb input::placeholder{color:var(--text3);}
+
+/* FILTER PILLS */
+.fp{display:flex;gap:7px;padding:10px 18px 0;overflow-x:auto;scrollbar-width:none;}
+.fp::-webkit-scrollbar{display:none;}
+.pill{flex-shrink:0;padding:6px 14px;border-radius:50px;font-family:sans-serif;font-size:10px;font-weight:700;cursor:pointer;white-space:nowrap;background:var(--surface);color:var(--text2);border:1px solid var(--border);transition:all .15s;}
+.pill.on{background:linear-gradient(135deg,var(--accent),var(--accent2));color:white;border-color:transparent;box-shadow:0 3px 10px rgba(255,107,53,.3);}
+
+/* TOOLBAR */
+.toolbar{display:flex;align-items:center;gap:8px;padding:10px 18px 8px;}
+.shead-c{font-size:10px;color:var(--text3);margin-right:auto;font-family:sans-serif;font-weight:600;}
+.sort-sel{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:5px 10px;font-size:11px;color:var(--text);font-family:'DM Sans',sans-serif;outline:none;cursor:pointer;}
+.vt-wrap{display:flex;gap:4px;}
+.vt-btn{width:30px;height:30px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;}
+.vt-btn.on{background:linear-gradient(135deg,var(--accent),var(--accent2));border-color:transparent;}
+.vt-btn svg{width:14px;height:14px;fill:none;stroke:var(--text2);stroke-width:2;}
+.vt-btn.on svg{stroke:white;}
+
+/* GRID VIEW */
+.pl-grid{display:flex;flex-direction:column;gap:14px;padding:0 18px;}
+.pcard{background:var(--surface);border:1px solid var(--border);border-radius:18px;overflow:hidden;cursor:pointer;transition:transform .15s,box-shadow .15s;}
+.pcard:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(0,0,0,.4);}
+.pcard-cover{height:110px;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden;}
+.pcard-emoji{font-size:42px;z-index:1;position:relative;}
+.pcard-cover-ov{position:absolute;inset:0;background:linear-gradient(to bottom,transparent 35%,rgba(15,20,32,.95));z-index:0;}
+.pcard-cnt{position:absolute;top:10px;right:12px;background:rgba(0,0,0,.5);backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:3px 9px;font-size:9px;font-family:sans-serif;font-weight:700;color:var(--accent2);}
+.pcard-type{position:absolute;top:10px;left:10px;font-size:8px;font-family:sans-serif;font-weight:700;padding:2px 7px;border-radius:50px;}
+.pcard-type.official{background:rgba(255,179,71,.15);color:var(--accent2);border:1px solid rgba(255,179,71,.3);}
+.pcard-type.featured{background:rgba(255,107,53,.15);color:var(--accent);border:1px solid rgba(255,107,53,.3);}
+.pcard-type.user{background:rgba(77,159,255,.12);color:var(--blue);border:1px solid rgba(77,159,255,.25);}
+.pcard-type.auto{background:rgba(46,204,143,.12);color:var(--green);border:1px solid rgba(46,204,143,.25);}
+.pcard-type.collab{background:rgba(155,107,255,.12);color:var(--purple);border:1px solid rgba(155,107,255,.25);}
+.pcard-body{padding:12px 14px 14px;}
+.pcard-title{font-family:sans-serif;font-size:15px;font-weight:800;margin-bottom:4px;line-height:1.3;}
+.pcard-owner{font-size:11px;color:var(--text2);margin-bottom:10px;display:flex;align-items:center;gap:5px;}
+.pcard-owner-dot{width:16px;height:16px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:8px;}
+.pcard-meta{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+.pmeta{display:flex;align-items:center;gap:4px;font-size:10px;color:var(--text3);}
+.pmeta svg{width:11px;height:11px;fill:none;stroke:currentColor;stroke-width:2;}
+.pcard-actions{display:flex;gap:8px;}
+.pcard-btn{flex:1;border-radius:10px;padding:9px 0;text-align:center;font-family:sans-serif;font-size:11px;font-weight:700;cursor:pointer;border:none;transition:opacity .15s;}
+.pcard-btn-play{background:linear-gradient(135deg,var(--accent),var(--accent2));color:white;}
+.pcard-btn-play:hover{opacity:.88;}
+.pcard-btn-songs{background:var(--surface2);color:var(--text2);border:1px solid var(--border);}
+.pcard-btn-songs:hover{color:var(--text);}
+
+/* LIST VIEW */
+.pl-list{display:flex;flex-direction:column;gap:10px;padding:0 18px;}
+.lrow{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:12px;cursor:pointer;transition:background .15s;}
+.lrow:hover{background:var(--surface2);}
+.lrow-thumb{width:54px;height:54px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;}
+.lrow-body{flex:1;min-width:0;}
+.lrow-type{font-size:8px;font-family:sans-serif;font-weight:700;border-radius:4px;padding:2px 7px;display:inline-block;margin-bottom:4px;}
+.lrow-title{font-family:sans-serif;font-size:13px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-bottom:2px;}
+.lrow-meta{font-size:10px;color:var(--text3);}
+.lrow-cnt{font-size:9px;font-family:sans-serif;font-weight:700;color:var(--accent2);margin-top:2px;}
+.lrow-actions{display:flex;flex-direction:column;gap:6px;flex-shrink:0;}
+.lrow-play{width:34px;height:34px;background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;color:white;font-size:11px;}
+.lrow-songs{width:34px;height:34px;background:var(--surface2);border:1px solid var(--border);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text2);font-size:13px;}
+
+/* GRADIENTS */
+.g1{background:linear-gradient(135deg,#1A0A2E,#2D1B69);}
+.g2{background:linear-gradient(135deg,#1A100A,#3A2006);}
+.g3{background:linear-gradient(135deg,#1A0A14,#3A1030);}
+.g4{background:linear-gradient(135deg,#0A1A0A,#0E3A1A);}
+.g5{background:linear-gradient(135deg,#1A150A,#3A2E0A);}
+.g6{background:linear-gradient(135deg,#0A1020,#0A1A3A);}
+.g7{background:linear-gradient(135deg,#1A0A12,#3A1020);}
+.g8{background:linear-gradient(135deg,#0A1A18,#0E3A28);}
+
+/* PAGINATION */
+.pagination{display:flex;align-items:center;justify-content:center;gap:6px;padding:16px 18px 6px;}
+.pg-btn{min-width:32px;height:32px;padding:0 8px;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text2);font-family:sans-serif;font-size:11px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;transition:all .15s;}
+.pg-btn:hover:not(:disabled){background:var(--surface2);color:var(--text);}
+.pg-btn.on{background:linear-gradient(135deg,var(--accent),var(--accent2));color:white;border-color:transparent;}
+.pg-btn:disabled{opacity:.35;cursor:not-allowed;}
+
+/* EMPTY */
+.empty{padding:48px 24px;text-align:center;}
+.empty-icon{font-size:40px;margin-bottom:12px;}
+.empty-msg{font-family:sans-serif;font-size:13px;font-weight:700;color:var(--text3);}
+
+/* BOTTOM NAV */
+.bnav{position:fixed;bottom:0;left:0;right:0;width:100%;height:64px;background:var(--surface);border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-around;z-index:50;transition:background .3s;}
+.ni{display:flex;flex-direction:column;align-items:center;gap:3px;padding:4px 10px;cursor:pointer;text-decoration:none;color:var(--text3);transition:color .15s;}
+.ni svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;}
+.ni .nl{font-size:9px;font-family:sans-serif;font-weight:700;}
+.ni.on{color:var(--accent);}
+
+/* ── RESPONSIVE ── */
+@media (min-width:640px){
+  .tbar{padding:16px 24px 6px;}
+  .stats-bar{padding:10px 24px 0;}
+  .sw{padding:10px 24px 0;}
+  .fp{padding:10px 24px 0;}
+  .toolbar{padding:10px 24px 8px;}
+  .pl-grid{padding:0 24px;}
+  .pl-list,.pagination{padding-left:24px;padding-right:24px;}
+  .bnav{padding:0 24px;}
+  .ni{padding:4px 16px;}
+}
+@media (min-width:1024px){
+  .phone{max-width:1200px;margin:0 auto;}
+  .tbar{padding:20px 40px 8px;}
+  .stats-bar{padding:14px 40px 0;}
+  .sw{padding:12px 40px 0;}
+  .fp{padding:12px 40px 0;}
+  .toolbar{padding:12px 40px 10px;}
+  .pl-grid{padding:0 40px;display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  .pl-list,.pagination{padding-left:40px;padding-right:40px;}
+  .pcard-cover{height:130px;}
+  .pcard-title{font-size:16px;}
+  .bnav{max-width:1200px;left:50%;transform:translateX(-50%);padding:0 40px;}
+  .ni{padding:4px 20px;}
+}
+@media (min-width:1300px){
+  .pl-grid{grid-template-columns:repeat(3,1fr);}
+}
+@media (max-width:480px){
+  .tbar{padding:12px 14px 4px;}
+  .stats-bar{padding:8px 14px 0;}
+  .sw{padding:8px 14px 0;}
+  .fp{padding:8px 14px 0;}
+  .toolbar{padding:8px 14px 6px;flex-wrap:wrap;}
+  .shead-c{width:100%;margin-bottom:2px;}
+  .pl-grid,.pl-list,.pagination{padding-left:14px;padding-right:14px;}
+  .ni{padding:4px 6px;}
+  .ni .nl{font-size:8px;}
+  .ni svg{width:18px;height:18px;}
+}
+</style>
+</head>
+<body>
+<div class="phone">
+  <div class="scroll">
+
+    <!-- HEADER -->
+    <div class="tbar">
+      <a class="tb-back" href="song_portal_web.html"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></a>
+      <div class="tb-title">🎵 All Playlists</div>
+      <div class="theme-toggle" id="themeToggle">
+        <span class="tt-icon" id="ttIcon">🌙</span>
+        <span class="tt-label" id="ttLabel">Dark</span>
+      </div>
+    </div>
+
+    <!-- STATS -->
+    <div class="stats-bar">
+      <div class="stat-chip"><div class="stat-v" id="statTotal">16</div><div class="stat-l">Playlists</div></div>
+      <div class="stat-chip"><div class="stat-v">2.4M</div><div class="stat-l">Total Plays</div></div>
+      <div class="stat-chip"><div class="stat-v">12</div><div class="stat-l">Featured</div></div>
+    </div>
+
+    <!-- SEARCH -->
+    <div class="sw">
+      <div class="sb">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" id="searchInput" placeholder="Search playlists, categories…">
+      </div>
+    </div>
+
+    <!-- FILTER PILLS -->
+    <div class="fp" id="filterPills">
+      <div class="pill on" data-filter="all">All</div>
+      <div class="pill" data-filter="official">Official</div>
+      <div class="pill" data-filter="featured">Featured</div>
+      <div class="pill" data-filter="user">User Created</div>
+      <div class="pill" data-filter="auto">Auto-Generated</div>
+      <div class="pill" data-filter="collab">Collaborative</div>
+    </div>
+
+    <!-- TOOLBAR -->
+    <div class="toolbar">
+      <span class="shead-c" id="countLabel">16 playlists</span>
+      <select class="sort-sel" id="sortSelect">
+        <option value="popular">Most Played</option>
+        <option value="songs">Most Songs</option>
+        <option value="recent">Newest</option>
+        <option value="az">A – Z</option>
+      </select>
+      <div class="vt-wrap">
+        <div class="vt-btn on" id="vtGrid" title="Grid view"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg></div>
+        <div class="vt-btn" id="vtList" title="List view"><svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg></div>
+      </div>
+    </div>
+
+    <!-- CONTENT -->
+    <div id="plContainer"></div>
+    <div class="pagination" id="pagination"></div>
+    <div style="height:16px;"></div>
+
+  </div>
+
+  <!-- BOTTOM NAV -->
+  <div class="bnav">
+    <a class="ni on" href="song_portal_web.html"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><div class="nl">Home</div></a>
+    <a class="ni" href="shurafah_waazi.html"><svg viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg><div class="nl">Wa'azi</div></a>
+    <a class="ni" href="shurafah_explore.html"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><div class="nl">Explore</div></a>
+    <a class="ni" href="favourites_page.html"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg><div class="nl">Favourites</div></a>
+    <a class="ni" href="user_profile_page.html"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><div class="nl">Profile</div></a>
+  </div>
+</div>
+
+<script>
+/* ── DATA (mirrors admin playlist management) ── */
+var PLAYLISTS = [
+  {id:1,  title:'Ashura Collection',       emoji:'☪️', grad:'g1', type:'official', featured:true,  category:'Ashura',  songs:28, duration:'1h 52min', plays:'420K', followers:'8.2K' },
+  {id:2,  title:'Sunday Morning Nasheeds', emoji:'🌅', grad:'g2', type:'official', featured:true,  category:'Shairai', songs:18, duration:'1h 14min', plays:'310K', followers:'6.4K' },
+  {id:3,  title:'Muharram Vibes',          emoji:'🌙', grad:'g3', type:'official', featured:false, category:'Ashura',  songs:22, duration:'1h 28min', plays:'284K', followers:'5.1K' },
+  {id:4,  title:'Maulud Classics',         emoji:'🎉', grad:'g4', type:'official', featured:true,  category:'Maulud',  songs:15, duration:'58min',    plays:'198K', followers:'3.8K' },
+  {id:5,  title:'Best of Uzairu',          emoji:'🎤', grad:'g5', type:'official', featured:true,  category:'Mix',     songs:32, duration:'2h 08min', plays:'640K', followers:'12.1K'},
+  {id:6,  title:'Deep Night Worship',      emoji:'🕯️', grad:'g6', type:'official', featured:false, category:'Shairai', songs:12, duration:'48min',    plays:'152K', followers:'2.9K' },
+  {id:7,  title:'Karbala Remembrance',     emoji:'🌹', grad:'g7', type:'official', featured:false, category:'Shuhada', songs:24, duration:'1h 36min', plays:'228K', followers:'4.6K' },
+  {id:8,  title:'Ramadan Special 2026',    emoji:'⭐', grad:'g8', type:'official', featured:true,  category:'Mix',     songs:30, duration:'2h 01min', plays:'580K', followers:'9.8K' },
+  {id:9,  title:'Ahmad Isah Best',         emoji:'🎵', grad:'g1', type:'official', featured:false, category:'Shairai', songs:20, duration:'1h 18min', plays:'190K', followers:'3.4K' },
+  {id:10, title:'Shuhada Anthems',         emoji:'⚔️', grad:'g2', type:'official', featured:false, category:'Shuhada', songs:16, duration:'1h 04min', plays:'144K', followers:'2.7K' },
+  {id:11, title:'My Morning Playlist',     emoji:'🌄', grad:'g3', type:'user',     featured:false, category:'Mix',     songs:10, duration:'42min',    plays:'1.2K', followers:'48'   },
+  {id:12, title:'Favourite Nasheeds',      emoji:'❤️', grad:'g4', type:'user',     featured:false, category:'Mix',     songs:24, duration:'1h 38min', plays:'3.8K', followers:'124'  },
+  {id:13, title:'Ashura 2026 Mix',         emoji:'🎶', grad:'g5', type:'user',     featured:false, category:'Ashura',  songs:8,  duration:'34min',    plays:'980',  followers:'21'   },
+  {id:14, title:'Auto: Top Shairai',       emoji:'🤖', grad:'g6', type:'auto',     featured:false, category:'Shairai', songs:50, duration:'3h 22min', plays:'88K',  followers:'1.4K' },
+  {id:15, title:'Auto: Trending Today',    emoji:'🔥', grad:'g7', type:'auto',     featured:false, category:'Mix',     songs:20, duration:'1h 12min', plays:'52K',  followers:'840'  },
+  {id:16, title:'Kano Chapter Collab',     emoji:'🤝', grad:'g8', type:'collab',   featured:false, category:'Mix',     songs:36, duration:'2h 24min', plays:'22K',  followers:'640'  }
+];
+
+var typeLabels = {official:'✓ Official', featured:'⭐ Featured', user:'👤 User', auto:'⚡ Auto', collab:'🤝 Collab'};
+
+var currentFilter = 'all';
+var currentSort   = 'popular';
+var currentView   = 'grid';
+var currentPage   = 1;
+var PG_GRID = 6;
+var PG_LIST = 8;
+var _filtered = PLAYLISTS.slice();
+
+/* ── Sort ── */
+function getSorted(list) {
+  var s = list.slice();
+  if (currentSort === 'popular') {
+    s.sort(function(a,b){ return parseFloat(b.plays) - parseFloat(a.plays); });
+  } else if (currentSort === 'songs') {
+    s.sort(function(a,b){ return b.songs - a.songs; });
+  } else if (currentSort === 'recent') {
+    s.sort(function(a,b){ return b.id - a.id; });
+  } else {
+    s.sort(function(a,b){ return a.title.localeCompare(b.title); });
+  }
+  return s;
+}
+
+/* ── Render ── */
+function renderPage() {
+  var cont = document.getElementById('plContainer');
+  cont.innerHTML = '';
+  var list = _filtered;
+  if (!list.length) {
+    cont.innerHTML = '<div class="empty"><div class="empty-icon">📭</div><div class="empty-msg">No playlists found</div></div>';
+    document.getElementById('pagination').innerHTML = '';
+    return;
+  }
+  var pageSize = currentView === 'grid' ? PG_GRID : PG_LIST;
+  var totalPages = Math.ceil(list.length / pageSize);
+  if (currentPage > totalPages) currentPage = 1;
+  var start = (currentPage - 1) * pageSize;
+  var pageItems = list.slice(start, start + pageSize);
+  var typeDisplay = currentView === 'grid' ? 'pcard-type' : 'lrow-type';
+
+  if (currentView === 'grid') {
+    cont.className = 'pl-grid';
+    for (var i = 0; i < pageItems.length; i++) {
+      var p = pageItems[i];
+      var tLabel = p.featured ? typeLabels.featured : typeLabels[p.type] || p.type;
+      var tClass = p.featured ? 'featured' : p.type;
+      var card = document.createElement('div');
+      card.className = 'pcard';
+      var pThumb = p.thumbnail ? 'style="background-image:url('+p.thumbnail+');background-size:cover;background-position:center;"' : '';
+      card.innerHTML =
+        '<div class="pcard-cover ' + p.grad + '" ' + pThumb + '>' +
+          '<div class="pcard-cover-ov"></div>' +
+          (p.thumbnail ? '' : '<span class="pcard-emoji">' + p.emoji + '</span>') +
+          '<div class="pcard-cnt">' + p.songs + ' songs</div>' +
+          '<span class="pcard-type ' + tClass + '">' + tLabel + '</span>' +
+        '</div>' +
+        '<div class="pcard-body">' +
+          '<div class="pcard-title">' + p.title + '</div>' +
+          '<div class="pcard-owner"><span class="pcard-owner-dot g' + ((p.id % 8)+1) + '">🎵</span>' + p.category + '</div>' +
+          '<div class="pcard-meta">' +
+            '<div class="pmeta"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>' + p.plays + '</div>' +
+            '<div class="pmeta"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>' + p.followers + '</div>' +
+            '<div class="pmeta"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>' + p.duration + '</div>' +
+          '</div>' +
+          '<div class="pcard-actions">' +
+            '<button class="pcard-btn pcard-btn-play">\u25b6 Play</button>' +
+            '<button class="pcard-btn pcard-btn-songs">Songs</button>' +
+          '</div>' +
+        '</div>';
+      (function(pl) {
+        card.querySelector('.pcard-btn-play').addEventListener('click', function(e) {
+          e.stopPropagation(); window.location.href = 'song_detail_page.html';
+        });
+        card.querySelector('.pcard-btn-songs').addEventListener('click', function(e) {
+          e.stopPropagation(); window.location.href = 'playlist_songs.html?id=' + pl.id;
+        });
+        card.addEventListener('click', function() { window.location.href = 'playlist_songs.html?id=' + pl.id; });
+      })(p);
+      cont.appendChild(card);
+    }
+  } else {
+    cont.className = 'pl-list';
+    for (var j = 0; j < pageItems.length; j++) {
+      var lj = pageItems[j];
+      var ltLabel = lj.featured ? typeLabels.featured : typeLabels[lj.type] || lj.type;
+      var ltClass = lj.featured ? 'featured' : lj.type;
+      var row = document.createElement('div');
+      row.className = 'lrow';
+      var rThumb = lj.thumbnail ? 'style="background-image:url('+lj.thumbnail+');background-size:cover;background-position:center;"' : '';
+      row.innerHTML =
+        '<div class="lrow-thumb ' + lj.grad + '" ' + rThumb + '>' + (lj.thumbnail ? '' : lj.emoji) + '</div>' +
+        '<div class="lrow-body">' +
+          '<span class="lrow-type pcard-type ' + ltClass + '">' + ltLabel + '</span>' +
+          '<div class="lrow-title">' + lj.title + '</div>' +
+          '<div class="lrow-meta">' + lj.category + ' · ' + lj.plays + ' plays · ' + lj.duration + '</div>' +
+          '<div class="lrow-cnt">' + lj.songs + ' songs</div>' +
+        '</div>' +
+        '<div class="lrow-actions">' +
+          '<button class="lrow-play" title="Play">\u25b6</button>' +
+          '<button class="lrow-songs" title="View Songs">\u2261</button>' +
+        '</div>';
+      (function(pl) {
+        row.querySelector('.lrow-play').addEventListener('click', function(e) {
+          e.stopPropagation(); window.location.href = 'song_detail_page.html';
+        });
+        row.querySelector('.lrow-songs').addEventListener('click', function(e) {
+          e.stopPropagation(); window.location.href = 'playlist_songs.html?id=' + pl.id;
+        });
+        row.addEventListener('click', function() { window.location.href = 'playlist_songs.html?id=' + pl.id; });
+      })(lj);
+      cont.appendChild(row);
+    }
+  }
+  renderPagination(list.length, pageSize, totalPages);
+}
+
+function renderPagination(total, pageSize, totalPages) {
+  var pg = document.getElementById('pagination');
+  pg.innerHTML = '';
+  if (totalPages <= 1) return;
+  var prev = document.createElement('button');
+  prev.className = 'pg-btn'; prev.innerHTML = '&#8249;'; prev.disabled = currentPage === 1;
+  prev.addEventListener('click', function() { currentPage--; renderPage(); document.querySelector('.scroll').scrollTop = 0; });
+  pg.appendChild(prev);
+  var maxB = 5, startP = Math.max(1, currentPage - 2), endP = Math.min(totalPages, startP + maxB - 1);
+  if (endP - startP < maxB - 1) startP = Math.max(1, endP - maxB + 1);
+  for (var p = startP; p <= endP; p++) {
+    (function(n) {
+      var btn = document.createElement('button');
+      btn.className = 'pg-btn' + (n === currentPage ? ' on' : '');
+      btn.textContent = n;
+      btn.addEventListener('click', function() { currentPage = n; renderPage(); document.querySelector('.scroll').scrollTop = 0; });
+      pg.appendChild(btn);
+    })(p);
+  }
+  var next = document.createElement('button');
+  next.className = 'pg-btn'; next.innerHTML = '&#8250;'; next.disabled = currentPage === totalPages;
+  next.addEventListener('click', function() { currentPage++; renderPage(); document.querySelector('.scroll').scrollTop = 0; });
+  pg.appendChild(next);
+}
+
+function apply() {
+  var q = (document.getElementById('searchInput').value || '').trim().toLowerCase();
+  _filtered = getSorted(PLAYLISTS.filter(function(p) {
+    var cm = currentFilter === 'all' ||
+             (currentFilter === 'featured' && p.featured) ||
+             (currentFilter !== 'featured' && p.type === currentFilter);
+    var tm = !q || p.title.toLowerCase().indexOf(q) !== -1 || p.category.toLowerCase().indexOf(q) !== -1;
+    return cm && tm;
+  }));
+  currentPage = 1;
+  document.getElementById('countLabel').textContent = _filtered.length + ' playlist' + (_filtered.length !== 1 ? 's' : '');
+  document.getElementById('statTotal').textContent = _filtered.length;
+  renderPage();
+}
+
+/* ── Theme ── */
+function applyTheme(isLight) {
+  if (isLight) { document.body.classList.add('light'); document.getElementById('ttIcon').textContent='☀️'; document.getElementById('ttLabel').textContent='Light'; }
+  else { document.body.classList.remove('light'); document.getElementById('ttIcon').textContent='🌙'; document.getElementById('ttLabel').textContent='Dark'; }
+}
+applyTheme(localStorage.getItem('shurafah-theme') === 'light');
+document.getElementById('themeToggle').addEventListener('click', function() {
+  var n = !document.body.classList.contains('light');
+  applyTheme(n); localStorage.setItem('shurafah-theme', n ? 'light' : 'dark');
+});
+
+/* ── Filter pills ── */
+document.getElementById('filterPills').addEventListener('click', function(e) {
+  var pill = e.target.closest('.pill');
+  if (!pill) return;
+  document.querySelectorAll('.pill').forEach(function(p){ p.classList.remove('on'); });
+  pill.classList.add('on');
+  currentFilter = pill.getAttribute('data-filter');
+  apply();
+});
+
+/* ── Sort ── */
+document.getElementById('sortSelect').addEventListener('change', function() { currentSort = this.value; apply(); });
+
+/* ── View toggle ── */
+document.getElementById('vtGrid').addEventListener('click', function() {
+  currentView = 'grid';
+  document.getElementById('vtGrid').classList.add('on'); document.getElementById('vtList').classList.remove('on');
+  currentPage = 1; renderPage();
+});
+document.getElementById('vtList').addEventListener('click', function() {
+  currentView = 'list';
+  document.getElementById('vtList').classList.add('on'); document.getElementById('vtGrid').classList.remove('on');
+  currentPage = 1; renderPage();
+});
+
+/* ── Search ── */
+var searchTimer = null;
+document.getElementById('searchInput').addEventListener('input', function() {
+  clearTimeout(searchTimer); searchTimer = setTimeout(apply, 280);
+});
+
+/* ── Init ── */
+apply();
+</script>
+</body>
+</html>

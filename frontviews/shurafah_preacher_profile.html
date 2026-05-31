@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Shurafah — Preacher Profile</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&family=Amiri:ital,wght@0,400;0,700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#05070F;--surface:#0A0E1A;--surface2:#0F1525;--surface3:#141B2E;--surface4:#1A2238;
+  --accent:#C8860A;--accent2:#E8A020;--accent3:#F5C842;
+  --blue:#4D9FFF;--green:#2ECC8F;--purple:#9B6BFF;--pink:#FF4D8F;
+  --text:#F0F4FF;--text2:#8A94B0;--text3:#4A5270;
+  --border:rgba(255,255,255,0.06);
+  --gold:linear-gradient(135deg,#C8860A,#E8A020,#F5C842,#E8A020);
+}
+body.light{
+  --bg:#F4F6FC;--surface:#FFFFFF;--surface2:#E8ECF7;--surface3:#D8DEEF;
+  --text:#12172E;--text2:#5A6380;--text3:#9AA0BA;
+  --border:rgba(0,0,0,0.07);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);font-family:'DM Sans',sans-serif;color:var(--text);min-height:100vh;display:flex;flex-direction:column;}
+.phone{width:100%;background:var(--bg);display:flex;flex-direction:column;min-height:100vh;position:relative;}
+.scroll{flex:1;overflow-y:auto;overflow-x:hidden;scrollbar-width:none;padding-bottom:80px;}
+.scroll::-webkit-scrollbar{display:none;}
+
+/* HERO */
+.hero{position:relative;width:100%;height:230px;background:linear-gradient(160deg,#1A0E04 0%,#0E1A08 50%,#0A0C1A 100%);overflow:hidden;flex-shrink:0;}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 20% 30%,rgba(200,134,10,.35) 0%,transparent 55%),radial-gradient(ellipse at 80% 70%,rgba(77,159,255,.22) 0%,transparent 55%);}
+.hero-arabesque{position:absolute;top:8px;right:14px;font-family:'Amiri',serif;font-size:90px;color:var(--accent3);opacity:.07;line-height:1;}
+.hero-nav{position:absolute;top:0;left:0;right:0;display:flex;justify-content:space-between;align-items:center;padding:14px 16px 0;z-index:10;}
+.back-btn,.share-btn{width:32px;height:32px;background:rgba(0,0,0,.45);backdrop-filter:blur(10px);border-radius:50%;display:flex;align-items:center;justify-content:center;border:1px solid rgba(255,255,255,.1);cursor:pointer;text-decoration:none;color:inherit;}
+.back-btn svg,.share-btn svg{width:13px;height:13px;fill:none;stroke:white;stroke-width:2;}
+.theme-toggle{display:inline-flex;align-items:center;gap:6px;background:rgba(0,0,0,.55);backdrop-filter:blur(10px);border-radius:50px;padding:5px 11px 5px 9px;border:1.5px solid var(--accent2);cursor:pointer;}
+.theme-toggle .tt-icon{font-size:13px;}
+.theme-toggle .tt-label{font-family:sans-serif;font-size:10px;font-weight:700;color:var(--accent3);letter-spacing:.3px;}
+
+/* Avatar + name overlap */
+.identity{position:absolute;bottom:-44px;left:18px;right:18px;display:flex;align-items:flex-end;gap:14px;z-index:5;}
+.preacher-avatar{width:96px;height:96px;border-radius:50%;padding:3px;background:var(--gold);box-shadow:0 12px 32px rgba(200,134,10,.4);flex-shrink:0;}
+.preacher-avatar-inner{width:100%;height:100%;border-radius:50%;background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:42px;}
+.identity-info{flex:1;min-width:0;padding-bottom:10px;}
+.preacher-name{font-family:sans-serif;font-size:20px;font-weight:800;letter-spacing:-.3px;color:white;text-shadow:0 2px 12px rgba(0,0,0,.5);margin-bottom:2px;}
+.preacher-arabic{font-family:'Amiri',serif;font-size:16px;color:var(--accent3);margin-bottom:6px;}
+.preacher-handle{font-family:sans-serif;font-size:11px;color:rgba(255,255,255,.7);}
+
+/* Stats row */
+.stats{margin:60px 18px 0;display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+.stat{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:11px 8px;text-align:center;}
+.stat-v{font-family:sans-serif;font-size:15px;font-weight:800;color:var(--accent2);margin-bottom:2px;}
+.stat-l{font-size:9px;color:var(--text3);font-family:sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:.3px;}
+
+/* Actions */
+.actions{padding:16px 18px 0;display:flex;gap:8px;}
+.act-primary{flex:1;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:12px;padding:11px;font-family:sans-serif;font-size:12px;font-weight:700;color:#1A0800;text-align:center;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;}
+.act-primary svg{width:12px;height:12px;fill:#1A0800;}
+.act-secondary{padding:11px 18px;background:var(--surface);border:1px solid var(--accent);border-radius:12px;font-family:sans-serif;font-size:12px;font-weight:700;color:var(--accent2);cursor:pointer;}
+.act-icon{width:42px;height:42px;background:var(--surface);border:1px solid var(--border);border-radius:12px;display:flex;align-items:center;justify-content:center;cursor:pointer;}
+.act-icon svg{width:14px;height:14px;fill:none;stroke:var(--text2);stroke-width:2;}
+
+/* About card */
+.about-card{margin:14px 18px 0;background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:14px;}
+.about-title{font-family:sans-serif;font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.4px;margin-bottom:8px;}
+.about-text{font-size:12px;color:var(--text2);line-height:1.55;}
+
+/* TABS */
+.tabs{display:flex;gap:6px;padding:16px 18px 0;border-bottom:1px solid var(--border);}
+.tab{padding:9px 12px;font-family:sans-serif;font-size:11px;font-weight:700;color:var(--text3);cursor:pointer;border-bottom:2px solid transparent;}
+.tab.on{color:var(--accent2);border-bottom-color:var(--accent);}
+
+/* Section header */
+.sh{display:flex;justify-content:space-between;align-items:center;padding:14px 18px 8px;}
+.sh-t{font-family:sans-serif;font-size:13px;font-weight:700;}
+.sh-a{font-size:10px;color:var(--accent2);font-weight:600;cursor:pointer;font-family:sans-serif;}
+
+/* Lecture list */
+.llist{padding:0 18px;display:flex;flex-direction:column;gap:3px;}
+.lrow{display:flex;align-items:center;gap:11px;padding:8px 9px;border-radius:12px;cursor:pointer;transition:background .15s;text-decoration:none;color:inherit;}
+.lrow:hover{background:var(--surface);}
+.lrank{width:22px;text-align:center;font-family:sans-serif;font-size:13px;font-weight:800;color:var(--text3);flex-shrink:0;}
+.lrank.r1{color:var(--accent3);}
+.lrank.r2{color:var(--text2);}
+.lrank.r3{color:#CD7F32;}
+.lart{width:46px;height:46px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0;}
+.linfo{flex:1;min-width:0;}
+.ltitle{font-family:sans-serif;font-size:12px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:2px;}
+.lsub{font-size:10px;color:var(--text2);}
+.lmeta{font-size:10px;color:var(--text3);font-family:sans-serif;font-weight:600;flex-shrink:0;}
+
+/* Series cards */
+.series-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;padding:0 18px;}
+.series-card{border-radius:14px;padding:14px 12px;position:relative;overflow:hidden;cursor:pointer;border:1px solid rgba(255,255,255,.06);min-height:96px;display:flex;flex-direction:column;justify-content:flex-end;text-decoration:none;color:inherit;}
+.series-card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(200,134,10,.18),rgba(245,200,66,.06));}
+.series-emoji{position:absolute;top:10px;right:12px;font-size:26px;opacity:.7;}
+.series-title{font-family:sans-serif;font-size:12px;font-weight:800;position:relative;margin-bottom:3px;}
+.series-count{font-size:10px;color:var(--text2);position:relative;}
+.s1{background:linear-gradient(135deg,#1A0E04,#2A1806);}
+.s2{background:linear-gradient(135deg,#04141A,#062A1A);}
+.s3{background:linear-gradient(135deg,#100414,#1A0628);}
+.s4{background:linear-gradient(135deg,#041A10,#062A08);}
+
+/* gradients */
+.g1{background:linear-gradient(135deg,#9B6BFF,#4D9FFF);}
+.g2{background:linear-gradient(135deg,#C8860A,#E8A020);}
+.g3{background:linear-gradient(135deg,#FF4D8F,#C8860A);}
+.g4{background:linear-gradient(135deg,#2ECC8F,#4D9FFF);}
+.g5{background:linear-gradient(135deg,#E8A020,#F5C842);}
+.g6{background:linear-gradient(135deg,#4D9FFF,#9B6BFF);}
+
+/* MINI PLAYER (gold themed) */
+.mp{margin:8px 12px 6px;background:linear-gradient(135deg,var(--surface2),var(--surface3));border-radius:16px;padding:10px 12px;border:1px solid rgba(200,134,10,.18);box-shadow:0 6px 24px rgba(0,0,0,.45);flex-shrink:0;}
+.mp-top{display:flex;align-items:center;gap:10px;}
+.mp-art{width:40px;height:40px;border-radius:9px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;color:#1A0800;}
+.mp-inf{flex:1;min-width:0;}
+.mp-title{font-family:sans-serif;font-size:12px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:2px;}
+.mp-sub{font-size:10px;color:var(--text2);}
+.mp-ctrl{display:flex;align-items:center;gap:6px;}
+.mp-ctrl>svg{width:17px;height:17px;fill:none;stroke:var(--text2);stroke-width:2;cursor:pointer;}
+.mp-play{width:32px;height:32px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;}
+.mp-play svg{width:14px;height:14px;fill:#1A0800;}
+
+/* BOTTOM NAV */
+.bnav{display:flex;justify-content:space-around;align-items:center;padding:10px 8px 14px;background:var(--surface);border-top:1px solid var(--border);flex-shrink:0;position:sticky;bottom:0;z-index:10;}
+.ni{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:5px 10px;border-radius:10px;}
+.ni svg{width:19px;height:19px;fill:none;stroke:var(--text3);stroke-width:2;}
+.nl{font-size:9px;font-family:sans-serif;font-weight:700;color:var(--text3);}
+
+@keyframes fup{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.phone>*{animation:fup 0.4s ease forwards;}
+</style>
+</head>
+<body>
+<div class="phone">
+  <div class="scroll">
+
+    <!-- HERO -->
+    <div class="hero">
+      <div class="hero-arabesque">﷽</div>
+      <div class="hero-nav">
+        <a class="back-btn" href="shurafah_waazi.html"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></a>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <div class="theme-toggle" id="themeToggle">
+            <span class="tt-icon" id="ttIcon">🌙</span>
+            <span class="tt-label" id="ttLabel">Dark</span>
+          </div>
+          <div class="share-btn"><svg viewBox="0 0 24 24"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg></div>
+        </div>
+      </div>
+
+      <div class="identity">
+        <div class="preacher-avatar">
+          <div class="preacher-avatar-inner">🎙️</div>
+        </div>
+        <div class="identity-info">
+          <div class="preacher-name">Sheikh Ahmad Abubakar Gumi</div>
+          <div class="preacher-arabic">الشيخ أحمد أبو بكر قمي</div>
+          <div class="preacher-handle">@sheikhahmadgumi · Verified Preacher</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STATS -->
+    <div class="stats">
+      <div class="stat"><div class="stat-v">148</div><div class="stat-l">Lectures</div></div>
+      <div class="stat"><div class="stat-v">2.4M</div><div class="stat-l">Followers</div></div>
+      <div class="stat"><div class="stat-v">18.2M</div><div class="stat-l">Total Plays</div></div>
+    </div>
+
+    <!-- ACTIONS -->
+    <div class="actions">
+      <div class="act-primary"><svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>Play Latest</div>
+      <div class="act-secondary">Following</div>
+      <div class="act-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg></div>
+    </div>
+
+    <!-- ABOUT -->
+    <div class="about-card">
+      <div class="about-title">About</div>
+      <div class="about-text">Sheikh Ahmad Abubakar Gumi is a prominent Nigerian Islamic scholar known for his lectures on Aqeedah, Tafsir, and contemporary Islamic affairs. His Hanyar Gaskiya series has reached millions across West Africa.</div>
+    </div>
+
+    <!-- TABS -->
+    <div class="tabs">
+      <div class="tab on" data-tab="lectures">Lectures</div>
+      <div class="tab" data-tab="series">Series</div>
+      <div class="tab" data-tab="about">More</div>
+    </div>
+
+    <!-- TOP LECTURES -->
+    <div class="sh"><div class="sh-t">🏆 Top Lectures</div><a class="sh-a" href="all_top_lectures.html" style="text-decoration:none;">See all</a></div>
+    <div class="llist">
+      <a class="lrow" href="shurafah_waazi_detail.html">
+        <div class="lrank r1">1</div>
+        <div class="lart g2">🎙️</div>
+        <div class="linfo"><div class="ltitle">Hanyar Gaskiya Vol. 3</div><div class="lsub">Aqeedah · 1:04:38</div></div>
+        <div class="lmeta">1.8M plays</div>
+      </a>
+      <a class="lrow" href="shurafah_waazi_detail.html">
+        <div class="lrank r2">2</div>
+        <div class="lart g5">📖</div>
+        <div class="linfo"><div class="ltitle">Tafsir of Surah Al-Mulk</div><div class="lsub">Tafsir · 58:14</div></div>
+        <div class="lmeta">1.2M plays</div>
+      </a>
+      <a class="lrow" href="shurafah_waazi_detail.html">
+        <div class="lrank r3">3</div>
+        <div class="lart g3">🕌</div>
+        <div class="linfo"><div class="ltitle">Tauhid wa-l-Iman</div><div class="lsub">Aqeedah · 48:22</div></div>
+        <div class="lmeta">920K plays</div>
+      </a>
+      <a class="lrow" href="shurafah_waazi_detail.html">
+        <div class="lrank">4</div>
+        <div class="lart g6">🤲</div>
+        <div class="linfo"><div class="ltitle">Du'as for Difficulty</div><div class="lsub">Du'a · 32:08</div></div>
+        <div class="lmeta">740K plays</div>
+      </a>
+      <a class="lrow" href="shurafah_waazi_detail.html">
+        <div class="lrank">5</div>
+        <div class="lart g4">🌿</div>
+        <div class="linfo"><div class="ltitle">Akhlaq al-Mu'min</div><div class="lsub">Akhlaq · 42:55</div></div>
+        <div class="lmeta">610K plays</div>
+      </a>
+    </div>
+
+    <!-- SERIES -->
+    <div class="sh"><div class="sh-t">📚 Lecture Series</div><div class="sh-a">See all</div></div>
+    <div class="series-grid">
+      <a class="series-card s1" href="shurafah_waazi.html"><div class="series-emoji">📖</div><div class="series-title">Hanyar Gaskiya</div><div class="series-count">12 lectures</div></a>
+      <a class="series-card s2" href="shurafah_waazi.html"><div class="series-emoji">🕌</div><div class="series-title">Tauhid Series</div><div class="series-count">8 lectures</div></a>
+      <a class="series-card s3" href="shurafah_waazi.html"><div class="series-emoji">⚖️</div><div class="series-title">Fiqhul Ibadah</div><div class="series-count">24 lectures</div></a>
+      <a class="series-card s4" href="shurafah_waazi.html"><div class="series-emoji">🤲</div><div class="series-title">Du'a Collection</div><div class="series-count">36 lectures</div></a>
+    </div>
+
+    <div style="height:14px;"></div>
+  </div><!-- /scroll -->
+
+  <!-- MINI PLAYER -->
+  <div class="mp">
+    <div class="mp-top">
+      <div class="mp-art">🎙️</div>
+      <div class="mp-inf"><div class="mp-title">Hanyar Gaskiya Vol. 3</div><div class="mp-sub">Sh. Ahmad Gumi</div></div>
+      <div class="mp-ctrl">
+        <svg viewBox="0 0 24 24"><polygon points="19 20 9 12 19 4 19 20"/><line x1="5" y1="19" x2="5" y2="5"/></svg>
+        <div class="mp-play"><svg viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg></div>
+        <svg viewBox="0 0 24 24"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19"/></svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- BOTTOM NAV (Home · Wa'azi · Explore · Favourites · Profile) -->
+  <div class="bnav">
+    <a class="ni" href="song_portal_web.html" style="text-decoration:none;color:inherit;"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><div class="nl">Home</div></a>
+    <a class="ni" href="shurafah_waazi.html" style="text-decoration:none;color:inherit;"><svg viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg><div class="nl">Wa'azi</div></a>
+    <a class="ni" href="shurafah_explore.html" style="text-decoration:none;color:inherit;"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><div class="nl">Explore</div></a>
+    <a class="ni" href="favourites_page.html" style="text-decoration:none;color:inherit;"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg><div class="nl">Favourites</div></a>
+    <a class="ni" href="user_profile_page.html" style="text-decoration:none;color:inherit;"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><div class="nl">Profile</div></a>
+  </div>
+</div>
+
+<script>
+  /* Theme */
+  var toggle = document.getElementById('themeToggle');
+  var ttIcon = document.getElementById('ttIcon');
+  var ttLabel = document.getElementById('ttLabel');
+  var body = document.body;
+  function applyTheme(isLight){
+    if(isLight){ body.classList.add('light'); ttIcon.textContent='☀️'; ttLabel.textContent='Light'; }
+    else { body.classList.remove('light'); ttIcon.textContent='🌙'; ttLabel.textContent='Dark'; }
+  }
+  applyTheme(localStorage.getItem('shurafah-theme') === 'light');
+  toggle.addEventListener('click', function(){
+    var isLight = !body.classList.contains('light');
+    applyTheme(isLight);
+    localStorage.setItem('shurafah-theme', isLight ? 'light' : 'dark');
+  });
+
+  /* Tabs (visual only) */
+  document.querySelectorAll('.tab').forEach(function(t){
+    t.addEventListener('click', function(){
+      document.querySelectorAll('.tab').forEach(function(x){ x.classList.remove('on'); });
+      t.classList.add('on');
+    });
+  });
+</script>
+</body>
+</html>
