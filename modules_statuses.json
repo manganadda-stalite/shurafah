@@ -1,3 +1,7 @@
 {
-    "Core": true
+    "Core": true,
+    "Geography": true,
+    "Auth": true,
+    "AdminRoles": true,
+    "Subscriptions": true
 }

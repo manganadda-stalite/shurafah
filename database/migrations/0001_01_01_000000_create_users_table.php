@@ -8,17 +8,36 @@ return new class extends Migration
 {
     /**
      * Run the migrations.
+     *
+     * End users authenticate by phone (Nigerian format). Email is optional.
+     * Geography columns are added here without foreign keys; the constraints
+     * are attached in a later migration once the `zones`/`states`/`lgas`
+     * reference tables exist (see Geography module).
      */
     public function up(): void
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('email')->unique();
+            $table->string('full_name');
+            $table->string('phone')->unique();
+            $table->timestamp('phone_verified_at')->nullable();
+            $table->string('email')->nullable()->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+
+            $table->unsignedBigInteger('zone_id')->nullable()->index();
+            $table->unsignedBigInteger('state_id')->nullable()->index();
+            $table->unsignedBigInteger('lga_id')->nullable()->index();
+
+            $table->string('avatar_path')->nullable();
+            $table->string('account_type')->default('free');
+            $table->timestamp('premium_expires_at')->nullable();
+            $table->string('status')->default('active')->index();
+            $table->timestamp('last_login_at')->nullable();
+
             $table->rememberToken();
             $table->timestamps();
+            $table->softDeletes();
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {
