@@ -1,0 +1,33 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * One-time passcodes for phone verification / passwordless flows. Only the
+     * hash of the code is stored, never the plaintext.
+     */
+    public function up(): void
+    {
+        Schema::create('otp_codes', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('user_id')->nullable()->constrained('users')->cascadeOnDelete();
+            $table->string('phone')->index();
+            $table->string('code_hash');
+            $table->string('purpose')->default('phone_verification');
+            $table->timestamp('expires_at');
+            $table->timestamp('consumed_at')->nullable();
+            $table->timestamps();
+
+            $table->index(['phone', 'purpose']);
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::dropIfExists('otp_codes');
+    }
+};
